@@ -12385,7 +12385,11 @@ const REGION_CONSUMABLES = {
                 addLog('任務', `🔷 獲得 ${quest.rewards.shards} 碎片`);
             }
             if (quest.rewards.exp > 0) {
-                gainExp(quest.rewards.exp);
+                gameState.player.exp += quest.rewards.exp;
+                // 檢查升級
+                if (gameState.player.exp >= gameState.player.expToNext) {
+                    levelUp();
+                }
             }
             
             addLog('任務', `✅ 完成任務：${quest.name}`);
@@ -12422,8 +12426,13 @@ const REGION_CONSUMABLES = {
                 gameState.dailyQuests.rewardsClaimed.five = true;
                 gameState.player.gold += 500;
                 gameState.player.shards += 10;
-                gainExp(500);
-                addLog('任務', '🎁 全部完成獎勵：500💰 + 10🔷 + 500EXP');
+                gameState.player.exp += 500;
+                addLog('任務', '🎁 全部完成獎勱：500💰 + 10🔷 + 500EXP');
+                
+                // 檢查升級
+                if (gameState.player.exp >= gameState.player.expToNext) {
+                    levelUp();
+                }
             }
         }
         
@@ -12647,9 +12656,14 @@ const REGION_CONSUMABLES = {
                 }
                 gameState.player.gold += 500;
                 gameState.player.shards += 10;
-                gainExp(500);
+                gameState.player.exp += 500;
                 gameState.dailyQuests.rewardsClaimed.five = true;
                 addLog('任務', '🎁 領取完成度獎勱：500💰 + 10🔷 + 500EXP');
+                
+                // 檢查升級
+                if (gameState.player.exp >= gameState.player.expToNext) {
+                    levelUp();
+                }
             }
             
             playSound('reward');
@@ -12683,7 +12697,11 @@ const REGION_CONSUMABLES = {
                 gameState.player.shards += quest.rewards.shards;
             }
             if (quest.rewards.exp > 0) {
-                gainExp(quest.rewards.exp);
+                gameState.player.exp += quest.rewards.exp;
+                // 檢查升級
+                if (gameState.player.exp >= gameState.player.expToNext) {
+                    levelUp();
+                }
             }
             
             // 標記為已完成

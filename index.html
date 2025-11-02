@@ -1999,7 +1999,8 @@ const TITLES_DATA = {
     // 戰鬥稱號（15個）
     'newbie_adventurer': {
         name: '🗡️ 新手冒險者',
-        desc: '擊敗10個敵人',
+        desc: '擊敗 10 個敵人',
+        howToGet: '在任意區域戰鬥並擊敗敵人，累計達到 10 次即可解鎖',
         category: 'combat',
         rarity: 'common',
         condition: { type: 'kills', value: 10 },
@@ -2008,6 +2009,7 @@ const TITLES_DATA = {
     'veteran_warrior': {
         name: '⚔️ 資深戰士',
         desc: '擊敗100個敵人',
+        howToGet: '在任意區域戰鬥並擊敗敵人，累計達到 100 次即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'kills', value: 100 },
@@ -2016,6 +2018,7 @@ const TITLES_DATA = {
     'battle_master': {
         name: '🔥 戰鬥大師',
         desc: '擊敗500個敵人',
+        howToGet: '在任意區域戰鬥並擊敗敵人，累計達到 500 次即可解鎖',
         category: 'combat',
         rarity: 'epic',
         condition: { type: 'kills', value: 500 },
@@ -2024,6 +2027,7 @@ const TITLES_DATA = {
     'legendary_hunter': {
         name: '⚡ 傳說獵人',
         desc: '擊敗1000個敵人',
+        howToGet: '在任意區域戰鬥並擊敗敵人，累計達到 1000 次即可解鎖',
         category: 'combat',
         rarity: 'legendary',
         condition: { type: 'kills', value: 1000 },
@@ -2032,6 +2036,7 @@ const TITLES_DATA = {
     'elite_slayer': {
         name: '👑 菁英殺手',
         desc: '擊敗50個菁英怪物',
+        howToGet: '擊敗菁英怪物（區域內的強力敵人），累計達到 50 次即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'elite_kills', value: 50 },
@@ -2040,6 +2045,7 @@ const TITLES_DATA = {
     'boss_terminator': {
         name: '💀 Boss終結者',
         desc: '擊敗20個Boss',
+        howToGet: '挑戰並擊敗各區域的 Boss，累計達到 20 次即可解鎖',
         category: 'combat',
         rarity: 'epic',
         condition: { type: 'boss_kills', value: 20 },
@@ -2048,6 +2054,7 @@ const TITLES_DATA = {
     'perfect_warrior': {
         name: '🌟 完美戰士',
         desc: '100次完美戰鬥',
+        howToGet: '以滿血狀態完成戰鬥，累計達到 100 次即可解鎖',
         category: 'combat',
         rarity: 'epic',
         condition: { type: 'perfect_battles', value: 100 },
@@ -2056,6 +2063,7 @@ const TITLES_DATA = {
     'sniper': {
         name: '🎯 狙擊手',
         desc: '暴擊1000次',
+        howToGet: '觸發暴擊攻擊，累計達到 1000 次即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'crits', value: 1000 },
@@ -2064,6 +2072,7 @@ const TITLES_DATA = {
     'crit_master': {
         name: '💥 暴擊大師',
         desc: '觸發100次高傷暴擊',
+        howToGet: '觸發高傷害暴擊（暴擊傷害 > 200%），累計達到 100 次即可解鎖',
         category: 'combat',
         rarity: 'epic',
         condition: { type: 'high_crits', value: 100 },
@@ -2072,6 +2081,7 @@ const TITLES_DATA = {
     'unyielding': {
         name: '🛡️ 不屈之志',
         desc: '生命低於10%存活100次',
+        howToGet: '在生命值低於 10% 時存活並獲勝，累計達到 100 次即可解鎖',
         category: 'combat',
         rarity: 'epic',
         condition: { type: 'low_hp_survive', value: 100 },
@@ -2080,6 +2090,7 @@ const TITLES_DATA = {
     'win_streak_king': {
         name: '⚡ 連勝王者',
         desc: '連勝50場',
+        howToGet: '連續獲勝不敗，達到 50 連勝即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'max_win_streak', value: 50 },
@@ -2088,6 +2099,7 @@ const TITLES_DATA = {
     'one_shot': {
         name: '🔪 一擊必殺',
         desc: '一擊擊殺敵人100次',
+        howToGet: '一擊擊殺敵人（單次攻擊造成敵人全部生命值傷害），累計達到 100 次即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'one_shots', value: 100 },
@@ -2096,6 +2108,7 @@ const TITLES_DATA = {
     'vampire': {
         name: '🩸 吸血鬼',
         desc: '吸血回復10000 HP',
+        howToGet: '透過吸血效果回復生命值，累計回復 10000 HP 即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'lifesteal_heal', value: 10000 },
@@ -2104,6 +2117,7 @@ const TITLES_DATA = {
     'iron_wall': {
         name: '🧱 鐵壁',
         desc: '減傷10000點',
+        howToGet: '透過減傷效果減少傷害，累計減傷 10000 點即可解鎖',
         category: 'combat',
         rarity: 'rare',
         condition: { type: 'damage_reduced', value: 10000 },
@@ -2112,6 +2126,7 @@ const TITLES_DATA = {
     'storm_force': {
         name: '🌪️ 風暴之力',
         desc: '單場戰鬥造成5000傷害',
+        howToGet: '在單場戰鬥中造成 5000 點總傷害即可解鎖',
         category: 'combat',
         rarity: 'epic',
         condition: { type: 'max_battle_damage', value: 5000 },
@@ -2122,6 +2137,7 @@ const TITLES_DATA = {
     'equipment_collector': {
         name: '📦 裝備收集者',
         desc: '獲得100件裝備',
+        howToGet: '透過戰鬥、商店、副本等方式獲得裝備，累計達到 100 件即可解鎖',
         category: 'collection',
         rarity: 'common',
         condition: { type: 'items', value: 100 },
@@ -2130,6 +2146,7 @@ const TITLES_DATA = {
     'rare_hunter': {
         name: '💎 稀有獵人',
         desc: '獲得50件稀有裝備',
+        howToGet: '獲得稀有品質（藍色）的裝備，累計達到 50 件即可解鎖',
         category: 'collection',
         rarity: 'rare',
         condition: { type: 'rare_items', value: 50 },
@@ -2138,6 +2155,7 @@ const TITLES_DATA = {
     'epic_collector': {
         name: '⭐ 史詩收藏家',
         desc: '獲得20件史詩裝備',
+        howToGet: '獲得史詩品質（紫色）的裝備，累計達到 20 件即可解鎖',
         category: 'collection',
         rarity: 'epic',
         condition: { type: 'epic_items', value: 20 },
@@ -2146,6 +2164,7 @@ const TITLES_DATA = {
     'legendary_seeker': {
         name: '🌟 傳說追尋者',
         desc: '獲得10件傳說裝備',
+        howToGet: '獲得傳說品質（金色）的裝備，累計達到 10 件即可解鎖',
         category: 'collection',
         rarity: 'legendary',
         condition: { type: 'legendaryItems', value: 10 },
@@ -2154,6 +2173,7 @@ const TITLES_DATA = {
     'shard_tycoon': {
         name: '🔷 碎片大亨',
         desc: '累積獲得10000碎片',
+        howToGet: '透過分解裝備、副本獎勵等方式獲得碎片，累計達到 10000 個即可解鎖',
         category: 'collection',
         rarity: 'rare',
         condition: { type: 'total_shards', value: 10000 },
@@ -2162,6 +2182,7 @@ const TITLES_DATA = {
     'gold_hunter': {
         name: '💰 黃金獵人',
         desc: '累積獲得100000金幣',
+        howToGet: '透過戰鬥、副本、離線收益等方式獲得金幣，累計達到 100000 金幣即可解鎖',
         category: 'collection',
         rarity: 'rare',
         condition: { type: 'total_gold', value: 100000 },
@@ -2170,6 +2191,7 @@ const TITLES_DATA = {
     'exp_master': {
         name: '📚 經驗大師',
         desc: '累積獲得50000經驗',
+        howToGet: '透過戰鬥、副本、任務等方式獲得經驗，累計達到 50000 經驗即可解鎖',
         category: 'collection',
         rarity: 'rare',
         condition: { type: 'total_exp', value: 50000 },
@@ -2178,6 +2200,7 @@ const TITLES_DATA = {
     'bag_expert': {
         name: '🎒 背包達人',
         desc: '背包滿100次',
+        howToGet: '背包滿載（裝備數量達到上限），累計達到 100 次即可解鎖',
         category: 'collection',
         rarity: 'common',
         condition: { type: 'bag_full', value: 100 },
@@ -2186,6 +2209,7 @@ const TITLES_DATA = {
     'salvage_expert': {
         name: '⚙️ 分解專家',
         desc: '分解100件裝備',
+        howToGet: '分解不需要的裝備以獲得碎片，累計分解 100 件即可解鎖',
         category: 'collection',
         rarity: 'common',
         condition: { type: 'salvaged', value: 100 },
@@ -2194,6 +2218,7 @@ const TITLES_DATA = {
     'enhance_master': {
         name: '⚡ 強化大師',
         desc: '強化成功100次',
+        howToGet: '強化裝備並成功，累計成功 100 次即可解鎖',
         category: 'collection',
         rarity: 'rare',
         condition: { type: 'enhances', value: 100 },
@@ -2202,6 +2227,7 @@ const TITLES_DATA = {
     'reforge_expert': {
         name: '🔄 重鑄專家',
         desc: '重鑄50次',
+        howToGet: '使用碎片重鑄裝備屬性，累計重鑄 50 次即可解鎖',
         category: 'collection',
         rarity: 'common',
         condition: { type: 'reforges', value: 50 },
@@ -2210,6 +2236,7 @@ const TITLES_DATA = {
     'set_collector': {
         name: '🎁 套裝收藏家',
         desc: '收集5套完整套裝',
+        howToGet: '收集並裝備完整的套裝（同系列裝備），累計收集 5 套即可解鎖',
         category: 'collection',
         rarity: 'epic',
         condition: { type: 'complete_sets', value: 5 },
@@ -2220,6 +2247,7 @@ const TITLES_DATA = {
     'explorer': {
         name: '🗺️ 探索者',
         desc: '探索所有區域',
+        howToGet: '探索並解鎖所有區域（共 10 個區域），全部探索完畢即可解鎖',
         category: 'exploration',
         rarity: 'common',
         condition: { type: 'regions_explored', value: 10 },
@@ -2228,6 +2256,7 @@ const TITLES_DATA = {
     'conqueror': {
         name: '🏔️ 征服者',
         desc: '擊敗所有區域Boss',
+        howToGet: '擊敗所有區域的 Boss（共 10 個 Boss），全部擊敗即可解鎖',
         category: 'exploration',
         rarity: 'rare',
         condition: { type: 'all_bosses_defeated', value: 1 },
@@ -2236,6 +2265,7 @@ const TITLES_DATA = {
     'traveler': {
         name: '🌍 旅行家',
         desc: '切換區域100次',
+        howToGet: '在不同區域之間切換，累計切換 100 次即可解鎖',
         category: 'exploration',
         rarity: 'common',
         condition: { type: 'region_switches', value: 100 },
@@ -2244,6 +2274,7 @@ const TITLES_DATA = {
     'specialist': {
         name: '🎯 專精者',
         desc: '在同一區域戰鬥100次',
+        howToGet: '在同一區域內持續戰鬥，累計戰鬥 100 次即可解鎖',
         category: 'exploration',
         rarity: 'common',
         condition: { type: 'same_region_battles', value: 100 },
@@ -2252,6 +2283,7 @@ const TITLES_DATA = {
     'region_lord': {
         name: '👑 區域霸主',
         desc: '在同一區域擊敗Boss 10次',
+        howToGet: '在同一區域內重複擊敗 Boss，累計擊敗 10 次即可解鎖',
         category: 'exploration',
         rarity: 'rare',
         condition: { type: 'same_boss_kills', value: 10 },
@@ -2260,6 +2292,7 @@ const TITLES_DATA = {
     'abyss_explorer': {
         name: '🔥 深淵探索者',
         desc: '到達最深層區域',
+        howToGet: '到達最深層區域（第 10 區域：終焉虛空），到達即可解鎖',
         category: 'exploration',
         rarity: 'epic',
         condition: { type: 'max_region', value: 9 },
@@ -2268,6 +2301,7 @@ const TITLES_DATA = {
     'speedster': {
         name: '⚡ 速度狂人',
         desc: '10秒內完成戰鬥100次',
+        howToGet: '在 10 秒內快速完成戰鬥，累計達到 100 次即可解鎖',
         category: 'exploration',
         rarity: 'rare',
         condition: { type: 'fast_battles', value: 100 },
@@ -2276,6 +2310,7 @@ const TITLES_DATA = {
     'defense_expert': {
         name: '🛡️ 防禦專家',
         desc: '受到0傷害完成戰鬥50次',
+        howToGet: '在戰鬥中受到 0 傷害（完美防禦），累計達到 50 次即可解鎖',
         category: 'exploration',
         rarity: 'epic',
         condition: { type: 'no_damage_battles', value: 50 },
@@ -2284,6 +2319,7 @@ const TITLES_DATA = {
     'endurance_warrior': {
         name: '💪 持久戰士',
         desc: '戰鬥超過5分鐘10次',
+        howToGet: '戰鬥時間超過 5 分鐘的持久戰，累計達到 10 次即可解鎖',
         category: 'exploration',
         rarity: 'common',
         condition: { type: 'long_battles', value: 10 },
@@ -2292,6 +2328,7 @@ const TITLES_DATA = {
     'lucky_one': {
         name: '🎲 幸運兒',
         desc: '連續掉落稀有裝備5次',
+        howToGet: '連續掉落稀有以上品質的裝備，連續 5 次即可解鎖',
         category: 'exploration',
         rarity: 'rare',
         condition: { type: 'rare_drop_streak', value: 5 },
@@ -2302,6 +2339,7 @@ const TITLES_DATA = {
     'fast_growth': {
         name: '📈 快速成長',
         desc: '1小時內升10級',
+        howToGet: '在 1 小時內快速升級 10 級即可解鎖',
         category: 'achievement',
         rarity: 'common',
         condition: { type: 'fast_level', value: 10 },
@@ -2310,6 +2348,7 @@ const TITLES_DATA = {
     'rocket_leveler': {
         name: '🚀 火箭升級',
         desc: '達到50級',
+        howToGet: '角色等級達到 50 級即可解鎖',
         category: 'achievement',
         rarity: 'rare',
         condition: { type: 'level', value: 50 },
@@ -2318,6 +2357,7 @@ const TITLES_DATA = {
     'max_level_warrior': {
         name: '⭐ 滿級戰士',
         desc: '達到100級',
+        howToGet: '角色等級達到滿級 100 級即可解鎖',
         category: 'achievement',
         rarity: 'epic',
         condition: { type: 'level', value: 100 },
@@ -2326,6 +2366,7 @@ const TITLES_DATA = {
     'reborn': {
         name: '🔄 重生者',
         desc: '完成1次迭代',
+        howToGet: '達到 Lv.100 並完成所有區域 Boss 後進行第 1 次迭代即可解鎖',
         category: 'achievement',
         rarity: 'rare',
         condition: { type: 'iterations', value: 1 },
@@ -2334,6 +2375,7 @@ const TITLES_DATA = {
     'veteran_iterator': {
         name: '🔄🔄 資深迭代者',
         desc: '完成5次迭代',
+        howToGet: '完成 5 次迭代即可解鎖',
         category: 'achievement',
         rarity: 'epic',
         condition: { type: 'iterations', value: 5 },
@@ -2342,6 +2384,7 @@ const TITLES_DATA = {
     'iteration_master': {
         name: '🔄🔄🔄 迭代大師',
         desc: '完成10次迭代',
+        howToGet: '完成 10 次迭代即可解鎖',
         category: 'achievement',
         rarity: 'legendary',
         condition: { type: 'iterations', value: 10 },
@@ -2350,6 +2393,7 @@ const TITLES_DATA = {
     'talent_apprentice': {
         name: '✨ 天賦學徒',
         desc: '解鎖10個天賦',
+        howToGet: '使用迭代點數解鎖 10 個天賦即可解鎖',
         category: 'achievement',
         rarity: 'common',
         condition: { type: 'talents_unlocked', value: 10 },
@@ -2358,6 +2402,7 @@ const TITLES_DATA = {
     'talent_expert': {
         name: '✨✨ 天賦專家',
         desc: '解鎖全部天賦',
+        howToGet: '解鎖所有天賦（共 20 個）即可解鎖',
         category: 'achievement',
         rarity: 'epic',
         condition: { type: 'talents_unlocked', value: 20 },
@@ -2366,6 +2411,7 @@ const TITLES_DATA = {
     'quest_master': {
         name: '📋 任務達人',
         desc: '完成100個每日任務',
+        howToGet: '完成每日任務，累計完成 100 個即可解鎖',
         category: 'achievement',
         rarity: 'rare',
         condition: { type: 'quests_completed', value: 100 },
@@ -2374,6 +2420,7 @@ const TITLES_DATA = {
     'achievement_hunter': {
         name: '🏆 成就獵人',
         desc: '獲得50個稱號',
+        howToGet: '解鎖各種稱號，累計解鎖 50 個稱號即可解鎖',
         category: 'achievement',
         rarity: 'legendary',
         condition: { type: 'titles_unlocked', value: 50 },
@@ -2384,6 +2431,7 @@ const TITLES_DATA = {
     'anniversary': {
         name: '🎂 週年慶典',
         desc: '遊玩滿1年',
+        howToGet: '持續遊玩滿 365 天（1 年）即可解鎖',
         category: 'special',
         rarity: 'legendary',
         condition: { type: 'play_days', value: 365 },
@@ -2392,6 +2440,7 @@ const TITLES_DATA = {
     'christmas': {
         name: '🎄 聖誕快樂',
         desc: '聖誕節登入',
+        howToGet: '在聖誕節期間（12/24-12/26）登入遊戲即可解鎖',
         category: 'special',
         rarity: 'rare',
         condition: { type: 'event', value: 'christmas' },
@@ -2400,6 +2449,7 @@ const TITLES_DATA = {
     'new_year': {
         name: '🎆 新年快樂',
         desc: '新年登入',
+        howToGet: '在新年期間（1/1）登入遊戲即可解鎖',
         category: 'special',
         rarity: 'rare',
         condition: { type: 'event', value: 'new_year' },
@@ -2408,6 +2458,7 @@ const TITLES_DATA = {
     'valentine': {
         name: '💝 情人節',
         desc: '情人節登入',
+        howToGet: '在情人節期間（2/14）登入遊戲即可解鎖',
         category: 'special',
         rarity: 'rare',
         condition: { type: 'event', value: 'valentine' },
@@ -2416,6 +2467,7 @@ const TITLES_DATA = {
     'lunar_new_year': {
         name: '🌸 春節快樂',
         desc: '春節登入',
+        howToGet: '在農曆新年期間登入遊戲即可解鎖',
         category: 'special',
         rarity: 'rare',
         condition: { type: 'event', value: 'lunar_new_year' },
@@ -2424,6 +2476,7 @@ const TITLES_DATA = {
     'halloween': {
         name: '👻 萬聖節',
         desc: '萬聖節登入',
+        howToGet: '在萬聖節期間（10/31）登入遊戲即可解鎖',
         category: 'special',
         rarity: 'rare',
         condition: { type: 'event', value: 'halloween' },
@@ -2432,6 +2485,7 @@ const TITLES_DATA = {
     'first_day_player': {
         name: '🎮 首日玩家',
         desc: '遊戲首日登入',
+        howToGet: '在遊戲首日（發布當天）登入遊戲即可解鎖',
         category: 'special',
         rarity: 'legendary',
         condition: { type: 'first_day', value: 1 },
@@ -2440,6 +2494,7 @@ const TITLES_DATA = {
     'abyss_guardian': {
         name: '🌟 數位深淵守護者',
         desc: '遊玩滿100小時',
+        howToGet: '累計遊玩時間達到 100 小時即可解鎖',
         category: 'special',
         rarity: 'legendary',
         condition: { type: 'play_hours', value: 100 },
@@ -2450,6 +2505,7 @@ const TITLES_DATA = {
     'v2_beta_tester': {
         name: '🌟 v2.0 體驗者',
         desc: '參與 v2.0 迭代優化測試',
+        howToGet: '使用舊版本存檔載入 v2.0 版本，系統會自動遷移並解鎖此稱號（所有等級）',
         category: 'special',
         rarity: 'rare',
         condition: { type: 'migration', value: 'v2_iteration_optimized' },
@@ -2458,6 +2514,7 @@ const TITLES_DATA = {
     'pioneer': {
         name: '🏆 先驅者',
         desc: '早期玩家，見證遊戲成長',
+        howToGet: '使用 Lv.15+ 的舊版本存檔載入 v2.0 版本，系統會自動遷移並解鎖此稱號',
         category: 'special',
         rarity: 'epic',
         condition: { type: 'migration', value: 'v2_pioneer' },
@@ -2466,11 +2523,235 @@ const TITLES_DATA = {
     'iteration_vanguard': {
         name: '⚡ 迭代先鋒',
         desc: '高等級早期玩家，迭代系統先驅',
+        howToGet: '使用 Lv.50+ 的舊版本存檔載入 v2.0 版本，系統會自動遷移並解鎖此稱號',
         category: 'special',
         rarity: 'legendary',
         condition: { type: 'migration', value: 'v2_iteration_vanguard' },
         bonus: { atk: 5, def: 5, hp: 5, expBonus: 8, iterationIP: 10 }
+    }    ,
+    
+    // 成長系列稱號（8個）
+    'beginner': {
+        name: '🌱 初學者',
+        desc: '達到 Lv.10',
+        howToGet: '角色等級達到 10 級即可解鎖',
+        category: 'achievement',
+        rarity: 'common',
+        condition: { type: 'level', value: 10 },
+        bonus: { expBonus: 2 }
+    },
+    'advanced_player': {
+        name: '🌿 進階者',
+        desc: '達到 Lv.20',
+        howToGet: '角色等級達到 20 級即可解鎖',
+        category: 'achievement',
+        rarity: 'common',
+        condition: { type: 'level', value: 20 },
+        bonus: { expBonus: 3 }
+    },
+    'veteran_adventurer': {
+        name: '🌳 資深冒險者',
+        desc: '達到 Lv.30',
+        howToGet: '角色等級達到 30 級即可解鎖',
+        category: 'achievement',
+        rarity: 'rare',
+        condition: { type: 'level', value: 30 },
+        bonus: { expBonus: 4, atk: 2 }
+    },
+    'elite_fighter': {
+        name: '🏔️ 精英戰士',
+        desc: '達到 Lv.40',
+        howToGet: '角色等級達到 40 級即可解鎖',
+        category: 'achievement',
+        rarity: 'rare',
+        condition: { type: 'level', value: 40 },
+        bonus: { expBonus: 5, atk: 3, def: 2 }
+    },
+    'exp_master_pro': {
+        name: '💫 經驗大師',
+        desc: '累計獲得 100,000 經驗',
+        howToGet: '透過戰鬥、副本、任務等方式累計獲得 100,000 經驗即可解鎖',
+        category: 'achievement',
+        rarity: 'epic',
+        condition: { type: 'total_exp', value: 100000 },
+        bonus: { expBonus: 10 }
+    },
+    'exp_maniac': {
+        name: '⚡ 經驗狂人',
+        desc: '累計獲得 500,000 經驗',
+        howToGet: '透過戰鬥、副本、任務等方式累計獲得 500,000 經驗即可解鎖',
+        category: 'achievement',
+        rarity: 'epic',
+        condition: { type: 'total_exp', value: 500000 },
+        bonus: { expBonus: 15 }
+    },
+    'exp_god': {
+        name: '🌟 經驗之神',
+        desc: '累計獲得 1,000,000 經驗',
+        howToGet: '透過戰鬥、副本、任務等方式累計獲得 1,000,000 經驗即可解鎖',
+        category: 'achievement',
+        rarity: 'legendary',
+        condition: { type: 'total_exp', value: 1000000 },
+        bonus: { expBonus: 20, atk: 5 }
+    },
+    'knowledge_seeker': {
+        name: '📚 知識追求者',
+        desc: '在 1 小時內升級 5 次',
+        howToGet: '在 1 小時內快速升級 5 次即可解鎖',
+        category: 'achievement',
+        rarity: 'rare',
+        condition: { type: 'fast_level', value: 5 },
+        bonus: { expBonus: 5 }
+    },
+    
+    // 財富系列稱號（10個）
+    'small_fortune': {
+        name: '💰 小富翁',
+        desc: '累計獲得 50,000 金幣',
+        howToGet: '透過戰鬥、副本、離線收益等方式累計獲得 50,000 金幣即可解鎖',
+        category: 'collection',
+        rarity: 'common',
+        condition: { type: 'total_gold', value: 50000 },
+        bonus: { goldBonus: 3 }
+    },
+    'wealthy': {
+        name: '💎 富豪',
+        desc: '累計獲得 500,000 金幣',
+        howToGet: '透過戰鬥、副本、離線收益等方式累計獲得 500,000 金幣即可解鎖',
+        category: 'collection',
+        rarity: 'rare',
+        condition: { type: 'total_gold', value: 500000 },
+        bonus: { goldBonus: 5 }
+    },
+    'gold_tycoon_pro': {
+        name: '👑 金幣大亨',
+        desc: '累計獲得 1,000,000 金幣',
+        howToGet: '透過戰鬥、副本、離線收益等方式累計獲得 1,000,000 金幣即可解鎖',
+        category: 'collection',
+        rarity: 'epic',
+        condition: { type: 'total_gold', value: 1000000 },
+        bonus: { goldBonus: 8 }
+    },
+    'wealth_king': {
+        name: '🏆 財富之王',
+        desc: '累計獲得 5,000,000 金幣',
+        howToGet: '透過戰鬥、副本、離線收益等方式累計獲得 5,000,000 金幣即可解鎖',
+        category: 'collection',
+        rarity: 'legendary',
+        condition: { type: 'total_gold', value: 5000000 },
+        bonus: { goldBonus: 12, atk: 5 }
+    },
+    'shard_collector_pro': {
+        name: '💠 碎片收藏家',
+        desc: '累計獲得 5,000 碎片',
+        howToGet: '透過分解裝備、副本獎勵等方式累計獲得 5,000 碎片即可解鎖',
+        category: 'collection',
+        rarity: 'common',
+        condition: { type: 'total_shards', value: 5000 },
+        bonus: { shardBonus: 3 }
+    },
+    'shard_expert_pro': {
+        name: '💠💠 碎片專家',
+        desc: '累計獲得 20,000 碎片',
+        howToGet: '透過分解裝備、副本獎勵等方式累計獲得 20,000 碎片即可解鎖',
+        category: 'collection',
+        rarity: 'rare',
+        condition: { type: 'total_shards', value: 20000 },
+        bonus: { shardBonus: 5 }
+    },
+    'shard_wealthy': {
+        name: '💠💠💠 碎片富豪',
+        desc: '累計獲得 50,000 碎片',
+        howToGet: '透過分解裝備、副本獎勵等方式累計獲得 50,000 碎片即可解鎖',
+        category: 'collection',
+        rarity: 'epic',
+        condition: { type: 'total_shards', value: 50000 },
+        bonus: { shardBonus: 8 }
+    },
+    'lucky_guy': {
+        name: '🎁 幸運兒',
+        desc: '單次戰鬥獲得 5,000+ 金幣',
+        howToGet: '在單次戰鬥中獲得 5,000 金幣以上即可解鎖',
+        category: 'collection',
+        rarity: 'rare',
+        condition: { type: 'single_battle_gold', value: 5000 },
+        bonus: { goldBonus: 5, dropRate: 3 }
+    },
+    'super_lucky_star': {
+        name: '🌈 超級幸運星',
+        desc: '單次戰鬥獲得 10,000+ 金幣',
+        howToGet: '在單次戰鬥中獲得 10,000 金幣以上即可解鎖',
+        category: 'collection',
+        rarity: 'epic',
+        condition: { type: 'single_battle_gold', value: 10000 },
+        bonus: { goldBonus: 8, dropRate: 5 }
+    },
+    'business_master': {
+        name: '🏪 商業大師',
+        desc: '在商店購買 50 件物品',
+        howToGet: '在商店累計購買 50 件物品（裝備或消耗品）即可解鎖',
+        category: 'collection',
+        rarity: 'rare',
+        condition: { type: 'shop_purchases', value: 50 },
+        bonus: { goldBonus: 5 }
+    },
+    
+    // 戰鬥精通系列稱號（6個）
+    'combo_novice': {
+        name: '⚔️ 連擊新手',
+        desc: '達成 10 連勝',
+        howToGet: '連續獲勝 10 次不敗即可解鎖',
+        category: 'combat',
+        rarity: 'common',
+        condition: { type: 'max_win_streak', value: 10 },
+        bonus: { atk: 2 }
+    },
+    'combo_expert': {
+        name: '⚔️⚔️ 連擊高手',
+        desc: '達成 20 連勝',
+        howToGet: '連續獲勝 20 次不敗即可解鎖',
+        category: 'combat',
+        rarity: 'rare',
+        condition: { type: 'max_win_streak', value: 20 },
+        bonus: { atk: 3, crit: 2 }
+    },
+    'combo_master': {
+        name: '⚔️⚔️⚔️ 連擊大師',
+        desc: '達成 30 連勝',
+        howToGet: '連續獲勝 30 次不敗即可解鎖',
+        category: 'combat',
+        rarity: 'epic',
+        condition: { type: 'max_win_streak', value: 30 },
+        bonus: { atk: 5, crit: 3, critDmg: 5 }
+    },
+    'crit_lover': {
+        name: '💥 暴擊愛好者',
+        desc: '觸發 500 次暴擊',
+        howToGet: '在戰鬥中觸發暴擊攻擊，累計達到 500 次即可解鎖',
+        category: 'combat',
+        rarity: 'common',
+        condition: { type: 'crit_count', value: 500 },
+        bonus: { crit: 2 }
+    },
+    'crit_expert_pro': {
+        name: '💥💥 暴擊專家',
+        desc: '觸發 2,000 次暴擊',
+        howToGet: '在戰鬥中觸發暴擊攻擊，累計達到 2,000 次即可解鎖',
+        category: 'combat',
+        rarity: 'rare',
+        condition: { type: 'crit_count', value: 2000 },
+        bonus: { crit: 3, critDmg: 5 }
+    },
+    'crit_god': {
+        name: '💥💥💥 暴擊之神',
+        desc: '觸發 5,000 次暴擊',
+        howToGet: '在戰鬥中觸發暴擊攻擊，累計達到 5,000 次即可解鎖',
+        category: 'combat',
+        rarity: 'epic',
+        condition: { type: 'crit_count', value: 5000 },
+        bonus: { crit: 5, critDmg: 10 }
     }
+
 };
 
 
@@ -2490,6 +2771,128 @@ const TITLES_DATA = {
             '戰術演算': { type: 'buff', trigger: 'onAttack', chance: 25, duration: 5, effects: { atk: 8, crit: 5 }, desc: '觸發25%，攻擊+8%、爆擊率+5%，持續5回合' },
             '堅定協議': { type: 'buff', trigger: 'onHitTaken', chance: 22, duration: 4, effects: { damageReduction: 10, def: 150 }, desc: '觸發22%，減傷+10%、護甲+150，持續4回合' }
         };
+
+        // ========== 簡化版統計追蹤系統 ==========
+        // 此版本避免了複雜的整合，只在必要處添加追蹤
+        
+        // 1. 擴展 initStats 函數
+        function initStatsExtended() {
+            if (!gameState.stats) {
+                gameState.stats = {};
+            }
+            
+            // 戰鬥統計
+            if (gameState.stats.critCount === undefined) gameState.stats.critCount = 0;
+            if (gameState.stats.winStreak === undefined) gameState.stats.winStreak = 0;
+            if (gameState.stats.maxWinStreak === undefined) gameState.stats.maxWinStreak = 0;
+            
+            // 財富統計
+            if (gameState.stats.totalGoldEarned === undefined) gameState.stats.totalGoldEarned = 0;
+            if (gameState.stats.totalShardsEarned === undefined) gameState.stats.totalShardsEarned = 0;
+            if (gameState.stats.totalExpEarned === undefined) gameState.stats.totalExpEarned = 0;
+            
+            // 商店統計
+            if (gameState.stats.shopPurchases === undefined) gameState.stats.shopPurchases = 0;
+        }
+        
+        // 2. 追蹤金幣獲得
+        function trackGoldGain(amount) {
+            initStatsExtended();
+            gameState.stats.totalGoldEarned += amount;
+            
+            // 檢查財富稱號
+            if (gameState.stats.totalGoldEarned >= 5000000) {
+                unlockTitle('wealth_king');
+            } else if (gameState.stats.totalGoldEarned >= 1000000) {
+                unlockTitle('gold_tycoon_pro');
+            } else if (gameState.stats.totalGoldEarned >= 500000) {
+                unlockTitle('wealthy');
+            } else if (gameState.stats.totalGoldEarned >= 50000) {
+                unlockTitle('small_fortune');
+            }
+        }
+        
+        // 3. 追蹤碎片獲得
+        function trackShardsGain(amount) {
+            initStatsExtended();
+            gameState.stats.totalShardsEarned += amount;
+            
+            // 檢查碎片稱號
+            if (gameState.stats.totalShardsEarned >= 50000) {
+                unlockTitle('shard_wealthy');
+            } else if (gameState.stats.totalShardsEarned >= 20000) {
+                unlockTitle('shard_expert_pro');
+            } else if (gameState.stats.totalShardsEarned >= 5000) {
+                unlockTitle('shard_collector_pro');
+            }
+        }
+        
+        // 4. 追蹤經驗獲得
+        function trackExpGain(amount) {
+            initStatsExtended();
+            gameState.stats.totalExpEarned += amount;
+            
+            // 檢查經驗稱號
+            if (gameState.stats.totalExpEarned >= 1000000) {
+                unlockTitle('exp_god');
+            } else if (gameState.stats.totalExpEarned >= 500000) {
+                unlockTitle('exp_maniac');
+            } else if (gameState.stats.totalExpEarned >= 100000) {
+                unlockTitle('exp_master_pro');
+            }
+        }
+        
+        // 5. 追蹤暴擊
+        function trackCrit() {
+            initStatsExtended();
+            gameState.stats.critCount++;
+            
+            // 檢查暴擊稱號
+            if (gameState.stats.critCount >= 5000) {
+                unlockTitle('crit_god');
+            } else if (gameState.stats.critCount >= 2000) {
+                unlockTitle('crit_expert_pro');
+            } else if (gameState.stats.critCount >= 500) {
+                unlockTitle('crit_lover');
+            }
+        }
+        
+        // 6. 追蹤連勝
+        function trackWinStreak() {
+            initStatsExtended();
+            gameState.stats.winStreak++;
+            
+            if (gameState.stats.winStreak > gameState.stats.maxWinStreak) {
+                gameState.stats.maxWinStreak = gameState.stats.winStreak;
+            }
+            
+            // 檢查連勝稱號
+            if (gameState.stats.maxWinStreak >= 30) {
+                unlockTitle('combo_master');
+            } else if (gameState.stats.maxWinStreak >= 20) {
+                unlockTitle('combo_expert');
+            } else if (gameState.stats.maxWinStreak >= 10) {
+                unlockTitle('combo_novice');
+            }
+        }
+        
+        // 7. 重置連勝
+        function resetWinStreak() {
+            initStatsExtended();
+            gameState.stats.winStreak = 0;
+        }
+        
+        // 8. 追蹤商店購買
+        function trackShopPurchase() {
+            initStatsExtended();
+            gameState.stats.shopPurchases++;
+            
+            // 檢查商店稱號
+            if (gameState.stats.shopPurchases >= 50) {
+                unlockTitle('business_master');
+            }
+        }
+        
         // 迭代天賦系統
 // 區域專屬消耗品
 const REGION_CONSUMABLES = {
@@ -5184,6 +5587,7 @@ const REGION_CONSUMABLES = {
                     playerCrit += gameState.player.setEffects.crit;
                 }
                 const isCrit = Math.random() * 100 < playerCrit;
+                if (isCrit) trackCrit();
                 let playerCritDmg = gameState.player.critDmg;
                 // 加上套裝暴擊傷害
                 if (gameState.player.setEffects) {
@@ -5748,7 +6152,8 @@ const REGION_CONSUMABLES = {
         }
 
         function victory(enemy) {
-            playSound('victory'); // 勝利音效
+            playSound('victory');
+            trackWinStreak(); // 勝利音效
             gameState.stats.kills++;
             gameState.battleProgress++;
             
@@ -5806,6 +6211,7 @@ const REGION_CONSUMABLES = {
             }
             
             gameState.player.gold += finalGoldReward;
+            trackGoldGain(finalGoldReward);
             // 連勝經驗加成
             gameState.winStreak = (gameState.winStreak || 0) + 1;
             gameState.maxWinStreak = Math.max(gameState.maxWinStreak || 0, gameState.winStreak);
@@ -5825,6 +6231,7 @@ const REGION_CONSUMABLES = {
             }
             
             gameState.player.exp += expReward;
+            trackExpGain(expReward);
             
             // 隨從獲得經驗（玩家經驗的50%）
             if (gameState.companions && gameState.companions.active) {
@@ -6260,6 +6667,7 @@ const REGION_CONSUMABLES = {
         }
 
         function defeat() {
+            resetWinStreak();
             playSound('defeat'); // 失敗音效
             const healAmount = Math.floor(gameState.player.maxHp * 0.1);
             gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
@@ -11120,6 +11528,7 @@ const REGION_CONSUMABLES = {
             }
             
             gameState.player.gold -= item.price;
+                trackShopPurchase();
             
             switch(item.type) {
                 case 'hp':
@@ -12041,6 +12450,12 @@ const REGION_CONSUMABLES = {
                     bonusText += `${attrName}+${value}% `;
                 }
                 
+                // 獲取方法說明
+                let howToGetText = '';
+                if (!isUnlocked && title.howToGet) {
+                    howToGetText = `<div style="font-size: 0.7rem; color: #66ccff; margin-top: 5px; padding: 5px; background: rgba(78, 165, 255, 0.1); border-radius: 3px; border-left: 2px solid #4EA5FF;">💡 獲取方法：${title.howToGet}</div>`;
+                }
+                
                 html += `
                     <div class="title-card ${rarityClass} ${lockedClass} ${equippedClass}" 
                          onclick="${isUnlocked ? `equipTitle('${title.id}')` : ''}" 
@@ -12049,6 +12464,7 @@ const REGION_CONSUMABLES = {
                         <div style="font-size: 0.75rem; color: #7a8fb8; margin: 5px 0;">${isUnlocked ? title.desc : '未解鎖'}</div>
                         <div style="font-size: 0.85rem; color: #4EA5FF; margin-top: 5px;">${bonusText}</div>
                         ${progressText}
+                        ${howToGetText}
                         ${isEquipped ? '<div style="margin-top: 5px; color: #FFD700; font-weight: bold;">★ 已裝備</div>' : ''}
                     </div>
                 `;
@@ -12105,6 +12521,16 @@ const REGION_CONSUMABLES = {
                     totalTalentLevel += level;
                 }
                 return `天賦等級: ${totalTalentLevel}/${cond.value}`;
+            } else if (cond.type === 'migration') {
+                // 遷移稱號的特殊處理
+                if (cond.value === 'v2_iteration_optimized') {
+                    return '舊存檔遷移至 v2.0 即可解鎖';
+                } else if (cond.value === 'v2_pioneer') {
+                    return 'Lv.15+ 舊存檔遷移至 v2.0 即可解鎖';
+                } else if (cond.value === 'v2_iteration_vanguard') {
+                    return 'Lv.50+ 舊存檔遷移至 v2.0 即可解鎖';
+                }
+                return '特殊條件解鎖';
             }
             
             return '';
@@ -15056,6 +15482,7 @@ function applyDungeonRewards(rewards) {
     // 碎片
     if (rewards.shards > 0) {
         gameState.player.shards += rewards.shards;
+        trackShardsGain(rewards.shards);
     }
     
     // 裝備

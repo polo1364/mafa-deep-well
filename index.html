@@ -2694,8 +2694,8 @@ const REGION_CONSUMABLES = {
             
             // 資源型 (Resource)
             scavenger_bot: { id: 'scavenger_bot', name: '💎 拾荒機器人', type: 'resource', rarity: 'Common', description: '幫你收集更多金幣', price: 500, skills: [{ type: 'bonus_gold', name: '金幣收集', description: '金幣掉落 +15%', value: 15, trigger: 'passive' }], maxLevel: 50 },
-            treasure_hunter: { id: 'treasure_hunter', name: '🔍 尋寶獵人', type: 'resource', rarity: 'Fine', description: '提升掉落與經驗', price: 1500, skills: [{ type: 'bonus_gold', name: '金幣收集', description: '金幣掉落 +20%', value: 20, trigger: 'passive' }, { type: 'bonus_drop', name: '幸運拾取', description: '裝備掉落率 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
-            fortune_core: { id: 'fortune_core', name: '🎰 幸運核心', type: 'resource', rarity: 'Rare', description: '全面提升資源獲取', price: 3000, skills: [{ type: 'bonus_gold', name: '財富磁鐵', description: '金幣掉落 +30%', value: 30, trigger: 'passive' }, { type: 'bonus_drop', name: '幸運光環', description: '裝備掉落率 +12%', value: 12, trigger: 'passive' }, { type: 'bonus_exp', name: '經驗加速', description: '經驗獲取 +15%', value: 15, trigger: 'passive' }], maxLevel: 50 }
+            treasure_hunter: { id: 'treasure_hunter', name: '🔍 尋寶獵人', type: 'resource', rarity: 'Fine', description: '提升掉落與經驗', price: 1500, skills: [{ type: 'bonus_gold', name: '金幣收集', description: '金幣掉落 +20%', value: 20, trigger: 'passive' }, { type: 'bonus_drop', name: '幸運拾取', description: '幸運值 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            fortune_core: { id: 'fortune_core', name: '🎰 幸運核心', type: 'resource', rarity: 'Rare', description: '全面提升資源獲取', price: 3000, skills: [{ type: 'bonus_gold', name: '財富磁鐵', description: '金幣掉落 +30%', value: 30, trigger: 'passive' }, { type: 'bonus_drop', name: '幸運光環', description: '幸運值 +12%', value: 12, trigger: 'passive' }, { type: 'bonus_exp', name: '經驗加速', description: '經驗獲取 +15%', value: 15, trigger: 'passive' }], maxLevel: 50 }
         };
 
         // 卡牌系統定義
@@ -5821,9 +5821,34 @@ const REGION_CONSUMABLES = {
                     }
                 }
             } else {
-                // 應用幸運值加成
-                let baseDropRate = 0.35 + affixDropBonus;
+                // 收集所有 dropBonus 來源
+                let totalDropBonus = 0;
+                
+                // 1. 裝備詞綴的 dropBonus
+                const passiveBonuses = getPassiveBonuses();
+                if (passiveBonuses.dropBonus) {
+                    totalDropBonus += passiveBonuses.dropBonus;
+                }
+                
+                // 2. 隨從技能的 dropBonus
+                if (gameState.player.dropBonus) {
+                    totalDropBonus += gameState.player.dropBonus;
+                }
+                
+                // 3. Buff 的掉落加成
+                if (gameState.player.buffs && gameState.player.buffs.length > 0) {
+                    gameState.player.buffs.forEach(buff => {
+                        if (buff.type === 'drop' && buff.value) {
+                            totalDropBonus += buff.value;
+                        }
+                    });
+                }
+                
+                // 計算最終掉落率
+                let baseDropRate = 0.35 + affixDropBonus + totalDropBonus;
                 let finalDropRate = baseDropRate;
+                
+                // 應用幸運值（倍增效果）
                 if (gameState.player.luck && gameState.player.luck > 0) {
                     finalDropRate = baseDropRate * (1 + gameState.player.luck / 100);
                 }
@@ -6121,10 +6146,10 @@ const REGION_CONSUMABLES = {
             // 檢查稱號解鎖
             checkTitleUnlocks();
             
-            // 減少屬性卷Buff持續時間
+            // 減少所有有 duration 的 Buff 持續時間
             if (gameState.player.buffs && gameState.player.buffs.length > 0) {
                 gameState.player.buffs = gameState.player.buffs.filter(buff => {
-                    if (buff.source === 'scroll' && buff.duration !== undefined) {
+                    if (buff.duration !== undefined && buff.duration > 0) {
                         buff.duration--;
                         if (buff.duration <= 0) {
                             addLog('系統', `${buff.name} 的效果已結束！`);
@@ -6556,14 +6581,16 @@ const REGION_CONSUMABLES = {
             const totalWeight = Object.values(weights).reduce((sum, w) => sum + w, 0);
             let random = Math.random() * totalWeight;
             
+            let selectedRarity = 'Common';
             for (const [rarity, weight] of Object.entries(weights)) {
                 random -= weight;
                 if (random <= 0) {
-                    return rarity;
+                    selectedRarity = rarity;
+                    break;
                 }
             }
             
-            return 'Common'; // 備用
+            return selectedRarity;
         }
         
         // 品質名稱對照表
@@ -6995,6 +7022,8 @@ const REGION_CONSUMABLES = {
                         bossDmg: finalStats.bossDmg || 0,
                         hpRegen: Math.random() < 0.15 ? Math.random() * 3 : 0, // 15%機率，0-3%
                         expBonus: Math.random() < 0.15 ? Math.random() * 20 : 0, // 15%機率，0-20%
+                        luck: Math.random() < 0.15 ? Math.random() * 10 : 0, // 15%機率，0-10%
+                        goldBonus: Math.random() < 0.15 ? Math.random() * 15 : 0, // 15%機率，0-15%
                         affixes: affixes, // 儲存詞條列表供顯示使用
                         enhance: 0 // 強化等級
                     };
@@ -7040,7 +7069,11 @@ const REGION_CONSUMABLES = {
                 { key: 'dmgRed', label: '減傷', suffix: '%' },
                 { key: 'lifeSteal', label: '吸血', suffix: '%' },
                 { key: 'armorPen', label: '無視防禦', suffix: '%' },
-                { key: 'bossDmg', label: '對首領傷害', suffix: '%' }
+                { key: 'bossDmg', label: '對首領傷害', suffix: '%' },
+                { key: 'hpRegen', label: '生命回復', suffix: '%' },
+                { key: 'expBonus', label: '經驗加成', suffix: '%' },
+                { key: 'luck', label: '幸運值', suffix: '%' },
+                { key: 'goldBonus', label: '金幣加成', suffix: '%' }
             ];
             
             statConfig.forEach(({ key, label, suffix }) => {
@@ -7347,6 +7380,8 @@ const REGION_CONSUMABLES = {
                     if (enhanced.bossDmg) totalBossDmg += enhanced.bossDmg;
                     if (enhanced.hpRegen) totalHpRegen += enhanced.hpRegen;
                     if (enhanced.expBonus) totalExpBonus += enhanced.expBonus;
+                    if (enhanced.luck) totalLuck += enhanced.luck;
+                    if (enhanced.goldBonus) totalGoldBonus += enhanced.goldBonus;
                     if (enhanced.crit) gameState.player.crit += enhanced.crit;
                     if (enhanced.critDmg) gameState.player.critDmg += enhanced.critDmg;
                 }
@@ -8879,7 +8914,7 @@ const REGION_CONSUMABLES = {
                                 description = `經驗獲取 +${effectValue}%`;
                                 break;
                             case 'bonus_drop':
-                                description = `裝備掉落率 +${effectValue}%`;
+                                description = `幸運值 +${effectValue}%`;
                                 break;
                             default:
                                 description = skill.description;
@@ -10410,6 +10445,10 @@ const REGION_CONSUMABLES = {
             if (item.lifeSteal > 0) enhanced.lifeSteal = item.lifeSteal + getEnhanceBonus(item.lifeSteal, item.enhance, 'lifeSteal');
             if (item.armorPen > 0) enhanced.armorPen = item.armorPen + getEnhanceBonus(item.armorPen, item.enhance, 'armorPen');
             if (item.bossDmg > 0) enhanced.bossDmg = item.bossDmg + getEnhanceBonus(item.bossDmg, item.enhance, 'bossDmg');
+            if (item.hpRegen > 0) enhanced.hpRegen = item.hpRegen + getEnhanceBonus(item.hpRegen, item.enhance, 'hpRegen');
+            if (item.expBonus > 0) enhanced.expBonus = item.expBonus + getEnhanceBonus(item.expBonus, item.enhance, 'expBonus');
+            if (item.luck > 0) enhanced.luck = item.luck + getEnhanceBonus(item.luck, item.enhance, 'luck');
+            if (item.goldBonus > 0) enhanced.goldBonus = item.goldBonus + getEnhanceBonus(item.goldBonus, item.enhance, 'goldBonus');
             
             return enhanced;
         }
@@ -10700,7 +10739,9 @@ const REGION_CONSUMABLES = {
                 { name: '幸運符', desc: '下一場戰鬥掉落率+30%', price: 60, type: 'luck_once', value: 0.3 },
                 { name: '攻擊卷軸', desc: '下一場戰鬥攻擊+20%', price: 50, type: 'atk_once', value: 0.2 },
                 { name: '防禦卷軸', desc: '下一場戰鬥防禦+20%', price: 50, type: 'def_once', value: 0.2 },
-                { name: '地圖碎片', desc: '顯示當前區域地圖（未來功能）', price: 100, type: 'map' }
+                { name: '背包擴充券', desc: '永久增加背包 +5 格（最多10次）', price: 120, type: 'bag_expand', value: 5, maxPurchase: 10 },
+                { name: '體力藥水', desc: '立即回復 10 點體力', price: 80, type: 'ap_potion', value: 10 },
+                { name: '重置石', desc: '重置所有每日任務（每日1次）', price: 150, type: 'reset_daily', maxPurchase: 1, resetDaily: true }
             ];
             
             return items.map(item => `
@@ -10987,6 +11028,44 @@ const REGION_CONSUMABLES = {
                 return;
             }
             
+            // 檢查購買次數限制
+            if (item.maxPurchase) {
+                if (!gameState.player.shopPurchases) gameState.player.shopPurchases = {};
+                const purchaseKey = item.type + '_' + item.name;
+                
+                // 如果是每日重置的物品，檢查是否需要重置
+                if (item.resetDaily) {
+                    if (!gameState.player.shopPurchases[purchaseKey]) {
+                        gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: Date.now() };
+                    }
+                    
+                    const purchaseData = gameState.player.shopPurchases[purchaseKey];
+                    const lastResetDate = new Date(purchaseData.lastReset);
+                    const nowDate = new Date();
+                    
+                    // 檢查是否跨天
+                    if (lastResetDate.getDate() !== nowDate.getDate() || 
+                        lastResetDate.getMonth() !== nowDate.getMonth() || 
+                        lastResetDate.getFullYear() !== nowDate.getFullYear()) {
+                        purchaseData.count = 0;
+                        purchaseData.lastReset = Date.now();
+                    }
+                    
+                    if (purchaseData.count >= item.maxPurchase) {
+                        addLog('商店', `${item.name} 今日已達到購買上限！`);
+                        return;
+                    }
+                } else {
+                    // 永久限制
+                    const currentPurchases = gameState.player.shopPurchases[purchaseKey] || 0;
+                    
+                    if (currentPurchases >= item.maxPurchase) {
+                        addLog('商店', `${item.name} 已達到購買上限！`);
+                        return;
+                    }
+                }
+            }
+            
             gameState.player.gold -= item.price;
             
             switch(item.type) {
@@ -11070,9 +11149,67 @@ const REGION_CONSUMABLES = {
                 case 'repair':
                     addLog('商店', `購買了 ${item.name}，可以修復裝備（未來功能）！`);
                     break;
-                case 'map':
-                    addLog('商店', `購買了 ${item.name}，可以查看地圖（未來功能）！`);
+                case 'bag_expand':
+                    // 直接增加 maxInventory
+                    if (!gameState.maxInventory) gameState.maxInventory = 50;
+                    gameState.maxInventory += item.value;
+                    
+                    // 記錄購買次數
+                    if (item.maxPurchase) {
+                        const purchaseKey = item.type + '_' + item.name;
+                        if (!gameState.player.shopPurchases) gameState.player.shopPurchases = {};
+                        gameState.player.shopPurchases[purchaseKey] = (gameState.player.shopPurchases[purchaseKey] || 0) + 1;
+                        const remaining = item.maxPurchase - gameState.player.shopPurchases[purchaseKey];
+                        addLog('商店', `購買了 ${item.name}，背包容量永久 +${item.value}！當前上限：${gameState.maxInventory}（剩餘 ${remaining} 次）`);
+                    } else {
+                        addLog('商店', `購買了 ${item.name}，背包容量永久 +${item.value}！當前上限：${gameState.maxInventory}`);
+                    }
+                    updateUI();
                     break;
+                case 'ap_potion':
+                    const apToRecover = Math.min(item.value, gameState.player.maxAp - gameState.player.ap);
+                    gameState.player.ap += apToRecover;
+                    addLog('商店', `購買了 ${item.name}，回復了 ${apToRecover} 點體力！`);
+                    updateUI();
+                    break;
+
+                case 'reset_daily':
+                    if (gameState.dailyQuests && gameState.dailyQuests.quests && gameState.dailyQuests.quests.length > 0) {
+                        const resetCount = gameState.dailyQuests.quests.length;
+                        
+                        // 重置所有每日任務
+                        gameState.dailyQuests.quests.forEach(quest => {
+                            quest.progress = 0;
+                            quest.accepted = false;
+                        });
+                        
+                        // 清空已完成列表
+                        gameState.dailyQuests.completed = [];
+                        
+                        // 記錄購買次數
+                        if (item.maxPurchase) {
+                            const purchaseKey = item.type + '_' + item.name;
+                            if (!gameState.player.shopPurchases) gameState.player.shopPurchases = {};
+                            
+                            if (item.resetDaily) {
+                                // 每日重置的物品
+                                if (!gameState.player.shopPurchases[purchaseKey]) {
+                                    gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: Date.now() };
+                                }
+                                gameState.player.shopPurchases[purchaseKey].count += 1;
+                            } else {
+                                // 永久限制
+                                gameState.player.shopPurchases[purchaseKey] = (gameState.player.shopPurchases[purchaseKey] || 0) + 1;
+                            }
+                        }
+                        
+                        addLog('商店', `購買了 ${item.name}，重置了 ${resetCount} 個每日任務！`);
+                        updateUI();
+                    } else {
+                        addLog('商店', `購買了 ${item.name}，但沒有每日任務可以重置。`);
+                    }
+                    break;
+
             }
             
             // 更新商店購買任務進度

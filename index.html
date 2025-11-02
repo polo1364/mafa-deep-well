@@ -7635,6 +7635,76 @@ const REGION_CONSUMABLES = {
                     bossDmg: setItem.bossDmg || 0
                 };
                 
+                // ===== 套裝詞綴系統 =====
+                // 套裝裝備有機率獲得 1-2 個詞綴
+                const affixRoll = Math.random() * 100;
+                let affixCount = 0;
+                
+                if (affixRoll < 10) {
+                    affixCount = 2;  // 10% 機率 2 個詞綴
+                } else if (affixRoll < 40) {
+                    affixCount = 1;  // 30% 機率 1 個詞綴
+                }
+                // 否則 60% 機率 0 個詞綴
+                
+                if (affixCount > 0) {
+                    // 根據裝備類型添加詞綴
+                    if (item.type === 'weapon') {
+                        // 武器添加前綴
+                        const availablePrefixes = EQUIPMENT_AFFIXES.prefix.filter(affix => 
+                            affix.equipTypes.includes('weapon')
+                        );
+                        
+                        item.prefixAffix = [];
+                        for (let i = 0; i < affixCount && i < availablePrefixes.length; i++) {
+                            const randomAffix = availablePrefixes[Math.floor(Math.random() * availablePrefixes.length)];
+                            // 避免重複詞綴
+                            if (!item.prefixAffix.find(a => a.id === randomAffix.id)) {
+                                item.prefixAffix.push(randomAffix);
+                            }
+                        }
+                    } else if (item.type === 'armor') {
+                        // 防具添加後綴
+                        const availableSuffixes = EQUIPMENT_AFFIXES.suffix.filter(affix => 
+                            affix.equipTypes.includes('armor')
+                        );
+                        
+                        item.suffixAffix = [];
+                        for (let i = 0; i < affixCount && i < availableSuffixes.length; i++) {
+                            const randomAffix = availableSuffixes[Math.floor(Math.random() * availableSuffixes.length)];
+                            // 避免重複詞綴
+                            if (!item.suffixAffix.find(a => a.id === randomAffix.id)) {
+                                item.suffixAffix.push(randomAffix);
+                            }
+                        }
+                    } else if (item.type === 'accessory') {
+                        // 飾品可以有前綴或後綴
+                        const affixType = Math.random() < 0.5 ? 'prefix' : 'suffix';
+                        const availableAffixes = EQUIPMENT_AFFIXES[affixType].filter(affix => 
+                            affix.equipTypes.includes('weapon') || affix.equipTypes.includes('armor')
+                        );
+                        
+                        if (affixType === 'prefix') {
+                            item.prefixAffix = [];
+                            for (let i = 0; i < affixCount && i < availableAffixes.length; i++) {
+                                const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
+                                if (!item.prefixAffix.find(a => a.id === randomAffix.id)) {
+                                    item.prefixAffix.push(randomAffix);
+                                }
+                            }
+                        } else {
+                            item.suffixAffix = [];
+                            for (let i = 0; i < affixCount && i < availableAffixes.length; i++) {
+                                const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
+                                if (!item.suffixAffix.find(a => a.id === randomAffix.id)) {
+                                    item.suffixAffix.push(randomAffix);
+                                }
+                            }
+                        }
+                    }
+                }
+                // ===== 套裝詞綴系統結束 =====
+                
                 return item;
             } else {
                 // 掉落普通裝備（區域專屬）

@@ -2757,20 +2757,264 @@ const TITLES_DATA = {
 
         // 技能系統
         const SKILLS = {
-            // 攻擊技能
-            '裂甲斬': { type: 'attack', trigger: 'onAttack', chance: 25, damageMultiplier: 1.6, desc: '觸發25%，造成160%傷害' },
-            '震盪斬': { type: 'attack', trigger: 'onAttack', chance: 20, damageMultiplier: 1.9, desc: '觸發20%，造成190%傷害' },
-            '斬流': { type: 'attack', trigger: 'onAttack', chance: 28, damageMultiplier: 1.4, desc: '觸發28%，造成140%傷害' },
-            '斷脈擊': { type: 'attack', trigger: 'onAttack', chance: 18, damageMultiplier: 2.0, desc: '觸發18%，造成200%傷害' },
-            // 防禦技能
-            '反刺': { type: 'counter', trigger: 'onHitTaken', chance: 28, damageMultiplier: 1.2, desc: '觸發28%，造成120%傷害' },
-            '反震': { type: 'counter', trigger: 'onHitTaken', chance: 22, damageMultiplier: 1.5, desc: '觸發22%，造成150%傷害' },
-            '反制擊': { type: 'counter', trigger: 'onHitTaken', chance: 20, damageMultiplier: 1.7, desc: '觸發20%，造成170%傷害' },
-            '回環斬': { type: 'counter', trigger: 'onHitTaken', chance: 25, damageMultiplier: 1.4, desc: '觸發25%，造成140%傷害' },
-            // 增益技能
-            '戰術演算': { type: 'buff', trigger: 'onAttack', chance: 25, duration: 5, effects: { atk: 8, crit: 5 }, desc: '觸發25%，攻擊+8%、爆擊率+5%，持續5回合' },
-            '堅定協議': { type: 'buff', trigger: 'onHitTaken', chance: 22, duration: 4, effects: { damageReduction: 10, def: 150 }, desc: '觸發22%，減傷+10%、護甲+150，持續4回合' }
-        };
+    // ========== 攻擊型技能（9個）==========
+    
+    // 系統架構師 - 平衡輸出
+    '模組化打擊': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 30, 
+        damageMultiplier: 1.5, 
+        desc: '攻擊時30%機率造成150%傷害' 
+    },
+    
+    // 暴力測試員 - 高爆發
+    '壓力測試': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 22, 
+        damageMultiplier: 2.1, 
+        desc: '攻擊時22%機率造成210%傷害' 
+    },
+    
+    // 滲透工程師 - 精準打擊
+    '漏洞利用': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 26, 
+        damageMultiplier: 1.8, 
+        desc: '攻擊時26%機率造成180%傷害' 
+    },
+    
+    // 數據科學家 - 穩定輸出
+    '數據爆破': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 32, 
+        damageMultiplier: 1.4, 
+        desc: '攻擊時32%機率造成140%傷害' 
+    },
+    
+    // 前端開發者 - 快速攻擊
+    '快速迭代': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 35, 
+        damageMultiplier: 1.3, 
+        desc: '攻擊時35%機率造成130%傷害' 
+    },
+    
+    // 區塊鏈工程師 - 鏈式攻擊
+    '區塊爆破': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 24, 
+        damageMultiplier: 1.9, 
+        desc: '攻擊時24%機率造成190%傷害' 
+    },
+    
+    // AI訓練師 - 極限爆發
+    '神經爆發': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 18, 
+        damageMultiplier: 2.3, 
+        desc: '攻擊時18%機率造成230%傷害' 
+    },
+    
+    // 雲端架構師 - 彈性輸出
+    '雲端打擊': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 28, 
+        damageMultiplier: 1.6, 
+        desc: '攻擊時28%機率造成160%傷害' 
+    },
+    
+    // 運維工程師 - 穩定傷害
+    '系統衝擊': { 
+        type: 'attack', 
+        trigger: 'onAttack', 
+        chance: 30, 
+        damageMultiplier: 1.5, 
+        desc: '攻擊時30%機率造成150%傷害' 
+    },
+
+    // ========== 反擊型技能（9個）==========
+    
+    // 系統架構師 - 架構反制
+    '架構反制': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 28, 
+        damageMultiplier: 1.3, 
+        desc: '受擊時28%機率反擊造成130%傷害' 
+    },
+    
+    // 暴力測試員 - 暴力反擊
+    '反向測試': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 22, 
+        damageMultiplier: 1.6, 
+        desc: '受擊時22%機率反擊造成160%傷害' 
+    },
+    
+    // 滲透工程師 - 精準反擊
+    '反向滲透': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 25, 
+        damageMultiplier: 1.5, 
+        desc: '受擊時25%機率反擊造成150%傷害' 
+    },
+    
+    // 數據科學家 - 數據反饋
+    '數據反饋': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 30, 
+        damageMultiplier: 1.2, 
+        desc: '受擊時30%機率反擊造成120%傷害' 
+    },
+    
+    // 運維工程師 - 故障轉移
+    '故障轉移': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 32, 
+        damageMultiplier: 1.1, 
+        desc: '受擊時32%機率反擊造成110%傷害' 
+    },
+    
+    // 前端開發者 - 響應反擊
+    '響應反擊': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 26, 
+        damageMultiplier: 1.4, 
+        desc: '受擊時26%機率反擊造成140%傷害' 
+    },
+    
+    // 區塊鏈工程師 - 共識反擊
+    '共識反擊': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 24, 
+        damageMultiplier: 1.5, 
+        desc: '受擊時24%機率反擊造成150%傷害' 
+    },
+    
+    // AI訓練師 - 學習反制
+    '學習反制': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 20, 
+        damageMultiplier: 1.7, 
+        desc: '受擊時20%機率反擊造成170%傷害' 
+    },
+    
+    // 雲端架構師 - 容災反擊
+    '容災反擊': { 
+        type: 'counter', 
+        trigger: 'onHitTaken', 
+        chance: 28, 
+        damageMultiplier: 1.3, 
+        desc: '受擊時28%機率反擊造成130%傷害' 
+    },
+
+    // ========== 增益型技能（9個）==========
+    
+    // 系統架構師 - 架構優化（攻防平衡）
+    '架構優化': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 28, 
+        duration: 5, 
+        effects: { atk: 10, def: 120 }, 
+        desc: '攻擊時28%機率觸發：攻擊+10%、護甲+120，持續5回合' 
+    },
+    
+    // 暴力測試員 - 過載模式（極限攻擊）
+    '過載模式': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 22, 
+        duration: 4, 
+        effects: { atk: 18, crit: 8 }, 
+        desc: '攻擊時22%機率觸發：攻擊+18%、暴擊率+8%，持續4回合' 
+    },
+    
+    // 滲透工程師 - 權限提升（暴擊強化）
+    '權限提升': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 25, 
+        duration: 5, 
+        effects: { crit: 10, atk: 8 }, 
+        desc: '攻擊時25%機率觸發：暴擊率+10%、攻擊+8%，持續5回合' 
+    },
+    
+    // 數據科學家 - 深度學習（全面提升）
+    '深度學習': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 26, 
+        duration: 6, 
+        effects: { atk: 12, crit: 6 }, 
+        desc: '攻擊時26%機率觸發：攻擊+12%、暴擊率+6%，持續6回合' 
+    },
+    
+    // 運維工程師 - 系統加固（防禦強化）
+    '系統加固': { 
+        type: 'buff', 
+        trigger: 'onHitTaken', 
+        chance: 28, 
+        duration: 5, 
+        effects: { def: 200, damageReduction: 12 }, 
+        desc: '受擊時28%機率觸發：護甲+200、減傷+12%，持續5回合' 
+    },
+    
+    // 前端開發者 - 視覺增強（攻擊暴擊）
+    '視覺增強': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 30, 
+        duration: 4, 
+        effects: { atk: 14, crit: 7 }, 
+        desc: '攻擊時30%機率觸發：攻擊+14%、暴擊率+7%，持續4回合' 
+    },
+    
+    // 區塊鏈工程師 - 智能合約（攻防兼備）
+    '智能合約': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 24, 
+        duration: 6, 
+        effects: { atk: 10, def: 150 }, 
+        desc: '攻擊時24%機率觸發：攻擊+10%、護甲+150，持續6回合' 
+    },
+    
+    // AI訓練師 - 模型優化（暴擊極限）
+    '模型優化': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 20, 
+        duration: 4, 
+        effects: { crit: 12, atk: 10 }, 
+        desc: '攻擊時20%機率觸發：暴擊率+12%、攻擊+10%，持續4回合' 
+    },
+    
+    // 雲端架構師 - 彈性擴展（全面增益）
+    '彈性擴展': { 
+        type: 'buff', 
+        trigger: 'onAttack', 
+        chance: 26, 
+        duration: 5, 
+        effects: { atk: 12, def: 100 }, 
+        desc: '攻擊時26%機率觸發：攻擊+12%、護甲+100，持續5回合' 
+    }
+};
 
         // ========== 簡化版統計追蹤系統 ==========
         // 此版本避免了複雜的整合，只在必要處添加追蹤

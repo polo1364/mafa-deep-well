@@ -1887,7 +1887,7 @@
         type: 'collect_legendary',
         target: 1,
         difficulty: 'hard',
-        rewards: { gold: 800, shards: 10, exp: 0 }
+        rewards: { gold: 800, shards: 35, exp: 0 }
     },
     {
         id: 'collect_shards_20',
@@ -2444,6 +2444,32 @@ const TITLES_DATA = {
         rarity: 'legendary',
         condition: { type: 'play_hours', value: 100 },
         bonus: { atk: 10, def: 10, hp: 10 }
+    },
+    
+    // v2.0 遷移特殊稱號
+    'v2_beta_tester': {
+        name: '🌟 v2.0 體驗者',
+        desc: '參與 v2.0 迭代優化測試',
+        category: 'special',
+        rarity: 'rare',
+        condition: { type: 'migration', value: 'v2_iteration_optimized' },
+        bonus: { expBonus: 3, goldBonus: 3 }
+    },
+    'pioneer': {
+        name: '🏆 先驅者',
+        desc: '早期玩家，見證遊戲成長',
+        category: 'special',
+        rarity: 'epic',
+        condition: { type: 'migration', value: 'v2_pioneer' },
+        bonus: { atk: 3, def: 3, hp: 3, expBonus: 5 }
+    },
+    'iteration_vanguard': {
+        name: '⚡ 迭代先鋒',
+        desc: '高等級早期玩家，迭代系統先驅',
+        category: 'special',
+        rarity: 'legendary',
+        condition: { type: 'migration', value: 'v2_iteration_vanguard' },
+        bonus: { atk: 5, def: 5, hp: 5, expBonus: 8, iterationIP: 10 }
     }
 };
 
@@ -5780,6 +5806,24 @@ const REGION_CONSUMABLES = {
             }
             
             gameState.player.gold += finalGoldReward;
+            // 連勝經驗加成
+            gameState.winStreak = (gameState.winStreak || 0) + 1;
+            gameState.maxWinStreak = Math.max(gameState.maxWinStreak || 0, gameState.winStreak);
+            
+            let streakBonus = 0;
+            if (gameState.winStreak >= 10) {
+                streakBonus = Math.floor(expReward * 0.5);  // 10連勝：+50%
+            } else if (gameState.winStreak >= 5) {
+                streakBonus = Math.floor(expReward * 0.3);  // 5連勝：+30%
+            } else if (gameState.winStreak >= 3) {
+                streakBonus = Math.floor(expReward * 0.1);  // 3連勝：+10%
+            }
+            
+            if (streakBonus > 0) {
+                gameState.player.exp += streakBonus;
+                addLog('連勝', `🔥 ${gameState.winStreak}連勝！額外獲得 ${streakBonus} 經驗！`);
+            }
+            
             gameState.player.exp += expReward;
             
             // 隨從獲得經驗（玩家經驗的50%）
@@ -6274,7 +6318,16 @@ const REGION_CONSUMABLES = {
             playSound('levelup'); // 升級音效
             gameState.player.level++;
             gameState.player.exp -= gameState.player.expToNext;
-            gameState.player.expToNext = Math.floor(gameState.player.expToNext * 1.5);
+            // 分段經驗成長係數（針對 Lv.100 優化）
+            let growthRate;
+            if (gameState.player.level <= 20) {
+                growthRate = 1.15;  // 前期（迭代優化）
+            } else if (gameState.player.level <= 40) {
+                growthRate = 1.08;  // 中期（迭代優化）
+            } else {
+                growthRate = 1.04;  // 後期（迭代優化）
+            }
+            gameState.player.expToNext = Math.floor(gameState.player.expToNext * growthRate);
             
             // 屬性提升
             gameState.player.maxHp += 10;
@@ -13134,7 +13187,7 @@ const REGION_CONSUMABLES = {
         function showTutorialCompletionReward() {
             const rewards = {
                 gold: 1000,
-                shards: 50
+                shards: 90
             };
             
             // 發放獎勵
@@ -13672,6 +13725,127 @@ Boss特點：
             if (loadedState.tutorial.battleCount === undefined) loadedState.tutorial.battleCount = 0;
             if (loadedState.tutorial.equipmentCount === undefined) loadedState.tutorial.equipmentCount = 0;
             
+            // ========== 經驗值優化遷移和補償系統 (v2.0) ==========
+            if (!loadedState.migration) {
+                loadedState.migration = {};
+            }
+            
+            // 檢查是否已經進行過 v2.0 迭代優化遷移
+            if (!loadedState.migration.v2_iteration_optimized) {
+                console.log('檢測到舊存檔，開始經驗值優化遷移...');
+                
+                const currentLevel = loadedState.player.level || 1;
+                
+                // 計算補償（所有等級玩家都獲得補償）
+                let expCompensation = 0;
+                let shardsCompensation = 0;
+                let goldCompensation = 0;
+                let specialRewards = [];
+                
+                // 基礎補償（所有玩家）
+                if (currentLevel >= 1) {
+                    expCompensation = 10000;  // 基礎經驗補償
+                    shardsCompensation = 50;   // 基礎碎片補償
+                    goldCompensation = 5000;   // 基礎金幣補償
+                    specialRewards.push('v2_beta_tester');
+                }
+                
+                // 額外補償（根據等級）
+                if (currentLevel >= 10) {
+                    expCompensation = 30000;
+                    shardsCompensation = 80;
+                    goldCompensation = 8000;
+                }
+                
+                if (currentLevel >= 15) {
+                    expCompensation = 50000;
+                    shardsCompensation = 100;
+                    goldCompensation = 10000;
+                    specialRewards.push('pioneer');
+                }
+                
+                if (currentLevel >= 20) {
+                    expCompensation = 100000;
+                    shardsCompensation = 200;
+                    goldCompensation = 20000;
+                }
+                
+                if (currentLevel >= 30) {
+                    expCompensation = 200000;
+                    shardsCompensation = 500;
+                    goldCompensation = 50000;
+                }
+                
+                if (currentLevel >= 40) {
+                    expCompensation = 500000;
+                    shardsCompensation = 1000;
+                    goldCompensation = 100000;
+                }
+                
+                if (currentLevel >= 50) {
+                    expCompensation = 1000000;
+                    shardsCompensation = 2000;
+                    goldCompensation = 200000;
+                    specialRewards.push('iteration_vanguard');
+                }
+                
+                // 應用補償
+                if (expCompensation > 0) {
+                    loadedState.player.exp += expCompensation;
+                }
+                
+                if (shardsCompensation > 0) {
+                    loadedState.player.shards = (loadedState.player.shards || 0) + shardsCompensation;
+                }
+                
+                if (goldCompensation > 0) {
+                    loadedState.player.gold += goldCompensation;
+                }
+                
+                // 解鎖稱號
+                if (!loadedState.titles) {
+                    loadedState.titles = {
+                        unlocked: [],
+                        equipped: null,
+                        progress: {}
+                    };
+                }
+                if (!loadedState.titles.unlocked) {
+                    loadedState.titles.unlocked = [];
+                }
+                
+                specialRewards.forEach(titleId => {
+                    if (!loadedState.titles.unlocked.includes(titleId)) {
+                        loadedState.titles.unlocked.push(titleId);
+                    }
+                });
+                
+                // 調整 expToNext 到新系統
+                let newExpToNext = 100;
+                for (let i = 1; i < currentLevel; i++) {
+                    if (i <= 20) {
+                        newExpToNext = newExpToNext * 1.15;
+                    } else if (i <= 40) {
+                        newExpToNext = newExpToNext * 1.08;
+                    } else {
+                        newExpToNext = newExpToNext * 1.04;
+                    }
+                }
+                loadedState.player.expToNext = Math.floor(newExpToNext);
+                
+                // 記錄遷移信息
+                loadedState.migration.v2_iteration_optimized = true;
+                loadedState.migration.migrationDate = new Date().toISOString();
+                loadedState.migration.compensations = {
+                    exp: expCompensation,
+                    shards: shardsCompensation,
+                    gold: goldCompensation,
+                    specialRewards: specialRewards
+                };
+                
+                console.log('遷移完成！補償內容：', loadedState.migration.compensations);
+            }
+            
             return loadedState;
         }
         
@@ -13792,6 +13966,56 @@ Boss特點：
                 updateUI();
                 updateEquipmentSlots(); // 更新裝備顯示
                 addLog('系統', '遊戲已讀取！歡迎回來，' + gameState.player.name + '！');
+                
+                // 顯示遷移通知
+                if (gameState.migration && gameState.migration.v2_iteration_optimized && gameState.migration.compensations) {
+                    const comp = gameState.migration.compensations;
+                    
+                    // 只在首次遷移時顯示（檢查是否有補償內容）
+                    if (comp.exp > 0 || comp.shards > 0 || comp.gold > 0) {
+                        setTimeout(() => {
+                            addLog('系統', '🎉 檢測到舊版本存檔，已自動遷移到 v2.0 迭代優化版本！');
+                            
+                            if (comp.exp > 0) {
+                                addLog('系統', `📈 經驗補償：+${comp.exp.toLocaleString()} EXP`);
+                            }
+                            if (comp.shards > 0) {
+                                addLog('系統', `💎 碎片補償：+${comp.shards} 碎片`);
+                            }
+                            if (comp.gold > 0) {
+                                addLog('系統', `💰 金幣補償：+${comp.gold.toLocaleString()} 金幣`);
+                            }
+                            if (comp.specialRewards && comp.specialRewards.length > 0) {
+                                comp.specialRewards.forEach(titleId => {
+                                    const titleData = TITLES_DATA[titleId];
+                                    if (titleData) {
+                                        addLog('系統', `🏆 特殊獎勵：${titleData.name} 稱號`);
+                                    }
+                                });
+                            }
+                            
+                            addLog('系統', '✨ v2.0 優化：升級速度大幅提升，迭代系統現已可用！');
+                            addLog('系統', '🔄 達到 Lv.100 後即可進行迭代，開啟全新玩法！');
+                            
+                            // 檢查是否可以升級
+                            while (gameState.player.exp >= gameState.player.expToNext) {
+                                levelUp();
+                            }
+                            
+                            updateUI();
+                            
+                            // 清除補償內容，避免重複顯示
+                            gameState.migration.compensations = {
+                                exp: 0,
+                                shards: 0,
+                                gold: 0,
+                                specialRewards: []
+                            };
+                            
+                            saveGame();
+                        }, 1500);
+                    }
+                }
                 
                 // 檢查離線收益
                 checkOfflineRewards();
@@ -13939,8 +14163,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 500,
-                    gold: [100, 200]
+                    exp: 650,
+                    gold: [150, 250]
                 },
                 firstClear: {
                     shards: 10,
@@ -13962,8 +14186,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 1500,
-                    gold: [200, 400]
+                    exp: 1950,
+                    gold: [300, 500]
                 },
                 firstClear: {
                     shards: 20,
@@ -13985,11 +14209,11 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 4000,
-                    gold: [400, 800]
+                    exp: 5200,
+                    gold: [600, 1000]
                 },
                 firstClear: {
-                    shards: 30,
+                    shards: 55,
                     gold: 2000
                 }
             },
@@ -13997,8 +14221,8 @@ const DUNGEONS_DATA = {
                 id: 'exp_hell',
                 name: '地獄',
                 level: 30,
-                ap: 20,
-                dailyLimit: 1,
+                ap: 18,
+                dailyLimit: 2,
                 enemy: {
                     name: '終極修煉傀儡',
                     hp: 4000,
@@ -14008,8 +14232,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 10000,
-                    gold: [800, 1600]
+                    exp: 11700,
+                    gold: [1200, 2000]
                 },
                 firstClear: {
                     shards: 50,
@@ -14040,8 +14264,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 200,
-                    gold: [800, 1200]
+                    exp: 260,
+                    gold: [600, 900]
                 },
                 firstClear: {
                     shards: 10,
@@ -14063,8 +14287,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 500,
-                    gold: [2500, 3500]
+                    exp: 650,
+                    gold: [1800, 2500]
                 },
                 firstClear: {
                     shards: 20,
@@ -14086,8 +14310,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 1200,
-                    gold: [7000, 9000]
+                    exp: 1560,
+                    gold: [5000, 7000]
                 },
                 firstClear: {
                     shards: 30,
@@ -14098,8 +14322,8 @@ const DUNGEONS_DATA = {
                 id: 'gold_hell',
                 name: '地獄',
                 level: 35,
-                ap: 20,
-                dailyLimit: 1,
+                ap: 18,
+                dailyLimit: 2,
                 enemy: {
                     name: '鑽石寶箱怪',
                     hp: 3500,
@@ -14109,8 +14333,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 3000,
-                    gold: [18000, 22000]
+                    exp: 3900,
+                    gold: [13000, 17000]
                 },
                 firstClear: {
                     shards: 50,
@@ -14141,8 +14365,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 300,
-                    gold: [200, 400],
+                    exp: 390,
+                    gold: [260, 520],
                     equipment: {
                         rarity: 'common',
                         count: 1
@@ -14171,15 +14395,15 @@ const DUNGEONS_DATA = {
                     critDmg: 160
                 },
                 rewards: {
-                    exp: 800,
-                    gold: [400, 800],
+                    exp: 1040,
+                    gold: [520, 1040],
                     equipment: {
                         rarity: 'rare',
                         count: 1
                     }
                 },
                 firstClear: {
-                    shards: 25,
+                    shards: 100,
                     equipment: {
                         rarity: 'epic',
                         count: 1
@@ -14201,8 +14425,8 @@ const DUNGEONS_DATA = {
                     critDmg: 170
                 },
                 rewards: {
-                    exp: 2000,
-                    gold: [800, 1600],
+                    exp: 2600,
+                    gold: [1040, 2080],
                     equipment: {
                         rarity: 'epic',
                         count: 1
@@ -14220,8 +14444,8 @@ const DUNGEONS_DATA = {
                 id: 'equipment_hell',
                 name: '地獄',
                 level: 40,
-                ap: 25,
-                dailyLimit: 1,
+                ap: 22,
+                dailyLimit: 2,
                 enemy: {
                     name: '遺跡霸主',
                     hp: 5000,
@@ -14231,8 +14455,8 @@ const DUNGEONS_DATA = {
                     critDmg: 180
                 },
                 rewards: {
-                    exp: 5000,
-                    gold: [1600, 3200],
+                    exp: 6500,
+                    gold: [2080, 4160],
                     equipment: {
                         rarity: 'legendary',
                         count: 1
@@ -14270,8 +14494,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 250,
-                    gold: [150, 300],
+                    exp: 325,
+                    gold: [210, 420],
                     materials: {
                         enhanceStone: 5
                     }
@@ -14298,8 +14522,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 600,
-                    gold: [300, 600],
+                    exp: 780,
+                    gold: [420, 840],
                     materials: {
                         enhanceStone: 15,
                         reforgeStone: 2
@@ -14328,8 +14552,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 1500,
-                    gold: [600, 1200],
+                    exp: 1950,
+                    gold: [840, 1680],
                     materials: {
                         enhanceStone: 30,
                         reforgeStone: 5
@@ -14347,8 +14571,8 @@ const DUNGEONS_DATA = {
                 id: 'material_hell',
                 name: '地獄',
                 level: 45,
-                ap: 20,
-                dailyLimit: 1,
+                ap: 18,
+                dailyLimit: 2,
                 enemy: {
                     name: '元素霸主',
                     hp: 4500,
@@ -14358,8 +14582,8 @@ const DUNGEONS_DATA = {
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 4000,
-                    gold: [1200, 2400],
+                    exp: 5200,
+                    gold: [1680, 3360],
                     materials: {
                         enhanceStone: 60,
                         reforgeStone: 10
@@ -14398,8 +14622,8 @@ const DUNGEONS_DATA = {
                     isBoss: true
                 },
                 rewards: {
-                    exp: 800,
-                    gold: [500, 1000],
+                    exp: 1040,
+                    gold: [600, 1200],
                     equipment: {
                         rarity: 'rare',
                         count: 1
@@ -14432,8 +14656,8 @@ const DUNGEONS_DATA = {
                     isBoss: true
                 },
                 rewards: {
-                    exp: 2000,
-                    gold: [1000, 2000],
+                    exp: 2600,
+                    gold: [1200, 2400],
                     equipment: {
                         rarity: 'epic',
                         count: 1
@@ -14467,8 +14691,8 @@ const DUNGEONS_DATA = {
                     isBoss: true
                 },
                 rewards: {
-                    exp: 5000,
-                    gold: [2000, 4000],
+                    exp: 6500,
+                    gold: [2400, 4800],
                     equipment: {
                         rarity: 'legendary',
                         count: 1
@@ -14503,8 +14727,8 @@ const DUNGEONS_DATA = {
                     isSpecialBoss: true
                 },
                 rewards: {
-                    exp: 12000,
-                    gold: [4000, 8000],
+                    exp: 15600,
+                    gold: [4800, 9600],
                     equipment: {
                         rarity: 'legendary',
                         count: 2

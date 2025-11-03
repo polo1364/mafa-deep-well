@@ -2764,8 +2764,8 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 30, 
-        damageMultiplier: 1.5, 
-        desc: '攻擊時30%機率造成150%傷害' 
+        damageMultiplier: 1.6, 
+        desc: '攻擊時30%機率造成160%傷害' 
     },
     
     // 暴力測試員 - 高爆發
@@ -2773,17 +2773,17 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 22, 
-        damageMultiplier: 2.1, 
-        desc: '攻擊時22%機率造成210%傷害' 
+        damageMultiplier: 2.2, 
+        desc: '攻擊時22%機率造成220%傷害' 
     },
     
-    // 滲透工程師 - 精準打擊
+    // 滿透工程師 - 精準打擊
     '漏洞利用': { 
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 26, 
-        damageMultiplier: 1.8, 
-        desc: '攻擊時26%機率造成180%傷害' 
+        damageMultiplier: 1.9, 
+        desc: '攻擊時26%機率造成190%傷害' 
     },
     
     // 數據科學家 - 穩定輸出
@@ -2791,8 +2791,8 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 32, 
-        damageMultiplier: 1.4, 
-        desc: '攻擊時32%機率造成140%傷害' 
+        damageMultiplier: 1.5, 
+        desc: '攻擊時32%機率造成150%傷害' 
     },
     
     // 前端開發者 - 快速攻擊
@@ -2800,8 +2800,8 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 35, 
-        damageMultiplier: 1.3, 
-        desc: '攻擊時35%機率造成130%傷害' 
+        damageMultiplier: 1.4, 
+        desc: '攻擊時35%機率造成140%傷害' 
     },
     
     // 區塊鏈工程師 - 鏈式攻擊
@@ -2809,8 +2809,8 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 24, 
-        damageMultiplier: 1.9, 
-        desc: '攻擊時24%機率造成190%傷害' 
+        damageMultiplier: 2.0, 
+        desc: '攻擊時24%機率造成200%傷害' 
     },
     
     // AI訓練師 - 極限爆發
@@ -2818,8 +2818,8 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 18, 
-        damageMultiplier: 2.3, 
-        desc: '攻擊時18%機率造成230%傷害' 
+        damageMultiplier: 2.5, 
+        desc: '攻擊時18%機率造成250%傷害' 
     },
     
     // 雲端架構師 - 彈性輸出
@@ -2827,8 +2827,8 @@ const TITLES_DATA = {
         type: 'attack', 
         trigger: 'onAttack', 
         chance: 28, 
-        damageMultiplier: 1.6, 
-        desc: '攻擊時28%機率造成160%傷害' 
+        damageMultiplier: 1.7, 
+        desc: '攻擊時28%機率造成170%傷害' 
     },
     
     // 運維工程師 - 穩定傷害
@@ -2846,9 +2846,9 @@ const TITLES_DATA = {
     '架構反制': { 
         type: 'counter', 
         trigger: 'onHitTaken', 
-        chance: 28, 
-        damageMultiplier: 1.3, 
-        desc: '受擊時28%機率反擊造成130%傷害' 
+        chance: 25, 
+        damageMultiplier: 0.6, 
+        desc: '受擊時25%機率反擊60%傷害' 
     },
     
     // 暴力測試員 - 暴力反擊
@@ -2860,13 +2860,13 @@ const TITLES_DATA = {
         desc: '受擊時22%機率反擊造成160%傷害' 
     },
     
-    // 滲透工程師 - 精準反擊
-    '反向滲透': { 
+    // 滿透工程師 - 精準反擊
+    '錯誤回溯': { 
         type: 'counter', 
         trigger: 'onHitTaken', 
-        chance: 25, 
-        damageMultiplier: 1.5, 
-        desc: '受擊時25%機率反擊造成150%傷害' 
+        chance: 20, 
+        damageMultiplier: 0.8, 
+        desc: '受擊時20%機率反擊80%傷害' 
     },
     
     // 數據科學家 - 數據反饋
@@ -2879,12 +2879,12 @@ const TITLES_DATA = {
     },
     
     // 運維工程師 - 故障轉移
-    '故障轉移': { 
+    '系統還原': { 
         type: 'counter', 
         trigger: 'onHitTaken', 
-        chance: 32, 
-        damageMultiplier: 1.1, 
-        desc: '受擊時32%機率反擊造成110%傷害' 
+        chance: 35, 
+        damageMultiplier: 0.4, 
+        desc: '受擊時35%機率反擊40%傷害' 
     },
     
     // 前端開發者 - 響應反擊
@@ -3376,9 +3376,9 @@ const REGION_CONSUMABLES = {
             // 攻擊型 - 刀刃系列 (Blade)
             blade_common: { id: 'blade_common', name: '🗡️ 鋒銳刀刃', type: 'attack', rarity: 'Common', series: 'blade', description: '攻擊力 +8%', price: 500, effect: { type: 'passive', stat: 'atk', value: 8 }, icon: '🗡️' },
             blade_fine: { id: 'blade_fine', name: '🗡️ 精鋼利刃', type: 'attack', rarity: 'Fine', series: 'blade', description: '攻擊力 +12%', price: 2000, effect: { type: 'passive', stat: 'atk', value: 12 }, icon: '🗡️' },
-            blade_rare: { id: 'blade_rare', name: '🗡️ 龍鱗神刃', type: 'attack', rarity: 'Rare', series: 'blade', description: '攻擊力 +15%，攻擊時5%機率造成200%傷害', price: 8000, effect: { type: 'passive', stat: 'atk', value: 15, trigger: { type: 'attack', chance: 5, effect: 'extra_damage', value: 200 } }, icon: '🗡️' },
-            blade_epic: { id: 'blade_epic', name: '🗡️ 神話屠龍劍', type: 'attack', rarity: 'Epic', series: 'blade', description: '攻擊力 +18%，攻擊時8%機率造成250%傷害', price: 30000, effect: { type: 'passive', stat: 'atk', value: 18, trigger: { type: 'attack', chance: 8, effect: 'extra_damage', value: 250 } }, icon: '🗡️' },
-            blade_legendary: { id: 'blade_legendary', name: '🗡️ 終焉之刃', type: 'attack', rarity: 'Legendary', series: 'blade', description: '攻擊力 +25%，攻擊時12%機率造成300%傷害並回復5%生命', price: 100000, effect: { type: 'passive', stat: 'atk', value: 25, trigger: { type: 'attack', chance: 12, effect: 'extra_damage', value: 300, heal: 5 } }, icon: '🗡️' },
+            blade_rare: { id: 'blade_rare', name: '🗡️ 龍鱗神刃', type: 'attack', rarity: 'Rare', series: 'blade', description: '攻擊力 +16%，攻擊時5%機率造成200%傷害', price: 8000, effect: { type: 'passive', stat: 'atk', value: 16, trigger: { type: 'attack', chance: 5, effect: 'extra_damage', value: 200 } }, icon: '🗡️' },
+            blade_epic: { id: 'blade_epic', name: '🗡️ 神話屠龍劍', type: 'attack', rarity: 'Epic', series: 'blade', description: '攻擊力 +20%，攻擊時8%機率造成250%傷害', price: 30000, effect: { type: 'passive', stat: 'atk', value: 20, trigger: { type: 'attack', chance: 8, effect: 'extra_damage', value: 250 } }, icon: '🗡️' },
+            blade_legendary: { id: 'blade_legendary', name: '🗡️ 終焉之刃', type: 'attack', rarity: 'Legendary', series: 'blade', description: '攻擊力 +28%，攻擊時12%機率造成300%傷害並回復5%生命', price: 100000, effect: { type: 'passive', stat: 'atk', value: 28, trigger: { type: 'attack', chance: 12, effect: 'extra_damage', value: 300, heal: 5 } }, icon: '🗡️' },
             
             // 攻擊型 - 戰士系列 (Warrior)
             warrior_common: { id: 'warrior_common', name: '⚔️ 戰士之心', type: 'attack', rarity: 'Common', series: 'warrior', description: '暴擊傷害 +10%', price: 500, effect: { type: 'passive', stat: 'critDmg', value: 10 }, icon: '⚔️' },
@@ -3388,7 +3388,7 @@ const REGION_CONSUMABLES = {
             // 防禦型 - 守護系列 (Shield)
             shield_common: { id: 'shield_common', name: '🛡️ 鐵壁防禦', type: 'defense', rarity: 'Common', series: 'shield', description: '防禦力 +10%', price: 500, effect: { type: 'passive', stat: 'def', value: 10 }, icon: '🛡️' },
             shield_fine: { id: 'shield_fine', name: '🛡️ 鋼鐵堡壘', type: 'defense', rarity: 'Fine', series: 'shield', description: '防禦力 +15%，減傷 +3%', price: 2000, effect: { type: 'passive', stats: [{ stat: 'def', value: 15 }, { stat: 'dmgRed', value: 3 }] }, icon: '🛡️' },
-            shield_rare: { id: 'shield_rare', name: '🛡️ 不朽護盾', type: 'defense', rarity: 'Rare', series: 'shield', description: '防禦力 +20%，減傷 +5%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'def', value: 20 }, { stat: 'dmgRed', value: 5 }] }, icon: '🛡️' },
+            shield_rare: { id: 'shield_rare', name: '🛡️ 不朽護盾', type: 'defense', rarity: 'Rare', series: 'shield', description: '防禦力 +22%，減傷 +6%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'def', value: 22 }, { stat: 'dmgRed', value: 6 }] }, icon: '🛡️' },
             
             // 防禦型 - 生命系列 (Vitality)
             vitality_common: { id: 'vitality_common', name: '💚 生命之源', type: 'defense', rarity: 'Common', series: 'vitality', description: '最大生命 +8%', price: 500, effect: { type: 'passive', stat: 'hp', value: 8 }, icon: '💚' },
@@ -3397,18 +3397,18 @@ const REGION_CONSUMABLES = {
             
             // 輔助型 - 精準系列 (Precision)
             precision_common: { id: 'precision_common', name: '✨ 精準打擊', type: 'support', rarity: 'Common', series: 'precision', description: '暴擊率 +4%', price: 500, effect: { type: 'passive', stat: 'crit', value: 4 }, icon: '✨' },
-            precision_fine: { id: 'precision_fine', name: '✨ 致命精準', type: 'support', rarity: 'Fine', series: 'precision', description: '暴擊率 +6%，暴擊傷害 +8%', price: 2000, effect: { type: 'passive', stats: [{ stat: 'crit', value: 6 }, { stat: 'critDmg', value: 8 }] }, icon: '✨' },
-            precision_rare: { id: 'precision_rare', name: '✨ 完美打擊', type: 'support', rarity: 'Rare', series: 'precision', description: '暴擊率 +8%，暴擊傷害 +15%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'crit', value: 8 }, { stat: 'critDmg', value: 15 }] }, icon: '✨' },
+            precision_fine: { id: 'precision_fine', name: '✨ 致命精準', type: 'support', rarity: 'Fine', series: 'precision', description: '暴擊率 +6%，暴擊傷害 +10%', price: 2000, effect: { type: 'passive', stats: [{ stat: 'crit', value: 6 }, { stat: 'critDmg', value: 10 }] }, icon: '✨' },
+            precision_rare: { id: 'precision_rare', name: '✨ 完美打擊', type: 'support', rarity: 'Rare', series: 'precision', description: '暴擊率 +9%，暴擊傷害 +18%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'crit', value: 9 }, { stat: 'critDmg', value: 18 }] }, icon: '✨' },
             
             // 資源型 - 貪婪系列 (Greed)
             greed_common: { id: 'greed_common', name: '💰 貪婪之手', type: 'resource', rarity: 'Common', series: 'greed', description: '金幣獲得 +15%', price: 500, effect: { type: 'passive', stat: 'goldBonus', value: 15 }, icon: '💰' },
             greed_fine: { id: 'greed_fine', name: '💰 財富祝福', type: 'resource', rarity: 'Fine', series: 'greed', description: '金幣獲得 +25%', price: 2000, effect: { type: 'passive', stat: 'goldBonus', value: 25 }, icon: '💰' },
-            greed_rare: { id: 'greed_rare', name: '💰 黃金之王', type: 'resource', rarity: 'Rare', series: 'greed', description: '金幣獲得 +35%', price: 8000, effect: { type: 'passive', stat: 'goldBonus', value: 35 }, icon: '💰' },
+            greed_rare: { id: 'greed_rare', name: '💰 黃金之王', type: 'resource', rarity: 'Rare', series: 'greed', description: '金幣獲得 +40%', price: 8000, effect: { type: 'passive', stat: 'goldBonus', value: 40 }, icon: '💰' },
             
             // 資源型 - 智慧系列 (Wisdom)
             wisdom_common: { id: 'wisdom_common', name: '⭐ 經驗之書', type: 'resource', rarity: 'Common', series: 'wisdom', description: '經驗獲得 +12%', price: 500, effect: { type: 'passive', stat: 'expBonus', value: 12 }, icon: '⭐' },
             wisdom_fine: { id: 'wisdom_fine', name: '⭐ 智慧之光', type: 'resource', rarity: 'Fine', series: 'wisdom', description: '經驗獲得 +20%', price: 2000, effect: { type: 'passive', stat: 'expBonus', value: 20 }, icon: '⭐' },
-            wisdom_rare: { id: 'wisdom_rare', name: '⭐ 博學者', type: 'resource', rarity: 'Rare', series: 'wisdom', description: '經驗獲得 +30%', price: 8000, effect: { type: 'passive', stat: 'expBonus', value: 30 }, icon: '⭐' },
+            wisdom_rare: { id: 'wisdom_rare', name: '⭐ 博學者', type: 'resource', rarity: 'Rare', series: 'wisdom', description: '經驗獲得 +35%', price: 8000, effect: { type: 'passive', stat: 'expBonus', value: 35 }, icon: '⭐' },
             
             // 特殊型 - 反擊系列 (Counter)
             counter_common: { id: 'counter_common', name: '🌟 反擊姿態', type: 'special', rarity: 'Common', series: 'counter', description: '受擊時10%機率反擊造成50%傷害', price: 500, effect: { type: 'trigger', trigger: 'on_hit', chance: 10, effect: 'counter', value: 50 }, icon: '🌟' },
@@ -3418,13 +3418,13 @@ const REGION_CONSUMABLES = {
 
         // 套牌效果定義
         const DECK_EFFECTS = {
-            blade: { name: '刀刃套牌', bonus: { atk: 10, trigger: { type: 'attack', chance: 15, effect: 'extra_damage', value: 100 } }, description: '攻擊力+10%，攻擊時15%機率造成額外100%傷害' },
+            blade: { name: '刀刃套牌', bonus: { atk: 12, trigger: { type: 'attack', chance: 18, effect: 'extra_damage', value: 120 } }, description: '攻擊力+12%，攻擊時18%機率造成額外120%傷害' },
             warrior: { name: '戰士套牌', bonus: { atk: 8, crit: 4, critDmg: 12 }, description: '攻擊力+8%，暴擊率+4%，暴擊傷害+12%' },
-            shield: { name: '守護套牌', bonus: { def: 20, dmgRed: 12 }, description: '防禦力+20%，減傷+12%' },
+            shield: { name: '守護套牌', bonus: { def: 25, dmgRed: 15 }, description: '防禦力+25%，減傷+15%' },
             vitality: { name: '生命套牌', bonus: { hp: 15, lifeSteal: 5 }, description: '最大生命+15%，吸血+5%' },
-            precision: { name: '精準套牌', bonus: { crit: 8, critDmg: 18 }, description: '暴擊率+8%，暴擊傷害+18%' },
-            greed: { name: '貪婪套牌', bonus: { goldBonus: 25 }, description: '金幣獲得+25%' },
-            wisdom: { name: '智慧套牌', bonus: { expBonus: 35 }, description: '經驗獲得+35%' },
+            precision: { name: '精準套牌', bonus: { crit: 10, critDmg: 25 }, description: '暴擊率+10%，暴擊傷害+25%' },
+            greed: { name: '貪婪套牌', bonus: { goldBonus: 30 }, description: '金幣獲得+30%' },
+            wisdom: { name: '智慧套牌', bonus: { expBonus: 40 }, description: '經驗獲得+40%' },
             counter: { name: '反擊套牌', bonus: { trigger: { type: 'on_hit', chance: 30, effect: 'counter', value: 150 } }, description: '受擊時30%機率反擊造成150%傷害' }
         };
 
@@ -5460,9 +5460,9 @@ const REGION_CONSUMABLES = {
                 region = REGIONS[0]; // 使用預設區域
             }
             
-            // 基礎屬性調整，使其隨等級增長更強
-            const baseHp = 50 + gameState.player.level * 6; 
-            const baseAtk = 10 + gameState.player.level * 3;
+            // 新的怪物基礎數值公式（平衡挑戰性）
+            const baseHp = 100 + gameState.player.level * 12; 
+            const baseAtk = 8 + gameState.player.level * 2;
             const baseDef = 3 + gameState.player.level * 1; // 新增基礎防禦定義
 
             
@@ -5778,6 +5778,13 @@ const REGION_CONSUMABLES = {
             
             // 設定戰鬥進行中標記
             isBattleInProgress = true;
+            
+            // 重置每場戰鬥的復活機會
+            if (!gameState.player.battleReviveUsed) {
+                gameState.player.battleReviveUsed = false;
+            } else {
+                gameState.player.battleReviveUsed = false;
+            }
             
             // 應用戰鬥開始時的特殊效果
             applyBattleStartSpecialEffects();
@@ -6121,9 +6128,39 @@ const REGION_CONSUMABLES = {
                 }
                 
                 if (playerHp <= 0) {
-                    clearInterval(battleInterval);
-                    defeat();
-                    return;
+                    // 檢查裝備詞綴中的時光詞綴（復活機制）
+                    let revived = false;
+                    if (!gameState.player.battleReviveUsed) {
+                        for (const slot in gameState.player.equipment) {
+                            const item = gameState.player.equipment[slot];
+                            if (!item || !item.equipmentAffix) continue;
+                            
+                            // 檢查後綴詞綴
+                            if (item.equipmentAffix.suffix && item.equipmentAffix.suffix.effect) {
+                                const effect = item.equipmentAffix.suffix.effect;
+                                if (effect.type === 'onDeath' && effect.chance && effect.revivePercent) {
+                                    if (Math.random() < effect.chance) {
+                                        // 觸發復活
+                                        const reviveHp = Math.floor(gameState.player.maxHp * effect.revivePercent);
+                                        gameState.player.hp = reviveHp;
+                                        playerHp = reviveHp;
+                                        gameState.player.battleReviveUsed = true;
+                                        revived = true;
+                                        addLog('詞綴', `✨ 時光詞綴觸發！復活並回復 ${reviveHp} 點生命值！`);
+                                        playSound('heal');
+                                        updateUI();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (!revived) {
+                        clearInterval(battleInterval);
+                        defeat();
+                        return;
+                    }
                 }
                 
                 // 嘗試自動喝藥
@@ -6970,14 +7007,16 @@ const REGION_CONSUMABLES = {
             playSound('levelup'); // 升級音效
             gameState.player.level++;
             gameState.player.exp -= gameState.player.expToNext;
-            // 分段經驗成長係數（針對 Lv.100 優化）
+            // 新的經驗成長係數（平滑曲線）
             let growthRate;
-            if (gameState.player.level <= 20) {
-                growthRate = 1.15;  // 前期（迭代優化）
-            } else if (gameState.player.level <= 40) {
-                growthRate = 1.08;  // 中期（迭代優化）
+            if (gameState.player.level <= 25) {
+                growthRate = 1.12;  // 入門開發層（1-25級）
+            } else if (gameState.player.level <= 50) {
+                growthRate = 1.07;  // 研發核心層（26-50級）
+            } else if (gameState.player.level <= 75) {
+                growthRate = 1.05;  // 資料裂縫（51-75級）
             } else {
-                growthRate = 1.04;  // 後期（迭代優化）
+                growthRate = 1.03;  // 深井臨界層（76-100級）
             }
             gameState.player.expToNext = Math.floor(gameState.player.expToNext * growthRate);
             
@@ -7162,8 +7201,8 @@ const REGION_CONSUMABLES = {
                     color: '#2196f3',
                     minRarity: 'Mythic',
                     equipTypes: ['armor'],
-                    effect: { type: 'onDeath', chance: 0.15, revivePercent: 0.5, cooldown: 86400000 },
-                    description: '死亡時有15%機率復活並回復50%生命（每天1次）'
+                    effect: { type: 'onDeath', chance: 0.15, revivePercent: 0.5, cooldown: 'perBattle' },
+                    description: '死亡時有15%機率復活並回復50%生命（每場戰鬥1次）'
                 }
             ],
             
@@ -7750,18 +7789,27 @@ const REGION_CONSUMABLES = {
                     
                     // ========== 使用新的隨機化系統 ==========
                     
-                    // 1. 計算點數預算
-                    const baseBudget = {
-                        'common': 10,
-                        'uncommon': 15,
-                        'fine': 20,
-                        'rare': 28,
-                        'epic': 38,
-                        'legendary': 50,
-                        'mythic': 65
-                    }[rarity.name] || 10;
+                    // 1. 計算點數預算（新的區域點數系統）
+                    let regionBaseBudget = 50;  // 預設：入門開發層
+                    if (gameState.player.level >= 76) {
+                        regionBaseBudget = 200;  // 深井臨界層
+                    } else if (gameState.player.level >= 51) {
+                        regionBaseBudget = 140;  // 資料裂縫
+                    } else if (gameState.player.level >= 26) {
+                        regionBaseBudget = 90;   // 研發核心層
+                    }
                     
-                    const finalBudget = Math.floor(baseBudget * difficultyMult);
+                    const rarityMult = {
+                        'common': 0.5,
+                        'uncommon': 0.7,
+                        'fine': 0.9,
+                        'rare': 1.2,
+                        'epic': 1.5,
+                        'legendary': 2.0,
+                        'mythic': 2.5
+                    }[rarity.name] || 1.0;
+                    
+                    const finalBudget = Math.floor(regionBaseBudget * rarityMult);
                     
                     // 2. 確定詞條數量
                     const { mainCount, subCount } = selectAffixCount(rarity.name, lootItem.type);
@@ -14899,91 +14947,114 @@ const DUNGEONS_DATA = {
                 name: '簡單',
                 level: 5,
                 ap: 5,
-                dailyLimit: 3,
+                dailyLimit: 5,
                 enemy: {
                     name: '修煉傀儡',
-                    hp: 200,
-                    atk: 15,
-                    def: 10,
+                    hp: 300,
+                    atk: 20,
+                    def: 15,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 650,
-                    gold: [150, 250]
+                    exp: 800,
+                    gold: [200, 300]
                 },
                 firstClear: {
-                    shards: 10,
+                    shards: 15,
                     gold: 500
                 }
             },
             normal: {
                 id: 'exp_normal',
                 name: '普通',
-                level: 10,
-                ap: 10,
-                dailyLimit: 3,
+                level: 15,
+                ap: 8,
+                dailyLimit: 5,
                 enemy: {
-                    name: '修煉傀儡',
-                    hp: 500,
-                    atk: 30,
-                    def: 20,
+                    name: '進階傀儡',
+                    hp: 900,
+                    atk: 40,
+                    def: 30,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 1950,
-                    gold: [300, 500]
+                    exp: 2500,
+                    gold: [400, 600]
                 },
                 firstClear: {
-                    shards: 20,
-                    gold: 1000
+                    shards: 25,
+                    gold: 1200
                 }
             },
             hard: {
                 id: 'exp_hard',
                 name: '困難',
-                level: 20,
-                ap: 15,
-                dailyLimit: 2,
+                level: 30,
+                ap: 12,
+                dailyLimit: 4,
                 enemy: {
-                    name: '高級修煉傀儡',
-                    hp: 1500,
-                    atk: 60,
-                    def: 40,
+                    name: '高級傀儡',
+                    hp: 2500,
+                    atk: 80,
+                    def: 60,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 5200,
-                    gold: [600, 1000]
+                    exp: 7000,
+                    gold: [800, 1200]
                 },
                 firstClear: {
-                    shards: 55,
-                    gold: 2000
+                    shards: 40,
+                    gold: 3000
                 }
             },
             hell: {
                 id: 'exp_hell',
                 name: '地獄',
-                level: 30,
+                level: 50,
                 ap: 18,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
-                    name: '終極修煉傀儡',
-                    hp: 4000,
-                    atk: 120,
-                    def: 80,
+                    name: '精英傀儡',
+                    hp: 7000,
+                    atk: 150,
+                    def: 110,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 11700,
-                    gold: [1200, 2000]
+                    exp: 18000,
+                    gold: [1500, 2500]
                 },
                 firstClear: {
-                    shards: 50,
-                    gold: 5000
+                    shards: 60,
+                    gold: 8000
+                }
+            },
+            abyss: {
+                id: 'exp_abyss',
+                name: '深淵',
+                level: 70,
+                ap: 25,
+                dailyLimit: 2,
+                enemy: {
+                    name: '終極傀儡',
+                    hp: 18000,
+                    atk: 280,
+                    def: 200,
+                    crit: 0,
+                    critDmg: 150
+                },
+                rewards: {
+                    exp: 45000,
+                    gold: [3000, 5000]
+                },
+                firstClear: {
+                    shards: 100,
+                    gold: 20000
                 }
             }
         }
@@ -15000,91 +15071,114 @@ const DUNGEONS_DATA = {
                 name: '簡單',
                 level: 8,
                 ap: 5,
-                dailyLimit: 3,
+                dailyLimit: 5,
                 enemy: {
                     name: '寶箱怪',
-                    hp: 150,
-                    atk: 10,
-                    def: 5,
+                    hp: 250,
+                    atk: 15,
+                    def: 10,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 260,
-                    gold: [600, 900]
+                    exp: 300,
+                    gold: [800, 1200]
                 },
                 firstClear: {
-                    shards: 10,
-                    gold: 2000
+                    shards: 15,
+                    gold: 2500
                 }
             },
             normal: {
                 id: 'gold_normal',
                 name: '普通',
-                level: 15,
-                ap: 10,
-                dailyLimit: 3,
+                level: 18,
+                ap: 8,
+                dailyLimit: 5,
                 enemy: {
                     name: '黃金寶箱怪',
-                    hp: 400,
-                    atk: 25,
-                    def: 15,
+                    hp: 750,
+                    atk: 35,
+                    def: 25,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 650,
-                    gold: [1800, 2500]
+                    exp: 900,
+                    gold: [2500, 3500]
                 },
                 firstClear: {
-                    shards: 20,
-                    gold: 5000
+                    shards: 25,
+                    gold: 6000
                 }
             },
             hard: {
                 id: 'gold_hard',
                 name: '困難',
-                level: 25,
-                ap: 15,
-                dailyLimit: 2,
+                level: 35,
+                ap: 12,
+                dailyLimit: 4,
                 enemy: {
                     name: '白金寶箱怪',
-                    hp: 1200,
-                    atk: 50,
-                    def: 30,
+                    hp: 2200,
+                    atk: 70,
+                    def: 50,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 1560,
-                    gold: [5000, 7000]
+                    exp: 2500,
+                    gold: [7000, 10000]
                 },
                 firstClear: {
-                    shards: 30,
-                    gold: 10000
+                    shards: 40,
+                    gold: 15000
                 }
             },
             hell: {
                 id: 'gold_hell',
                 name: '地獄',
-                level: 35,
+                level: 55,
                 ap: 18,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '鑽石寶箱怪',
-                    hp: 3500,
-                    atk: 100,
-                    def: 60,
+                    hp: 6500,
+                    atk: 140,
+                    def: 100,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 3900,
-                    gold: [13000, 17000]
+                    exp: 6500,
+                    gold: [18000, 25000]
                 },
                 firstClear: {
-                    shards: 50,
-                    gold: 30000
+                    shards: 60,
+                    gold: 40000
+                }
+            },
+            abyss: {
+                id: 'gold_abyss',
+                name: '深淵',
+                level: 75,
+                ap: 25,
+                dailyLimit: 2,
+                enemy: {
+                    name: '神話寶箱怪',
+                    hp: 17000,
+                    atk: 260,
+                    def: 190,
+                    crit: 0,
+                    critDmg: 150
+                },
+                rewards: {
+                    exp: 16000,
+                    gold: [45000, 60000]
+                },
+                firstClear: {
+                    shards: 100,
+                    gold: 100000
                 }
             }
         }
@@ -15099,27 +15193,27 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'equipment_easy',
                 name: '簡單',
-                level: 12,
+                level: 10,
                 ap: 8,
-                dailyLimit: 3,
+                dailyLimit: 4,
                 enemy: {
                     name: '遺跡守衛',
-                    hp: 300,
-                    atk: 25,
-                    def: 15,
+                    hp: 400,
+                    atk: 30,
+                    def: 20,
                     crit: 5,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 390,
-                    gold: [260, 520],
+                    exp: 500,
+                    gold: [300, 500],
                     equipment: {
-                        rarity: 'common',
+                        rarity: 'fine',
                         count: 1
                     }
                 },
                 firstClear: {
-                    shards: 15,
+                    shards: 20,
                     equipment: {
                         rarity: 'rare',
                         count: 1
@@ -15129,27 +15223,27 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'equipment_normal',
                 name: '普通',
-                level: 18,
+                level: 22,
                 ap: 12,
-                dailyLimit: 3,
+                dailyLimit: 4,
                 enemy: {
                     name: '精英守衛',
-                    hp: 800,
-                    atk: 50,
-                    def: 30,
+                    hp: 1200,
+                    atk: 60,
+                    def: 45,
                     crit: 10,
                     critDmg: 160
                 },
                 rewards: {
-                    exp: 1040,
-                    gold: [520, 1040],
+                    exp: 1500,
+                    gold: [600, 1000],
                     equipment: {
                         rarity: 'rare',
                         count: 1
                     }
                 },
                 firstClear: {
-                    shards: 100,
+                    shards: 35,
                     equipment: {
                         rarity: 'epic',
                         count: 1
@@ -15159,27 +15253,27 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'equipment_hard',
                 name: '困難',
-                level: 28,
+                level: 40,
                 ap: 18,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '遺跡領主',
-                    hp: 2000,
-                    atk: 100,
-                    def: 60,
+                    hp: 3500,
+                    atk: 120,
+                    def: 90,
                     crit: 15,
                     critDmg: 170
                 },
                 rewards: {
-                    exp: 2600,
-                    gold: [1040, 2080],
+                    exp: 4000,
+                    gold: [1200, 2000],
                     equipment: {
                         rarity: 'epic',
                         count: 1
                     }
                 },
                 firstClear: {
-                    shards: 40,
+                    shards: 55,
                     equipment: {
                         rarity: 'legendary',
                         count: 1
@@ -15189,30 +15283,61 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'equipment_hell',
                 name: '地獄',
-                level: 40,
-                ap: 22,
+                level: 60,
+                ap: 25,
                 dailyLimit: 2,
                 enemy: {
                     name: '遺跡霸主',
-                    hp: 5000,
-                    atk: 200,
-                    def: 120,
+                    hp: 9000,
+                    atk: 220,
+                    def: 160,
                     crit: 20,
                     critDmg: 180
                 },
                 rewards: {
-                    exp: 6500,
-                    gold: [2080, 4160],
+                    exp: 10000,
+                    gold: [2500, 4000],
                     equipment: {
                         rarity: 'legendary',
                         count: 1
                     }
                 },
                 firstClear: {
-                    shards: 60,
+                    shards: 80,
                     equipment: {
                         rarity: 'legendary',
                         count: 2
+                    }
+                }
+            },
+            abyss: {
+                id: 'equipment_abyss',
+                name: '深淵',
+                level: 80,
+                ap: 30,
+                dailyLimit: 2,
+                enemy: {
+                    name: '遺跡神祇',
+                    hp: 22000,
+                    atk: 400,
+                    def: 300,
+                    crit: 25,
+                    critDmg: 200
+                },
+                rewards: {
+                    exp: 25000,
+                    gold: [5000, 8000],
+                    equipment: {
+                        rarity: 'legendary',
+                        count: 1,
+                        mythicChance: 0.5
+                    }
+                },
+                firstClear: {
+                    shards: 150,
+                    equipment: {
+                        rarity: 'mythic',
+                        count: 1
                     }
                 }
             }
@@ -15228,57 +15353,57 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'material_easy',
                 name: '簡單',
-                level: 10,
+                level: 12,
                 ap: 6,
-                dailyLimit: 3,
+                dailyLimit: 5,
                 enemy: {
                     name: '元素生物',
-                    hp: 250,
-                    atk: 20,
-                    def: 12,
+                    hp: 350,
+                    atk: 25,
+                    def: 18,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 325,
-                    gold: [210, 420],
+                    exp: 450,
+                    gold: [250, 400],
                     materials: {
-                        enhanceStone: 5
+                        enhanceStone: 8
                     }
                 },
                 firstClear: {
-                    shards: 10,
+                    shards: 15,
                     materials: {
-                        enhanceStone: 10
+                        enhanceStone: 20
                     }
                 }
             },
             normal: {
                 id: 'material_normal',
                 name: '普通',
-                level: 20,
+                level: 25,
                 ap: 10,
-                dailyLimit: 3,
+                dailyLimit: 5,
                 enemy: {
-                    name: '高級元素生物',
-                    hp: 600,
-                    atk: 40,
-                    def: 25,
+                    name: '高級元素',
+                    hp: 1000,
+                    atk: 55,
+                    def: 40,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 780,
-                    gold: [420, 840],
+                    exp: 1300,
+                    gold: [500, 800],
                     materials: {
                         enhanceStone: 15,
                         reforgeStone: 2
                     }
                 },
                 firstClear: {
-                    shards: 20,
+                    shards: 30,
                     materials: {
-                        enhanceStone: 30,
+                        enhanceStone: 40,
                         reforgeStone: 5
                     }
                 }
@@ -15286,29 +15411,29 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'material_hard',
                 name: '困難',
-                level: 30,
+                level: 45,
                 ap: 15,
-                dailyLimit: 2,
+                dailyLimit: 4,
                 enemy: {
-                    name: '元素領主',
-                    hp: 1800,
-                    atk: 80,
-                    def: 50,
+                    name: '精英元素',
+                    hp: 3000,
+                    atk: 110,
+                    def: 80,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 1950,
-                    gold: [840, 1680],
+                    exp: 3500,
+                    gold: [1000, 1600],
                     materials: {
                         enhanceStone: 30,
                         reforgeStone: 5
                     }
                 },
                 firstClear: {
-                    shards: 35,
+                    shards: 50,
                     materials: {
-                        enhanceStone: 60,
+                        enhanceStone: 80,
                         reforgeStone: 10
                     }
                 }
@@ -15316,30 +15441,60 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'material_hell',
                 name: '地獄',
-                level: 45,
-                ap: 18,
-                dailyLimit: 2,
+                level: 65,
+                ap: 22,
+                dailyLimit: 3,
                 enemy: {
-                    name: '元素霸主',
-                    hp: 4500,
-                    atk: 160,
-                    def: 100,
+                    name: '元素領主',
+                    hp: 8000,
+                    atk: 200,
+                    def: 150,
                     crit: 0,
                     critDmg: 150
                 },
                 rewards: {
-                    exp: 5200,
-                    gold: [1680, 3360],
+                    exp: 9000,
+                    gold: [2000, 3200],
                     materials: {
                         enhanceStone: 60,
                         reforgeStone: 10
                     }
                 },
                 firstClear: {
-                    shards: 50,
+                    shards: 75,
+                    materials: {
+                        enhanceStone: 150,
+                        reforgeStone: 20
+                    }
+                }
+            },
+            abyss: {
+                id: 'material_abyss',
+                name: '深淵',
+                level: 85,
+                ap: 28,
+                dailyLimit: 2,
+                enemy: {
+                    name: '元素君主',
+                    hp: 20000,
+                    atk: 370,
+                    def: 280,
+                    crit: 0,
+                    critDmg: 150
+                },
+                rewards: {
+                    exp: 22000,
+                    gold: [4000, 6500],
                     materials: {
                         enhanceStone: 120,
                         reforgeStone: 20
+                    }
+                },
+                firstClear: {
+                    shards: 120,
+                    materials: {
+                        enhanceStone: 300,
+                        reforgeStone: 50
                     }
                 }
             }
@@ -15355,31 +15510,31 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'boss_easy',
                 name: '簡單',
-                level: 15,
-                ap: 10,
-                dailyLimit: 2,
+                level: 20,
+                ap: 12,
+                dailyLimit: 3,
                 enemy: {
                     name: '魔王侍衛',
-                    hp: 500,
-                    atk: 35,
-                    def: 20,
+                    hp: 1500,
+                    atk: 50,
+                    def: 35,
                     crit: 10,
                     critDmg: 160,
                     isBoss: true
                 },
                 rewards: {
-                    exp: 1040,
-                    gold: [600, 1200],
+                    exp: 2000,
+                    gold: [800, 1500],
                     equipment: {
                         rarity: 'rare',
                         count: 1
                     },
                     materials: {
-                        enhanceStone: 5
+                        enhanceStone: 10
                     }
                 },
                 firstClear: {
-                    shards: 30,
+                    shards: 40,
                     equipment: {
                         rarity: 'epic',
                         count: 1
@@ -15389,32 +15544,32 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'boss_normal',
                 name: '普通',
-                level: 25,
-                ap: 15,
+                level: 35,
+                ap: 18,
                 dailyLimit: 2,
                 enemy: {
                     name: '魔王將軍',
-                    hp: 1500,
-                    atk: 70,
-                    def: 40,
+                    hp: 4500,
+                    atk: 100,
+                    def: 70,
                     crit: 15,
                     critDmg: 170,
                     isBoss: true
                 },
                 rewards: {
-                    exp: 2600,
-                    gold: [1200, 2400],
+                    exp: 5000,
+                    gold: [2000, 3500],
                     equipment: {
                         rarity: 'epic',
                         count: 1
                     },
                     materials: {
-                        enhanceStone: 15,
-                        reforgeStone: 3
+                        enhanceStone: 20,
+                        reforgeStone: 5
                     }
                 },
                 firstClear: {
-                    shards: 50,
+                    shards: 70,
                     equipment: {
                         rarity: 'legendary',
                         count: 1
@@ -15424,32 +15579,32 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'boss_hard',
                 name: '困難',
-                level: 35,
-                ap: 20,
-                dailyLimit: 1,
+                level: 50,
+                ap: 25,
+                dailyLimit: 2,
                 enemy: {
                     name: '副魔王',
-                    hp: 3500,
-                    atk: 140,
-                    def: 80,
+                    hp: 10000,
+                    atk: 180,
+                    def: 130,
                     crit: 20,
                     critDmg: 180,
                     isBoss: true
                 },
                 rewards: {
-                    exp: 6500,
-                    gold: [2400, 4800],
+                    exp: 12000,
+                    gold: [4000, 7000],
                     equipment: {
                         rarity: 'legendary',
                         count: 1
                     },
                     materials: {
-                        enhanceStone: 30,
-                        reforgeStone: 8
+                        enhanceStone: 40,
+                        reforgeStone: 10
                     }
                 },
                 firstClear: {
-                    shards: 80,
+                    shards: 100,
                     equipment: {
                         rarity: 'legendary',
                         count: 2
@@ -15459,36 +15614,73 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'boss_hell',
                 name: '地獄',
-                level: 50,
-                ap: 30,
-                dailyLimit: 1,
+                level: 70,
+                ap: 35,
+                dailyLimit: 2,
                 enemy: {
                     name: '魔王',
-                    hp: 8000,
-                    atk: 280,
-                    def: 160,
+                    hp: 25000,
+                    atk: 320,
+                    def: 230,
                     crit: 25,
                     critDmg: 200,
                     isBoss: true,
                     isSpecialBoss: true
                 },
                 rewards: {
-                    exp: 15600,
-                    gold: [4800, 9600],
+                    exp: 30000,
+                    gold: [8000, 15000],
                     equipment: {
                         rarity: 'legendary',
                         count: 2
                     },
                     materials: {
-                        enhanceStone: 60,
-                        reforgeStone: 15
+                        enhanceStone: 80,
+                        reforgeStone: 20
                     }
                 },
                 firstClear: {
-                    shards: 150,
+                    shards: 200,
                     equipment: {
                         rarity: 'legendary',
                         count: 3
+                    }
+                }
+            },
+            abyss: {
+                id: 'boss_abyss',
+                name: '深淵',
+                level: 90,
+                ap: 40,
+                dailyLimit: 1,
+                enemy: {
+                    name: '魔神',
+                    hp: 60000,
+                    atk: 550,
+                    def: 400,
+                    crit: 30,
+                    critDmg: 220,
+                    isBoss: true,
+                    isSpecialBoss: true
+                },
+                rewards: {
+                    exp: 70000,
+                    gold: [20000, 35000],
+                    equipment: {
+                        rarity: 'legendary',
+                        count: 2,
+                        mythicChance: 0.7
+                    },
+                    materials: {
+                        enhanceStone: 150,
+                        reforgeStone: 40
+                    }
+                },
+                firstClear: {
+                    shards: 300,
+                    equipment: {
+                        rarity: 'mythic',
+                        count: 2
                     }
                 }
             }

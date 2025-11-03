@@ -758,6 +758,19 @@
                     <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px; text-align: center;">
                         <div style="font-size: 1.4rem; font-weight: bold; color: #00d9ff; text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);" id="player-name">工程師</div>
                         <div style="font-size: 0.9rem; color: #7a8fb8; margin-top: 5px;" id="player-class">系統架構師</div>
+                        
+                        <!-- 職業被動顯示 -->
+                        <div id="class-bonus-display" style="margin-top: 10px; padding: 6px 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px;">
+                            <div style="font-size: 0.7rem; color: #888; margin-bottom: 2px;">📊 職業被動</div>
+                            <div id="class-bonus-text" style="font-size: 0.8rem; color: #7a8fb8;">每級 +10 HP, +9 DEF</div>
+                        </div>
+                        
+                        <!-- 技能效果顯示 -->
+                        <div id="skill-effect-display" style="margin-top: 8px; padding: 6px 10px; background: rgba(186, 104, 200, 0.15); border: 1px solid rgba(186, 104, 200, 0.5); border-radius: 6px;">
+                            <div style="font-size: 0.7rem; color: #aaa; margin-bottom: 2px;">⚡ 技能效果</div>
+                            <div id="skill-effect-text" style="font-size: 0.85rem; color: #ce93d8; font-weight: 500;">未選擇技能</div>
+                        </div>
+                        
                         <div id="current-title-badge" style="margin-top: 10px; padding: 8px 12px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.15) 100%); border: 1px solid rgba(255, 215, 0, 0.5); border-radius: 8px; display: none;">
                             <div style="font-size: 0.75rem; color: #888; margin-bottom: 3px;">🏆 目前稱號</div>
                             <div id="current-title-name" style="font-size: 0.95rem; font-weight: bold; color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);">無</div>
@@ -789,8 +802,10 @@
                                     <option value="60">60%</option>
                                     <option value="70">70%</option>
                                 </select>
-                                <select id="auto-potion-type" onchange="updateAutoPotionType()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                                    <option value="best" selected>優先最佳</option>
+                                <select id="auto-potion-mode" onchange="updateAutoPotionMode()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="economy" selected>優先經濟</option>
+                                    <option value="best">優先最佳</option>
+                                    <option value="small_first">優先小瓶</option>
                                 </select>
                             </div>
                         </div>
@@ -1103,364 +1118,484 @@
     </div>
 
         <!-- 如何遊玩模態視窗 -->
+    <!-- 如何遊玩模態視窗 -->
     <div class="modal" id="how-to-play-modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <h2>❓ 如何遊玩</h2>
-            <div style="text-align: left; color: #e0e6ff; line-height: 1.8;">
-                <h3 style="color: #00d9ff; margin-top: 20px;">💻 遊戲背景</h3>
-                <p style="color: #7a8fb8;">歡迎來到數位深淵！在這個由數據構成的神秘世界中，你將扮演一名探索者，深入數位海洋的最深處。這裡充滿了變異的數據生物、失控的程式碼，以及被遺忘的古老系統。你的任務是探索未知的區域，擊敗強大的敵人，收集珍貴的裝備，並最終揭開深淵背後的真相。</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🚀 如何開始</h3>
-                <p style="color: #7a8fb8;">1. 輸入角色名稱<br>2. 選擇職業（9 種職業可選）<br>3. 選擇初始技能（10 種技能可選）<br>4. 點擊「▶️ 自動戰鬥」開始探索</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">👥 職業系統</h3>
-                <p style="color: #7a8fb8;">遊戲提供 9 種職業，每個職業有獨特的屬性和升級加成：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">🏗️ 系統架構師</strong>：坦克型 | HP 150, ATK 15, DEF 10, CRIT 6%, CRITDMG 155%</li>
-                    <li><strong style="color: #00d9ff;">💥 暴力測試員</strong>：爆發型 | HP 120, ATK 20, DEF 6, CRIT 14%, CRITDMG 195%</li>
-                    <li><strong style="color: #00d9ff;">🔓 滲透工程師</strong>：暴擊型 | HP 110, ATK 17, DEF 6, CRIT 18%, CRITDMG 180%</li>
-                    <li><strong style="color: #00d9ff;">📊 數據科學家</strong>：均衡型 | HP 130, ATK 16, DEF 8, CRIT 12%, CRITDMG 170%</li                    <li><strong style="color: #00d9ff;">👨‍💻 運維工程師</strong>：超坦型 | HP 180, ATK 16, DEF 12, CRIT 6%, CRITDMG 155%</li>
-                    <li><strong style="color: #00d9ff;">🎨 前端開發者</strong>：攻擊型 | HP 125, ATK 18, DEF 7, CRIT 14%, CRITDMG 180%</li>
-                    <li><strong style="color: #00d9ff;">⛓️ 區塊鏈工程師</strong>：均衡坦 | HP 140, ATK 15, DEF 9, CRIT 10%, CRITDMG 175%</li>
-                    <li><strong style="color: #00d9ff;">🤖 AI訓練師</strong>：暴擊型 | HP 115, ATK 19, DEF 6, CRIT 16%, CRITDMG 185%</li>
-                    <li><strong style="color: #00d9ff;">☁️ 雲端架構師</strong>：坦克型 | HP 160, ATK 16, DEF 11, CRIT 7%, CRITDMG 160%</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">⚔️ 技能系統</h3>
-                <p style="color: #7a8fb8;">角色創建後可從 10 個技能中選擇 1 個專屬技能，技能分為三類：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #ff6b6b;">攻擊技能（4個）</strong>：攻擊時觸發，造成額外傷害
-                        <ul style="margin-left: 20px; margin-top: 5px;">
-                            <li>⚔️ 裂甲斬：25%機率，160%傷害</li>
-                            <li>💥 震盪斬：20%機率，190%傷害</li>
-                            <li>🌊 斬流：28%機率，140%傷害</li>
-                            <li>💀 斷脈擊：18%機率，200%傷害</li>
-                        </ul>
-                    </li>
-                    <li style="margin-top: 8px;"><strong style="color: #4ea5ff;">防禦技能（4個）</strong>：受擊時觸發，反擊敵人
-                        <ul style="margin-left: 20px; margin-top: 5px;">
-                            <li>🔪 反刺：28%機率，120%傷害</li>
-                            <li>💢 反震：22%機率，150%傷害</li>
-                            <li>🛡️ 反制擊：20%機率，170%傷害</li>
-                            <li>🔄 回環斬：25%機率，140%傷害</li>
-                        </ul>
-                    </li>
-                    <li style="margin-top: 8px;"><strong style="color: #00ff88;">增益技能（2個）</strong>：觸發時獲得Buff加成
-                        <ul style="margin-left: 20px; margin-top: 5px;">
-                            <li>🧠 戰術演算：攻擊時觸發25%，攻擊+8%、暴擊率+5%，持續5回合</li>
-                            <li>🛡️ 堅定協議：受擊時觸發22%，減傷+10%、護甲+150，持續4回合</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">⚔️ 戰鬥系統</h3>
-                <p style="color: #7a8fb8;">點擊「▶️ 自動戰鬥」開始探索（消耗 1 點體力 AP），會自動遇到敵人並進入戰鬥。戰鬥有以下特點：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8;">
-                    <li><strong style="color: #00d9ff;">回合制戰鬥</strong>：玩家攻擊 → 敵人攻擊，直到一方生命值歸零</li>
-                    <li><strong style="color: #00d9ff;">暴擊系統</strong>：有機率觸發暴擊造成額外傷害</li>
-                    <li><strong style="color: #00d9ff;">新屬性</strong>：減傷、吸血、無視防禦、對首領傷害</li>
-                    <li><strong style="color: #00d9ff;">Boss機制</strong>：每10場戰鬥後會遇到Boss，獎勵3倍</li>
-                    <li><strong style="color: #00d9ff;">特殊Boss</strong>：5%機率遭遇，必定掉落2件裝備，獎勵5倍</li>
-                    <li><strong style="color: #00d9ff;">體力系統</strong>：上限100點，每2分鐘回復1點</li>
-                    <li><strong style="color: #00d9ff;">死亡機制</strong>：死亡後生命值恢復至10%，不會損失裝備和經驗</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🎒 裝備系統</h3>
-                <p style="color: #7a8fb8;">戰鬥勝利後有35%機率獲得裝備，裝備分為8種品質：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #9e9e9e;">普通（灰色）</strong>：屬性點數 10</li>
-                    <li><strong style="color: #4caf50;">優質（綠色）</strong>：屬性點數 18</li>
-                    <li><strong style="color: #2196f3;">精良（藍色）</strong>：屬性點數 28</li>
-                    <li><strong style="color: #9c27b0;">稀有（紫色）</strong>：屬性點數 40</li>
-                    <li><strong style="color: #ff9800;">史詩（橙色）</strong>：屬性點數 52</li>
-                    <li><strong style="color: #f44336;">傳說（紅色）</strong>：屬性點數 60</li>
-                    <li><strong style="color: #ffd700;">神話（金色）</strong>：屬性點數 65</li>
-                    <li><strong style="color: #00ffff;">套裝（青色）</strong>：屬性點數 45，可觸發套裝效果</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 背包容量：50格<br>• 背包滿時自動停止戰鬥<br>• 裝備類型：武器、防具、戒指、項鍊</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">✨ 裝備詞綴系統</h3>
-                <p style="color: #7a8fb8;">高品質裝備可能帶有特殊詞綴，提供強大的效果：</p>
-                
-                <h4 style="color: #ff9800; margin-top: 15px;">🔥 前綴詞綴（武器專屬）</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #ff9800;">熾熱的</strong>：15%機率造成額外50%傷害（灼燒）</li>
-                    <li><strong style="color: #ff9800;">閃電的</strong>：20%機率連鎖傷害（30%×2次）</li>
-                    <li><strong style="color: #ff9800;">冰霜的</strong>：25%機率減緩敵人（降低10%攻擊）</li>
-                    <li><strong style="color: #ff9800;">嗜血的</strong>：擊殺回復15%最大生命</li>
-                    <li><strong style="color: #ff9800;">致命的</strong>：對低於30%血的敵人額外30%傷害</li>
-                    <li><strong style="color: #ff9800;">精準的</strong>：暴擊時額外20%傷害</li>
-                    <li><strong style="color: #ff9800;">狂暴的</strong>：低於50%血時攻擊+20%</li>
-                    <li><strong style="color: #ffd700;">神聖的</strong>：10%機率造成200%傷害</li>
-                </ul>
-                
-                <h4 style="color: #2196f3; margin-top: 15px;">🛡️ 後綴詞綴（防具專屬）</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #2196f3;">守護</strong>：致命傷只扣1血（30%機率，冷卻60秒）</li>
-                    <li><strong style="color: #2196f3;">再生</strong>：每5秒回復2%最大生命</li>
-                    <li><strong style="color: #2196f3;">反射</strong>：反彈10%傷害給敵人</li>
-                    <li><strong style="color: #2196f3;">冰甲</strong>：20%機率減少50%傷害</li>
-                    <li><strong style="color: #2196f3;">潮汐</strong>：低於30%血時防禦+50%</li>
-                    <li><strong style="color: #2196f3;">堅韌</strong>：減少所有傷害5%</li>
-                    <li><strong style="color: #ffd700;">魔盾</strong>：戰鬥開始獲得20%最大生命護盾</li>
-                </ul>
-                
-                <h4 style="color: #9c27b0; margin-top: 15px;">💎 特殊詞綴（飾品專屬）</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #9c27b0;">貪婪</strong>：擊殺獲得額外50%金幣</li>
-                    <li><strong style="color: #9c27b0;">經驗</strong>：獲得額外30%經驗</li>
-                    <li><strong style="color: #9c27b0;">幸運</strong>：裝備掉落機率+20%</li>
-                    <li><strong style="color: #9c27b0;">連擊</strong>：連殺3個敵人後下次攻擊雙倍傷害</li>
-                    <li><strong style="color: #9c27b0;">獵殺</strong>：對Boss額外25%傷害</li>
-                    <li><strong style="color: #9c27b0;">星辰</strong>：每擊殺10個敵人+1全屬性（最多10層）</li>
-                    <li><strong style="color: #9c27b0;">煉金</strong>：藥水效果+20%</li>
-                    <li><strong style="color: #ffd700;">彩虹</strong>：戰鬥開始隨機獲得一個Buff</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">👾 怪物詞綴系統</h3>
-                <p style="color: #7a8fb8;">菁英怪物會帶有隨機詞綴，增加戰鬥難度和獎勵：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #ff6b6b;">🔥 狂暴</strong>：攻擊力+30%</li>
-                    <li><strong style="color: #2196f3;">🛡️ 堅韌</strong>：防禦力+40%</li>
-                    <li><strong style="color: #ffd700;">⚡ 迅捷</strong>：暴擊率+15%，暴擊傷害+50%</li>
-                    <li><strong style="color: #9c27b0;">💚 再生</strong>：每回合回復5%最大生命</li>
-                    <li><strong style="color: #ff9800;">🔄 反彈</strong>：反彈20%受到的傷害</li>
-                    <li><strong style="color: #00ffff;">❄️ 冰霜</strong>：受擊時30%機率減少玩家50%傷害</li>
-                    <li><strong style="color: #f44336;">💀 致命</strong>：對低血玩家額外50%傷害</li>
-                    <li><strong style="color: #4caf50;">🌿 荊棘</strong>：受擊時造成固定傷害反擊</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 菁英怪物：1-2個詞綴，獎勵×1.5<br>• Boss：2-3個詞綴，獎勵×3<br>• 特殊Boss：3-4個詞綴，獎勵×5</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🏰 副本系統</h3>
-                <p style="color: #7a8fb8;">挑戰特殊副本獲取大量資源和獎勵：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">🎯 修煉之地</strong>：經驗副本，獲得大量經驗值</li>
-                    <li><strong style="color: #ffd700;">💰 寶藏洞窟</strong>：金幣副本，獲得大量金幣</li>
-                    <li><strong style="color: #ff9800;">⚔️ 遺跡探索</strong>：裝備副本，獲得高品質裝備</li>
-                    <li><strong style="color: #9c27b0;">💎 資源礦場</strong>：材料副本，獲得碎片和消耗品</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 每種副本有4個難度：簡單、普通、困難、地獄<br>• 消耗AP進入副本<br>• 每日挑戰次數限制<br>• 首次通關獎勵豐厚</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🎽 套裝系統</h3>
-                <p style="color: #7a8fb8;">穿戴同區域的套裝裝備可觸發套裝效果，提供強大的屬性加成和特殊效果。</p>
-                <h4 style="color: #4caf50; margin-top: 15px;">🔰 入門開發層｜啟動者套裝</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #4caf50;">2件效果（啟動協議）</strong>：攻擊+10%、防禦+10%、生命+15%</li>
-                    <li><strong style="color: #4caf50;">4件效果（系統加速）</strong>：暴擊率+8%、吸血+5%、經驗獲得+15%、<strong style="color: #ffd700;">特殊效果：擊殺回血</strong>（擊殺敵人回復10%最大生命）</li>
-                </ul>
-                
-                <h4 style="color: #2196f3; margin-top: 15px;">⚗️ 研發核心層｜研發者套裝</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #2196f3;">2件效果（研發突破）</strong>：攻擊+15%、暴擊率+10%、暴擊傷害+20%</li>
-                    <li><strong style="color: #2196f3;">4件效果（完美代碼）</strong>：無視防禦+15%、暴擊傷害+25%、<strong style="color: #ffd700;">特殊效果：暴擊連鎖</strong>（暴擊時30%機率再次暴擊）</li>
-                </ul>
-                
-                <h4 style="color: #ff9800; margin-top: 15px;">🖥️ 資料裂隙｜機櫃防禦套裝</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #ff9800;">2件效果（機櫃護盾）</strong>：防禦+20%、減傷+10%、生命+25%</li>
-                    <li><strong style="color: #ff9800;">4件效果（數據堡壘）</strong>：生命回復+3%、減傷+8%、<strong style="color: #ffd700;">特殊效果：反擊回血</strong>（受擊時反擊20%傷害並回血）</li>
-                </ul>
-                
-                <h4 style="color: #9c27b0; margin-top: 15px;">⚛️ 深井臨界層｜量子同步套裝</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #9c27b0;">2件效果（量子纏纏）</strong>：攻擊+20%、防禦+15%、無視防禦+12%、對首領傷害+15%</li>
-                    <li><strong style="color: #9c27b0;">4件效果（奇點爆發）</strong>：暴擊率+12%、暴擊傷害+30%、吸血+8%、<strong style="color: #ffd700;">特殊效果：量子崩塌</strong>（暴擊時對周圍敵人造成50%範圍傷害）</li>
-                </ul>
-                
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 套裝裝備為<strong style="color: #00ffff;">青色（Set）</strong>品質<br>• 穿戴同名稱2件/4件觸發套裝效果<br>• 套裝效果可與裝備詞綴疊加<br>• 4件套裝的特殊效果非常強大，優先收集</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🗺️ 區域探索</h3>
-                <p style="color: #7a8fb8;">遊戲有4個區域，每個區域有等級門檻和難度係數：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8;">
-                    <li><strong style="color: #00d9ff;">🔰 入門開發層</strong>：Lv.1+，難度×1.0，獎勵×1.0</li>
-                    <li><strong style="color: #00d9ff;">⚗️ 研發核心層</strong>：Lv.26+，難度×1.2，獎勵×1.3</li>
-                    <li><strong style="color: #00d9ff;">🖥️ 資料裂隙</strong>：Lv.51+，難度×1.6，獎勵×1.7</li>
-                    <li><strong style="color: #00d9ff;">⚛️ 深井臨界層</strong>：Lv.76+，難度×2.2，獎勵×2.3</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🧪 消耗品系統</h3>
-                <p style="color: #7a8fb8;">每個區域都有專屬的消耗品，可以在戰鬥中掉落：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #ff6b6b;">HP藥水</strong>：立即回復生命值（10%-30%）</li>
-                    <li><strong style="color: #4ea5ff;">AP藥水</strong>：立即回復體力（1-8點）</li>
-                    <li><strong style="color: #ffd700;">屬性卷</strong>：永久提升屬性（攻擊/防禦/暴擊率）</li>
-                    <li><strong style="color: #00ff88;">經驗卷</strong>：立即獲得經驗（120-1200）</li>
-                </ul>
-                
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🔄 迭代系統</h3>
-                <p style="color: #7a8fb8;">達到100級後可以進行迭代，重新開始但保留永久加成：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #ffd700;">迭代點數（IP）</strong>：根據等級、擊敗數、傳說裝備數量獲得</li>
-                    <li><strong style="color: #4ea5ff;">保留碎片</strong>：根據迭代次數保留一定比例的碎片</li>
-                    <li><strong style="color: #00d9ff;">解鎖稱號</strong>：每次迭代解鎖新稱號，提供永久屬性加成</li>
-                    <li><strong style="color: #9c27b0;">天賦系統</strong>：使用IP點亮天賦樹，獲得強大的永久加成</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;"><strong style="color: #ff6b6b;">⚠️ 迭代將重置：</strong>等級、經驗、金幣、所有裝備和物品、區域進度<br><strong style="color: #00ff88;">✅ 迭代保留：</strong>迭代點數、天賦、稱號、部分碎片</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">✨ 天賦系統</h3>
-                <p style="color: #7a8fb8;">使用迭代點數（IP）點亮天賦樹，獲得永久加成：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #ff6b6b;">⚔️ 戰鬥天賦</strong>：提升攻擊力、暴擊率、暴擊傷害、無視防禦</li>
-                    <li><strong style="color: #2196f3;">🛡️ 防禦天賦</strong>：提升生命值、防禦力、減傷、吸血</li>
-                    <li><strong style="color: #ffd700;">💰 資源天賦</strong>：增加金幣、經驗、掉落率、碎片獲取</li>
-                    <li><strong style="color: #9c27b0;">✨ 特殊天賦</strong>：解鎖特殊能力，如額外裝備欄、技能強化等</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 天賦效果永久生效<br>• 迭代後可重置天賦重新分配<br>• 高級天賦需要前置天賦解鎖</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🏆 稱號系統</h3>
-                <p style="color: #7a8fb8;">完成特定成就解鎖稱號，裝備後獲得永久屬性加成：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #00d9ff;">🔄 迭代者系列</strong>：完成迭代解鎖，提升全屬性</li>
-                    <li><strong style="color: #ff6b6b;">⚔️ 戰鬥系列</strong>：擊敗大量敵人解鎖，提升攻擊和暴擊</li>
-                    <li><strong style="color: #ffd700;">💰 財富系列</strong>：累積金幣解鎖，提升金幣和經驗獲取</li>
-                    <li><strong style="color: #9c27b0;">🗺️ 探索系列</strong>：探索區域解鎖，提升探索效率</li>
-                    <li><strong style="color: #f44336;">👑 特殊系列</strong>：完成特殊成就解鎖，提供獨特效果</li>
-                </ul>
-
-                <h3 style="color: #00d9ff; margin-top: 20px;">🎴 卡牌系統</h3>
-                <p style="color: #7a8fb8;">卡牌是強大的被動加成道具，可以大幅提升角色戰力。每張卡牌都有獨特的效果，並且可以通過升級來強化效果。</p>
-                <h4 style="color: #9c27b0; margin-top: 15px;">🃏 卡牌品質與獲取</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #9e9e9e;">Common（普通）</strong>：商店購買、戰鬥掉落（5%機率）</li>
-                    <li><strong style="color: #4caf50;">Fine（優質）</strong>：戰鬥掉落、菁英怪物（15%機率）</li>
-                    <li><strong style="color: #2196f3;">Rare（稀有）</strong>：Boss掉落（25%機率）</li>
-                    <li><strong style="color: #9c27b0;">Epic（史詩）</strong>：特殊Boss掉落（35%機率）</li>
-                    <li><strong style="color: #ff9800;">Legendary（傳說）</strong>：極低機率掉落</li>
-                </ul>
-                <h4 style="color: #9c27b0; margin-top: 15px;">🎯 卡牌類型</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #ff6b6b;">🗡️ 刀刃系列</strong>：攻擊時15%機率造成額外100%傷害</li>
-                    <li><strong style="color: #ff9800;">⚔️ 戰士系列</strong>：攻擊力+8%、暴擊率+4%、暴擊傷害+12%</li>
-                    <li><strong style="color: #2196f3;">🛡️ 守護系列</strong>：防禦力+20%、減傷+12%</li>
-                    <li><strong style="color: #4caf50;">💚 生命系列</strong>：最大生命+15%、吸血+5%</li>
-                    <li><strong style="color: #9c27b0;">🎯 精準系列</strong>：暴擊率+8%、暴擊傷害+18%</li>
-                    <li><strong style="color: #ffd700;">💰 貪婪系列</strong>：金幣獲得+25%</li>
-                    <li><strong style="color: #00d9ff;">📚 智慧系列</strong>：經驗獲得+35%</li>
-                    <li><strong style="color: #f44336;">🔄 反擊系列</strong>：受擊時30%機率反擊造成150%傷害</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 雙卡槽系統：最多同時裝備2張卡牌<br>• 卡牌升級：使用對應品質的碎片升級（Lv.1-10），每級效果+10%<br>• 套牌效果：裝備同系列2張卡牌觸發額外套牌加成<br>• 碎片兌換：已擁有的卡牌自動轉換為碎片</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🐾 隨從系統</h3>
-                <p style="color: #7a8fb8;">隨從是跟隨角色戰鬥的夥伴，可以提供額外的屬性加成和戰鬥支援。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">屬性加成</strong>：隨從提供永久性的屬性加成（攻擊、防禦、生命等）</li>
-                    <li><strong style="color: #00d9ff;">技能系統</strong>：隨從擁有主動或被動技能，在戰鬥中自動觸發</li>
-                    <li><strong style="color: #00d9ff;">隨從升級</strong>：隨從可以通過戰鬥獲得經驗升級</li>
-                    <li><strong style="color: #00d9ff;">隨從裝備</strong>：可以為隨從裝備專屬道具</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 獲取方式：商店購買（Common品質）、戰鬥掉落、副本獎勵</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🏪 商店系統</h3>
-                <p style="color: #7a8fb8;">遊戲中有多個商店，提供不同類型的物品和服務：</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #ffd700;">普通商店（金幣）</strong>：藥水、卷軸、隨從、卡牌</li>
-                    <li><strong style="color: #4ea5ff;">碎片商店（碎片）</strong>：裝備寶箱、套裝寶箱、消耗品、特殊道具</li>
-                    <li><strong style="color: #9c27b0;">卡牌碎片商店</strong>：使用碎片兌換卡牌（比金幣購買便宜）</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 兌換成本：Common 5碎片、Fine 15碎片、Rare 50碎片、Epic 150碎片、Legendary 500碎片</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">📋 每日任務系統</h3>
-                <p style="color: #7a8fb8;">每日任務是獲取資源的重要途徑，完成任務可獲得金幣、碎片和經驗值獎勵。</p>
-                <h4 style="color: #ffd700; margin-top: 15px;">📝 任務類型</h4>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #ff6b6b;">戰鬥類（40%）</strong>：擊敗X個敵人、擊敗X個Boss、連勝X場</li>
-                    <li><strong style="color: #4ea5ff;">收集類（30%）</strong>：獲得X件裝備、獲得X件稀有裝備、獲得X碎片</li>
-                    <li><strong style="color: #00d9ff;">探索類（20%）</strong>：完成X場戰鬥、切換X次區域、挑戰X次副本</li>
-                    <li><strong style="color: #9c27b0;">成長類（10%）</strong>：獲得X經驗、升級X次、強化X次裝備</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 每日5個任務，凌晨0點重置<br>• 需手動接取任務才會追蹤進度<br>• 每天可免費刷新3次任務<br>• 完成3個任務：200💰 + 3🔷<br>• 完成5個任務：500💰 + 10🔷 + 500EXP</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🔨 強化系統</h3>
-                <p style="color: #7a8fb8;">強化系統可以提升裝備的屬性，是後期提升戰力的重要途徑。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">強化等級</strong>：+0 到 +15，每級提升裝備基礎屬性</li>
-                    <li><strong style="color: #4caf50;">成功率</strong>：+0~+5（100%）、+6~+10（90%）、+11~+15（70%）</li>
-                    <li><strong style="color: #ff6b6b;">失敗懲罰</strong>：+0~+10失敗不掉級、+11~+15失敗掉1級</li>
-                    <li><strong style="color: #ffd700;">消耗金幣</strong>：等級越高消耗越多（100~1500金幣）</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🎲 重鑄系統</h3>
-                <p style="color: #7a8fb8;">重鑄系統可以重新生成裝備的屬性，用於優化裝備詞綴和屬性分配。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">保留品質和類型</strong>：重鑄後裝備品質和類型不變</li>
-                    <li><strong style="color: #ff9800;">重新生成屬性</strong>：所有屬性點數和詞綴重新隨機生成</li>
-                    <li><strong style="color: #ff6b6b;">強化等級清零</strong>：重鑄後強化等級歸零</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 消耗碎片：Common 10、Fine 15、Rare 25、Epic 40、Legendary 60、Mythic 80、Set 50</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">♻️ 分解系統</h3>
-                <p style="color: #7a8fb8;">分解系統可以將不需要的裝備轉換為碎片，是獲取碎片的重要途徑。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li><strong style="color: #9e9e9e;">Common</strong>：1碎片</li>
-                    <li><strong style="color: #4caf50;">Fine</strong>：2碎片</li>
-                    <li><strong style="color: #2196f3;">Rare</strong>：5碎片</li>
-                    <li><strong style="color: #9c27b0;">Epic</strong>：10碎片</li>
-                    <li><strong style="color: #ff9800;">Legendary</strong>：20碎片</li>
-                    <li><strong style="color: #ffd700;">Mythic</strong>：30碎片</li>
-                    <li><strong style="color: #00ffff;">Set</strong>：15碎片</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">💤 離線獎勵系統</h3>
-                <p style="color: #7a8fb8;">離線時也能獲得獎勵，最長可累積48小時的離線收益。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">經驗值和金幣</strong>：基於角色等級計算，每小時獲得</li>
-                    <li><strong style="color: #9c27b0;">裝備掉落</strong>：每4小時掉落1件裝備</li>
-                    <li><strong style="color: #ff9800;">卡牌掉落</strong>：每8小時掉落1張卡牌或碎片</li>
-                    <li><strong style="color: #4caf50;">消耗品</strong>：隨機掉落HP/AP藥水</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 最長48小時，最短10分鐘<br>• 重新登入時自動彈出獎勵面板</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">💾 存檔系統</h3>
-                <p style="color: #7a8fb8;">遊戲支持自動存檔和手動存檔，確保進度不會丟失。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">自動存檔</strong>：每30秒自動存檔、關閉頁面時存檔、重要操作後存檔</li>
-                    <li><strong style="color: #4ea5ff;">手動存檔</strong>：點擊「💾 存檔」按鈕手動存檔</li>
-                    <li><strong style="color: #9c27b0;">導出/導入</strong>：可導出存檔文件到本地，可導入存檔恢復進度</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">🎓 新手教學系統</h3>
-                <p style="color: #7a8fb8;">遊戲內置10階段新手教學，幫助玩家快速上手。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.85rem;">
-                    <li>角色創建 → 首次戰鬥 → 升級系統 → 裝備系統 → 背包管理</li>
-                    <li>商店系統 → 卡牌系統 → 自動戰鬥 → 每日任務 → 進階功能</li>
-                </ul>
-                <p style="color: #7a8fb8; margin-top: 10px; font-size: 0.9rem;">• 新手獎勵：500💰 + 20🔷 + 稀有裝備×1 + 隨機卡牌×1</p>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">⚡ 體力系統</h3>
-                <p style="color: #7a8fb8;">體力（AP）是進行戰鬥和副本的必要資源。</p>
-                <ul style="margin-left: 20px; color: #7a8fb8; font-size: 0.9rem;">
-                    <li><strong style="color: #00d9ff;">最大體力</strong>：100點（可通過天賦提升）</li>
-                    <li><strong style="color: #ff6b6b;">消耗體力</strong>：每次戰鬥消耗1點，副本消耗5-20點</li>
-                    <li><strong style="color: #4caf50;">體力回復</strong>：每2分鐘自動回復1點</li>
-                    <li><strong style="color: #9c27b0;">藥水回復</strong>：使用AP藥水立即回復體力</li>
-                </ul>
-
-                <h3 style="color: #00d9ff; margin-top: 20px;">🎮 遊戲技巧</h3>
-                <ul style="margin-left: 20px; color: #7a8fb8;">
-                    <li>優先裝備高品質裝備提升戰力</li>
-                    <li>收集套裝裝備觸發強大的套裝效果</li>
-                    <li>注意裝備詞綴，組合強力效果</li>
-                    <li>每日完成任務獲取碎片和金幣</li>
-                    <li>使用卡牌系統大幅提升屬性</li>
-                    <li>合理配置隨從提供戰鬥支援</li>
-                    <li>定期分解低品質裝備獲取碎片</li>
-                    <li>強化主要裝備提升戰鬥力</li>
-                    <li>挑戰副本快速獲取資源</li>
-                    <li>生命值過低時使用HP藥水</li>
-                    <li>定期清理背包，避免背包滿</li>
-                    <li>挑戰菁英怪物和Boss獲取更好裝備</li>
-                    <li>利用離線獎勵系統積累資源</li>
-                    <li>定期存檔以免進度遺失</li>
-                </ul>
-                
-                <h3 style="color: #00d9ff; margin-top: 20px;">📝 版本資訊</h3>
-                <p style="color: #7a8fb8;">當前版本：<strong style="color: #00d9ff;">v1.7.1</strong><br>更新日期：2025年11月2日<br>新增內容：完整遊戲系統介紹（卡牌、隨從、每日任務、強化、重鑄、分解、離線獎勵、存檔、新手教學、體力系統）</p>
+        <div class="modal-content" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
+            <h2 style="text-align: center; margin-bottom: 20px;">❓ 如何遊玩</h2>
+            
+            <!-- Tab 標籤 -->
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;">
+                <button class="how-to-play-tab active" onclick="switchHowToPlayTab('quickstart')" data-tab="quickstart" style="flex: 1; min-width: 120px; padding: 12px; font-size: 0.9rem; background: linear-gradient(135deg, #00d9ff 0%, #4EA5FF 100%); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    🚀 快速入門
+                </button>
+                <button class="how-to-play-tab" onclick="switchHowToPlayTab('combat')" data-tab="combat" style="flex: 1; min-width: 120px; padding: 12px; font-size: 0.9rem; background: rgba(0, 217, 255, 0.2); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    ⚔️ 戰鬥與屬性
+                </button>
+                <button class="how-to-play-tab" onclick="switchHowToPlayTab('gear')" data-tab="gear" style="flex: 1; min-width: 120px; padding: 12px; font-size: 0.9rem; background: rgba(0, 217, 255, 0.2); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    🎒 裝備與強化
+                </button>
+                <button class="how-to-play-tab" onclick="switchHowToPlayTab('advanced')" data-tab="advanced" style="flex: 1; min-width: 120px; padding: 12px; font-size: 0.9rem; background: rgba(0, 217, 255, 0.2); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    🌟 進階系統
+                </button>
+                <button class="how-to-play-tab" onclick="switchHowToPlayTab('prestige')" data-tab="prestige" style="flex: 1; min-width: 120px; padding: 12px; font-size: 0.9rem; background: rgba(0, 217, 255, 0.2); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    🔄 迭代與天賦
+                </button>
             </div>
-
-            <button onclick="closeHowToPlay()" style="margin-top: 20px; width: 100%;">關閉</button>
+            
+            <!-- Tab 內容 -->
+            <div id="how-to-play-content" style="text-align: left; color: #e0e6ff; line-height: 1.8;">
+                
+                <!-- 快速入門 -->
+                <div class="how-to-play-panel" id="panel-quickstart" style="display: block;">
+                    <h3 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">🚀 新手快速入門</h3>
+                    <p style="color: #7a8fb8; text-align: center; font-size: 1.1rem; margin-bottom: 30px;">歡迎來到數位深淵！只需5個步驟,立即開始你的冒險！</p>
+                    
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                        <h4 style="color: #00d9ff; margin-bottom: 10px;">📝 步驟1: 創建角色</h4>
+                        <p style="color: #7a8fb8;">輸入你的角色名字,然後從<strong style="color: #00d9ff;">9種職業</strong>中選擇一個。不用擔心,每個職業都很強,選一個你喜歡的就好!</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">💡 提示: 新手推薦<strong style="color: #00d9ff;">系統架構師</strong>(坦克型)或<strong style="color: #00d9ff;">數據科學家</strong>(均衡型)</p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                        <h4 style="color: #00d9ff; margin-bottom: 10px;">⚡ 步驟2: 選擇技能</h4>
+                        <p style="color: #7a8fb8;">從<strong style="color: #00d9ff;">10個技能</strong>中選擇1個作為你的專屬技能。技能分為<strong style="color: #ff6b6b;">攻擊型</strong>、<strong style="color: #4ea5ff;">防禦型</strong>和<strong style="color: #00ff88;">增益型</strong>。</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">💡 提示: 攻擊型技能適合快速推進,防禦型技能適合穩健玩法</p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                        <h4 style="color: #00d9ff; margin-bottom: 10px;">▶️ 步驟3: 開始戰鬥</h4>
+                        <p style="color: #7a8fb8;">點擊主畫面左側的<strong style="color: #00d9ff;">「▶️ 自動戰鬥」</strong>按鈕,遊戲會自動幫你戰鬥。你只需要坐著看日誌,等待勝利!</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">💡 提示: 戰鬥消耗<strong style="color: #00d9ff;">1點體力(AP)</strong>,體力會自動回復</p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                        <h4 style="color: #00d9ff; margin-bottom: 10px;">🎒 步驟4: 穿上裝備</h4>
+                        <p style="color: #7a8fb8;">戰鬥勝利後,點擊<strong style="color: #00d9ff;">「🎒 背包」</strong>查看獲得的裝備。選擇屬性更好的裝備,點擊<strong style="color: #00d9ff;">「快速裝備」</strong>穿上!</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">💡 提示: 裝備品質從低到高: <span style="color: #9e9e9e;">灰</span> < <span style="color: #4caf50;">綠</span> < <span style="color: #2196f3;">藍</span> < <span style="color: #9c27b0;">紫</span> < <span style="color: #ff9800;">橙</span> < <span style="color: #f44336;">紅</span> < <span style="color: #ffd700;">金</span></p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                        <h4 style="color: #00d9ff; margin-bottom: 10px;">🔄 步驟5: 重複循環</h4>
+                        <p style="color: #7a8fb8; font-size: 1.1rem; text-align: center;"><strong style="color: #00d9ff;">戰鬥</strong> → <strong style="color: #00d9ff;">獲得裝備</strong> → <strong style="color: #00d9ff;">變強</strong> → <strong style="color: #00d9ff;">挑戰更強的敵人</strong></p>
+                        <p style="color: #888; font-size: 0.9rem; margin-top: 10px; text-align: center;">就是這麼簡單!現在你已經掌握了遊戲的核心玩法!</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(78, 165, 255, 0.15) 100%); padding: 20px; border-radius: 10px; border: 2px solid rgba(0, 217, 255, 0.5); margin-top: 20px;">
+                        <h4 style="color: #00d9ff; text-align: center; margin-bottom: 10px;">🎯 接下來做什麼?</h4>
+                        <ul style="color: #7a8fb8; margin-left: 20px;">
+                            <li>每<strong style="color: #00d9ff;">10場戰鬥</strong>會遇到<strong style="color: #ffd700;">Boss</strong>,獎勵更豐厚!</li>
+                            <li>達到<strong style="color: #00d9ff;">26級</strong>後可以切換到更高級的區域</li>
+                            <li>點擊<strong style="color: #00d9ff;">「💰 商店」</strong>購買藥水和道具</li>
+                            <li>點擊<strong style="color: #00d9ff;">「🔨 鐵匠鋪」</strong>強化或分解裝備</li>
+                            <li>點擊其他Tab查看更多進階系統!</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 戰鬥與屬性 -->
+                <div class="how-to-play-panel" id="panel-combat" style="display: none;">
+                    <h3 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">⚔️ 戰鬥與屬性</h3>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 20px;">📊 角色屬性說明</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0; background: rgba(0, 217, 255, 0.05);">
+                        <thead>
+                            <tr style="background: rgba(0, 217, 255, 0.15);">
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">屬性</th>
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color: #7a8fb8;">
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ff6b6b;">生命值 (HP)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">你的血量,歸零就會死亡(但不會損失裝備)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ff9800;">攻擊力 (ATK)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">決定你造成的傷害,越高越好</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #2196f3;">防禦力 (DEF)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">減少受到的傷害</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ffd700;">暴擊率 (CRIT)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">觸發暴擊的機率(%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ffd700;">暴擊傷害 (CRITDMG)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">暴擊時造成的傷害倍率(%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #9c27b0;">減傷 (DMG RED)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">額外減少受到的傷害(%),上限75%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #f44336;">吸血 (LIFESTEAL)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">攻擊時回復造成傷害的一定比例(%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #00ffff;">無視防禦 (ARMORPEN)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">無視敵人一定比例的防禦(%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #4caf50;">幸運 (LUCK)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">提升裝備掉落機率(%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ffd700;">金幣獲取 (GOLD)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">增加戰鬥獲得的金幣(%)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">⚔️ 戰鬥流程</h4>
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3); margin: 15px 0;">
+                        <ol style="color: #7a8fb8; margin-left: 20px; line-height: 2;">
+                            <li>點擊<strong style="color: #00d9ff;">「▶️ 自動戰鬥」</strong>消耗1點體力(AP)</li>
+                            <li>自動遇到敵人並進入<strong style="color: #00d9ff;">回合制戰鬥</strong></li>
+                            <li>玩家先攻擊 → 敵人反擊 → 循環直到一方HP歸零</li>
+                            <li>勝利獲得<strong style="color: #ffd700;">經驗、金幣</strong>,有機率掉落<strong style="color: #9c27b0;">裝備</strong>和<strong style="color: #4ea5ff;">消耗品</strong></li>
+                            <li>每<strong style="color: #ffd700;">10場戰鬥</strong>會遇到<strong style="color: #ff9800;">Boss</strong>,獎勵×3!</li>
+                        </ol>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">💪 怪物詞綴</h4>
+                    <p style="color: #7a8fb8;">偶爾會遇到帶有特殊詞綴的<strong style="color: #ff9800;">菁英怪物</strong>,它們更強大,但獎勵也更豐厚!</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
+                        <div style="background: rgba(255, 107, 107, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                            <strong style="color: #ff6b6b;">🔥 狂暴</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">攻擊力+30%</span>
+                        </div>
+                        <div style="background: rgba(33, 150, 243, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(33, 150, 243, 0.3);">
+                            <strong style="color: #2196f3;">🛡️ 堅韌</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">防禦力+40%</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <strong style="color: #ffd700;">⚡ 迅捷</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">暴擊率+15%</span>
+                        </div>
+                        <div style="background: rgba(156, 39, 176, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(156, 39, 176, 0.3);">
+                            <strong style="color: #9c27b0;">💚 再生</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">每回合回復5%HP</span>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">⚡ 體力系統</h4>
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">每次戰鬥消耗<strong style="color: #00d9ff;">1點體力(AP)</strong>,體力上限<strong style="color: #00d9ff;">100點</strong>。</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">體力會<strong style="color: #00ff88;">自動回復</strong>,每<strong style="color: #00d9ff;">2分鐘</strong>回復<strong style="color: #00d9ff;">1點</strong>。</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 也可以在商店購買<strong style="color: #00d9ff;">能量藥水</strong>立即回復體力!</p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">💀 死亡機制</h4>
+                    <div style="background: rgba(244, 67, 54, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(244, 67, 54, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">如果你的HP歸零,你會<strong style="color: #f44336;">死亡</strong>,但<strong style="color: #00ff88;">不會損失任何裝備或經驗</strong>!</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">死亡後,你的HP會自動回復到<strong style="color: #00d9ff;">10%</strong>,可以繼續戰鬥。</p>
+                    </div>
+                </div>
+                
+                <!-- 裝備與強化 -->
+                <div class="how-to-play-panel" id="panel-gear" style="display: none;">
+                    <h3 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">🎒 裝備與強化</h3>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 20px;">💎 裝備品質</h4>
+                    <p style="color: #7a8fb8;">裝備分為8種品質,品質越高,屬性點數越多!</p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0; background: rgba(0, 217, 255, 0.05);">
+                        <thead>
+                            <tr style="background: rgba(0, 217, 255, 0.15);">
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">品質</th>
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">屬性點數</th>
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">特點</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color: #7a8fb8;">
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #9e9e9e;">普通(灰)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">10</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">基礎裝備</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #4caf50;">優質(綠)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">18</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">略強於普通</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #2196f3;">精良(藍)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">28</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">可能帶有詞綴</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #9c27b0;">稀有(紫)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">40</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">通常帶有詞綴</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ff9800;">史詩(橙)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">52</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">強大的詞綴</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #f44336;">傳說(紅)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">60</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">頂級裝備</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ffd700;">神話(金)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">65</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">極稀有</td>
+                            </tr>
+                            <tr style="background: rgba(0, 255, 255, 0.1);">
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #00ffff;">套裝(青)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">45</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);"><strong style="color: #ffd700;">可觸發套裝效果!</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">✨ 裝備詞綴</h4>
+                    <p style="color: #7a8fb8;">高品質裝備會附帶<strong style="color: #ff9800;">前綴</strong>和<strong style="color: #2196f3;">後綴</strong>,提供強大的特殊效果!</p>
+                    
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); margin: 15px 0;">
+                        <h5 style="color: #ff9800; margin-bottom: 10px;">🔥 前綴詞綴(武器專屬)</h5>
+                        <ul style="color: #7a8fb8; margin-left: 20px; font-size: 0.9rem;">
+                            <li><strong style="color: #ff9800;">熾熱的</strong>: 15%機率造成額外50%傷害</li>
+                            <li><strong style="color: #ff9800;">閃電的</strong>: 20%機率連鎖傷害</li>
+                            <li><strong style="color: #ff9800;">嗜血的</strong>: 擊殺回復15%最大生命</li>
+                            <li><strong style="color: #ffd700;">神聖的</strong>: 10%機率造成200%傷害</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: rgba(33, 150, 243, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(33, 150, 243, 0.3); margin: 15px 0;">
+                        <h5 style="color: #2196f3; margin-bottom: 10px;">🛡️ 後綴詞綴(防具專屬)</h5>
+                        <ul style="color: #7a8fb8; margin-left: 20px; font-size: 0.9rem;">
+                            <li><strong style="color: #2196f3;">守護</strong>: 致命傷只扣1血(30%機率)</li>
+                            <li><strong style="color: #2196f3;">再生</strong>: 每5秒回復2%最大生命</li>
+                            <li><strong style="color: #2196f3;">反射</strong>: 反彈10%傷害給敵人</li>
+                            <li><strong style="color: #ffd700;">魔盾</strong>: 戰鬥開始獲得20%最大生命護盾</li>
+                        </ul>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🎽 套裝系統</h4>
+                    <p style="color: #7a8fb8;">穿戴同名的<strong style="color: #00ffff;">套裝裝備</strong>可以觸發超強大的套裝效果!</p>
+                    <div style="background: rgba(0, 255, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;"><strong style="color: #00ffff;">2件套</strong>: 提供基礎屬性加成</p>
+                        <p style="color: #7a8fb8; margin-top: 8px;"><strong style="color: #00ffff;">4件套</strong>: 解鎖<strong style="color: #ffd700;">特殊效果</strong>(例如:暴擊連鎖、擊殺回血等)</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 4件套的特殊效果非常強大,優先收集!</p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🔨 強化與分解</h4>
+                    <p style="color: #7a8fb8;">點擊<strong style="color: #00d9ff;">「🔨 鐵匠鋪」</strong>可以強化或分解裝備。</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3);">
+                            <h5 style="color: #00d9ff; margin-bottom: 10px;">⬆️ 強化裝備</h5>
+                            <p style="color: #7a8fb8; font-size: 0.9rem;">消耗<strong style="color: #ffd700;">金幣</strong>和<strong style="color: #9c27b0;">強化石</strong>,提升裝備的屬性值。</p>
+                            <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">每次強化+1級,屬性提升5%</p>
+                        </div>
+                        <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3);">
+                            <h5 style="color: #00d9ff; margin-bottom: 10px;">♻️ 分解裝備</h5>
+                            <p style="color: #7a8fb8; font-size: 0.9rem;">將不需要的裝備分解成<strong style="color: #9c27b0;">碎片</strong>和<strong style="color: #ff9800;">材料</strong>。</p>
+                            <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">品質越高,獲得的碎片越多</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 進階系統 -->
+                <div class="how-to-play-panel" id="panel-advanced" style="display: none;">
+                    <h3 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">🌟 進階系統</h3>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 20px;">🎴 卡牌系統</h4>
+                    <div style="background: rgba(156, 39, 176, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(156, 39, 176, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">擊敗敵人有機率掉落<strong style="color: #9c27b0;">卡牌</strong>,裝備後提供永久被動加成。</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">你可以同時裝備<strong style="color: #00d9ff;">3張卡牌</strong>,組成你的套牌。</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">卡牌可以使用<strong style="color: #9c27b0;">碎片</strong>升級,提升效果。</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 裝備同系列的卡牌可以觸發<strong style="color: #ffd700;">套牌效果</strong>!</p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🐾 隨從系統</h4>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">在商店購買或特殊掉落<strong style="color: #ff9800;">隨從</strong>,牠們會跟著你一起戰鬥!</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">隨從提供<strong style="color: #00d9ff;">被動屬性加成</strong>,並且會在戰鬥中<strong style="color: #00d9ff;">主動釋放技能</strong>。</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">隨從可以透過戰鬥<strong style="color: #00ff88;">升級</strong>,變得更強大。</p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">📋 每日任務</h4>
+                    <div style="background: rgba(33, 150, 243, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(33, 150, 243, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">每天會刷新<strong style="color: #2196f3;">5個每日任務</strong>,完成後可以獲得豐厚獎勵。</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">任務類型包括:擊敗敵人、收集裝備、使用技能等。</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 完成所有任務可以獲得<strong style="color: #ffd700;">完成度獎勵</strong>!</p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🏰 副本系統</h4>
+                    <p style="color: #7a8fb8;">挑戰特殊<strong style="color: #ff9800;">副本</strong>來農指定的資源!</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
+                        <div style="background: rgba(0, 217, 255, 0.08); padding: 12px; border-radius: 6px; border: 1px solid rgba(0, 217, 255, 0.3);">
+                            <strong style="color: #00d9ff;">🎯 修煉之地</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">獲得大量經驗值</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.08); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <strong style="color: #ffd700;">💰 寶藏洞窟</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">獲得大量金幣</span>
+                        </div>
+                        <div style="background: rgba(255, 152, 0, 0.08); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.3);">
+                            <strong style="color: #ff9800;">⚔️ 遺跡探索</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">獲得高品質裝備</span>
+                        </div>
+                        <div style="background: rgba(156, 39, 176, 0.08); padding: 12px; border-radius: 6px; border: 1px solid rgba(156, 39, 176, 0.3);">
+                            <strong style="color: #9c27b0;">💎 資源礦場</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">獲得碎片和材料</span>
+                        </div>
+                    </div>
+                    <p style="color: #888; font-size: 0.85rem;">每種副本有4個難度,難度越高獎勵越好!</p>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">💤 離線收益</h4>
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">關掉遊戲也會自動累積收益!</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">下次上線時會彈出<strong style="color: #00ff88;">離線收益視窗</strong>,顯示你獲得的經驗、金幣、裝備等。</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 離線收益有上限,記得定期上線領取!</p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🗺️ 區域探索</h4>
+                    <p style="color: #7a8fb8;">遊戲有<strong style="color: #00d9ff;">4個區域</strong>,等級越高,可以探索更高級的區域!</p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0; background: rgba(0, 217, 255, 0.05);">
+                        <thead>
+                            <tr style="background: rgba(0, 217, 255, 0.15);">
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">區域</th>
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">等級需求</th>
+                                <th style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff;">獎勵倍率</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color: #7a8fb8;">
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">🔰 入門開發層</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">Lv.1+</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">×1.0</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">⚗️ 研發核心層</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">Lv.26+</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">×1.3</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">🖥️ 資料裂隙</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">Lv.51+</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">×1.7</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">⚛️ 深井臨界層</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">Lv.76+</td>
+                                <td style="padding: 10px; border: 1px solid rgba(0, 217, 255, 0.2);">×2.3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 迭代與天賦 -->
+                <div class="how-to-play-panel" id="panel-prestige" style="display: none;">
+                    <h3 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">🔄 迭代與天賦</h3>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 20px;">🔄 什麼是迭代?</h4>
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8; font-size: 1.05rem;">當你達到<strong style="color: #ffd700;">100級</strong>並完成所有主線Boss後,可以選擇<strong style="color: #00d9ff;">迭代</strong>。</p>
+                        <p style="color: #7a8fb8; margin-top: 15px;">迭代後,你的<strong style="color: #f44336;">等級、裝備、金幣</strong>會重置,但你會獲得<strong style="color: #ffd700;">永久的強化</strong>!</p>
+                        <p style="color: #7a8fb8; margin-top: 15px; font-size: 1.1rem; text-align: center;"><strong style="color: #00ff88;">這是遊戲的核心長期目標!</strong></p>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🎁 迭代獎勵</h4>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin: 15px 0;">
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <h5 style="color: #ffd700; margin-bottom: 10px;">💎 迭代點數(IP)</h5>
+                            <p style="color: #7a8fb8; font-size: 0.95rem;">根據你的<strong style="color: #00d9ff;">等級、擊敗數、傳說裝備數量</strong>等計算獲得的IP點數。</p>
+                            <p style="color: #7a8fb8; margin-top: 8px;">IP可以用來學習<strong style="color: #00d9ff;">天賦</strong>,獲得永久加成!</p>
+                        </div>
+                        <div style="background: rgba(156, 39, 176, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(156, 39, 176, 0.3);">
+                            <h5 style="color: #9c27b0; margin-bottom: 10px;">💎 碎片保留</h5>
+                            <p style="color: #7a8fb8; font-size: 0.95rem;">根據迭代次數,保留一定比例的<strong style="color: #9c27b0;">碎片</strong>到下一輪。</p>
+                            <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">第1次迭代保留10%,之後每次+5%,最高25%</p>
+                        </div>
+                        <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3);">
+                            <h5 style="color: #ff9800; margin-bottom: 10px;">🏆 迭代稱號</h5>
+                            <p style="color: #7a8fb8; font-size: 0.95rem;">每次迭代解鎖新<strong style="color: #ff9800;">稱號</strong>,裝備後提供永久屬性加成。</p>
+                            <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">例如:「初次迭代者」、「迭代大師」等</p>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">✨ 天賦系統</h4>
+                    <p style="color: #7a8fb8;">使用<strong style="color: #ffd700;">迭代點數(IP)</strong>在天賦樹中學習強大的永久被動效果!</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 15px 0;">
+                        <div style="background: rgba(255, 107, 107, 0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                            <strong style="color: #ff6b6b;">⚔️ 戰鬥天賦</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">提升攻擊、暴擊、暴傷</span>
+                        </div>
+                        <div style="background: rgba(33, 150, 243, 0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(33, 150, 243, 0.3);">
+                            <strong style="color: #2196f3;">🛡️ 防禦天賦</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">提升生命、防禦、減傷</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <strong style="color: #ffd700;">💰 資源天賦</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">增加金幣、經驗、掉落</span>
+                        </div>
+                        <div style="background: rgba(156, 39, 176, 0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(156, 39, 176, 0.3);">
+                            <strong style="color: #9c27b0;">✨ 特殊天賦</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.85rem;">解鎖特殊能力</span>
+                        </div>
+                    </div>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 天賦效果<strong style="color: #00ff88;">永久生效</strong>,即使迭代也不會消失!</p>
+                    
+                    <h4 style="color: #00d9ff; margin-top: 25px;">🏆 稱號系統</h4>
+                    <p style="color: #7a8fb8;">完成特定成就解鎖<strong style="color: #ff9800;">稱號</strong>,裝備後獲得永久屬性加成!</p>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); margin: 15px 0;">
+                        <p style="color: #7a8fb8;">稱號分為多個系列:</p>
+                        <ul style="color: #7a8fb8; margin-left: 20px; margin-top: 10px; font-size: 0.9rem;">
+                            <li><strong style="color: #00d9ff;">🔄 迭代者系列</strong>: 完成迭代解鎖</li>
+                            <li><strong style="color: #ff6b6b;">⚔️ 戰鬥系列</strong>: 擊敗大量敵人解鎖</li>
+                            <li><strong style="color: #ffd700;">💰 財富系列</strong>: 累積金幣解鎖</li>
+                            <li><strong style="color: #9c27b0;">🗺️ 探索系列</strong>: 探索區域解鎖</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%); padding: 20px; border-radius: 10px; border: 2px solid rgba(255, 215, 0, 0.5); margin-top: 25px;">
+                        <h4 style="color: #ffd700; text-align: center; margin-bottom: 10px;">⚠️ 迭代注意事項</h4>
+                        <p style="color: #f44336; text-align: center; font-size: 1.05rem; margin-bottom: 15px;"><strong>迭代將重置:</strong> 等級、經驗、金幣、所有裝備和物品、區域進度</p>
+                        <p style="color: #00ff88; text-align: center; font-size: 1.05rem;"><strong>迭代保留:</strong> 迭代點數、天賦、稱號、部分碎片</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <button onclick="closeHowToPlay()" style="margin-top: 20px; width: 100%; padding: 15px; font-size: 1.1rem;">關閉</button>
         </div>
     </div>
+    
+    <script>
+        // Tab 切換功能
+        function switchHowToPlayTab(tabName) {
+            // 隱藏所有面板
+            const panels = document.querySelectorAll('.how-to-play-panel');
+            panels.forEach(panel => panel.style.display = 'none');
+            
+            // 顯示選中的面板
+            document.getElementById('panel-' + tabName).style.display = 'block';
+            
+            // 更新Tab樣式
+            const tabs = document.querySelectorAll('.how-to-play-tab');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('active');
+                    tab.style.background = 'linear-gradient(135deg, #00d9ff 0%, #4EA5FF 100%)';
+                    tab.style.border = 'none';
+                    tab.style.color = '#000';
+                    tab.style.fontWeight = 'bold';
+                } else {
+                    tab.classList.remove('active');
+                    tab.style.background = 'rgba(0, 217, 255, 0.2)';
+                    tab.style.border = '1px solid rgba(0, 217, 255, 0.3)';
+                    tab.style.color = '#e0e6ff';
+                    tab.style.fontWeight = 'normal';
+                }
+            });
+        }
+    </script>
 
     <!-- 迭代確認模態視窗 -->
     <div class="modal" id="iteration-modal">
@@ -3141,64 +3276,34 @@ const TITLES_DATA = {
 // 區域專屬消耗品
 const REGION_CONSUMABLES = {
     '入門開發層': {
-        hp: { name: '新手急救包', type: 'hp', recovery: 0.10, dropRate: 0.01 },
-        ap: { name: '新手能量膠囊', type: 'ap', recovery: 1, dropRate: 0.01 },
-        buff: { 
-            name: '輕質調校卷', 
-            type: 'buff',
-            dropRate: 0.003,
-            effects: [
-                { stat: 'atk', value: 1, label: '攻擊+1' },
-                { stat: 'def', value: 1, label: '防禦+1' },
-                { stat: 'crit', value: 1, label: '暴擊率+1%' }
-            ]
-        },
-        exp: { name: '新手經驗憑證', type: 'exp', exp: 120, dropRate: 0.003 }
+        hp: { name: '小型生命藥水', type: 'hp', recovery: 0.30, dropRate: 0.05 },
+        ap: { name: '小型能量藥水', type: 'ap', recovery: 5, dropRate: 0.03 },
+        exp: { name: '小型經驗卷軸', type: 'exp', exp: 500, dropRate: 0.02 },
+        lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
+        expBoost: { name: '雙倍經驗卷', type: 'expBoost', dropRate: 0.008 }
     },
     '研發核心層': {
-        hp: { name: '實驗修復噴霧', type: 'hp', recovery: 0.16, dropRate: 0.005 },
-        ap: { name: '相位能量瓶', type: 'ap', recovery: 3, dropRate: 0.005 },
-        buff: { 
-            name: '臨界校準卷', 
-            type: 'buff',
-            dropRate: 0.002,
-            effects: [
-                { stat: 'atk', value: 2, label: '攻擊+2' },
-                { stat: 'def', value: 2, label: '防禦+2' },
-                { stat: 'critDmg', value: 6, label: '暴擊傷害+6%' }
-            ]
-        },
-        exp: { name: '實驗報告摘錄', type: 'exp', exp: 360, dropRate: 0.002 }
+        hp: { name: '中型生命藥水', type: 'hp', recovery: 0.50, dropRate: 0.03 },
+        ap: { name: '中型能量藥水', type: 'ap', recovery: 10, dropRate: 0.02 },
+        exp: { name: '中型經驗卷軸', type: 'exp', exp: 2000, dropRate: 0.015 },
+        lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
+        expBoost: { name: '雙倍經驗卷', type: 'expBoost', dropRate: 0.008 }
     },
     '資料裂縫': {
-        hp: { name: '機房維護套件', type: 'hp', recovery: 0.24, dropRate: 0.003 },
-        ap: { name: '冗餘電容包', type: 'ap', recovery: 5, dropRate: 0.003 },
-        buff: { 
-            name: '硬化指令卷', 
-            type: 'buff',
-            dropRate: 0.001,
-            effects: [
-                { stat: 'def', value: 4, label: '防禦+4' },
-                { stat: 'maxHp', value: 60, label: '生命上限+60' },
-                { stat: 'atk', value: 3, label: '攻擊+3' }
-            ]
-        },
-        exp: { name: '維運作業紀錄', type: 'exp', exp: 1100, dropRate: 0.001 }
+        hp: { name: '大型生命藥水', type: 'hp', recovery: 0.80, dropRate: 0.02 },
+        ap: { name: '大型能量藥水', type: 'ap', recovery: 20, dropRate: 0.015 },
+        exp: { name: '大型經驗卷軸', type: 'exp', exp: 8000, dropRate: 0.01 },
+        lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
+        expBoost: { name: '雙倍經驗卷', type: 'expBoost', dropRate: 0.008 },
+        protection: { name: '保護符咒', type: 'protection', dropRate: 0.003 }
     },
     '深井臨界層': {
-        hp: { name: '量子穩定注射', type: 'hp', recovery: 0.40, dropRate: 0.001 },
-        ap: { name: '相干能量注入', type: 'ap', recovery: 10, dropRate: 0.001 },
-        buff: { 
-            name: '臨界疊加卷', 
-            type: 'buff',
-            dropRate: 0.0001,
-            effects: [
-                { stat: 'atk', value: 6, label: '攻擊+6' },
-                { stat: 'crit', value: 2, label: '暴擊率+2%' },
-                { stat: 'critDmg', value: 12, label: '暴擊傷害+12%' }
-            ]
-        },
-        exp: { name: '臨界觀測報告', type: 'exp', exp: 2400, dropRate: 0.0001 }
+        hp: { name: '完全生命藥水', type: 'hp', recovery: 1.00, dropRate: 0.01 },
+        ap: { name: '完全能量藥水', type: 'ap', recovery: 40, dropRate: 0.008 },
+        exp: { name: '完美經驗卷軸', type: 'exp', exp: 20000, dropRate: 0.005 },
+        lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
+        expBoost: { name: '雙倍經驗卷', type: 'expBoost', dropRate: 0.008 },
+        protection: { name: '保護符咒', type: 'protection', dropRate: 0.003 }
     }
 };
 
@@ -4225,67 +4330,15 @@ const REGION_CONSUMABLES = {
                 bonusCritDmg: classStats.bonusCritDmg || 0
             };
             
-            // 添加初始裝備（綠色品質）
-            const uncommonRarity = RARITIES[1]; // 優質（綠色）
-            
-            // 新手武器
-            const starterWeapon = {
-                id: Date.now() + Math.random(),
-                type: 'weapon',
-                name: '新手短劍',
-                rarity: uncommonRarity.name,
-                rarityLabel: uncommonRarity.label,
-                color: uncommonRarity.color,
-                atk: 8,
-                def: 0,
-                hp: 0,
-                crit: 2,
-                critDmg: 0,
-                dmgRed: 0,
-                enhance: 0,
-                lifeSteal: 0,
-                armorPen: 0,
-                bossDmg: 0,
-                hpRegen: 0,
-                expBonus: 0,
-                affixes: ['atk', 'crit']
-            };
-            
-            // 新手防具
-            const starterArmor = {
-                id: Date.now() + Math.random() + 1,
-                type: 'armor',
-                name: '新手布甲',
-                rarity: uncommonRarity.name,
-                rarityLabel: uncommonRarity.label,
-                color: uncommonRarity.color,
-                atk: 0,
-                def: 6,
-                hp: 30,
-                crit: 0,
-                critDmg: 0,
-                dmgRed: 0,
-                enhance: 0,
-                lifeSteal: 0,
-                armorPen: 0,
-                bossDmg: 0,
-                hpRegen: 0,
-                expBonus: 0,
-                affixes: ['def', 'hp']
-            };
-            
-            // 裝備初始裝備
-            gameState.player.equipment.weapon = starterWeapon;
-            gameState.player.equipment.armor = starterArmor;
-            
-            // 添加20個小型藥水（堆疊版）
+            // 添加出生禮包道具
             gameState.inventory.push({
                 id: Date.now() + Math.random(),
                 type: 'consumable',
-                subtype: 'hp',
-                name: '小型藥水',
-                recovery: 0.3, // 回復30% HP
-                quantity: 20
+                subtype: 'starter_pack',
+                name: '🎁 出生禮包',
+                description: '[一次性] 開啟獲得新手裝備、隨從、卡牌和藥水',
+                quantity: 1,
+                canUse: true
             });
             
             // 初始化每日任務系統
@@ -4469,12 +4522,17 @@ const REGION_CONSUMABLES = {
             }
         }
         
-        function updateAutoPotionType() {
-            gameState.autoPotionType = document.getElementById('auto-potion-type').value;
+        function updateAutoPotionMode() {
+            gameState.autoPotionMode = document.getElementById('auto-potion-mode').value;
             saveGame();
             if (gameState.autoPotion) {
-                const typeName = gameState.autoPotionType === 'best' ? '優先最佳' : gameState.autoPotionType;
-                addLog('系統', `自動喝藥類型已調整為：${typeName}`);
+                const modeNames = {
+                    'economy': '優先經濟',
+                    'best': '優先最佳',
+                    'small_first': '優先小瓶'
+                };
+                const modeName = modeNames[gameState.autoPotionMode] || gameState.autoPotionMode;
+                addLog('系統', `自動喝藥模式已調整為：${modeName}`);
             }
         }
         
@@ -4531,47 +4589,97 @@ const REGION_CONSUMABLES = {
             if (!gameState.autoPotion) return false;
             
             const hpPercent = (gameState.player.hp / gameState.player.maxHp) * 100;
-            if (hpPercent >= gameState.autoPotionThreshold) return false;
+            const isEmergency = hpPercent < 20; // 緊急門檻: 20%
             
-            // 檢查冷卻
+            // 檢查是否需要喝藥
+            if (!isEmergency && hpPercent >= gameState.autoPotionThreshold) return false;
+            
+            // 檢查冷卻（緊急模式無視冷卻）
             const now = Date.now();
-            if (now < gameState.potionCooldown) return false;
+            if (!isEmergency && now < gameState.potionCooldown) return false;
             
-            // 獲取所有HP藥水
+            // 獲取所有HP藥水（支持百分比和固定值）
             const hpPotions = gameState.inventory.filter(item => 
                 item.type === 'consumable' && 
-                item.subtype === 'hp' &&
+                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed') &&
                 (item.quantity || 1) > 0
             );
             
             if (hpPotions.length === 0) return false;
             
-            // 根據設定選擇藥水
+            // 根據模式選擇藥水
             let potion = null;
-            const autoPotionType = gameState.autoPotionType || 'best';
+            const mode = gameState.autoPotionMode || 'economy';
             
-            if (autoPotionType === 'best') {
-                // 優先最佳：選擇回復量最高的藥水
-                potion = hpPotions.reduce((best, current) => 
-                    current.recovery > best.recovery ? current : best
-                );
-            } else {
-                // 指定藥水名稱
-                potion = hpPotions.find(p => p.name === autoPotionType);
-                // 如果指定的藥水不存在，則使用最佳
+            if (mode === 'economy') {
+                // 經濟模式：選擇剛好夠用的最便宜藥水
+                const hpNeeded = gameState.player.maxHp - gameState.player.hp;
+                
+                // 計算每個藥水的回復量
+                const potionsWithHeal = hpPotions.map(p => {
+                    let healAmount = 0;
+                    if (p.subtype === 'hp_percent' || p.subtype === 'hp') {
+                        healAmount = Math.floor(gameState.player.maxHp * p.recovery);
+                    } else if (p.subtype === 'hp_fixed') {
+                        healAmount = p.recovery;
+                    }
+                    return { ...p, healAmount };
+                });
+                
+                // 按回復量排序（從小到大）
+                potionsWithHeal.sort((a, b) => a.healAmount - b.healAmount);
+                
+                // 找到第一個能回復足夠HP的藥水（至少回復80%需求）
+                potion = potionsWithHeal.find(p => p.healAmount >= hpNeeded * 0.8);
+                
+                // 如果沒有合適的，就用最大的
                 if (!potion) {
-                    potion = hpPotions.reduce((best, current) => 
-                        current.recovery > best.recovery ? current : best
-                    );
+                    potion = potionsWithHeal[potionsWithHeal.length - 1];
                 }
+                
+            } else if (mode === 'small_first') {
+                // 優先小瓶：選擇回復量最小的
+                const potionsWithHeal = hpPotions.map(p => {
+                    let healAmount = 0;
+                    if (p.subtype === 'hp_percent' || p.subtype === 'hp') {
+                        healAmount = Math.floor(gameState.player.maxHp * p.recovery);
+                    } else if (p.subtype === 'hp_fixed') {
+                        healAmount = p.recovery;
+                    }
+                    return { ...p, healAmount };
+                });
+                potion = potionsWithHeal.sort((a, b) => a.healAmount - b.healAmount)[0];
+                
+            } else {
+                // 優先最佳：選擇回復量最高的
+                const potionsWithHeal = hpPotions.map(p => {
+                    let healAmount = 0;
+                    if (p.subtype === 'hp_percent' || p.subtype === 'hp') {
+                        healAmount = Math.floor(gameState.player.maxHp * p.recovery);
+                    } else if (p.subtype === 'hp_fixed') {
+                        healAmount = p.recovery;
+                    }
+                    return { ...p, healAmount };
+                });
+                potion = potionsWithHeal.sort((a, b) => b.healAmount - a.healAmount)[0];
             }
             
             if (!potion) return false;
             
-            // 使用藥水
-            const healAmount = Math.floor(gameState.player.maxHp * potion.recovery);
+            // 計算回復量
+            let healAmount = 0;
+            if (potion.subtype === 'hp_percent' || potion.subtype === 'hp') {
+                healAmount = Math.floor(gameState.player.maxHp * potion.recovery);
+            } else if (potion.subtype === 'hp_fixed') {
+                healAmount = potion.recovery;
+            }
+            
             gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
-            gameState.potionCooldown = now + 5000; // 5秒冷卻
+            
+            // 設置冷卻（緊急模式無冷卻）
+            if (!isEmergency) {
+                gameState.potionCooldown = now + 5000; // 5秒冷卻
+            }
             
             // 減少數量
             if (potion.quantity && potion.quantity > 1) {
@@ -4580,10 +4688,8 @@ const REGION_CONSUMABLES = {
                 gameState.inventory = gameState.inventory.filter(i => i.id !== potion.id);
             }
             
-            addLog('自動喝藥', `自動使用了 ${potion.name}，恢復了 ${healAmount} 點生命！`);
-            
-            // 更新下拉選單（藥水可能用完了）
-            updateAutoPotionDropdown();
+            const modeText = isEmergency ? '[緊急]' : '[自動]';
+            addLog('自動喝藥', `${modeText} 使用了 ${potion.name}，恢復了 ${healAmount} 點生命！`);
             
             return true;
         }
@@ -4603,14 +4709,12 @@ const REGION_CONSUMABLES = {
             // 初始化自動喝藥UI狀態
             document.getElementById('auto-potion-toggle').checked = gameState.autoPotion || false;
             document.getElementById('auto-potion-threshold').value = gameState.autoPotionThreshold || 50;
-            
-            // 初始化隨從系統並給予初始隨從
-            initCompanionSystem();
-            if (gameState.companions.owned.length === 0) {
-                // 給新玩家一個初始隨從（修復機器人）
-                obtainCompanion('repair_bot');
-                addLog('系統', '🎁 你獲得了初始隨從！在左側欄點擊「隨從」查看詳情。');
+            if (document.getElementById('auto-potion-mode')) {
+                document.getElementById('auto-potion-mode').value = gameState.autoPotionMode || 'economy';
             }
+            
+            // 初始化隨從系統（不再贈送初始隨從，由出生禮包提供）
+            initCompanionSystem();
             
             // 檢查每日任務重置
             // checkDailyReset(); // 已移除，副本系統有自己的重置邏輯
@@ -5126,6 +5230,17 @@ const REGION_CONSUMABLES = {
                 enemyDisplayName += ` [${affixDesc}]`;
             }
             addLog('遇到', `遇到了 ${enemyDisplayName}！`, enemy.isSpecialBoss);
+            
+            // 偵查卷軸效果：顯示敵人詳細資訊
+            if (gameState.scoutInfo && gameState.scoutInfo.remaining > 0) {
+                const dropRate = Math.floor((enemy.dropRate || 0.3) * 100);
+                addLog('偵查', `🔍 敵人資訊：HP ${enemy.hp} | ATK ${enemy.atk} | DEF ${enemy.def} | 掉落率 ${dropRate}%`);
+                gameState.scoutInfo.remaining--;
+                if (gameState.scoutInfo.remaining === 0) {
+                    delete gameState.scoutInfo;
+                    addLog('偵查', '偵查卷軸效果已用盡。');
+                }
+            }
             playSound('encounter'); // 遭遇音效
             
             // 戰鬥
@@ -5789,6 +5904,16 @@ const REGION_CONSUMABLES = {
             // 應用戰鬥開始時的特殊效果
             applyBattleStartSpecialEffects();
             
+            // 處理煙霧彈效果（降低敵人攻擊力）
+            if (gameState.player.buffs) {
+                const smokeDebuff = gameState.player.buffs.find(b => b.type === 'enemy_atk_debuff');
+                if (smokeDebuff) {
+                    const reduction = Math.floor(smokeDebuff.value * 100);
+                    enemy.atk = Math.floor(enemy.atk * (1 - smokeDebuff.value));
+                    addLog('道具', `💨 煙霧彈生效！敵人攻擊力降低${reduction}%！`);
+                }
+            }
+            
             // 觸發隨從戰鬥開始技能（減益型）
             const companionBattleStart = triggerCompanionSkill('battle_start', {enemy});
             if (companionBattleStart) {
@@ -6127,10 +6252,42 @@ const REGION_CONSUMABLES = {
                     }
                 }
                 
+                // 持續回復藥水buff處理
+                if (gameState.player.buffs && playerHp > 0) {
+                    const regenBuffs = gameState.player.buffs.filter(b => 
+                        b.type === 'hp_regen_potion' || b.type === 'both_regen_potion'
+                    );
+                    
+                    regenBuffs.forEach(buff => {
+                        if (buff.type === 'hp_regen_potion') {
+                            const healAmount = Math.floor(gameState.player.maxHp * buff.value);
+                            playerHp = Math.min(playerHp + healAmount, gameState.player.maxHp);
+                            gameState.player.hp = playerHp;
+                            addLog('藥水', `💚 ${buff.name} 回復了 ${healAmount} 點生命！`);
+                        } else if (buff.type === 'both_regen_potion') {
+                            const healAmount = Math.floor(gameState.player.maxHp * buff.hpValue);
+                            playerHp = Math.min(playerHp + healAmount, gameState.player.maxHp);
+                            gameState.player.hp = playerHp;
+                            gameState.player.ap = Math.min(gameState.player.ap + buff.apValue, gameState.player.maxAp);
+                            addLog('藥水', `💚 ${buff.name} 回復了 ${healAmount} HP + ${buff.apValue} AP！`);
+                        }
+                    });
+                }
+                
                 if (playerHp <= 0) {
-                    // 檢查裝備詞綴中的時光詞綴（復活機制）
-                    let revived = false;
-                    if (!gameState.player.battleReviveUsed) {
+                    // 檢查護身符保護
+                    const guardianBuff = gameState.player.buffs ? gameState.player.buffs.find(b => b.type === 'guardian') : null;
+                    if (guardianBuff) {
+                        playerHp = 1;
+                        gameState.player.hp = 1;
+                        gameState.player.buffs = gameState.player.buffs.filter(b => b.type !== 'guardian');
+                        addLog('保護', '🛡️ 護身符觸發！保留1點生命！');
+                        playSound('heal');
+                        updateUI();
+                    } else {
+                        // 檢查裝備詞綴中的時光詞綴（復活機制）
+                        let revived = false;
+                        if (!gameState.player.battleReviveUsed) {
                         for (const slot in gameState.player.equipment) {
                             const item = gameState.player.equipment[slot];
                             if (!item || !item.equipmentAffix) continue;
@@ -6156,10 +6313,11 @@ const REGION_CONSUMABLES = {
                         }
                     }
                     
-                    if (!revived) {
-                        clearInterval(battleInterval);
-                        defeat();
-                        return;
+                        if (!revived) {
+                            clearInterval(battleInterval);
+                            defeat();
+                            return;
+                        }
                     }
                 }
                 
@@ -6511,6 +6669,13 @@ const REGION_CONSUMABLES = {
                 addLog('連勝', `🔥 ${gameState.winStreak}連勝！額外獲得 ${streakBonus} 經驗！`);
             }
             
+            // 檢查雙倍經驗卷buff
+            if (gameState.buffs && gameState.buffs.expBoost) {
+                expReward = expReward * 2;
+                addLog('特殊', `✨ 雙倍經驗卷生效！經驗獲得翻倍！`);
+                delete gameState.buffs.expBoost; // 消耗buff
+            }
+            
             gameState.player.exp += expReward;
             trackExpGain(expReward);
             
@@ -6761,57 +6926,93 @@ const REGION_CONSUMABLES = {
             // 掉落消耗品
             const regionConsumables = REGION_CONSUMABLES[region.name];
             if (regionConsumables) {
+                // 檢查幸運硬幣buff
+                let dropRateMultiplier = 1;
+                if (gameState.buffs && gameState.buffs.luckyBoost) {
+                    dropRateMultiplier = 2;
+                    addLog('特殊', `🍀 幸運硬幣生效！掉落率提升100%！`);
+                    delete gameState.buffs.luckyBoost; // 消耗buff
+                }
+                
                 // HP藥水
-                if (Math.random() < regionConsumables.hp.dropRate) {
+                if (Math.random() < regionConsumables.hp.dropRate * dropRateMultiplier) {
                     const potion = {
                         id: Date.now() + Math.random(),
                         type: 'consumable',
                         subtype: 'hp',
                         name: regionConsumables.hp.name,
-                        recovery: regionConsumables.hp.recovery
+                        recovery: regionConsumables.hp.recovery,
+                        description: `[立即] 恢復${Math.floor(regionConsumables.hp.recovery * 100)}%最大生命值`
                     };
                     const result = addConsumableToInventory(potion);
                     addLog('掉落', `獲得了 ${potion.name}！（總計: ${result.quantity}）`);
                 }
                 
                 // AP藥水
-                if (Math.random() < regionConsumables.ap.dropRate) {
+                if (Math.random() < regionConsumables.ap.dropRate * dropRateMultiplier) {
                     const potion = {
                         id: Date.now() + Math.random(),
                         type: 'consumable',
                         subtype: 'ap',
                         name: regionConsumables.ap.name,
-                        recovery: regionConsumables.ap.recovery
+                        recovery: regionConsumables.ap.recovery,
+                        description: `[立即] 恢復${regionConsumables.ap.recovery}點行動力`
                     };
                     const result = addConsumableToInventory(potion);
                     addLog('掉落', `獲得了 ${potion.name}！（總計: ${result.quantity}）`);
                 }
                 
-                // 屬性卷
-                if (Math.random() < regionConsumables.buff.dropRate) {
-                    const randomEffect = regionConsumables.buff.effects[Math.floor(Math.random() * regionConsumables.buff.effects.length)];
-                    const scroll = {
-                        id: Date.now() + Math.random(),
-                        type: 'consumable',
-                        subtype: 'buff',
-                        name: regionConsumables.buff.name,
-                        effect: randomEffect
-                    };
-                    const result = addConsumableToInventory(scroll);
-                    addLog('掉落', `獲得了 ${scroll.name}（${randomEffect.label}）！（總計: ${result.quantity}）`);
-                }
-                
-                // 經驗卷
-                if (Math.random() < regionConsumables.exp.dropRate) {
+                // 經驗卷軸
+                if (Math.random() < regionConsumables.exp.dropRate * dropRateMultiplier) {
                     const expScroll = {
                         id: Date.now() + Math.random(),
                         type: 'consumable',
                         subtype: 'exp',
                         name: regionConsumables.exp.name,
-                        exp: regionConsumables.exp.exp
+                        exp: regionConsumables.exp.exp,
+                        description: `[立即] 獲得${regionConsumables.exp.exp}點經驗值`
                     };
                     const result = addConsumableToInventory(expScroll);
                     addLog('掉落', `獲得了 ${expScroll.name}！（總計: ${result.quantity}）`);
+                }
+                
+                // 幸運硬幣
+                if (regionConsumables.lucky && Math.random() < regionConsumables.lucky.dropRate * dropRateMultiplier) {
+                    const lucky = {
+                        id: Date.now() + Math.random(),
+                        type: 'consumable',
+                        subtype: 'lucky',
+                        name: regionConsumables.lucky.name,
+                        description: '[一次性] 下次戰鬥掉落率提升100%'
+                    };
+                    const result = addConsumableToInventory(lucky);
+                    addLog('掉落', `獲得了 ${lucky.name}！（總計: ${result.quantity}）`);
+                }
+                
+                // 雙倍經驗卷
+                if (regionConsumables.expBoost && Math.random() < regionConsumables.expBoost.dropRate * dropRateMultiplier) {
+                    const expBoost = {
+                        id: Date.now() + Math.random(),
+                        type: 'consumable',
+                        subtype: 'expBoost',
+                        name: regionConsumables.expBoost.name,
+                        description: '[一次性] 下次戰鬥獲得雙倍經驗'
+                    };
+                    const result = addConsumableToInventory(expBoost);
+                    addLog('掉落', `獲得了 ${expBoost.name}！（總計: ${result.quantity}）`);
+                }
+                
+                // 保護符咒
+                if (regionConsumables.protection && Math.random() < regionConsumables.protection.dropRate * dropRateMultiplier) {
+                    const protection = {
+                        id: Date.now() + Math.random(),
+                        type: 'consumable',
+                        subtype: 'protection',
+                        name: regionConsumables.protection.name,
+                        description: '[一次性] 死亡時保畐50%經驗和金幣'
+                    };
+                    const result = addConsumableToInventory(protection);
+                    addLog('掉落', `獲得了 ${protection.name}！（總計: ${result.quantity}）`);
                 }
             }
             
@@ -8370,6 +8571,12 @@ const REGION_CONSUMABLES = {
             document.getElementById('player-class').textContent = gameState.player.class;
             document.getElementById('player-level').textContent = gameState.player.level;
             
+            // 更新職業被動顯示
+            updateClassBonusDisplay();
+            
+            // 更新技能效果顯示
+            updateSkillEffectDisplay();
+            
             // 目前稱號顯示
             const currentTitleBadge = document.getElementById('current-title-badge');
             const currentTitleName = document.getElementById('current-title-name');
@@ -8614,6 +8821,50 @@ const REGION_CONSUMABLES = {
             
             // 按鈕狀態
 
+        }
+        // 更新職業被動顯示
+        function updateClassBonusDisplay() {
+            const classBonusText = document.getElementById('class-bonus-text');
+            if (!classBonusText) return;
+            
+            const className = gameState.player.class;
+            const classData = CLASSES[className];
+            
+            if (!classData) {
+                classBonusText.textContent = '無';
+                return;
+            }
+            
+            const bonuses = [];
+            if (classData.bonusHp) bonuses.push(`+${classData.bonusHp} HP`);
+            if (classData.bonusAtk) bonuses.push(`+${classData.bonusAtk} ATK`);
+            if (classData.bonusDef) bonuses.push(`+${classData.bonusDef} DEF`);
+            if (classData.bonusCrit) bonuses.push(`+${classData.bonusCrit}% CRIT`);
+            if (classData.bonusCritDmg) bonuses.push(`+${classData.bonusCritDmg}% CRITDMG`);
+            
+            classBonusText.textContent = bonuses.length > 0 ? `每級 ${bonuses.join(', ')}` : '無特殊加成';
+        }
+        
+        // 更新技能效果顯示
+        function updateSkillEffectDisplay() {
+            const skillEffectText = document.getElementById('skill-effect-text');
+            if (!skillEffectText) return;
+            
+            const skillName = gameState.player.skill;
+            
+            if (!skillName) {
+                skillEffectText.textContent = '未選擇技能';
+                return;
+            }
+            
+            const skill = SKILLS[skillName];
+            
+            if (!skill) {
+                skillEffectText.textContent = '未知技能';
+                return;
+            }
+            
+            skillEffectText.textContent = `${skillName}: ${skill.desc}`;
         }
         
         function updateBuffsDisplay() {
@@ -9153,7 +9404,7 @@ const REGION_CONSUMABLES = {
                         return '';
                     }
                     // 更嚴格的消耗品檢查：有subtype或者type是consumable
-                    const isConsumable = item.type === 'consumable' || item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand';
+                    const isConsumable = item.type === 'consumable' || item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || item.subtype === 'starter_pack';
                     
                     if (isConsumable) {
                         // 消耗品
@@ -9166,24 +9417,33 @@ const REGION_CONSUMABLES = {
                             item.id = Date.now() + Math.random();
                         }
                         
-                        let desc = item.desc || ''; // 優先使用道具自帶的描述
+                        // 優先使用 description 屬性，其次是 desc
+                        let desc = item.description || item.desc || '';
                         if (!desc) {
                             // 如果没有描述，根據類型生成
                             if (item.subtype === 'hp') {
-                                desc = `回復${Math.floor(item.recovery * 100)}% HP`;
+                                desc = `[立即] 回復${Math.floor(item.recovery * 100)}% HP`;
+                            } else if (item.subtype === 'hp_percent') {
+                                desc = `[立即] 回復${Math.floor(item.recovery * 100)}%最大HP`;
                             } else if (item.subtype === 'hp_fixed') {
-                                desc = `回復${item.recovery} HP`;
+                                desc = `[立即] 回復${item.recovery} HP`;
                             } else if (item.subtype === 'ap') {
-                                desc = `回復${item.recovery} AP`;
+                                desc = `[立即] 回復${item.recovery} AP`;
                             } else if (item.subtype === 'ap_fixed') {
-                                desc = `恢復${item.recovery} AP`;
+                                desc = `[立即] 恢復${item.recovery} AP`;
                             } else if (item.subtype === 'both_fixed') {
-                                desc = `回復${item.hpRecovery} HP + ${item.apRecovery} AP`;
+                                desc = `[立即] 回復${item.hpRecovery} HP + ${item.apRecovery} AP`;
+                            } else if (item.subtype === 'both_percent') {
+                                desc = `[立即] 回復${Math.floor(item.hpPercent * 100)}%最大HP + ${item.apRecovery} AP`;
+                            } else if (item.subtype === 'hp_regen') {
+                                desc = `[持續${item.duration}戰] 每回合回復${Math.floor(item.regenValue * 100)}%最大HP`;
+                            } else if (item.subtype === 'both_regen') {
+                                desc = `[持續${item.duration}戰] 每回合回復${Math.floor(item.hpRegenValue * 100)}%最大HP + ${item.apRegenValue} AP`;
                         } else if (item.subtype === 'buff') {
                             const effectLabel = item.effect?.label || '屬性加成';
-                            desc = `${effectLabel}（持續10戰）`;
+                            desc = `[持續10戰] ${effectLabel}`;
                             } else if (item.subtype === 'exp') {
-                                desc = `+${item.exp} EXP`;
+                                desc = `[立即] +${item.exp} EXP`;
                             }
                         }
                         
@@ -9252,36 +9512,163 @@ const REGION_CONSUMABLES = {
             document.getElementById('bag-modal').classList.remove('active');
         }
 
+        // 開啟出生禮包
+        function openStarterPack() {
+            const rewards = [];
+            
+            // 1. 生成隨機武器(灰50%/綠35%/藍15%)
+            const weaponRarityRoll = Math.random();
+            let weaponRarity;
+            if (weaponRarityRoll < 0.5) {
+                weaponRarity = RARITIES[0]; // 普通(灰)
+            } else if (weaponRarityRoll < 0.85) {
+                weaponRarity = RARITIES[1]; // 優質(綠)
+            } else {
+                weaponRarity = RARITIES[2]; // 精良(藍)
+            }
+            
+            let weapon = generateItem('normal', weaponRarity.name);
+            if (!weapon || weapon.type !== 'weapon') {
+                // 如果不是武器，重新生成直到獲得武器
+                let attempts = 0;
+                while ((!weapon || weapon.type !== 'weapon') && attempts < 10) {
+                    weapon = generateItem('normal', weaponRarity.name);
+                    attempts++;
+                }
+            }
+            
+            // generateItem 已經會自動根據品階生成詞綴，不需要手動添加
+            
+            gameState.inventory.push(weapon);
+            rewards.push(`⚔️ 武器: <span style="color: ${weaponRarity.color};">[${weaponRarity.label}] ${weapon.name}</span>`);
+            
+            // 2. 生成隨機防具(灰50%/綠35%/藍15%)
+            const armorRarityRoll = Math.random();
+            let armorRarity;
+            if (armorRarityRoll < 0.5) {
+                armorRarity = RARITIES[0]; // 普通(灰)
+            } else if (armorRarityRoll < 0.85) {
+                armorRarity = RARITIES[1]; // 優質(綠)
+            } else {
+                armorRarity = RARITIES[2]; // 精良(藍)
+            }
+            
+            let armor = generateItem('normal', armorRarity.name);
+            if (!armor || armor.type !== 'armor') {
+                // 如果不是防具，重新生成直到獲得防具
+                let attempts = 0;
+                while ((!armor || armor.type !== 'armor') && attempts < 10) {
+                    armor = generateItem('normal', armorRarity.name);
+                    attempts++;
+                }
+            }
+            
+            // generateItem 已經會自動根據品階生成詞綴，不需要手動添加
+            
+            gameState.inventory.push(armor);
+            rewards.push(`🛡️ 防具: <span style="color: ${armorRarity.color};">[${armorRarity.label}] ${armor.name}</span>`);
+            
+            // 3. 隨機選擇1個Common隨從
+            const commonCompanions = Object.keys(COMPANIONS).filter(id => COMPANIONS[id].rarity === 'Common');
+            if (commonCompanions.length > 0) {
+                const randomCompanionId = commonCompanions[Math.floor(Math.random() * commonCompanions.length)];
+                obtainCompanion(randomCompanionId);
+                const companion = COMPANIONS[randomCompanionId];
+                rewards.push(`🐾 隨從: <span style="color: #9e9e9e;">[Common] ${companion.name}</span>`);
+            }
+            
+            // 4. 隨機選擇1個Common卡牌
+            const commonCards = Object.keys(CARDS).filter(id => CARDS[id].rarity === 'Common');
+            if (commonCards.length > 0) {
+                const randomCardId = commonCards[Math.floor(Math.random() * commonCards.length)];
+                getCard(randomCardId);
+                const card = CARDS[randomCardId];
+                rewards.push(`🎴 卡牌: <span style="color: #9e9e9e;">[Common] ${card.name}</span>`);
+            }
+            
+            // 5. 添加30個小型生命藥水
+            gameState.inventory.push({
+                id: Date.now() + Math.random(),
+                type: 'consumable',
+                subtype: 'hp_potion',
+                name: '小型生命藥水',
+                description: '[立即] 回復25%最大HP',
+                recovery: 0.25,
+                quantity: 30
+            });
+            rewards.push(`🧪 小型生命藥水 × 30`);
+            
+            // 6. 添加10個經驗藥水
+            gameState.inventory.push({
+                id: Date.now() + Math.random() + 1,
+                type: 'consumable',
+                subtype: 'exp_scroll',
+                name: '小型經驗卷軸',
+                description: '[立即] 獲得500點經驗值',
+                exp: 500,
+                quantity: 10
+            });
+            rewards.push(`📚 小型經驗卷軸 × 10`);
+            
+            // 顯示獎勵視窗
+            showStarterPackRewards(rewards);
+            
+            // 記錄日誌
+            addLog('系統', '🎁 出生禮包開啟成功！');
+            
+            updateUI();
+            saveGame();
+        }
+        
+        // 顯示出生禮包獎勵視窗
+        function showStarterPackRewards(rewards) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.style.zIndex = '10000';
+            
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <h2 style="text-align: center; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">🎁 出生禮包開啟成功！</h2>
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin: 20px 0;">
+                        <h3 style="color: #00d9ff; text-align: center; margin-bottom: 15px;">獲得物品</h3>
+                        <div style="color: #e0e6ff; line-height: 2; font-size: 1rem;">
+                            ${rewards.map(r => `<div style="padding: 5px 0; border-bottom: 1px solid rgba(0, 217, 255, 0.1);">${r}</div>`).join('')}
+                        </div>
+                    </div>
+                    <button onclick="this.closest('.modal').remove()" style="width: 100%; padding: 15px; font-size: 1.1rem; background: linear-gradient(135deg, #00d9ff 0%, #4EA5FF 100%);">確定</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
         function useConsumable(itemId) {
             const item = gameState.inventory.find(i => i.id == itemId);
             if (!item || item.type !== 'consumable') return;
             
-            if (item.subtype === 'hp') {
-                // HP藥水（百分比） - 檢查冷卻
-                const now = Date.now();
-                if (now < gameState.potionCooldown) {
-                    const remaining = Math.ceil((gameState.potionCooldown - now) / 1000);
-                    addLog('系統', `藥水冷卻中！還需等待 ${remaining} 秒`);
-                    return;
+            if (item.subtype === 'starter_pack') {
+                // 出生禮包
+                openStarterPack();
+                
+                // 移除禮包
+                const index = gameState.inventory.findIndex(i => i.id == itemId);
+                if (index !== -1) {
+                    gameState.inventory.splice(index, 1);
                 }
                 
+                updateUI();
+                saveGame();
+                return;
+                
+            } else if (item.subtype === 'hp') {
+                // HP藥水（百分比） - 無冷卻
                 const healAmount = Math.floor(gameState.player.maxHp * item.recovery);
                 gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
-                gameState.potionCooldown = now + 5000; // 5秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
                 
             } else if (item.subtype === 'hp_fixed') {
-                // HP藥水（固定數值） - 檢查冷卻
-                const now = Date.now();
-                if (now < gameState.potionCooldown) {
-                    const remaining = Math.ceil((gameState.potionCooldown - now) / 1000);
-                    addLog('系統', `藥水冷卻中！還需等待 ${remaining} 秒`);
-                    return;
-                }
-                
+                // HP藥水（固定數值） - 無冷卻
                 const healAmount = item.recovery;
                 gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
-                gameState.potionCooldown = now + 5000; // 5秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
                 
             } else if (item.subtype === 'ap') {
@@ -9311,6 +9698,45 @@ const REGION_CONSUMABLES = {
                 gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + restoreAmount);
                 gameState.potionCooldown = now + 5000; // 5秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} HP 和 ${restoreAmount} AP！`);
+                
+            } else if (item.subtype === 'hp_percent') {
+                // HP藥水（百分比） - 無冷卻
+                const healAmount = Math.floor(gameState.player.maxHp * item.recovery);
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
+                
+            } else if (item.subtype === 'both_percent') {
+                // 組合藥水（百分比HP + 固定AP） - 無冷卻
+                const healAmount = Math.floor(gameState.player.maxHp * item.hpPercent);
+                const restoreAmount = item.apRecovery;
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + restoreAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} HP 和 ${restoreAmount} AP！`);
+                
+            } else if (item.subtype === 'hp_regen') {
+                // 持續HP回復藥水 - 添加buff
+                if (!gameState.player.buffs) gameState.player.buffs = [];
+                gameState.player.buffs.push({
+                    name: item.name,
+                    type: 'hp_regen_potion',
+                    value: item.regenValue,
+                    duration: item.duration
+                });
+                const percent = Math.floor(item.regenValue * 100);
+                addLog('使用', `使用了 ${item.name}！接下來${item.duration}場戰鬥每回合回復${percent}%HP！`);
+                
+            } else if (item.subtype === 'both_regen') {
+                // 持續組合回復藥水 - 添加buff
+                if (!gameState.player.buffs) gameState.player.buffs = [];
+                gameState.player.buffs.push({
+                    name: item.name,
+                    type: 'both_regen_potion',
+                    hpValue: item.hpRegenValue,
+                    apValue: item.apRegenValue,
+                    duration: item.duration
+                });
+                const hpPercent = Math.floor(item.hpRegenValue * 100);
+                addLog('使用', `使用了 ${item.name}！接下來${item.duration}場戰鬥每回合回復${hpPercent}%HP + ${item.apRegenValue}AP！`);
                 
             } else if (item.subtype === 'buff') {
                 // 屬性卷 - 臨時Buff（10場戰鬥）
@@ -9366,6 +9792,25 @@ const REGION_CONSUMABLES = {
                 if (gameState.player.exp >= gameState.player.expToNext) {
                     levelUp();
                 }
+                
+            } else if (item.subtype === 'lucky') {
+                // 幸運硬幣
+                if (!gameState.buffs) gameState.buffs = {};
+                gameState.buffs.luckyBoost = true;
+                addLog('使用', `使用了 ${item.name}！下次戰鬥掉落率提升100%！`);
+                
+            } else if (item.subtype === 'expBoost') {
+                // 雙倍經驗卷
+                if (!gameState.buffs) gameState.buffs = {};
+                gameState.buffs.expBoost = true;
+                addLog('使用', `使用了 ${item.name}！下次戰鬥獲得雙倍經驗！`);
+                
+            } else if (item.subtype === 'protection') {
+                // 保護符咒
+                if (!gameState.buffs) gameState.buffs = {};
+                gameState.buffs.deathProtection = true;
+                addLog('使用', `使用了 ${item.name}！下次死亡時保留50%經驗和金幣！`);
+                
             } else if (item.subType === 'skill_reset') {
                 // 技能重置卷
                 gameState.player.skill = null;
@@ -10601,18 +11046,22 @@ const REGION_CONSUMABLES = {
         function calculateOfflineRewards(offlineTimeMs) {
             const offlineHours = offlineTimeMs / (1000 * 60 * 60);
             
-            // 時間係數（遞減機制）
+            // 時間係數（優化後）
             let timeCoefficient = 1.0;
-            if (offlineHours <= 2) {
-                timeCoefficient = 1.0;
-            } else if (offlineHours <= 6) {
-                timeCoefficient = 0.8;
+            if (offlineHours <= 4) {
+                timeCoefficient = 1.0;      // 100%效率
             } else if (offlineHours <= 12) {
-                timeCoefficient = 0.6;
+                timeCoefficient = 0.9;      // 90%效率
             } else if (offlineHours <= 24) {
-                timeCoefficient = 0.4;
+                timeCoefficient = 0.75;     // 75%效率
+            } else if (offlineHours <= 48) {
+                timeCoefficient = 0.5;      // 50%效率
             } else {
-                timeCoefficient = 0.2;
+                timeCoefficient = 0.3;      // 30%效率（最多72小時）
+                // 限制最多72小時
+                if (offlineHours > 72) {
+                    offlineHours = 72;
+                }
             }
             
             // 獲取當前區域資訊
@@ -10622,18 +11071,23 @@ const REGION_CONSUMABLES = {
             // 計算效率係數（基於裝備和隨從）
             let efficiencyCoefficient = 1.0;
             
-            // 裝備評分加成
+            // 裝備評分加成（根據新裝備點數系統）
             let equipmentScore = 0;
             Object.values(gameState.player.equipment).forEach(item => {
                 if (item) {
                     const rarityScores = {
-                        'Common': 10, 'Fine': 18, 'Rare': 28, 'Epic': 40, 
-                        'Legendary': 52, 'Mythic': 60, 'Set': 45
+                        'Common': 50,      // 入門開發層
+                        'Fine': 90,        // 研發核心層
+                        'Rare': 140,       // 資料裂縫
+                        'Epic': 200,       // 深井臨界層
+                        'Legendary': 300,  // 傳說裝備
+                        'Mythic': 400,     // 神話裝備
+                        'Set': 180
                     };
-                    equipmentScore += rarityScores[item.rarity] || 10;
+                    equipmentScore += rarityScores[item.rarity] || 50;
                 }
             });
-            efficiencyCoefficient += equipmentScore / 1000;
+            efficiencyCoefficient += equipmentScore / 2000;
             
             // 隨從等級加成
             const activeCompanion = getActiveCompanion();
@@ -10656,23 +11110,29 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            // 隨從加成（資源型隨從）
-            if (activeCompanion && activeCompanion.type === 'resource') {
-                bonusCoefficient += 0.1 + (activeCompanion.level * 0.01); // 10% + 1%/級
+            // 隨從加成（優化後）
+            if (activeCompanion) {
+                if (activeCompanion.type === 'resource') {
+                    bonusCoefficient += 0.2 + (activeCompanion.level * 0.02); // 20% + 2%/級
+                } else {
+                    bonusCoefficient += 0.1 + (activeCompanion.level * 0.01); // 10% + 1%/級
+                }
             }
             
-            // 基礎收益計算
-            const baseGoldPerHour = (10 + playerLevel * 2) * region.reward * 10;
-            const baseExpPerHour = (20 + playerLevel * 5) * region.reward * 10;
+            // 基礎收益計算（根據新平衡數值）
+            // 金幣: 每小時擊敥20隻怪物，平均掉落 level * 4.5
+            const baseGoldPerHour = playerLevel * 90;
+            // 經驗: 每小時擊敥20隻怪物，平均經驗 (level * 2 + 10)
+            const baseExpPerHour = (playerLevel * 2 + 10) * 20;
             
             // 計算總收益（應用所有係數）
             const goldReward = Math.floor(baseGoldPerHour * offlineHours * timeCoefficient * efficiencyCoefficient * bonusCoefficient);
             const expReward = Math.floor(baseExpPerHour * offlineHours * timeCoefficient * efficiencyCoefficient * bonusCoefficient);
             
-            // 計算裝備掉落（每4小時1件）
+            // 計算裝備掉落（每3小時1件，優化後）
             const itemDrops = [];
-            const dropCount = Math.floor(offlineHours / 4);
-            const maxDrops = Math.min(dropCount, 5); // 最多保存5件
+            const dropCount = Math.floor(offlineHours / 3);
+            const maxDrops = Math.min(dropCount, 8); // 最多保存8件
             
             for (let i = 0; i < maxDrops; i++) {
                 const item = generateOfflineItem();
@@ -10724,14 +11184,38 @@ const REGION_CONSUMABLES = {
         
         // 生成離線裝備掉落
         function generateOfflineItem() {
-            // 品質分布：Common 50%, Fine 30%, Rare 15%, Epic 4%, Legendary 1%
+            // 根據玩家等級調整品質分布
+            const playerLevel = gameState.player.level;
             const rand = Math.random();
             let rarity;
-            if (rand < 0.50) rarity = 'Common';
-            else if (rand < 0.80) rarity = 'Fine';
-            else if (rand < 0.95) rarity = 'Rare';
-            else if (rand < 0.99) rarity = 'Epic';
-            else rarity = 'Legendary';
+            
+            if (playerLevel < 25) {
+                // 1-25級: Common 60%, Fine 30%, Rare 10%
+                if (rand < 0.60) rarity = 'Common';
+                else if (rand < 0.90) rarity = 'Fine';
+                else rarity = 'Rare';
+            } else if (playerLevel < 50) {
+                // 26-50級: Common 40%, Fine 35%, Rare 20%, Epic 5%
+                if (rand < 0.40) rarity = 'Common';
+                else if (rand < 0.75) rarity = 'Fine';
+                else if (rand < 0.95) rarity = 'Rare';
+                else rarity = 'Epic';
+            } else if (playerLevel < 75) {
+                // 51-75級: Common 20%, Fine 30%, Rare 35%, Epic 13%, Legendary 2%
+                if (rand < 0.20) rarity = 'Common';
+                else if (rand < 0.50) rarity = 'Fine';
+                else if (rand < 0.85) rarity = 'Rare';
+                else if (rand < 0.98) rarity = 'Epic';
+                else rarity = 'Legendary';
+            } else {
+                // 76-100級: Common 10%, Fine 20%, Rare 35%, Epic 25%, Legendary 9%, Mythic 1%
+                if (rand < 0.10) rarity = 'Common';
+                else if (rand < 0.30) rarity = 'Fine';
+                else if (rand < 0.65) rarity = 'Rare';
+                else if (rand < 0.90) rarity = 'Epic';
+                else if (rand < 0.99) rarity = 'Legendary';
+                else rarity = 'Mythic';
+            }
             
             // 隨機選擇裝備類型
             const types = ['weapon', 'armor', 'ring', 'necklace'];
@@ -10788,44 +11272,91 @@ const REGION_CONSUMABLES = {
         function generateOfflineConsumables(offlineHours, region) {
             const consumables = [];
             
-            // 根據離線時間計算掉落數量
-            const baseDropsPerHour = 2;
-            const totalDrops = Math.floor(offlineHours * baseDropsPerHour);
-            const maxDrops = Math.min(totalDrops, 20); // 最多20個
+            // 每2小時進行一次消耗品掉落檢查（優化後）
+            const consumableChecks = Math.floor(offlineHours / 2);
+            const maxChecks = Math.min(consumableChecks, 24); // 最多24次
             
-            for (let i = 0; i < maxDrops; i++) {
-                const rand = Math.random();
-                let consumable;
-                
-                if (rand < 0.4) {
-                    // 40% HP藥水
-                    consumable = generateConsumable('hp_potion', region);
-                } else if (rand < 0.7) {
-                    // 30% AP藥水
-                    consumable = generateConsumable('ap_potion', region);
-                } else if (rand < 0.9) {
-                    // 20% 屬性卷
-                    const scrollTypes = ['atk_scroll', 'def_scroll', 'crit_scroll'];
-                    const scrollType = scrollTypes[Math.floor(Math.random() * scrollTypes.length)];
-                    consumable = generateConsumable(scrollType, region);
-                } else {
-                    // 10% 經驗卷
-                    consumable = generateConsumable('exp_scroll', region);
+            const regionConsumables = REGION_CONSUMABLES[region.name];
+            if (!regionConsumables) return consumables;
+            
+            for (let i = 0; i < maxChecks; i++) {
+                // HP藥水
+                if (Math.random() < regionConsumables.hp.dropRate) {
+                    addOfflineConsumable(consumables, {
+                        type: 'consumable',
+                        subtype: 'hp',
+                        name: regionConsumables.hp.name,
+                        recovery: regionConsumables.hp.recovery,
+                        description: `[立即] 恢復${Math.floor(regionConsumables.hp.recovery * 100)}%最大生命值`
+                    });
                 }
                 
-                if (consumable) {
-                    // 檢查是否已有相同消耗品
-                    const existing = consumables.find(c => c.id === consumable.id);
-                    if (existing) {
-                        existing.quantity = (existing.quantity || 1) + 1;
-                    } else {
-                        consumable.quantity = 1;
-                        consumables.push(consumable);
-                    }
+                // AP藥水
+                if (Math.random() < regionConsumables.ap.dropRate) {
+                    addOfflineConsumable(consumables, {
+                        type: 'consumable',
+                        subtype: 'ap',
+                        name: regionConsumables.ap.name,
+                        recovery: regionConsumables.ap.recovery,
+                        description: `[立即] 恢復${regionConsumables.ap.recovery}點行動力`
+                    });
+                }
+                
+                // 經驗卷軸
+                if (Math.random() < regionConsumables.exp.dropRate) {
+                    addOfflineConsumable(consumables, {
+                        type: 'consumable',
+                        subtype: 'exp',
+                        name: regionConsumables.exp.name,
+                        exp: regionConsumables.exp.exp,
+                        description: `[立即] 獲得${regionConsumables.exp.exp}點經驗值`
+                    });
+                }
+                
+                // 幸運硬幣
+                if (regionConsumables.lucky && Math.random() < regionConsumables.lucky.dropRate) {
+                    addOfflineConsumable(consumables, {
+                        type: 'consumable',
+                        subtype: 'lucky',
+                        name: regionConsumables.lucky.name,
+                        description: '[一次性] 下次戰鬥掉落率提升100%'
+                    });
+                }
+                
+                // 雙倍經驗卷
+                if (regionConsumables.expBoost && Math.random() < regionConsumables.expBoost.dropRate) {
+                    addOfflineConsumable(consumables, {
+                        type: 'consumable',
+                        subtype: 'expBoost',
+                        name: regionConsumables.expBoost.name,
+                        description: '[一次性] 下次戰鬥獲得雙倍經驗'
+                    });
+                }
+                
+                // 保護符咒
+                if (regionConsumables.protection && Math.random() < regionConsumables.protection.dropRate) {
+                    addOfflineConsumable(consumables, {
+                        type: 'consumable',
+                        subtype: 'protection',
+                        name: regionConsumables.protection.name,
+                        description: '[一次性] 死亡時保畐50%經驗和金幣'
+                    });
                 }
             }
             
             return consumables;
+        }
+        
+        // 添加離線消耗品到列表（自動堆疊）
+        function addOfflineConsumable(consumables, newItem) {
+            const existing = consumables.find(c => c.name === newItem.name && c.subtype === newItem.subtype);
+            if (existing) {
+                existing.quantity = (existing.quantity || 1) + 1;
+            } else {
+                newItem.id = Date.now() + Math.random();
+                newItem.quantity = 1;
+                consumables.push(newItem);
+            }
         }
         
         // 生成消耗品（輔助函數）
@@ -11524,18 +12055,27 @@ const REGION_CONSUMABLES = {
         
         function renderGeneralRecoveryShop() {
             const items = [
-                { name: '小型生命藥水', desc: '回復50 HP', price: 20, type: 'hp', value: 50 },
-                { name: '中型生命藥水', desc: '回復100 HP', price: 40, type: 'hp', value: 100 },
-                { name: '大型生命藥水', desc: '回復200 HP', price: 70, type: 'hp', value: 200 },
-                { name: '超級生命藥水', desc: '回復300 HP', price: 120, type: 'hp', value: 300 },
-                { name: '能量飲料', desc: '恢復3 AP', price: 50, type: 'ap', value: 3 },
-                { name: '美味便當', desc: '回復200 HP + 3 AP', price: 100, type: 'both', hp: 200, ap: 3 }
+                // HP百分比回復藥水
+                { name: '小型生命藥水', desc: '[立即] 回复25%最大HP', price: 25, type: 'hp_percent', value: 0.25, icon: '🧪' },
+                { name: '中型生命藥水', desc: '[立即] 回复40%最大HP', price: 45, type: 'hp_percent', value: 0.40, icon: '🧪' },
+                { name: '大型生命藥水', desc: '[立即] 回复60%最大HP', price: 75, type: 'hp_percent', value: 0.60, icon: '🧪' },
+                { name: '完全恢復藥水', desc: '[立即] 回复100%最大HP', price: 150, type: 'hp_percent', value: 1.00, icon: '✨' },
+                // AP固定回復藥水
+                { name: '小型能量藥水', desc: '[立即] 恢復5 AP', price: 30, type: 'ap_fixed', value: 5, icon: '⚡' },
+                { name: '中型能量藥水', desc: '[立即] 恢復10 AP', price: 55, type: 'ap_fixed', value: 10, icon: '⚡' },
+                { name: '大型能量藥水', desc: '[立即] 恢復20 AP', price: 100, type: 'ap_fixed', value: 20, icon: '⚡' },
+                // 組合藥水
+                { name: '戰鬥補給包', desc: '[立即] 回复50%最大HP + 10 AP', price: 110, type: 'both_percent', hpPercent: 0.50, ap: 10, icon: '🎁' },
+                { name: '完全補給包', desc: '[立即] 回复100%最大HP + 20 AP', price: 220, type: 'both_percent', hpPercent: 1.00, ap: 20, icon: '🎁' },
+                // 持續回復藥水
+                { name: '再生藥劑', desc: '[持續5戰] 每回合回復5%最大HP', price: 80, type: 'hp_regen', value: 0.05, duration: 5, icon: '💚' },
+                { name: '活力藥劑', desc: '[持續3戰] 每回合回復10%最大HP + 2 AP', price: 120, type: 'both_regen', hpValue: 0.10, apValue: 2, duration: 3, icon: '💚' }
             ];
             
             return items.map(item => `
                 <div style="padding: 12px; margin: 8px 0; background: rgba(0, 217, 255, 0.05); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-weight: bold; color: #4CAF50;">🧪 ${item.name}</div>
+                        <div style="font-weight: bold; color: #4CAF50;">${item.icon || '🧪'} ${item.name}</div>
                         <div style="font-size: 0.85rem; color: #7a8fb8;">${item.desc}</div>
                     </div>
                     <button onclick='buyGeneralItem(${JSON.stringify(item)})' style="padding: 8px 16px;">💰 ${item.price}</button>
@@ -11545,16 +12085,18 @@ const REGION_CONSUMABLES = {
         
         function renderGeneralBattleShop() {
             const items = [
-                { name: '逃脫繩', desc: '立即逃離當前戰鬥', price: 30, type: 'escape' },
-                { name: '傳送石', desc: '傳送回區域起點', price: 15, type: 'teleport' },
-                { name: '探測器', desc: '顯示下一個敵人類型', price: 50, type: 'detect' },
-                { name: '修復工具', desc: '修復裝備耐久度（未來功能）', price: 80, type: 'repair' }
+                { name: '煙霧彈', desc: '[持續1戰] 敵人攻擊力-25%', price: 45, type: 'smoke_bomb', value: 0.25, duration: 1, icon: '💨' },
+                { name: '強化藥水', desc: '[持續3戰] 攻擊+15%、防禦+15%', price: 65, type: 'power_potion', duration: 3, icon: '💪' },
+                { name: '偵查卷軸', desc: '[使用3次] 顯示敵人詳細資訊(HP/ATK/DEF/掉落率)', price: 50, type: 'scout_scroll', value: 3, icon: '🔍' },
+                { name: '經驗藥水', desc: '[持續3戰] 經驗獲得+40%', price: 55, type: 'exp_potion', value: 0.4, duration: 3, icon: '📚' },
+                { name: '幸運藥水', desc: '[持續3戰] 掉落率+35%', price: 60, type: 'luck_potion', value: 0.35, duration: 3, icon: '🍀' },
+                { name: '狂戰藥劑', desc: '[持續5戰] 攻擊+25%、防禦-10%', price: 70, type: 'berserk_potion', duration: 5, icon: '🔥' }
             ];
             
             return items.map(item => `
                 <div style="padding: 12px; margin: 8px 0; background: rgba(0, 217, 255, 0.05); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-weight: bold; color: #FF9800;">🎲 ${item.name}</div>
+                        <div style="font-weight: bold; color: #FF9800;">${item.icon || '🎲'} ${item.name}</div>
                         <div style="font-size: 0.85rem; color: #7a8fb8;">${item.desc}</div>
                     </div>
                     <button onclick='buyGeneralItem(${JSON.stringify(item)})' style="padding: 8px 16px;">💰 ${item.price}</button>
@@ -11564,13 +12106,12 @@ const REGION_CONSUMABLES = {
         
         function renderGeneralOtherShop() {
             const items = [
-                { name: '小型經驗書', desc: '獲得100經驗', price: 40, type: 'exp', value: 100 },
-                { name: '幸運符', desc: '下一場戰鬥掉落率+30%', price: 60, type: 'luck_once', value: 0.3 },
-                { name: '攻擊卷軸', desc: '下一場戰鬥攻擊+20%', price: 50, type: 'atk_once', value: 0.2 },
-                { name: '防禦卷軸', desc: '下一場戰鬥防禦+20%', price: 50, type: 'def_once', value: 0.2 },
-                { name: '背包擴充券', desc: '永久增加背包 +5 格（最多10次）', price: 120, type: 'bag_expand', value: 5, maxPurchase: 10 },
-                { name: '體力藥水', desc: '立即回復 10 點體力', price: 80, type: 'ap_potion', value: 10 },
-                { name: '重置石', desc: '重置所有每日任務（每日1次）', price: 150, type: 'reset_daily', maxPurchase: 1, resetDaily: true }
+                { name: '背包擴充券', desc: '[永久] 永久增加背包 +5 格(最多10次)', price: 120, type: 'bag_expand', value: 5, maxPurchase: 10, icon: '🎒' },
+                { name: '體力藥水', desc: '[立即] 立即回復 10 點體力', price: 80, type: 'ap_potion', value: 10, icon: '⚡' },
+                { name: '重置石', desc: '[每日1次] 重置所有每日任務', price: 150, type: 'reset_daily', maxPurchase: 1, resetDaily: true, icon: '🔄' },
+                { name: '生命結晶', desc: '[永久] 永久增加最大HP +50', price: 100, type: 'hp_crystal', value: 50, icon: '💖' },
+                { name: '護身符', desc: '[一次性] 受到致命傷時保留1HP', price: 110, type: 'guardian_charm', value: 1, icon: '🛡️' },
+                { name: '祝福藥水', desc: '[持續5戰] 所有屬性+8%', price: 85, type: 'blessing_potion', duration: 5, icon: '✨' }
             ];
             
             return items.map(item => `
@@ -11945,39 +12486,119 @@ const REGION_CONSUMABLES = {
                     gameState.stats.items++;
                     addLog('商店', `購買了 ${item.name}，已添加到背包！`);
                     break;
-                case 'exp':
-                    gameState.player.exp += item.value;
-                    addLog('商店', `購買了 ${item.name}，獲得了 ${item.value} 經驗！`);
-                    if (gameState.player.exp >= gameState.player.expToNext) {
-                        levelUp();
-                    }
+                case 'hp_percent':
+                    // 百分比HP藥水
+                    const hpPercentPotion = {
+                        id: Date.now() + Math.random(),
+                        name: item.name,
+                        type: 'consumable',
+                        subtype: 'hp_percent',
+                        recovery: item.value,
+                        description: item.desc,
+                        color: '#4CAF50'
+                    };
+                    addConsumableToInventory(hpPercentPotion);
+                    gameState.stats.items++;
+                    addLog('商店', `購買了 ${item.name}，已添加到背包！`);
                     break;
-                case 'luck_once':
+                case 'both_percent':
+                    // 百分比組合藥水
+                    const bothPercentPotion = {
+                        id: Date.now() + Math.random(),
+                        name: item.name,
+                        type: 'consumable',
+                        subtype: 'both_percent',
+                        hpPercent: item.hpPercent,
+                        apRecovery: item.ap,
+                        description: item.desc,
+                        color: '#FF9800'
+                    };
+                    addConsumableToInventory(bothPercentPotion);
+                    gameState.stats.items++;
+                    addLog('商店', `購買了 ${item.name}，已添加到背包！`);
+                    break;
+                case 'hp_regen':
+                    // 持續HP回復藥水
+                    const hpRegenPotion = {
+                        id: Date.now() + Math.random(),
+                        name: item.name,
+                        type: 'consumable',
+                        subtype: 'hp_regen',
+                        regenValue: item.value,
+                        duration: item.duration,
+                        description: item.desc,
+                        color: '#4CAF50'
+                    };
+                    addConsumableToInventory(hpRegenPotion);
+                    gameState.stats.items++;
+                    addLog('商店', `購買了 ${item.name}，已添加到背包！`);
+                    break;
+                case 'both_regen':
+                    // 持續組合回復藥水
+                    const bothRegenPotion = {
+                        id: Date.now() + Math.random(),
+                        name: item.name,
+                        type: 'consumable',
+                        subtype: 'both_regen',
+                        hpRegenValue: item.hpValue,
+                        apRegenValue: item.apValue,
+                        duration: item.duration,
+                        description: item.desc,
+                        color: '#FF9800'
+                    };
+                    addConsumableToInventory(bothRegenPotion);
+                    gameState.stats.items++;
+                    addLog('商店', `購買了 ${item.name}，已添加到背包！`);
+                    break;
+                case 'hp_crystal':
+                    gameState.player.maxHp += item.value;
+                    gameState.player.hp += item.value; // 同時回復增加的HP
+                    addLog('商店', `購買了 ${item.name}，最大HP永久 +${item.value}！當前最大HP：${gameState.player.maxHp}`);
+                    updateUI();
+                    break;
+                case 'guardian_charm':
                     if (!gameState.player.buffs) gameState.player.buffs = [];
-                    gameState.player.buffs.push({ name: '幸運符', type: 'drop', value: item.value, duration: 1 });
-                    addLog('商店', `購買了 ${item.name}，下一場戰鬥掉落率+30%！`);
+                    gameState.player.buffs.push({ name: '護身符', type: 'guardian', value: item.value, duration: 999 });
+                    addLog('商店', `購買了 ${item.name}，獲得致命傷保護！`);
                     break;
-                case 'atk_once':
+                case 'blessing_potion':
                     if (!gameState.player.buffs) gameState.player.buffs = [];
-                    gameState.player.buffs.push({ name: '攻擊卷軸', type: 'atk', value: item.value, duration: 1 });
-                    addLog('商店', `購買了 ${item.name}，下一場戰鬥攻擊+20%！`);
+                    gameState.player.buffs.push({ name: '祝福(攻擊)', type: 'atk', value: 0.08, duration: item.duration });
+                    gameState.player.buffs.push({ name: '祝福(防禦)', type: 'def', value: 0.08, duration: item.duration });
+                    gameState.player.buffs.push({ name: '祝福(爆擊)', type: 'crit', value: 8, duration: item.duration });
+                    addLog('商店', `購買了 ${item.name}，獲得全屬性+8% (持續${item.duration}戰)！`);
                     break;
-                case 'def_once':
+                case 'smoke_bomb':
                     if (!gameState.player.buffs) gameState.player.buffs = [];
-                    gameState.player.buffs.push({ name: '防禦卷軸', type: 'def', value: item.value, duration: 1 });
-                    addLog('商店', `購買了 ${item.name}，下一場戰鬥防禦+20%！`);
+                    gameState.player.buffs.push({ name: '煙霧彈', type: 'enemy_atk_debuff', value: item.value, duration: item.duration });
+                    addLog('商店', `購買了 ${item.name}，下次戰鬥敵人攻擊力-25%！`);
                     break;
-                case 'escape':
-                    addLog('商店', `購買了 ${item.name}，可以在戰鬥中使用（未來功能）！`);
+                case 'power_potion':
+                    if (!gameState.player.buffs) gameState.player.buffs = [];
+                    gameState.player.buffs.push({ name: '強化(攻擊)', type: 'atk', value: 0.15, duration: item.duration });
+                    gameState.player.buffs.push({ name: '強化(防禦)', type: 'def', value: 0.15, duration: item.duration });
+                    addLog('商店', `購買了 ${item.name}，攻擊+15%、防禦+15% (持續${item.duration}戰)！`);
                     break;
-                case 'teleport':
-                    addLog('商店', `購買了 ${item.name}，可以傳送回起點（未來功能）！`);
+                case 'scout_scroll':
+                    if (!gameState.scoutInfo) gameState.scoutInfo = {};
+                    gameState.scoutInfo.remaining = item.value;
+                    addLog('商店', `購買了 ${item.name}，接下來${item.value}場戰鬥可查看敵人詳細資訊！`);
                     break;
-                case 'detect':
-                    addLog('商店', `購買了 ${item.name}，可以探測敵人（未來功能）！`);
+                case 'exp_potion':
+                    if (!gameState.player.buffs) gameState.player.buffs = [];
+                    gameState.player.buffs.push({ name: '經驗藥水', type: 'exp', value: item.value, duration: item.duration });
+                    addLog('商店', `購買了 ${item.name}，經驗獲得+40% (持續${item.duration}戰)！`);
                     break;
-                case 'repair':
-                    addLog('商店', `購買了 ${item.name}，可以修復裝備（未來功能）！`);
+                case 'luck_potion':
+                    if (!gameState.player.buffs) gameState.player.buffs = [];
+                    gameState.player.buffs.push({ name: '幸運藥水', type: 'drop', value: item.value, duration: item.duration });
+                    addLog('商店', `購買了 ${item.name}，掉落率+35% (持續${item.duration}戰)！`);
+                    break;
+                case 'berserk_potion':
+                    if (!gameState.player.buffs) gameState.player.buffs = [];
+                    gameState.player.buffs.push({ name: '狂戰(攻擊)', type: 'atk', value: 0.25, duration: item.duration });
+                    gameState.player.buffs.push({ name: '狂戰(副作用)', type: 'def', value: -0.1, duration: item.duration });
+                    addLog('商店', `購買了 ${item.name}，攻擊+25%、防禦-10% (持續${item.duration}戰)！`);
                     break;
                 case 'bag_expand':
                     // 直接增加 maxInventory

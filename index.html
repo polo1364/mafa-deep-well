@@ -1407,7 +1407,7 @@
                     <h4 style="color: #00d9ff; margin-top: 20px;">🎴 卡牌系統</h4>
                     <div style="background: rgba(156, 39, 176, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(156, 39, 176, 0.3); margin: 15px 0;">
                         <p style="color: #7a8fb8;">擊敗敵人有機率掉落<strong style="color: #9c27b0;">卡牌</strong>,裝備後提供永久被動加成。</p>
-                        <p style="color: #7a8fb8; margin-top: 10px;">你可以同時裝備<strong style="color: #00d9ff;">3張卡牌</strong>,組成你的套牌。</p>
+                        <p style="color: #7a8fb8; margin-top: 10px;">你可以同時裝備<strong style="color: #00d9ff;">2張卡牌</strong>,組成你的套牌。</p>
                         <p style="color: #7a8fb8; margin-top: 10px;">卡牌可以使用<strong style="color: #9c27b0;">碎片</strong>升級,提升效果。</p>
                         <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 裝備同系列的卡牌可以觸發<strong style="color: #ffd700;">套牌效果</strong>!</p>
                     </div>
@@ -2636,25 +2636,7 @@ const TITLES_DATA = {
         bonus: { atk: 10, def: 10, hp: 10 }
     },
     
-    // v2.0 遷移特殊稱號
-    'v2_beta_tester': {
-        name: '🌟 v2.0 體驗者',
-        desc: '參與 v2.0 迭代優化測試',
-        howToGet: '使用舊版本存檔載入 v2.0 版本，系統會自動遷移並解鎖此稱號（所有等級）',
-        category: 'special',
-        rarity: 'rare',
-        condition: { type: 'migration', value: 'v2_iteration_optimized' },
-        bonus: { expBonus: 3, goldBonus: 3 }
-    },
-    'pioneer': {
-        name: '🏆 先驅者',
-        desc: '早期玩家，見證遊戲成長',
-        howToGet: '使用 Lv.15+ 的舊版本存檔載入 v2.0 版本，系統會自動遷移並解鎖此稱號',
-        category: 'special',
-        rarity: 'epic',
-        condition: { type: 'migration', value: 'v2_pioneer' },
-        bonus: { atk: 3, def: 3, hp: 3, expBonus: 5 }
-    },
+    // v2.0 遷移稱號已移除
     'iteration_vanguard': {
         name: '⚡ 迭代先鋒',
         desc: '高等級早期玩家，迭代系統先驅',
@@ -4033,23 +4015,7 @@ const REGION_CONSUMABLES = {
                     totalCardsUpgraded: 0,  // 總升級次數
                     deckEffectsTriggered: 0  // 套牌效果觸發次數
                 }
-            },
-            tutorial: {
-                enabled: true,              // 是否啟用教學
-                completed: false,           // 是否完成所有教學
-                steps: {
-                    characterCreation: false,
-                    firstBattle: false,
-                    firstEquipment: false,
-                    inventoryManagement: false,
-                    firstBoss: false,
-                    shop: false,
-                    cardSystem: false,
-                    levelUp: false,
-                    dailyQuests: false
-                },
-                battleCount: 0,            // 戰鬥次數計數
-                equipmentCount: 0          // 獲得裝備次數計數
+                // tutorial 系統已移除equipmentCount: 0          // 獲得裝備次數計數
             }
         };
         // 迭代天賦系統
@@ -4280,10 +4246,7 @@ const REGION_CONSUMABLES = {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('character-creation').style.display = 'block';
             
-            // 觸發角色創建教學
-            if (gameState.tutorial && gameState.tutorial.enabled && !gameState.tutorial.steps.characterCreation) {
-                setTimeout(() => triggerCharacterCreationTutorial(), 500);
-            }
+            // 教學系統已移除
         }
 
         function backToMenu() {
@@ -4601,7 +4564,7 @@ const REGION_CONSUMABLES = {
             // 獲取所有HP藥水（支持百分比和固定值）
             const hpPotions = gameState.inventory.filter(item => 
                 item.type === 'consumable' && 
-                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed') &&
+                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || item.subtype === 'hp_potion') &&
                 (item.quantity || 1) > 0
             );
             
@@ -4618,7 +4581,7 @@ const REGION_CONSUMABLES = {
                 // 計算每個藥水的回復量
                 const potionsWithHeal = hpPotions.map(p => {
                     let healAmount = 0;
-                    if (p.subtype === 'hp_percent' || p.subtype === 'hp') {
+                    if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
                         healAmount = Math.floor(gameState.player.maxHp * p.recovery);
                     } else if (p.subtype === 'hp_fixed') {
                         healAmount = p.recovery;
@@ -4641,7 +4604,7 @@ const REGION_CONSUMABLES = {
                 // 優先小瓶：選擇回復量最小的
                 const potionsWithHeal = hpPotions.map(p => {
                     let healAmount = 0;
-                    if (p.subtype === 'hp_percent' || p.subtype === 'hp') {
+                    if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
                         healAmount = Math.floor(gameState.player.maxHp * p.recovery);
                     } else if (p.subtype === 'hp_fixed') {
                         healAmount = p.recovery;
@@ -4654,7 +4617,7 @@ const REGION_CONSUMABLES = {
                 // 優先最佳：選擇回復量最高的
                 const potionsWithHeal = hpPotions.map(p => {
                     let healAmount = 0;
-                    if (p.subtype === 'hp_percent' || p.subtype === 'hp') {
+                    if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
                         healAmount = Math.floor(gameState.player.maxHp * p.recovery);
                     } else if (p.subtype === 'hp_fixed') {
                         healAmount = p.recovery;
@@ -4668,7 +4631,7 @@ const REGION_CONSUMABLES = {
             
             // 計算回復量
             let healAmount = 0;
-            if (potion.subtype === 'hp_percent' || potion.subtype === 'hp') {
+            if (potion.subtype === 'hp_percent' || potion.subtype === 'hp' || potion.subtype === 'hp_potion') {
                 healAmount = Math.floor(gameState.player.maxHp * potion.recovery);
             } else if (potion.subtype === 'hp_fixed') {
                 healAmount = potion.recovery;
@@ -5846,50 +5809,7 @@ const REGION_CONSUMABLES = {
         }
 
         function battle(enemy) {
-            // 觸發第一場戰鬥教學
-            if (gameState.tutorial && gameState.tutorial.enabled && !gameState.tutorial.steps.firstBattle && gameState.tutorial.battleCount === 0) {
-                // 暫停自動戰鬥
-                if (gameState.autoExplore) {
-                    const wasAutoExploring = true;
-                    gameState.autoExplore = false;
-                    if (gameState.autoExploreInterval) {
-                        clearTimeout(gameState.autoExploreInterval);
-                    }
-                    // 教學完成後恢復自動戰鬥
-                    triggerFirstBattleTutorial(() => {
-                        if (wasAutoExploring) {
-                            gameState.autoExplore = true;
-                            autoExploreLoop();
-                        }
-                    });
-                } else {
-                    triggerFirstBattleTutorial();
-                }
-                return; // 暫停戰鬥，等待玩家確認
-            }
-            
-            // 觸發Boss戰教學
-            if (enemy.isBoss && gameState.tutorial && gameState.tutorial.enabled && !gameState.tutorial.steps.firstBoss) {
-                // 暫停自動戰鬥
-                if (gameState.autoExplore) {
-                    const wasAutoExploring = true;
-                    gameState.autoExplore = false;
-                    if (gameState.autoExploreInterval) {
-                        clearTimeout(gameState.autoExploreInterval);
-                    }
-                    // 教學完成後恢復自動戰鬥並繼續戰鬥
-                    triggerFirstBossTutorial(() => {
-                        battle(enemy);
-                        if (wasAutoExploring) {
-                            gameState.autoExplore = true;
-                            autoExploreLoop();
-                        }
-                    });
-                } else {
-                    triggerFirstBossTutorial(() => battle(enemy));
-                }
-                return; // 暫停戰鬥，等待玩家確認
-            }
+            // 教學系統已移除
             
             // 設定戰鬥進行中標記
             isBattleInProgress = true;
@@ -6772,13 +6692,7 @@ const REGION_CONSUMABLES = {
                         }
                         addLog('掉落', `獲得了 ${item.name}！`);
                         
-                        // 教學：裝備計數和觸發
-                        if (gameState.tutorial) {
-                            gameState.tutorial.equipmentCount++;
-                            if (!gameState.tutorial.steps.firstEquipment && gameState.tutorial.equipmentCount === 1) {
-                                setTimeout(() => triggerFirstEquipmentTutorial(), 1000);
-                            }
-                        }
+                        // 教學系統已移除
                     }
                 }
             }
@@ -7100,16 +7014,7 @@ const REGION_CONSUMABLES = {
                 levelUp();
             }
             
-            // 教學：戰鬥計數
-            if (gameState.tutorial) {
-                gameState.tutorial.battleCount++;
-                
-                // 觸發Boss戰獎勵
-                if (enemy.isBoss && !gameState.tutorial.steps.firstBoss) {
-                    gameState.player.gold += 200;
-                    addLog('🎁', '完成Boss戰教學，獲得 200 金幣', 'reward');
-                }
-            }
+            // 教學系統已移除
             
             // Boss重置進度
             if (enemy.isBoss) {
@@ -7235,15 +7140,7 @@ const REGION_CONSUMABLES = {
             // 檢查稱號解鎖
             checkTitleUnlocks();
             
-            // 教學：升級教學
-            if (gameState.tutorial && gameState.tutorial.enabled && !gameState.tutorial.steps.levelUp && gameState.player.level === 2) {
-                setTimeout(() => triggerLevelUpTutorial(), 1000);
-            }
-            
-            // 教學：每日任務教學
-            if (gameState.tutorial && gameState.tutorial.enabled && !gameState.tutorial.steps.dailyQuests && gameState.player.level === 5) {
-                setTimeout(() => triggerDailyQuestsTutorial(), 1000);
-            }
+            // 教學系統已移除
             
             updateUI();
             
@@ -9404,7 +9301,7 @@ const REGION_CONSUMABLES = {
                         return '';
                     }
                     // 更嚴格的消耗品檢查：有subtype或者type是consumable
-                    const isConsumable = item.type === 'consumable' || item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || item.subtype === 'starter_pack';
+                    const isConsumable = item.type === 'consumable' || item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || item.subtype === 'starter_pack' || item.subtype === 'hp_potion' || item.subtype === 'exp_scroll' || item.subtype === 'hp_percent' || item.subtype === 'both_percent' || item.subtype === 'hp_regen' || item.subtype === 'both_regen' || item.subtype === 'ap_potion';
                     
                     if (isConsumable) {
                         // 消耗品
@@ -9782,6 +9679,22 @@ const REGION_CONSUMABLES = {
                 
                 // 重新計算屬性（因為Buff改變了）
                 recalculateStats();
+                
+            } else if (item.subtype === 'hp_potion') {
+                // HP藥水（百分比） - 無冷卻
+                const healAmount = Math.floor(gameState.player.maxHp * item.recovery);
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
+                
+            } else if (item.subtype === 'exp_scroll') {
+                // 經驗卷軸
+                gameState.player.exp += item.exp;
+                addLog('使用', `使用了 ${item.name}，獲得了 ${item.exp} 點經驗！`);
+                
+                // 檢查升級
+                if (gameState.player.exp >= gameState.player.expToNext) {
+                    levelUp();
+                }
                 
             } else if (item.subtype === 'exp') {
                 // 經驗卷
@@ -14438,469 +14351,6 @@ const REGION_CONSUMABLES = {
             return `${typeNames[condition.type] || condition.type}：${condition.value}`;
         }
 
-        // ========== 新手教學系統 ==========
-        
-        // 教學對話框組件
-        function showTutorial(title, content, options = {}) {
-            // 檢查教學是否啟用
-            if (!gameState.tutorial.enabled) {
-                return;
-            }
-            
-            // 檢查是否已完成該教學
-            if (options.stepId && gameState.tutorial.steps[options.stepId]) {
-                return;
-            }
-            
-            // 創建遮罩層
-            const overlay = document.createElement('div');
-            overlay.id = 'tutorial-overlay';
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                z-index: 9999;
-                backdrop-filter: blur(3px);
-            `;
-            document.body.appendChild(overlay);
-            
-            // 創建對話框
-            
-            const dialog = document.createElement('div');
-            dialog.id = 'tutorial-dialog';
-            dialog.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: linear-gradient(135deg, rgba(10, 25, 47, 0.98) 0%, rgba(15, 35, 65, 0.98) 100%);
-                border: 2px solid #00d9ff;
-                border-radius: 15px;
-                padding: 30px;
-                max-width: 500px;
-                width: 90%;
-                z-index: 10000;
-                box-shadow: 0 0 30px rgba(0, 217, 255, 0.5), inset 0 0 20px rgba(0, 217, 255, 0.1);
-                animation: tutorialFadeIn 0.3s ease-out;
-            `;
-            
-            // 添加動畫
-            if (!document.getElementById('tutorial-styles')) {
-                const style = document.createElement('style');
-                style.id = 'tutorial-styles';
-                style.textContent = `
-                    @keyframes tutorialFadeIn {
-                        from {
-                            opacity: 0;
-                            transform: translate(-50%, -60%);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translate(-50%, -50%);
-                        }
-                    }
-                    
-                    .tutorial-button {
-                        padding: 10px 20px;
-                        border: none;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-size: 1rem;
-                        transition: all 0.3s;
-                    }
-                    
-                    .tutorial-button:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 5px 15px rgba(0, 217, 255, 0.3);
-                    }
-                    
-                    .tutorial-button-primary {
-                        background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
-                        color: #0a192f;
-                        font-weight: bold;
-                    }
-                    
-                    .tutorial-button-secondary {
-                        background: rgba(122, 143, 184, 0.2);
-                        color: #7a8fb8;
-                        border: 1px solid rgba(122, 143, 184, 0.5);
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            dialog.innerHTML = `
-                <h2 style="color: #00d9ff; margin-bottom: 20px; font-size: 1.5rem; text-align: center;">
-                    ${title}
-                </h2>
-                <div style="color: #7a8fb8; line-height: 1.8; white-space: pre-line; margin-bottom: 25px; font-size: 0.95rem;">
-                    ${content}
-                </div>
-                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                    ${options.showSkip ? '<button id="tutorial-skip" class="tutorial-button tutorial-button-secondary">跳過所有教學</button>' : ''}
-                    ${options.showLater ? '<button id="tutorial-later" class="tutorial-button tutorial-button-secondary">稍後再看</button>' : ''}
-                    <button id="tutorial-continue" class="tutorial-button tutorial-button-primary">
-                        ${options.buttonText || '我知道了'}
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(overlay);
-            document.body.appendChild(dialog);
-            
-            // 綁定繼續按鈕事件
-            document.getElementById('tutorial-continue').onclick = () => {
-                if (options.stepId) {
-                    gameState.tutorial.steps[options.stepId] = true;
-                }
-                document.body.removeChild(overlay);
-                document.body.removeChild(dialog);
-                if (options.onComplete) {
-                    options.onComplete();
-                }
-                saveGame();
-                
-                // 檢查是否完成所有教學
-                checkTutorialCompletion();
-            };
-            
-            // 綁定跳過按鈕事件
-            if (options.showSkip) {
-                document.getElementById('tutorial-skip').onclick = () => {
-                    gameState.tutorial.enabled = false;
-                    document.body.removeChild(overlay);
-                    document.body.removeChild(dialog);
-                    addLog('📚 已跳過所有教學', 'system');
-                    saveGame();
-                };
-            }
-            
-            // 綁定稍後按鈕事件
-            if (options.showLater) {
-                document.getElementById('tutorial-later').onclick = () => {
-                    document.body.removeChild(overlay);
-                    document.body.removeChild(dialog);
-                };
-            }
-        }
-        
-        // 檢查教學完成狀態
-        function checkTutorialCompletion() {
-            const steps = gameState.tutorial.steps;
-            const allCompleted = Object.values(steps).every(completed => completed);
-            
-            if (allCompleted && !gameState.tutorial.completed) {
-                gameState.tutorial.completed = true;
-                showTutorialCompletionReward();
-            }
-        }
-        
-        // 教學完成獎勵
-        function showTutorialCompletionReward() {
-            const rewards = {
-                gold: 1000,
-                shards: 90
-            };
-            
-            // 發放獎勵
-            gameState.player.gold += rewards.gold;
-            gameState.player.shards += rewards.shards;
-            
-            // 生成稀有裝備
-            const equipment = generateEquipment(gameState.player.level, 'Rare');
-            gameState.inventory.push(equipment);
-            gameState.stats.items++;
-            
-            // 更新任務進度：獲得裝備
-            updateQuestProgress('collect_equipment', 1);
-            updateQuestProgress('collect_rare', 1);
-            
-            // 添加隨機卡牌（如果卡牌系統存在）
-            if (gameState.cards && gameState.cards.collection) {
-                const cards = ['blade', 'warrior', 'shield', 'vitality', 'precision', 'greed', 'wisdom', 'counter'];
-                const randomCard = cards[Math.floor(Math.random() * cards.length)];
-                if (!gameState.cards.collection.includes(randomCard)) {
-                    gameState.cards.collection.push(randomCard);
-                }
-            }
-            
-            showTutorial(
-                '🎉 教學完成！',
-                `恭喜！你已經掌握了遊戲的基本玩法！
-
-你已學會：
-✅ 戰鬥系統
-✅ 裝備管理
-✅ Boss戰略略
-✅ 商店購物
-✅ 卡牌系統
-✅ 屬性成長
-✅ 每日任務
-
-🎁 新手獎勵已發放：
-- 金幣 ×${rewards.gold}
-- 碎片 ×${rewards.shards}
-- 稀有裝備 ×1
-- 隨機卡牌 ×1
-
-繼續探索伺服器深井的秘密吧！`,
-                {
-                    buttonText: '開始冒險',
-                    onComplete: () => {
-                        addLog('🎁 獲得新手獎勵！', 'reward');
-                        updateUI();
-                        saveGame();
-                    }
-                }
-            );
-        }
-        
-        // 階段1：角色創建引導
-        function triggerCharacterCreationTutorial() {
-            showTutorial(
-                '🎮 歡迎來到伺服器深井！',
-                `選擇一個職業開始你的冒險
-
-不同職業有不同的屬性和升級加成：
-- 🛡️ 坦克型：高生命、高防禦（運維工程師、雲端架構師）
-- ⚔️ 攻擊型：高攻擊、高暴擊（暴力測試員、滿透工程師）
-- ⚖️ 均衡型：屬性平衡（系統架構師、數據科學家）
-
-💡 新手推薦：
-- 想要穩定生存 → 運維工程師
-- 想要高輸出 → 暴力測試員`,
-                {
-                    stepId: 'characterCreation',
-                    showSkip: true,
-                    buttonText: '開始選擇'
-                }
-            );
-        }
-        
-        // 階段2：第一場戰鬥教學
-        function triggerFirstBattleTutorial(callback) {
-            showTutorial(
-                '⚔️ 戰鬥教學',
-                `戰鬥是回合制的：
-1. 你先攻擊敵人
-2. 敵人反擊
-3. 重複直到一方生命歸零
-
-💡 小提示：
-- 💥 暴擊會造成額外傷害（黃色數字）
-- 🛡️ 防禦力會減少受到的傷害
-- 💚 吸血可以回復生命值
-
-點擊「開始戰鬥」繼續`,
-                {
-                    stepId: 'firstBattle',
-                    showLater: true,
-                    buttonText: '開始戰鬥',
-                    onComplete: () => {
-                        gameState.player.gold += 50;
-                        addLog('🎁 完成教學，獲得 50 金幣', 'reward');
-                        updateUI();
-                        if (callback) callback();
-                    }
-                }
-            );
-        }
-        
-        // 階段3：裝備系統教學
-        function triggerFirstEquipmentTutorial() {
-            showTutorial(
-                '🎒 裝備教學',
-                `恭喜！你獲得了第一件裝備！
-
-裝備有不同品質：
-灰色（普通）< 藍色（精良）< 紫色（稀有）< 橙色（史詩）< 金色（傳說）
-
-💡 如何使用裝備：
-1. 點擊「背包」查看裝備
-2. 點擊裝備查看屬性
-3. 點擊「裝備」按鈕穿上裝備
-
-提示：裝備後你的屬性會大幅提升！`,
-                {
-                    stepId: 'firstEquipment',
-                    buttonText: '了解了',
-                    onComplete: () => {
-                        gameState.player.gold += 100;
-                        addLog('🎁 完成教學，獲得 100 金幣', 'reward');
-                        updateUI();
-                    }
-                }
-            );
-        }
-        
-        // 階段4：背包管理教學
-        function triggerInventoryManagementTutorial() {
-            showTutorial(
-                '🎒 背包管理教學',
-                `你的背包開始累積裝備了！
-
-💡 裝備管理技巧：
-1. 對比裝備：查看新裝備是否比當前裝備更好
-2. 分解裝備：將不需要的裝備分解成碎片
-3. 碎片用途：用於重鑄裝備屬性
-
-提示：
-- 普通（灰色）裝備可以直接分解
-- 保留高品質裝備（藍色以上）`,
-                {
-                    stepId: 'inventoryManagement',
-                    buttonText: '了解了',
-                    onComplete: () => {
-                        gameState.player.gold += 50;
-                        addLog('👑 完成教學，獲得 50 金幣', 'reward');
-                        updateUI();
-                    }
-                }
-            );
-        }
-        
-        // 階段5：Boss戰教學
-        function triggerFirstBossTutorial(callback) {
-            showTutorial(
-                '👑 Boss戰教學',
-                `你即將面對第一個Boss！
-
-Boss特點：
-- 生命值更高
-- 可能帶有特殊詞綴（如「狂暴」、「再生」）
-- 獎勱3倍金幣和經驗
-- 必定掉落1件裝備
-
-💡 戰鬥策略：
-- 確保生命值充足（建議80%以上）
-- 如果生命不足，使用血瓶回復
-- Boss詞綴會在戰鬥日誌中顯示
-
-準備好了嗎？`,
-                {
-                    stepId: 'firstBoss',
-                    showLater: true,
-                    buttonText: '開始挑戰',
-                    onComplete: () => {
-                        if (callback) callback();
-                    }
-                }
-            );
-        }
-        
-        // 階段6：商店系統教學
-        function triggerShopTutorial() {
-            showTutorial(
-                '🏪 商店教學',
-                `商店可以購買補給和道具：
-
-📦 補給品：
-- 小血瓶（30金）：回復30%生命
-- 中血瓶（60金）：回復50%生命
-- 體力藥水（100金）：回復20點體力
-
-💡 購買建議：
-- 保持2-3個血瓶備用
-- 體力不足時可購買體力藥水
-- 優先購買性價比高的小血瓶
-
-提示：金幣來自戰鬥獎勵和每日任務`,
-                {
-                    stepId: 'shop',
-                    buttonText: '開始購物'
-                }
-            );
-        }
-        
-        // 階段7：卡牌系統教學
-        function triggerCardSystemTutorial() {
-            showTutorial(
-                '🎴 卡牌系統教學',
-                `卡牌可以提供強大的被動加成！
-
-卡牌類型：
-- 攻擊型：刀刃、戰士、精準
-- 防禦型：守護、生命
-- 資源型：貪婪（金幣+25%）、智慧（經驗+35%）
-- 特殊型：反擊
-
-💡 使用方法：
-1. 點擊「卡牌」查看已獲得的卡牌
-2. 點擊卡牌查看效果
-3. 點擊「裝備」使用卡牌（只能裝備2張）
-
-提示：根據職業選擇合適的卡牌
-- 攻擊職業 → 攻擊型卡牌
-- 坦克職業 → 防禦型卡牌
-- 練級階段 → 智慧套牌`,
-                {
-                    stepId: 'cardSystem',
-                    buttonText: '了解了',
-                    onComplete: () => {
-                        gameState.player.gold += 100;
-                        addLog('🎁 完成教學，獲得 100 金幣', 'reward');
-                        updateUI();
-                    }
-                }
-            );
-        }
-        
-        // 階段8：升級教學
-        function triggerLevelUpTutorial() {
-            showTutorial(
-                '⬆️ 升級教學',
-                `恭喜升級！你變得更強了！
-
-升級獲得：
-- 生命值全滿
-- 屬性提升（根據職業）
-- 解鎖新功能（特定等級）
-
-💡 屬性說明：
-- 攻擊力：影響造成的傷害
-- 防禦力：減少受到的傷害
-- 生命值：你的血量
-- 暴擊率：觸發暴擊的機率
-- 暴擊傷害：暴擊時的傷害倍率
-
-查看「角色」面板了解你的屬性`,
-                {
-                    stepId: 'levelUp',
-                    buttonText: '查看屬性'
-                }
-            );
-        }
-        
-        // 階段9：每日任務教學
-        function triggerDailyQuestsTutorial() {
-            showTutorial(
-                '📋 每日任務教學',
-                `每日任務可以獲得豐厚獎勵！
-
-任務類型：
-- 戰鬥類：擊敗X個敵人
-- 收集類：獲得X件裝備
-- 成長類：達到X等級
-
-💡 獎勵：
-- 金幣：100-800金
-- 碎片：2-10碎片
-- 經驗：額外經驗值
-
-提示：
-- 每天刷新3個任務
-- 優先完成高獎勵任務
-- 任務會自動追蹤進度`,
-                {
-                    stepId: 'dailyQuests',
-                    buttonText: '查看任務'
-                }
-            );
-        }
-
         // ========== 存檔系統 ==========
         function saveGame() {
             try {
@@ -15101,165 +14551,14 @@ Boss特點：
                 loadedState.player.goldBonus = 0;
             }
             
-            // 確保教學系統存在（v1.3.0+）
-            if (!loadedState.tutorial) {
-                loadedState.tutorial = {
-                    enabled: true,
-                    completed: false,
-                    steps: {
-                        characterCreation: false,
-                        firstBattle: false,
-                        firstEquipment: false,
-                        inventoryManagement: false,
-                        firstBoss: false,
-                        shop: false,
-                        cardSystem: false,
-                        levelUp: false,
-                        dailyQuests: false
-                    },
-                    battleCount: 0,
-                    equipmentCount: 0
-                };
-            }
-            // 確保教學系統子屬性存在
-            if (loadedState.tutorial.enabled === undefined) loadedState.tutorial.enabled = true;
-            if (loadedState.tutorial.completed === undefined) loadedState.tutorial.completed = false;
-            if (!loadedState.tutorial.steps) {
-                loadedState.tutorial.steps = {
-                    characterCreation: false,
-                    firstBattle: false,
-                    firstEquipment: false,
-                    inventoryManagement: false,
-                    firstBoss: false,
-                    shop: false,
-                    cardSystem: false,
-                    levelUp: false,
-                    dailyQuests: false
-                };
-            }
-            if (loadedState.tutorial.battleCount === undefined) loadedState.tutorial.battleCount = 0;
-            if (loadedState.tutorial.equipmentCount === undefined) loadedState.tutorial.equipmentCount = 0;
+            // 教學系統已移除
             
             // ========== 經驗值優化遷移和補償系統 (v2.0) ==========
             if (!loadedState.migration) {
                 loadedState.migration = {};
             }
             
-            // 檢查是否已經進行過 v2.0 迭代優化遷移
-            if (!loadedState.migration.v2_iteration_optimized) {
-                console.log('檢測到舊存檔，開始經驗值優化遷移...');
-                
-                const currentLevel = loadedState.player.level || 1;
-                
-                // 計算補償（所有等級玩家都獲得補償）
-                let expCompensation = 0;
-                let shardsCompensation = 0;
-                let goldCompensation = 0;
-                let specialRewards = [];
-                
-                // 基礎補償（所有玩家）
-                if (currentLevel >= 1) {
-                    expCompensation = 10000;  // 基礎經驗補償
-                    shardsCompensation = 50;   // 基礎碎片補償
-                    goldCompensation = 5000;   // 基礎金幣補償
-                    specialRewards.push('v2_beta_tester');
-                }
-                
-                // 額外補償（根據等級）
-                if (currentLevel >= 10) {
-                    expCompensation = 30000;
-                    shardsCompensation = 80;
-                    goldCompensation = 8000;
-                }
-                
-                if (currentLevel >= 15) {
-                    expCompensation = 50000;
-                    shardsCompensation = 100;
-                    goldCompensation = 10000;
-                    specialRewards.push('pioneer');
-                }
-                
-                if (currentLevel >= 20) {
-                    expCompensation = 100000;
-                    shardsCompensation = 200;
-                    goldCompensation = 20000;
-                }
-                
-                if (currentLevel >= 30) {
-                    expCompensation = 200000;
-                    shardsCompensation = 500;
-                    goldCompensation = 50000;
-                }
-                
-                if (currentLevel >= 40) {
-                    expCompensation = 500000;
-                    shardsCompensation = 1000;
-                    goldCompensation = 100000;
-                }
-                
-                if (currentLevel >= 50) {
-                    expCompensation = 1000000;
-                    shardsCompensation = 2000;
-                    goldCompensation = 200000;
-                    specialRewards.push('iteration_vanguard');
-                }
-                
-                // 應用補償
-                if (expCompensation > 0) {
-                    loadedState.player.exp += expCompensation;
-                }
-                
-                if (shardsCompensation > 0) {
-                    loadedState.player.shards = (loadedState.player.shards || 0) + shardsCompensation;
-                }
-                
-                if (goldCompensation > 0) {
-                    loadedState.player.gold += goldCompensation;
-                }
-                
-                // 解鎖稱號
-                if (!loadedState.titles) {
-                    loadedState.titles = {
-                        unlocked: [],
-                        equipped: null,
-                        progress: {}
-                    };
-                }
-                if (!loadedState.titles.unlocked) {
-                    loadedState.titles.unlocked = [];
-                }
-                
-                specialRewards.forEach(titleId => {
-                    if (!loadedState.titles.unlocked.includes(titleId)) {
-                        loadedState.titles.unlocked.push(titleId);
-                    }
-                });
-                
-                // 調整 expToNext 到新系統
-                let newExpToNext = 100;
-                for (let i = 1; i < currentLevel; i++) {
-                    if (i <= 20) {
-                        newExpToNext = newExpToNext * 1.15;
-                    } else if (i <= 40) {
-                        newExpToNext = newExpToNext * 1.08;
-                    } else {
-                        newExpToNext = newExpToNext * 1.04;
-                    }
-                }
-                loadedState.player.expToNext = Math.floor(newExpToNext);
-                
-                // 記錄遷移信息
-                loadedState.migration.v2_iteration_optimized = true;
-                loadedState.migration.migrationDate = new Date().toISOString();
-                loadedState.migration.compensations = {
-                    exp: expCompensation,
-                    shards: shardsCompensation,
-                    gold: goldCompensation,
-                    specialRewards: specialRewards
-                };
-                
-                console.log('遷移完成！補償內容：', loadedState.migration.compensations);
-            }
+            // v2.0 遷移代碼已移除
             
             return loadedState;
         }
@@ -15354,26 +14653,7 @@ Boss特點：
                     };
                 }
                 
-                // 確保教學系統存在（舊存檔相容）
-                if (!gameState.tutorial) {
-                    gameState.tutorial = {
-                        enabled: true,
-                        completed: false,
-                        steps: {
-                            characterCreation: false,
-                            firstBattle: false,
-                            firstEquipment: false,
-                            inventoryManagement: false,
-                            firstBoss: false,
-                            shop: false,
-                            cardSystem: false,
-                            levelUp: false,
-                            dailyQuests: false
-                        },
-                        battleCount: 0,
-                        equipmentCount: 0
-                    };
-                }
+                // 教學系統已移除
                 
                 // 應用天賦加成
                 applyTalentBonusesOnLoad();
@@ -15382,55 +14662,7 @@ Boss特點：
                 updateEquipmentSlots(); // 更新裝備顯示
                 addLog('系統', '遊戲已讀取！歡迎回來，' + gameState.player.name + '！');
                 
-                // 顯示遷移通知
-                if (gameState.migration && gameState.migration.v2_iteration_optimized && gameState.migration.compensations) {
-                    const comp = gameState.migration.compensations;
-                    
-                    // 只在首次遷移時顯示（檢查是否有補償內容）
-                    if (comp.exp > 0 || comp.shards > 0 || comp.gold > 0) {
-                        setTimeout(() => {
-                            addLog('系統', '🎉 檢測到舊版本存檔，已自動遷移到 v2.0 迭代優化版本！');
-                            
-                            if (comp.exp > 0) {
-                                addLog('系統', `📈 經驗補償：+${comp.exp.toLocaleString()} EXP`);
-                            }
-                            if (comp.shards > 0) {
-                                addLog('系統', `💎 碎片補償：+${comp.shards} 碎片`);
-                            }
-                            if (comp.gold > 0) {
-                                addLog('系統', `💰 金幣補償：+${comp.gold.toLocaleString()} 金幣`);
-                            }
-                            if (comp.specialRewards && comp.specialRewards.length > 0) {
-                                comp.specialRewards.forEach(titleId => {
-                                    const titleData = TITLES_DATA[titleId];
-                                    if (titleData) {
-                                        addLog('系統', `🏆 特殊獎勵：${titleData.name} 稱號`);
-                                    }
-                                });
-                            }
-                            
-                            addLog('系統', '✨ v2.0 優化：升級速度大幅提升，迭代系統現已可用！');
-                            addLog('系統', '🔄 達到 Lv.100 後即可進行迭代，開啟全新玩法！');
-                            
-                            // 檢查是否可以升級
-                            while (gameState.player.exp >= gameState.player.expToNext) {
-                                levelUp();
-                            }
-                            
-                            updateUI();
-                            
-                            // 清除補償內容，避免重複顯示
-                            gameState.migration.compensations = {
-                                exp: 0,
-                                shards: 0,
-                                gold: 0,
-                                specialRewards: []
-                            };
-                            
-                            saveGame();
-                        }, 1500);
-                    }
-                }
+                // v2.0 遷移通知代碼已移除
                 
                 // 檢查離線收益
                 checkOfflineRewards();

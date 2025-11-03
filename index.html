@@ -7717,15 +7717,15 @@ const REGION_CONSUMABLES = {
                     if (regionLoot.accessories) lootPools.push(...regionLoot.accessories);
                     
                     const lootItem = lootPools[Math.floor(Math.random() * lootPools.length)];
-                    // 使用權重選擇的稀有度
+                    // 使用權重選擇的稀有度（支持大小寫）
                     const rarityIndex = {
-                        'Common': 0,
-                        'Uncommon': 1,
-                        'Fine': 2,
-                        'Rare': 3,
-                        'Epic': 4,
-                        'Legendary': 5,
-                        'Mythic': 6
+                        'Common': 0, 'common': 0,
+                        'Uncommon': 1, 'uncommon': 1,
+                        'Fine': 2, 'fine': 2,
+                        'Rare': 3, 'rare': 3,
+                        'Epic': 4, 'epic': 4,
+                        'Legendary': 5, 'legendary': 5,
+                        'Mythic': 6, 'mythic': 6
                     }[selectedRarity] || 0;
                     const rarity = RARITIES[rarityIndex];
                     
@@ -11262,9 +11262,12 @@ const REGION_CONSUMABLES = {
             if (success) {
                 // 強化成功
                 item.enhance++;
-                addLog('強化', `✨ 強化成功！${item.name} +${item.enhance}`);
+                addLog('強化', `✨ 強化成功!${item.name} +${item.enhance}`);
                 
-                // 如果裝備已裝備，重新計算屬性
+                // 更新任務進度
+                updateQuestProgress('enhance', 1);
+                
+                // 如果裝備已裝備,重新計算屬性
                 if (isEquipped(item)) {
                     recalculateStats();
                 }
@@ -11373,7 +11376,10 @@ const REGION_CONSUMABLES = {
             item.hpRegen = Math.random() < 0.15 ? Math.random() * 3 : 0;
             item.expBonus = Math.random() < 0.15 ? Math.random() * 20 : 0;
             
-            addLog('重鐄', `🔄 重鐄完成！${item.name} 的屬性已重新隨機`);
+            addLog('重鍋', `🔄 重鍋完成！${item.name} 的屬性已重新隨機`);
+            
+            // 更新任務進度
+            updateQuestProgress('reforge', 1);
             
             // 如果裝備已裝備，重新計算屬性
             if (isEquipped(item)) {
@@ -15611,7 +15617,10 @@ function challengeDungeon(dungeonId, difficulty) {
 
 // 開始副本戰鬥
 function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
-    const enemy = { ...difficultyData.enemy };
+    const enemy = { 
+        ...difficultyData.enemy,
+        level: gameState.player.level  // 添加怪物等級
+    };
     const battleStartTime = Date.now();
     
     // 關閉副本界面
@@ -15828,27 +15837,14 @@ function applyDungeonRewards(rewards) {
 
 // 根據稀有度生成裝備
 function generateEquipmentByRarity(rarity) {
-    // 使用generateItem生成裝備
+    // 使用generateItem生成裝備，傳入小寫的稀有度名稱
     const item = generateItem('normal', rarity);
     
-    // 強制設置稀有度
-    item.rarity = rarity;
-    
-    // 根據稀有度調整屬性
-    const rarityMultipliers = {
-        'common': 1.0,
-        'rare': 1.5,
-        'epic': 2.0,
-        'legendary': 3.0
-    };
-    
-    const multiplier = rarityMultipliers[rarity] || 1.0;
-    
-    // 調整基礎屬性
-    for (const key in item) {
-        if (typeof item[key] === 'number' && key !== 'level' && key !== 'enhanceLevel') {
-            item[key] = Math.floor(item[key] * multiplier);
-        }
+    // 確保稀有度正確設置
+    if (item) {
+        // generateItem 已經正確處理稀有度，不需要额外調整
+        // 只需確保 rarity 字段是小寫格式
+        item.rarity = rarity.toLowerCase();
     }
     
     return item;

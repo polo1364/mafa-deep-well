@@ -983,7 +983,6 @@
                         <!-- 遊戲操作 -->
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             <button onclick="toggleAutoExplore()" id="auto-explore-btn" style="flex: 1; min-width: 120px;">▶️ 自動戰鬥</button>
-                            <button onclick="rest()" style="flex: 1; min-width: 120px;">💤 休息 (30💰, -2AP)</button>
                         </div>
                         
                         <!-- 其他功能 -->
@@ -995,6 +994,10 @@
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             <button onclick="openRegionModal()" style="flex: 1; min-width: 90px;">🗺️ 切換區域</button>
                             <button onclick="openDungeonsModal()" style="flex: 1; min-width: 90px;">🏰 副本</button>
+                        </div>
+                        
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button onclick="openEndlessModal()" style="flex: 1; min-width: 90px; background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);">🗼 無盡挑戰</button>
                         </div>
                         
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -1836,6 +1839,75 @@
             </div>
         </div>
     </div>
+<!-- MANUS-EDIT-START: 添加無盡模式UI -->
+
+<!-- 無盡模式模態視窗 -->
+<div class="modal" id="endless-mode-modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <h2>🗼 無盡挑戰塔</h2>
+        
+        <!-- 解鎖提示 -->
+        <div id="endless-locked-hint" style="display: none; background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.4); margin-bottom: 15px; text-align: center;">
+            <p style="color: #ff9800; margin: 0;">🔒 需要達到 Lv.30 才能解鎖無盡模式</p>
+        </div>
+        
+        <!-- 統計信息 -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+            <div style="background: rgba(0, 217, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3); text-align: center;">
+                <div style="color: #7a8fb8; font-size: 0.9rem; margin-bottom: 5px;">歷史最高層數</div>
+                <div id="endless-highest-floor" style="color: #00d9ff; font-size: 1.8rem; font-weight: bold;">0</div>
+            </div>
+            <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); text-align: center;">
+                <div style="color: #7a8fb8; font-size: 0.9rem; margin-bottom: 5px;">平均通關層數</div>
+                <div id="endless-average-floor" style="color: #ffd700; font-size: 1.8rem; font-weight: bold;">0</div>
+            </div>
+        </div>
+        
+        <!-- 當前狀態 -->
+        <div id="endless-current-status" style="background: rgba(156, 39, 176, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(156, 39, 176, 0.3); margin-bottom: 15px;">
+            <h3 style="color: #9c27b0; margin: 0 0 10px 0;">📊 當前狀態</h3>
+            <div style="color: #7a8fb8; line-height: 1.8;">
+                <div>檢查點: 第 <span id="endless-checkpoint" style="color: #00d9ff;">1</span> 層</div>
+                <div>永久Buff數量: <span id="endless-buff-count" style="color: #00ff88;">0</span></div>
+                <div>總挑戰次數: <span id="endless-total-runs" style="color: #ffd700;">0</span></div>
+            </div>
+        </div>
+        
+        <!-- Buff列表 -->
+        <div id="endless-buffs-display" style="background: rgba(0, 255, 136, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.3); margin-bottom: 15px; display: none;">
+            <h3 style="color: #00ff88; margin: 0 0 10px 0;">✨ 當前永久Buff</h3>
+            <div id="endless-buffs-list" style="color: #7a8fb8; line-height: 1.8;">
+                <!-- 動態生成 -->
+            </div>
+        </div>
+        
+        <!-- 說明 -->
+        <div style="background: rgba(122, 143, 184, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(122, 143, 184, 0.3); margin-bottom: 15px;">
+            <h3 style="color: #7a8fb8; margin: 0 0 10px 0;">📖 規則說明</h3>
+            <ul style="color: #888; font-size: 0.9rem; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li>每層敵人屬性 +5%, HP額外 +3%</li>
+                <li>每10層有一個Boss (屬性×1.3, HP×2.5)</li>
+                <li>每10層設置檢查點,死亡可從檢查點繼續</li>
+                <li>每20層選擇一個永久Buff,可疊加</li>
+                <li>每50層獲得特殊獎勵(史詩裝備/碎片/金幣)</li>
+                <li>消耗 10 AP 開始挑戰</li>
+            </ul>
+        </div>
+        
+        <!-- 按鈕 -->
+        <div style="display: flex; gap: 10px;">
+            <button id="endless-start-btn" onclick="startEndlessMode(false)" style="flex: 1; background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%); padding: 12px; font-size: 1.1rem;">
+                🚀 開始挑戰 (10 AP)
+            </button>
+            <button id="endless-continue-btn" onclick="startEndlessMode(true)" style="flex: 1; background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%); padding: 12px; font-size: 1.1rem; display: none;">
+                📍 從檢查點繼續
+            </button>
+            <button onclick="closeEndlessModal()" style="flex: 0.5;">關閉</button>
+        </div>
+    </div>
+</div>
+
+<!-- MANUS-EDIT-END -->
 
     <!-- 隨從管理模態視窗 -->
     <div class="modal" id="companion-modal">
@@ -1927,7 +1999,133 @@
         // 迭代天賦系統
 // 每日任務和稱號系統
 
-        const ITERATION_TALENTS = {};
+        const ITERATION_TALENTS = {
+            combat: {
+                name: '⚔️ 戰鬥天賦',
+                talents: {
+                    power: {
+                        name: '力量強化',
+                        desc: '永久提升攻擊力',
+                        maxLevel: 5,
+                        cost: [1, 2, 3, 4, 5],
+                        effect: (level) => ({ atk: level * 3 })
+                    },
+                    critical: {
+                        name: '暴擊精通',
+                        desc: '永久提升暴擊率',
+                        maxLevel: 5,
+                        cost: [1, 2, 3, 4, 5],
+                        effect: (level) => ({ crit: level * 2 })
+                    },
+                    critDamage: {
+                        name: '致命一擊',
+                        desc: '永久提升暴擊傷害',
+                        maxLevel: 5,
+                        cost: [2, 3, 4, 5, 6],
+                        effect: (level) => ({ critDmg: level * 5 })
+                    },
+                    bossDamage: {
+                        name: 'Boss獵手',
+                        desc: '對Boss造成額外傷害',
+                        maxLevel: 3,
+                        cost: [3, 5, 7],
+                        effect: (level) => ({ bossDmg: level * 5 })
+                    },
+                    lifeSteal: {
+                        name: '生命汲取',
+                        desc: '永久提升吸血',
+                        maxLevel: 3,
+                        cost: [2, 4, 6],
+                        effect: (level) => ({ lifeSteal: level * 2 })
+                    }
+                }
+            },
+            defense: {
+                name: '🛡️ 防禦天賦',
+                talents: {
+                    vitality: {
+                        name: '生命強化',
+                        desc: '永久提升生命值',
+                        maxLevel: 5,
+                        cost: [1, 2, 3, 4, 5],
+                        effect: (level) => ({ hp: level * 5 })
+                    },
+                    armor: {
+                        name: '裝甲精通',
+                        desc: '永久提升防禦力',
+                        maxLevel: 5,
+                        cost: [1, 2, 3, 4, 5],
+                        effect: (level) => ({ def: level * 3 })
+                    },
+                    damageReduction: {
+                        name: '傷害減免',
+                        desc: '永久提升傷害減免',
+                        maxLevel: 3,
+                        cost: [2, 4, 6],
+                        effect: (level) => ({ dmgRed: level * 2 })
+                    },
+                    maxAP: {
+                        name: '體力大師',
+                        desc: '永久提升最大體力',
+                        maxLevel: 3,
+                        cost: [3, 5, 7],
+                        effect: (level) => ({ maxAp: level * 5 })
+                    }
+                }
+            },
+            resource: {
+                name: '💰 資源天賦',
+                talents: {
+                    goldBonus: {
+                        name: '點金術',
+                        desc: '永久提升金幣獲得',
+                        maxLevel: 5,
+                        cost: [1, 2, 3, 4, 5],
+                        effect: (level) => ({ goldBonus: level * 5 })
+                    },
+                    expBonus: {
+                        name: '快速成長',
+                        desc: '永久提升經驗獲得',
+                        maxLevel: 5,
+                        cost: [1, 2, 3, 4, 5],
+                        effect: (level) => ({ expBonus: level * 5 })
+                    },
+                    dropBonus: {
+                        name: '寶物獲得者',
+                        desc: '永久提升掉落率',
+                        maxLevel: 3,
+                        cost: [2, 4, 6],
+                        effect: (level) => ({ dropBonus: level * 3 })
+                    },
+                    shardBonus: {
+                        name: '碎片大師',
+                        desc: '永久提升碎片獲得',
+                        maxLevel: 3,
+                        cost: [3, 5, 7],
+                        effect: (level) => ({ shardBonus: level * 5 })
+                    },
+                    startGold: {
+                        name: '起始資金',
+                        desc: '迭代後起始金幣',
+                        maxLevel: 3,
+                        cost: [2, 4, 6],
+                        effect: (level) => ({ startGold: level * 500 })
+                    }
+                }
+            },
+            special: {
+                name: '✨ 特殊天賦',
+                talents: {
+                    bagSize: {
+                        name: '空間擴展',
+                        desc: '永久提升背包容量',
+                        maxLevel: 3,
+                        cost: [3, 5, 7],
+                        effect: (level) => ({ bagSize: level * 5 })
+                    }
+                }
+            }
+        };
         
         // 每日任務定義
         const DAILY_QUEST_POOL = [
@@ -4015,7 +4213,21 @@ const REGION_CONSUMABLES = {
                     totalCardsUpgraded: 0,  // 總升級次數
                     deckEffectsTriggered: 0  // 套牌效果觸發次數
                 }
-                // tutorial 系統已移除equipmentCount: 0          // 獲得裝備次數計數
+            },
+            endlessMode: {
+                unlocked: false,           // 是否解鎖(Lv.30)
+                active: false,             // 是否正在進行
+                currentFloor: 1,           // 當前層數
+                highestFloor: 0,           // 歷史最高層數
+                checkpoint: 1,             // 最近檢查點(每10層)
+                buffs: [],                 // 永久Buff列表 [{id, name, type, value, floor}]
+                stats: {
+                    totalKills: 0,         // 總擊殺數
+                    totalGold: 0,          // 總獲得金幣
+                    totalFloors: 0,        // 總通關層數
+                    totalRuns: 0,          // 總挑戰次數
+                    averageFloor: 0        // 平均層數
+                }
             }
         };
         // 迭代天賦系統
@@ -6617,8 +6829,7 @@ const REGION_CONSUMABLES = {
                 // 特殊Boss必定掉2件裝備
                 for (let i = 0; i < 2; i++) {
                 const item = generateItem('boss');
-                if (item) {
-                    gameState.inventory.push(item);
+                if (item && addToInventory(item)) {
                     gameState.stats.items++;
                     
                     // 更新任務進度：獲得裝備
@@ -6673,8 +6884,7 @@ const REGION_CONSUMABLES = {
                 if (Math.random() < finalDropRate) {
                     const enemyType = enemy.isElite ? 'elite' : 'normal';
                     const item = generateItem(enemyType);
-                    if (item) {
-                        gameState.inventory.push(item);
+                    if (item && addToInventory(item)) {
                         gameState.stats.items++;
                         
                         // 更新任務進度：獲得裝備
@@ -7110,6 +7320,13 @@ const REGION_CONSUMABLES = {
         }
 
         function levelUp() {
+            // 檢查等級上限
+            if (gameState.player.level >= 100) {
+                addLog('系統', '⭐ 已達到最高等級 Lv.100！');
+                gameState.player.exp = gameState.player.expToNext - 1; // 鎖定經驗值
+                return;
+            }
+            
             playSound('levelup'); // 升級音效
             gameState.player.level++;
             gameState.player.exp -= gameState.player.expToNext;
@@ -7140,7 +7357,8 @@ const REGION_CONSUMABLES = {
             // 檢查稱號解鎖
             checkTitleUnlocks();
             
-            // 教學系統已移除
+            // 檢查無盡模式解鎖
+            checkEndlessModeUnlock();
             
             updateUI();
             
@@ -8117,7 +8335,10 @@ const REGION_CONSUMABLES = {
             // 卸下舊裝備
             const oldItem = gameState.player.equipment[currentEquipSlot];
             if (oldItem) {
-                gameState.inventory.push(oldItem);
+                if (!addToInventory(oldItem, false)) {
+                    addLog('系統', '⚠️ 背包已滿，無法裝備！請先整理背包。');
+                    return;
+                }
             }
             
             // 裝備新裝備
@@ -8143,7 +8364,10 @@ const REGION_CONSUMABLES = {
             // 如果目標欄位已有裝備，卸下到背包
             const oldItem = gameState.player.equipment[targetSlot];
             if (oldItem) {
-                gameState.inventory.push(oldItem);
+                if (!addToInventory(oldItem, false)) {
+                    addLog('系統', '⚠️ 背包已滿，無法裝備！請先整理背包。');
+                    return;
+                }
             }
             
             // 裝備新裝備
@@ -8167,7 +8391,10 @@ const REGION_CONSUMABLES = {
             if (!item) return;
             
             // 將裝備放回背包
-            gameState.inventory.push(item);
+            if (!addToInventory(item, false)) {
+                addLog('系統', '⚠️ 背包已滿，無法卸下裝備！請先整理背包。');
+                return;
+            }
             gameState.player.equipment[slot] = null;
             
             // 重新計算屬性
@@ -9239,6 +9466,26 @@ const REGION_CONSUMABLES = {
         }
 
         // ========== 其他功能 ==========
+        
+        // 統一的背包添加函數（檢查容量）
+        function addToInventory(item, showLog = true) {
+            const maxInv = gameState.maxInventory || 50;
+            
+            // 檢查背包是否已滿
+            if (gameState.inventory.length >= maxInv) {
+                if (showLog) {
+                    addLog('系統', `⚠️ 背包已滿！無法獲得 ${item.name}，請先整理背包。`);
+                }
+                return false;
+            }
+            
+            // 添加物品
+            gameState.inventory.push(item);
+            return true;
+        }
+        
+        // 休息功能已移除
+        /*
          function rest() {
              const COST_GOLD = 30;
              const COST_AP = 2;
@@ -9284,6 +9531,7 @@ const REGION_CONSUMABLES = {
              // 休息後立即存檔
              saveGame();
          }
+         */
 
         function openBagModal() {
             const modal = document.getElementById('bag-modal');
@@ -9436,8 +9684,9 @@ const REGION_CONSUMABLES = {
             
             // generateItem 已經會自動根據品階生成詞綴，不需要手動添加
             
-            gameState.inventory.push(weapon);
-            rewards.push(`⚔️ 武器: <span style="color: ${weaponRarity.color};">[${weaponRarity.label}] ${weapon.name}</span>`);
+            if (addToInventory(weapon, false)) {
+                rewards.push(`⚔️ 武器: <span style="color: ${weaponRarity.color};">[${weaponRarity.label}] ${weapon.name}</span>`);
+            }
             
             // 2. 生成隨機防具(灰50%/綠35%/藍15%)
             const armorRarityRoll = Math.random();
@@ -9462,8 +9711,9 @@ const REGION_CONSUMABLES = {
             
             // generateItem 已經會自動根據品階生成詞綴，不需要手動添加
             
-            gameState.inventory.push(armor);
-            rewards.push(`🛡️ 防具: <span style="color: ${armorRarity.color};">[${armorRarity.label}] ${armor.name}</span>`);
+            if (addToInventory(armor, false)) {
+                rewards.push(`🛡️ 防具: <span style="color: ${armorRarity.color};">[${armorRarity.label}] ${armor.name}</span>`);
+            }
             
             // 3. 隨機選擇1個Common隨從
             const commonCompanions = Object.keys(COMPANIONS).filter(id => COMPANIONS[id].rarity === 'Common');
@@ -9484,19 +9734,21 @@ const REGION_CONSUMABLES = {
             }
             
             // 5. 添加30個小型生命藥水
-            gameState.inventory.push({
+            const hpPotion = {
                 id: Date.now() + Math.random(),
                 type: 'consumable',
                 subtype: 'hp_potion',
                 name: '小型生命藥水',
                 description: '[立即] 回復25%最大HP',
-                recovery: 0.25,
+                hpPercent: 0.25,
                 quantity: 30
-            });
-            rewards.push(`🧪 小型生命藥水 × 30`);
+            };
+            if (addToInventory(hpPotion, false)) {
+                rewards.push(`🧪 小型生命藥水 × 30`);
+            }
             
             // 6. 添加10個經驗藥水
-            gameState.inventory.push({
+            const expScroll = {
                 id: Date.now() + Math.random() + 1,
                 type: 'consumable',
                 subtype: 'exp_scroll',
@@ -9504,7 +9756,8 @@ const REGION_CONSUMABLES = {
                 description: '[立即] 獲得500點經驗值',
                 exp: 500,
                 quantity: 10
-            });
+            };
+            addToInventory(expScroll, false);
             rewards.push(`📚 小型經驗卷軸 × 10`);
             
             // 顯示獎勵視窗
@@ -12975,8 +13228,7 @@ const REGION_CONSUMABLES = {
             switch(itemType) {
                 case 'set_box':
                     const setItem = generateItem('normal', 'Set');
-                    if (setItem) {
-                        gameState.inventory.push(setItem);
+                    if (setItem && addToInventory(setItem)) {
                         gameState.stats.items++;
                         addLog('商店', `花費 ${price} 🔷 碎片購買了套裝寶箱，獲得了 ${setItem.name}！`);
                         
@@ -12989,8 +13241,7 @@ const REGION_CONSUMABLES = {
                     break;
                 case 'legendary_box':
                     const legendaryItem = generateItem('normal', 'Legendary');
-                    if (legendaryItem) {
-                        gameState.inventory.push(legendaryItem);
+                    if (legendaryItem && addToInventory(legendaryItem)) {
                         gameState.stats.items++;
                         gameState.stats.legendaryItems = (gameState.stats.legendaryItems || 0) + 1;
                         addLog('商店', `花費 ${price} 🔷 碎片購買了傳說寶箱，獲得了 ${legendaryItem.name}！`);
@@ -13013,8 +13264,12 @@ const REGION_CONSUMABLES = {
                         desc: '使用後可以重新選擇技能',
                         color: '#FFD700'
                     };
-                    gameState.inventory.push(skillResetItem);
-                    gameState.stats.items++;
+                    if (addToInventory(skillResetItem, false)) {
+                        gameState.stats.items++;
+                    } else {
+                        gameState.player.shards += price; // 退款
+                        return;
+                    }
                     addLog('商店', `花費 ${price} 🔷 碎片購買了技能重置卷！已添加到背包。`);
                     updateQuestProgress('shop_purchase', 1);
                     break;
@@ -13028,8 +13283,12 @@ const REGION_CONSUMABLES = {
                         desc: '使用後背包上限+1格（最多100格）',
                         color: '#4CAF50'
                     };
-                    gameState.inventory.push(bagExpandItem);
-                    gameState.stats.items++;
+                    if (addToInventory(bagExpandItem, false)) {
+                        gameState.stats.items++;
+                    } else {
+                        gameState.player.shards += price; // 退款
+                        return;
+                    }
                     addLog('商店', `花費 ${price} 🔷 碎片購買了背包擴充卷！已添加到背包。`);
                     updateQuestProgress('shop_purchase', 1);
                     break;
@@ -14567,6 +14826,25 @@ const REGION_CONSUMABLES = {
             }
             
             // 教學系統已移除
+            
+            // 確保endlessMode屬性存在
+            if (!loadedState.endlessMode) {
+                loadedState.endlessMode = {
+                    unlocked: false,
+                    active: false,
+                    currentFloor: 1,
+                    highestFloor: 0,
+                    checkpoint: 1,
+                    buffs: [],
+                    stats: {
+                        totalKills: 0,
+                        totalGold: 0,
+                        totalFloors: 0,
+                        totalRuns: 0,
+                        averageFloor: 0
+                    }
+                };
+            }
             
             // ========== 經驗值優化遷移和補償系統 (v2.0) ==========
             if (!loadedState.migration) {
@@ -16128,6 +16406,787 @@ function generateEquipmentByRarity(rarity) {
             openDungeonsModal();
         }
         
-</script>
-</body>
-</html>
+        // ========== 無盡模式系統 ==========
+        
+        function openEndlessModal() {
+            // 檢查解鎖狀態
+            checkEndlessModeUnlock();
+            
+            const modal = document.getElementById('endless-mode-modal');
+            const lockedHint = document.getElementById('endless-locked-hint');
+            const startBtn = document.getElementById('endless-start-btn');
+            const continueBtn = document.getElementById('endless-continue-btn');
+            
+            // 更新統計數據
+            document.getElementById('endless-highest-floor').textContent = gameState.endlessMode.highestFloor;
+            document.getElementById('endless-average-floor').textContent = gameState.endlessMode.stats.averageFloor;
+            document.getElementById('endless-checkpoint').textContent = gameState.endlessMode.checkpoint;
+            document.getElementById('endless-buff-count').textContent = gameState.endlessMode.buffs.length;
+            document.getElementById('endless-total-runs').textContent = gameState.endlessMode.stats.totalRuns;
+            
+            // 顯示/隱藏Buff列表
+            const buffsDisplay = document.getElementById('endless-buffs-display');
+            const buffsList = document.getElementById('endless-buffs-list');
+            
+            if (gameState.endlessMode.buffs.length > 0) {
+                buffsDisplay.style.display = 'block';
+                
+                // 統計Buff
+                const buffSummary = {};
+                gameState.endlessMode.buffs.forEach(b => {
+                    if (!buffSummary[b.type]) {
+                        buffSummary[b.type] = { name: b.name.split(' ')[1], total: 0, count: 0 };
+                    }
+                    buffSummary[b.type].total += b.value;
+                    buffSummary[b.type].count++;
+                });
+                
+                // 生成Buff列表HTML
+                let html = '';
+                Object.entries(buffSummary).forEach(([type, summary]) => {
+                    let displayValue;
+                    if (type === 'crit' || type === 'dmgRed' || type === 'lifeSteal' || type === 'critDmg') {
+                        displayValue = `+${Math.floor(summary.total)}%`;
+                    } else {
+                        displayValue = `+${Math.floor(summary.total * 100)}%`;
+                    }
+                    html += `<div>• ${summary.name}: ${displayValue} (×${summary.count})</div>`;
+                });
+                buffsList.innerHTML = html;
+            } else {
+                buffsDisplay.style.display = 'none';
+            }
+            
+            // 根據解鎖狀態顯示/隱藏元素
+            if (!gameState.endlessMode.unlocked) {
+                lockedHint.style.display = 'block';
+                startBtn.disabled = true;
+                startBtn.style.opacity = '0.5';
+                continueBtn.style.display = 'none';
+            } else {
+                lockedHint.style.display = 'none';
+                startBtn.disabled = false;
+                startBtn.style.opacity = '1';
+                
+                // 顯示/隱藏繼續按鈕
+                if (gameState.endlessMode.checkpoint > 1 && !gameState.endlessMode.active) {
+                    continueBtn.style.display = 'block';
+                } else {
+                    continueBtn.style.display = 'none';
+                }
+            }
+            
+            // 檢查AP是否足夠
+            if (gameState.player.ap < 10) {
+                startBtn.disabled = true;
+                startBtn.style.opacity = '0.5';
+                startBtn.textContent = '🚀 開始挑戰 (AP不足)';
+            } else {
+                startBtn.textContent = '🚀 開始挑戰 (10 AP)';
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        // 關閉無盡模式介面
+        function closeEndlessModal() {
+            document.getElementById('endless-mode-modal').classList.remove('active');
+        }
+        
+        // 無盡模式Buff選項池
+        const ENDLESS_BUFFS = [
+            { id: 'atk', name: '⚔️ 攻擊強化', type: 'atk', value: 0.10, desc: '攻擊力 +10%' },
+            { id: 'def', name: '🛡️ 防禦強化', type: 'def', value: 0.10, desc: '防禦力 +10%' },
+            { id: 'crit', name: '🎯 暴擊強化', type: 'crit', value: 5, desc: '暴擊率 +5%' },
+            { id: 'hp', name: '💖 生命強化', type: 'maxHp', value: 0.15, desc: '最大生命 +15%' },
+            { id: 'critDmg', name: '💥 暴擊傷害', type: 'critDmg', value: 20, desc: '暴擊傷害 +20%' },
+            { id: 'dmgRed', name: '🛡️ 減傷強化', type: 'dmgRed', value: 5, desc: '減傷 +5%' },
+            { id: 'lifeSteal', name: '🩸 吸血強化', type: 'lifeSteal', value: 3, desc: '吸血 +3%' }
+        ];
+        
+        // 檢查是否解鎖無盡模式
+        function checkEndlessModeUnlock() {
+            if (!gameState.endlessMode.unlocked && gameState.player.level >= 30) {
+                gameState.endlessMode.unlocked = true;
+                addLog('系統', '🗼 恭喜！你已解鎖【無盡挑戰塔】！在副本頁面開始挑戰。');
+                saveGame();
+            }
+        }
+        
+        // 開始無盡模式
+        function startEndlessMode(fromCheckpoint = false) {
+            if (!gameState.endlessMode.unlocked) {
+                addLog('系統', '無盡模式需要達到 Lv.30 才能解鎖！');
+                return;
+            }
+            
+            // 檢查是否有足夠的體力
+            if (gameState.player.ap < 10) {
+                addLog('系統', '開始無盡模式需要 10 AP！');
+                return;
+            }
+            
+            gameState.player.ap -= 10;
+            gameState.endlessMode.active = true;
+            
+            if (fromCheckpoint && gameState.endlessMode.checkpoint > 1) {
+                gameState.endlessMode.currentFloor = gameState.endlessMode.checkpoint;
+                addLog('無盡模式', `從檢查點第 ${gameState.endlessMode.checkpoint} 層繼續挑戰！`);
+            } else {
+                gameState.endlessMode.currentFloor = 1;
+                gameState.endlessMode.buffs = [];
+                gameState.endlessMode.stats.totalRuns++;
+                addLog('無盡模式', '開始無盡挑戰！祝你好運！');
+            }
+            
+            updateUI();
+            saveGame();
+            
+            // 開始第一層戰鬥
+            startEndlessFloor();
+        }
+        
+        // 開始當前層戰鬥
+        function startEndlessFloor() {
+            if (!gameState.endlessMode.active) return;
+            
+            // 關閉無盡模式視窗，讓玩家看到戰鬥日誌
+            closeEndlessModal();
+            
+            const floor = gameState.endlessMode.currentFloor;
+            const isBoss = floor % 10 === 0;
+            
+            // 生成敵人
+            const enemy = generateEndlessEnemy(floor, isBoss);
+            
+            // 顯示層數信息
+            const bossHint = (floor % 10 === 9) ? ' (下一層Boss!)' : '';
+            const nextMilestone = Math.ceil(floor / 50) * 50;
+            const milestoneHint = (floor % 50 === 49) ? ` (第${nextMilestone}層有特殊獎勵!)` : '';
+            
+            addLog('無盡模式', `━━━ 第 ${floor} 層${bossHint}${milestoneHint} ━━━`);
+            
+            if (isBoss) {
+                addLog('無盡模式', `⚠️ Boss戰！${enemy.name} 出現了！`);
+            }
+            
+            // 開始戰鬥
+            endlessBattle(enemy);
+        }
+        
+        // 生成無盡模式敵人
+        function generateEndlessEnemy(floor, isBoss) {
+            // 基礎敵人模板
+            const baseEnemy = isBoss ? 
+                { name: `第${floor}層守護者`, hp: 200, atk: 30, def: 20 } :
+                { name: `第${floor}層挑戰者`, hp: 100, atk: 15, def: 10 };
+            
+            // 屬性成長: 每層 +5%
+            const growthRate = 1 + (floor - 1) * 0.05;
+            const hpGrowth = 1 + (floor - 1) * 0.08; // HP額外成長
+            
+            let enemy = {
+                name: baseEnemy.name,
+                hp: Math.floor(baseEnemy.hp * growthRate * hpGrowth),
+                maxHp: Math.floor(baseEnemy.hp * growthRate * hpGrowth),
+                atk: Math.floor(baseEnemy.atk * growthRate),
+                def: Math.floor(baseEnemy.def * growthRate),
+                isBoss: isBoss,
+                floor: floor
+            };
+            
+            // Boss額外加成
+            if (isBoss) {
+                enemy.hp = Math.floor(enemy.hp * 2.5);
+                enemy.maxHp = enemy.hp;
+                enemy.atk = Math.floor(enemy.atk * 1.3);
+                enemy.def = Math.floor(enemy.def * 1.3);
+            }
+            
+            return enemy;
+        }
+        
+        // 無盡模式戰鬥
+        function endlessBattle(enemy) {
+            // 應用無盡模式Buff到玩家
+            const buffedPlayer = applyEndlessBuffs();
+            
+            // 戰鬥循環
+            let battleLog = [];
+            let round = 0;
+            const maxRounds = 100;
+            
+            while (buffedPlayer.hp > 0 && enemy.hp > 0 && round < maxRounds) {
+                round++;
+                
+                // 玩家攻擊
+                const playerDmg = calculateDamage(buffedPlayer.atk, enemy.def, buffedPlayer.armorPen || 0);
+                enemy.hp -= playerDmg;
+                battleLog.push(`[回合${round}] 你造成 ${playerDmg} 傷害`);
+                
+                if (enemy.hp <= 0) break;
+                
+                // 敵人反擊
+                const enemyDmg = calculateDamage(enemy.atk, buffedPlayer.def, 0);
+                const actualDmg = Math.floor(enemyDmg * (1 - (buffedPlayer.dmgRed || 0) / 100));
+                buffedPlayer.hp -= actualDmg;
+                battleLog.push(`[回合${round}] 敵人造成 ${actualDmg} 傷害`);
+            }
+            
+            // 同步玩家HP
+            gameState.player.hp = buffedPlayer.hp;
+            
+            // 顯示戰鬥日誌(簡化版)
+            if (battleLog.length <= 6) {
+                battleLog.forEach(log => addLog('戰鬥', log));
+            } else {
+                addLog('戰鬥', battleLog[0]);
+                addLog('戰鬥', `... 激戰 ${round} 回合 ...`);
+                addLog('戰鬥', battleLog[battleLog.length - 1]);
+            }
+            
+            // 判定結果
+            if (buffedPlayer.hp > 0) {
+                endlessVictory(enemy);
+            } else {
+                endlessDefeat();
+            }
+        }
+        
+        // 應用無盡模式Buff
+        function applyEndlessBuffs() {
+            const player = { ...gameState.player };
+            
+            gameState.endlessMode.buffs.forEach(buff => {
+                switch(buff.type) {
+                    case 'atk':
+                        player.atk = Math.floor(player.atk * (1 + buff.value));
+                        break;
+                    case 'def':
+                        player.def = Math.floor(player.def * (1 + buff.value));
+                        break;
+                    case 'maxHp':
+                        const hpRatio = player.hp / player.maxHp;
+                        player.maxHp = Math.floor(player.maxHp * (1 + buff.value));
+                        player.hp = Math.floor(player.maxHp * hpRatio);
+                        break;
+                    case 'crit':
+                        player.crit += buff.value;
+                        break;
+                    case 'critDmg':
+                        player.critDmg += buff.value;
+                        break;
+                    case 'dmgRed':
+                        player.dmgRed += buff.value;
+                        break;
+                    case 'lifeSteal':
+                        player.lifeSteal += buff.value;
+                        break;
+                }
+            });
+            
+            return player;
+        }
+        
+        // 無盡模式勝利
+        function endlessVictory(enemy) {
+            const floor = gameState.endlessMode.currentFloor;
+            
+            // 計算獎勵（大幅降低以平衡遊戲）
+            const goldReward = Math.floor(20 * floor * (1 + floor * 0.01));
+            const expReward = Math.floor(30 * floor * (1 + floor * 0.01));
+            
+            gameState.player.gold += goldReward;
+            gameState.player.exp += expReward;
+            gameState.endlessMode.stats.totalKills++;
+            gameState.endlessMode.stats.totalGold += goldReward;
+            gameState.endlessMode.stats.totalFloors++;
+            
+            addLog('無盡模式', `✨ 通關第 ${floor} 層！獲得 ${goldReward} 金幣、${expReward} 經驗`);
+            
+            // Boss獎勵: 裝備
+            if (enemy.isBoss) {
+                const rarity = getEndlessEquipmentRarity(floor);
+                const equipment = generateItem('normal', rarity);
+                if (equipment && addToInventory(equipment)) {
+                    addLog('無盡模式', `🎁 Boss獎勵：${equipment.name}`);
+                }
+                
+                // 設置檢查點
+                gameState.endlessMode.checkpoint = floor;
+                addLog('無盡模式', `📍 檢查點已設置在第 ${floor} 層`);
+            }
+            
+            // 50層里程碑獎勵
+            if (floor % 50 === 0) {
+                showEndlessMilestoneReward(floor);
+                return; // 等待選擇獎勵後再繼續
+            }
+            
+            // 20層Buff選擇
+            if (floor % 20 === 0) {
+                showEndlessBuffChoice(floor);
+                return; // 等待選擇Buff後再繼續
+            }
+            
+            // 更新最高記錄
+            if (floor > gameState.endlessMode.highestFloor) {
+                gameState.endlessMode.highestFloor = floor;
+                addLog('無盡模式', `🏆 新記錄！最高層數：${floor}`);
+            }
+            
+            // 檢查升級
+            if (gameState.player.exp >= gameState.player.expToNext) {
+                levelUp();
+            }
+            
+            // 繼續下一層
+            gameState.endlessMode.currentFloor++;
+            updateUI();
+            saveGame();
+            
+            // 每10關詢問1次是否繼續（除非是BUFF或里程碑關卡，那些已經有自己的處理流程）
+            const nextFloor = gameState.endlessMode.currentFloor;
+            if (nextFloor % 10 === 0) {
+                setTimeout(() => {
+                    if (confirm(`繼續挑戰第 ${nextFloor} 層？`)) {
+                        startEndlessFloor();
+                    } else {
+                        endEndlessMode(false);
+                    }
+                }, 500);
+            } else {
+                // 非10的倍數，自動繼續
+                setTimeout(() => {
+                    startEndlessFloor();
+                }, 500);
+            }
+        }
+        
+        // 無盡模式失敗
+        function endlessDefeat() {
+            const floor = gameState.endlessMode.currentFloor;
+            
+            addLog('失敗', `💀 在第 ${floor} 層戰敗了...`);
+            
+            // 更新統計
+            if (floor > gameState.endlessMode.highestFloor) {
+                gameState.endlessMode.highestFloor = floor;
+                addLog('記錄', `🏆 新記錄！最高層數：${floor}`);
+            }
+            
+            // 計算平均層數
+            const stats = gameState.endlessMode.stats;
+            stats.averageFloor = Math.floor(stats.totalFloors / stats.totalRuns);
+            
+            // 復活玩家
+            gameState.player.hp = gameState.player.maxHp;
+            
+            updateUI();
+            saveGame();
+            
+            // 詢問是否從檢查點繼續
+            setTimeout(() => {
+                const choice = confirm(
+                    `從檢查點(第${gameState.endlessMode.checkpoint}層)繼續？\n` +
+                    `確定: 從檢查點繼續(保留Buff)\n` +
+                    `取消: 結束挑戰`
+                );
+                
+                if (choice) {
+                    startEndlessMode(true);
+                } else {
+                    endEndlessMode(true);
+                }
+            }, 500);
+        }
+        
+        // 結束無盡模式
+        function endEndlessMode(defeated) {
+            gameState.endlessMode.active = false;
+            
+            if (!defeated) {
+                addLog('無盡模式', '你選擇了退出挑戰。');
+            }
+            
+            addLog('統計', `本次挑戰: 第 ${gameState.endlessMode.currentFloor} 層`);
+            addLog('統計', `歷史最高: 第 ${gameState.endlessMode.highestFloor} 層`);
+            
+            updateUI();
+            saveGame();
+        }
+        
+        // 獲取裝備品質(根據層數)
+        function getEndlessEquipmentRarity(floor) {
+            if (floor >= 61) {
+                // 61+層: 紫色-橙色
+                return Math.random() < 0.3 ? 'Epic' : 'Rare';
+            } else if (floor >= 31) {
+                // 31-60層: 藍色-紫色
+                return Math.random() < 0.2 ? 'Rare' : 'Uncommon';
+            } else {
+                // 1-30層: 綠色-藍色
+                return Math.random() < 0.3 ? 'Uncommon' : 'Common';
+            }
+        }
+        
+        // 顯示50層里程碑獎勵選擇
+        function showEndlessMilestoneReward(floor) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.95); z-index: 99999;
+                display: flex; align-items: center; justify-content: center;
+                pointer-events: auto;
+            `;
+            
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
+                border: 2px solid #ffd700;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 500px;
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+                position: relative;
+                z-index: 100000;
+                pointer-events: auto;
+            `;
+            
+            dialog.innerHTML = `
+                <h2 style="color: #ffd700; text-align: center; margin-bottom: 20px;">
+                    🎉 第 ${floor} 層里程碑獎勵！
+                </h2>
+                <p style="color: #7a8fb8; text-align: center; margin-bottom: 30px;">
+                    選擇一項獎勵：
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button id="reward-epic" style="
+                        padding: 15px 20px;
+                        background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+                        border: 2px solid #ce93d8;
+                        border-radius: 10px;
+                        color: white;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        pointer-events: auto;
+                        position: relative;
+                        z-index: 100001;
+                        transition: all 0.3s;
+                    ">
+                        💜 史詩裝備 ×1
+                    </button>
+                    <button id="reward-shards" style="
+                        padding: 15px 20px;
+                        background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+                        border: 2px solid #ce93d8;
+                        border-radius: 10px;
+                        color: white;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        pointer-events: auto;
+                        position: relative;
+                        z-index: 100001;
+                        transition: all 0.3s;
+                    ">
+                        💎 碎片 ×200
+                    </button>
+                    <button id="reward-gold" style="
+                        padding: 15px 20px;
+                        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+                        border: 2px solid #fff;
+                        border-radius: 10px;
+                        color: #0a192f;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        font-weight: bold;
+                        pointer-events: auto;
+                        position: relative;
+                        z-index: 100001;
+                        transition: all 0.3s;
+                    ">
+                        💰 金幣 ×20000
+                    </button>
+                </div>
+            `;
+            
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+            
+            // 綁定選擇事件（使用setTimeout確保DOM完全渲染）
+            setTimeout(() => {
+                const btnEpic = document.getElementById('reward-epic');
+                const btnShards = document.getElementById('reward-shards');
+                const btnGold = document.getElementById('reward-gold');
+                
+                if (btnEpic) {
+                    btnEpic.onclick = (e) => {
+                        e.stopPropagation();
+                        btnEpic.disabled = true;
+                        btnEpic.style.opacity = '0.5';
+                        const epic = generateItem('normal', 'Epic');
+                        if (epic && addToInventory(epic)) {
+                            addLog('無盡模式', `💜 獲得史詩裝備：${epic.name}！`);
+                        }
+                        setTimeout(() => {
+                            if (document.body.contains(overlay)) {
+                                document.body.removeChild(overlay);
+                            }
+                            continueEndlessAfterReward();
+                        }, 100);
+                    };
+                    btnEpic.onmouseenter = () => {
+                        if (!btnEpic.disabled) {
+                            btnEpic.style.transform = 'scale(1.05)';
+                            btnEpic.style.boxShadow = '0 0 20px rgba(156, 39, 176, 0.8)';
+                        }
+                    };
+                    btnEpic.onmouseleave = () => {
+                        btnEpic.style.transform = 'scale(1)';
+                        btnEpic.style.boxShadow = 'none';
+                    };
+                }
+                
+                if (btnShards) {
+                    btnShards.onclick = (e) => {
+                        e.stopPropagation();
+                        btnShards.disabled = true;
+                        btnShards.style.opacity = '0.5';
+                        gameState.player.shards += 200;
+                        addLog('無盡模式', '💎 獲得 200 碎片！');
+                        setTimeout(() => {
+                            if (document.body.contains(overlay)) {
+                                document.body.removeChild(overlay);
+                            }
+                            continueEndlessAfterReward();
+                        }, 100);
+                    };
+                    btnShards.onmouseenter = () => {
+                        if (!btnShards.disabled) {
+                            btnShards.style.transform = 'scale(1.05)';
+                            btnShards.style.boxShadow = '0 0 20px rgba(156, 39, 176, 0.8)';
+                        }
+                    };
+                    btnShards.onmouseleave = () => {
+                        btnShards.style.transform = 'scale(1)';
+                        btnShards.style.boxShadow = 'none';
+                    };
+                }
+                
+                if (btnGold) {
+                    btnGold.onclick = (e) => {
+                        e.stopPropagation();
+                        btnGold.disabled = true;
+                        btnGold.style.opacity = '0.5';
+                        gameState.player.gold += 20000;
+                        addLog('無盡模式', '💰 獲得 20000 金幣！');
+                        setTimeout(() => {
+                            if (document.body.contains(overlay)) {
+                                document.body.removeChild(overlay);
+                            }
+                            continueEndlessAfterReward();
+                        }, 100);
+                    };
+                    btnGold.onmouseenter = () => {
+                        if (!btnGold.disabled) {
+                            btnGold.style.transform = 'scale(1.05)';
+                            btnGold.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8)';
+                        }
+                    };
+                    btnGold.onmouseleave = () => {
+                        btnGold.style.transform = 'scale(1)';
+                        btnGold.style.boxShadow = 'none';
+                    };
+                }
+            }, 100);
+        }
+        
+        // 里程碑獎勵後繼續
+        function continueEndlessAfterReward() {
+            const floor = gameState.endlessMode.currentFloor;
+            
+            // 更新最高記錄
+            if (floor > gameState.endlessMode.highestFloor) {
+                gameState.endlessMode.highestFloor = floor;
+            }
+            
+            // 繼續下一層
+            gameState.endlessMode.currentFloor++;
+            updateUI();
+            saveGame();
+            
+            // 每10關詢問1次是否繼續
+            const nextFloor = gameState.endlessMode.currentFloor;
+            if (nextFloor % 10 === 0) {
+                setTimeout(() => {
+                    if (confirm(`繼續挑戰第 ${nextFloor} 層？`)) {
+                        startEndlessFloor();
+                    } else {
+                        endEndlessMode(false);
+                    }
+                }, 500);
+            } else {
+                // 非10的倍數，自動繼續
+                setTimeout(() => {
+                    startEndlessFloor();
+                }, 500);
+            }
+        }
+        
+        // 顯示Buff選擇介面
+        function showEndlessBuffChoice(floor) {
+            // 隨機選3個Buff
+            const shuffled = [...ENDLESS_BUFFS].sort(() => Math.random() - 0.5);
+            const choices = shuffled.slice(0, 3);
+            
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.95); z-index: 99999;
+                display: flex; align-items: center; justify-content: center;
+                pointer-events: auto;
+            `;
+            
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
+                border: 2px solid #00d9ff;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 600px;
+                box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+                position: relative;
+                z-index: 100000;
+                pointer-events: auto;
+            `;
+            
+            dialog.innerHTML = `
+                <h2 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">
+                    🎁 第 ${floor} 層獎勵 - 選擇永久Buff
+                </h2>
+                <p style="color: #7a8fb8; text-align: center; margin-bottom: 30px;">
+                    選擇一個Buff,效果永久生效並可疊加！
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    ${choices.map((buff, idx) => `
+                        <button id="buff-choice-${idx}" style="
+                            padding: 20px;
+                            background: linear-gradient(135deg, rgba(0,217,255,0.2) 0%, rgba(0,168,204,0.2) 100%);
+                            border: 2px solid rgba(0,217,255,0.5);
+                            border-radius: 10px;
+                            color: white;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            text-align: center;
+                            min-width: 150px;
+                            pointer-events: auto;
+                            position: relative;
+                            z-index: 100001;
+                            transition: all 0.3s;
+                        ">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">${buff.name.split(' ')[0]}</div>
+                            <div style="font-weight: bold; margin-bottom: 5px;">${buff.name.split(' ')[1]}</div>
+                            <div style="color: #00d9ff; font-size: 1.2rem;">${buff.desc}</div>
+                        </button>
+                    `).join('')}
+                </div>
+                <p style="color: #888; text-align: center; margin-top: 20px; font-size: 0.9rem;">
+                    💡 提示: Buff可以疊加,多次選擇同類型Buff效果會累加
+                </p>
+            `;
+            
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+            
+            // 綁定選擇事件（使用setTimeout確保DOM完全渲染）
+            setTimeout(() => {
+                choices.forEach((buff, idx) => {
+                    const btn = document.getElementById(`buff-choice-${idx}`);
+                    if (btn) {
+                        btn.onclick = (e) => {
+                            e.stopPropagation();
+                            // 防止重複點擊
+                            btn.disabled = true;
+                            btn.style.opacity = '0.5';
+                            btn.style.cursor = 'not-allowed';
+                            selectEndlessBuff(buff, floor);
+                            setTimeout(() => {
+                                if (document.body.contains(overlay)) {
+                                    document.body.removeChild(overlay);
+                                }
+                            }, 100);
+                        };
+                        // 添加hover效果
+                        btn.onmouseenter = () => {
+                            if (!btn.disabled) {
+                                btn.style.transform = 'scale(1.05)';
+                                btn.style.boxShadow = '0 0 20px rgba(0, 217, 255, 0.8)';
+                            }
+                        };
+                        btn.onmouseleave = () => {
+                            btn.style.transform = 'scale(1)';
+                            btn.style.boxShadow = 'none';
+                        };
+                    }
+                });
+            }, 100);
+        }
+        
+        // 選擇Buff
+        function selectEndlessBuff(buff, floor) {
+            const newBuff = {
+                id: `${buff.id}_${Date.now()}`,
+                name: buff.name,
+                type: buff.type,
+                value: buff.value,
+                floor: floor
+            };
+            
+            gameState.endlessMode.buffs.push(newBuff);
+            addLog('無盡模式', `✨ 獲得永久Buff：${buff.name} (${buff.desc})`);
+            
+            // 顯示當前所有Buff
+            const buffSummary = {};
+            gameState.endlessMode.buffs.forEach(b => {
+                if (!buffSummary[b.type]) {
+                    buffSummary[b.type] = { name: b.name.split(' ')[1], total: 0, count: 0 };
+                }
+                buffSummary[b.type].total += b.value;
+                buffSummary[b.type].count++;
+            });
+            
+            addLog('無盡模式', '當前永久Buff:');
+            Object.values(buffSummary).forEach(summary => {
+                const displayValue = summary.total >= 1 ? `+${Math.floor(summary.total)}` : `+${Math.floor(summary.total * 100)}%`;
+                addLog('無盡模式', `  ${summary.name} ${displayValue} (×${summary.count})`);
+            });
+            
+            // 更新最高記錄
+            if (floor > gameState.endlessMode.highestFloor) {
+                gameState.endlessMode.highestFloor = floor;
+            }
+            
+            // 繼續下一層
+            gameState.endlessMode.currentFloor++;
+            updateUI();
+            saveGame();
+            
+            // 選擇BUFF後，每10關詢問1次是否繼續
+            const nextFloor = gameState.endlessMode.currentFloor;
+            if (nextFloor % 10 === 0) {
+                setTimeout(() => {
+                    if (confirm(`繼續挑戰第 ${nextFloor} 層？`)) {
+                        startEndlessFloor();
+                    } else {
+                        endEndlessMode(false);
+                    }
+                }, 500);
+            } else {
+                // 非10的倍數，自動繼續
+                setTimeout(() => {
+                    startEndlessFloor();
+                }, 500);
+            }
+        }
+        
+        </script>

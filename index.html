@@ -5201,10 +5201,10 @@ const REGION_CONSUMABLES = {
             const now = Date.now();
             if (!isEmergency && now < gameState.potionCooldown) return false;
             
-            // 獲取所有HP藥水（支持百分比和固定值）
+            // 獲取所有HP藥水（支持百分比、固定值和組合藥水）
             const hpPotions = gameState.inventory.filter(item => 
                 item.type === 'consumable' && 
-                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || item.subtype === 'hp_potion') &&
+                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || item.subtype === 'hp_potion' || item.subtype === 'both_percent' || item.subtype === 'both_fixed') &&
                 (item.quantity || 1) > 0
             );
             
@@ -5227,6 +5227,11 @@ const REGION_CONSUMABLES = {
                         healAmount = Math.floor(gameState.player.maxHp * recovery);
                     } else if (p.subtype === 'hp_fixed') {
                         healAmount = p.recovery || 0;
+                    } else if (p.subtype === 'both_percent') {
+                        const hpPercent = (p.hpPercent !== undefined && !isNaN(p.hpPercent)) ? p.hpPercent : 0;
+                        healAmount = Math.floor(gameState.player.maxHp * hpPercent);
+                    } else if (p.subtype === 'both_fixed') {
+                        healAmount = p.hpRecovery || 0;
                     }
                     return { ...p, healAmount };
                 });
@@ -5251,6 +5256,11 @@ const REGION_CONSUMABLES = {
                         healAmount = Math.floor(gameState.player.maxHp * recovery);
                     } else if (p.subtype === 'hp_fixed') {
                         healAmount = p.recovery || 0;
+                    } else if (p.subtype === 'both_percent') {
+                        const hpPercent = (p.hpPercent !== undefined && !isNaN(p.hpPercent)) ? p.hpPercent : 0;
+                        healAmount = Math.floor(gameState.player.maxHp * hpPercent);
+                    } else if (p.subtype === 'both_fixed') {
+                        healAmount = p.hpRecovery || 0;
                     }
                     return { ...p, healAmount };
                 });
@@ -5265,6 +5275,11 @@ const REGION_CONSUMABLES = {
                         healAmount = Math.floor(gameState.player.maxHp * recovery);
                     } else if (p.subtype === 'hp_fixed') {
                         healAmount = p.recovery || 0;
+                    } else if (p.subtype === 'both_percent') {
+                        const hpPercent = (p.hpPercent !== undefined && !isNaN(p.hpPercent)) ? p.hpPercent : 0;
+                        healAmount = Math.floor(gameState.player.maxHp * hpPercent);
+                    } else if (p.subtype === 'both_fixed') {
+                        healAmount = p.hpRecovery || 0;
                     }
                     return { ...p, healAmount };
                 });
@@ -5280,6 +5295,21 @@ const REGION_CONSUMABLES = {
                 healAmount = Math.floor(gameState.player.maxHp * recovery);
             } else if (potion.subtype === 'hp_fixed') {
                 healAmount = potion.recovery || 0;
+            } else if (potion.subtype === 'both_percent') {
+                // 組合藥水（百分比HP）
+                const hpPercent = (potion.hpPercent !== undefined && !isNaN(potion.hpPercent)) ? potion.hpPercent : 0;
+                healAmount = Math.floor(gameState.player.maxHp * hpPercent);
+                // 同時回復AP
+                if (potion.apRecovery) {
+                    gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + potion.apRecovery);
+                }
+            } else if (potion.subtype === 'both_fixed') {
+                // 組合藥水（固定HP）
+                healAmount = potion.hpRecovery || 0;
+                // 同時回復AP
+                if (potion.apRecovery) {
+                    gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + potion.apRecovery);
+                }
             }
             
             // 防止NaN：檢查healAmount是否有效
@@ -10040,43 +10070,11 @@ const REGION_CONSUMABLES = {
             // 屬性顯示（含基礎和裝備加成分解）
             const breakdown = gameState.player.statsBreakdown || {};
             
-            // 攻擊力
-            if (breakdown.atk) {
-                const base = breakdown.atk.base || 0;
-                const equipment = breakdown.atk.equipment || 0;
-                const buffTotal = buffAtk + scrollBuffAtk;
-                
-                let atkHtml = `${gameState.player.atk} <span style="color: #888; font-size: 0.9em;">(${base}`;
-                if (equipment > 0) {
-                    atkHtml += ` <span style="color: #4a9eff;">+${equipment}</span>`;
-                }
-                if (buffTotal > 0) {
-                    atkHtml += ` <span style="color: #4ade80;">+${buffTotal}</span>`;
-                }
-                atkHtml += `)</span>`;
-                document.getElementById('player-atk').innerHTML = atkHtml;
-            } else {
-                document.getElementById('player-atk').textContent = gameState.player.atk;
-            }
+            // 攻擊力（只顯示最終總值）
+            document.getElementById('player-atk').textContent = Math.round(gameState.player.atk);
             
-            // 防禦力
-            if (breakdown.def) {
-                const base = breakdown.def.base || 0;
-                const equipment = breakdown.def.equipment || 0;
-                const buffTotal = buffDef + scrollBuffDef;
-                
-                let defHtml = `${gameState.player.def} <span style="color: #888; font-size: 0.9em;">(${base}`;
-                if (equipment > 0) {
-                    defHtml += ` <span style="color: #4a9eff;">+${equipment}</span>`;
-                }
-                if (buffTotal > 0) {
-                    defHtml += ` <span style="color: #4ade80;">+${buffTotal}</span>`;
-                }
-                defHtml += `)</span>`;
-                document.getElementById('player-def').innerHTML = defHtml;
-            } else {
-                document.getElementById('player-def').textContent = gameState.player.def;
-            }
+            // 防禦力（只顯示最終總值）
+            document.getElementById('player-def').textContent = Math.round(gameState.player.def);
             
             // 暴擊率
             if (breakdown.crit && breakdown.crit.equipment > 0) {

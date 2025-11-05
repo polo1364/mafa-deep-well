@@ -4431,8 +4431,8 @@ const REGION_CONSUMABLES = {
             // 測試localStorage是否可用
             try {
                 const testKey = '__storage_test__';
-                storage.setItem(testKey, 'test');
-                storage.removeItem(testKey);
+                localStorage.setItem(testKey, 'test');
+                localStorage.removeItem(testKey);
             } catch (e) {
                 console.warn('localStorage 不可用，使用記憶體儲存（關閉分頁後數據將遺失）');
                 useMemory = true;
@@ -4468,7 +4468,7 @@ const REGION_CONSUMABLES = {
                         return;
                     }
                     try {
-                        storage.setItem(key, value);
+                        localStorage.setItem(key, value);
                     } catch (e) {
                         memoryStorage[key] = value;
                     }
@@ -4479,7 +4479,7 @@ const REGION_CONSUMABLES = {
                         return;
                     }
                     try {
-                        storage.removeItem(key);
+                        localStorage.removeItem(key);
                     } catch (e) {
                         delete memoryStorage[key];
                     }
@@ -4490,7 +4490,7 @@ const REGION_CONSUMABLES = {
                         return;
                     }
                     try {
-                        storage.clear();
+                        localStorage.clear();
                     } catch (e) {
                         memoryStorage = {};
                     }

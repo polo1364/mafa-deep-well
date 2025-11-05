@@ -4234,6 +4234,81 @@ const REGION_CONSUMABLES = {
         const GAME_VERSION = '1.0.0';
         const SAVE_KEY = 'darui_game_save';
         
+        // ========== localStorage 包裝器（支援沙盒環境） ==========
+        const storage = (() => {
+            let memoryStorage = {};
+            let useMemory = false;
+            
+            // 測試localStorage是否可用
+            try {
+                const testKey = '__storage_test__';
+                storage.setItem(testKey, 'test');
+                storage.removeItem(testKey);
+            } catch (e) {
+                console.warn('localStorage 不可用，使用記憶體儲存（關閉分頁後數據將遺失）');
+                useMemory = true;
+            }
+            
+            return {
+                getItem: (key) => {
+                    if (useMemory) {
+                        // 在記憶體模式下，嘗試從localStorage讀取舊存檔
+                        if (!memoryStorage[key]) {
+                            try {
+                                const oldSave = localStorage.getItem(key);
+                                if (oldSave) {
+                                    console.log('從localStorage遷移舊存檔到記憶體');
+                                    memoryStorage[key] = oldSave;
+                                    return oldSave;
+                                }
+                            } catch (e) {
+                                // localStorage不可用，忽略
+                            }
+                        }
+                        return memoryStorage[key] || null;
+                    }
+                    try {
+                        return localStorage.getItem(key);
+                    } catch (e) {
+                        return memoryStorage[key] || null;
+                    }
+                },
+                setItem: (key, value) => {
+                    if (useMemory) {
+                        memoryStorage[key] = value;
+                        return;
+                    }
+                    try {
+                        storage.setItem(key, value);
+                    } catch (e) {
+                        memoryStorage[key] = value;
+                    }
+                },
+                removeItem: (key) => {
+                    if (useMemory) {
+                        delete memoryStorage[key];
+                        return;
+                    }
+                    try {
+                        storage.removeItem(key);
+                    } catch (e) {
+                        delete memoryStorage[key];
+                    }
+                },
+                clear: () => {
+                    if (useMemory) {
+                        memoryStorage = {};
+                        return;
+                    }
+                    try {
+                        storage.clear();
+                    } catch (e) {
+                        memoryStorage = {};
+                    }
+                }
+            };
+        })();
+        
         let gameState = {
             version: GAME_VERSION,
             player: {
@@ -4454,7 +4529,7 @@ const REGION_CONSUMABLES = {
             // 主選單按鈕
             document.getElementById('new-game-btn').addEventListener('click', () => {
                 // 檢查是否有存檔
-                const hasSave = localStorage.getItem(SAVE_KEY) !== null;
+                const hasSave = storage.getItem(SAVE_KEY) !== null;
                 
                 if (hasSave) {
                     // 有存檔時顯示確認對話框
@@ -4503,7 +4578,7 @@ const REGION_CONSUMABLES = {
                 if (document.getElementById('game-main').style.display === 'block') {
                     try {
                         gameState.version = GAME_VERSION;
-                        localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+                        storage.setItem(SAVE_KEY, JSON.stringify(gameState));
                         console.log('自動存檔完成');
                     } catch (e) {
                         console.error('自動存檔失敗', e);
@@ -5549,7 +5624,8 @@ const REGION_CONSUMABLES = {
         }
 
         // ========== 怪物詞綴系統 ==========
-        const MONSTER_AFFIXES = [
+        // 🔴 前綴 - 攻擊型
+        const PREFIX_AFFIXES = [
             // 攻擊型詞綴
             {
                 id: 'furious',
@@ -5737,6 +5813,264 @@ const REGION_CONSUMABLES = {
             }
         ];
         
+        // 🔵 後綴 - 防禦型
+        const SUFFIX_AFFIXES = [
+            {
+                id: 'shielded',
+                name: '之盾',
+                icon: '🛡️',
+                color: '#4dabf7',
+                tier: 'basic',
+                effect: { defMultiplier: 1.3 },
+                reward: { goldMultiplier: 1.2, expMultiplier: 1.2 },
+                description: '防禦+30%'
+            },
+            {
+                id: 'armored',
+                name: '之錘',
+                icon: '🛡️',
+                color: '#4dabf7',
+                tier: 'basic',
+                effect: { damageReduction: 0.2 },
+                reward: { goldMultiplier: 1.2, expMultiplier: 1.2 },
+                description: '減傷20%'
+            },
+            {
+                id: 'fortified',
+                name: '之壁',
+                icon: '🏯',
+                color: '#4dabf7',
+                tier: 'basic',
+                effect: { hpMultiplier: 1.3 },
+                reward: { goldMultiplier: 1.2, expMultiplier: 1.2 },
+                description: '生命+30%'
+            },
+            {
+                id: 'shadowy',
+                name: '之影',
+                icon: '🌑',
+                color: '#4dabf7',
+                tier: 'basic',
+                effect: { dodgeChance: 0.3 },
+                reward: { goldMultiplier: 1.25, expMultiplier: 1.25 },
+                description: '閃避30%'
+            },
+            {
+                id: 'thorny',
+                name: '之刺',
+                icon: '🌹',
+                color: '#4dabf7',
+                tier: 'basic',
+                effect: { reflect: 0.2 },
+                reward: { goldMultiplier: 1.25, expMultiplier: 1.25 },
+                description: '反傷20%'
+            },
+            {
+                id: 'regenerating',
+                name: '之心',
+                icon: '❤️',
+                color: '#ff6b6b',
+                tier: 'advanced',
+                effect: { regen: 0.05 },
+                reward: { goldMultiplier: 1.3, expMultiplier: 1.3 },
+                description: '每回合回復5%生命'
+            },
+            {
+                id: 'titan',
+                name: '之體',
+                icon: '💪',
+                color: '#ff6b6b',
+                tier: 'advanced',
+                effect: { hpMultiplier: 1.5, defMultiplier: 1.2 },
+                reward: { goldMultiplier: 1.3, expMultiplier: 1.3 },
+                description: '生命+50%, 防禦+20%'
+            },
+            {
+                id: 'ethereal',
+                name: '之魂',
+                icon: '👻',
+                color: '#ff6b6b',
+                tier: 'advanced',
+                effect: { damageReduction: 0.3, dodgeChance: 0.2 },
+                reward: { goldMultiplier: 1.35, expMultiplier: 1.35 },
+                description: '減傷30%, 閃避20%'
+            },
+            {
+                id: 'king',
+                name: '之王',
+                icon: '👑',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { allStatsMultiplier: 1.3 },
+                reward: { goldMultiplier: 1.4, expMultiplier: 1.4 },
+                description: '全屬性+30%'
+            },
+            {
+                id: 'god',
+                name: '之神',
+                icon: '✨',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { hpMultiplier: 1.8, defMultiplier: 1.4 },
+                reward: { goldMultiplier: 1.5, expMultiplier: 1.5 },
+                description: '生命+80%, 防禦+40%'
+            },
+            {
+                id: 'tower',
+                name: '之塔',
+                icon: '🗼',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { defMultiplier: 2.0, damageReduction: 0.3 },
+                reward: { goldMultiplier: 1.45, expMultiplier: 1.45 },
+                description: '防禦+100%, 減傷30%'
+            },
+            {
+                id: 'spirit',
+                name: '之靈',
+                icon: '🔮',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { hpMultiplier: 1.6, regen: 0.08 },
+                reward: { goldMultiplier: 1.4, expMultiplier: 1.4 },
+                description: '生命+60%, 每回合回復8%'
+            },
+            {
+                id: 'plated',
+                name: '之錘甲',
+                icon: '🛡️',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { damageReduction: 0.4, reflect: 0.3 },
+                reward: { goldMultiplier: 1.4, expMultiplier: 1.4 },
+                description: '減傷40%, 反傷30%'
+            },
+            {
+                id: 'immortal_suffix',
+                name: '不滅',
+                icon: '⏰',
+                color: '#ff4444',
+                tier: 'special',
+                effect: { revive: true, revivePercent: 0.5 },
+                reward: { goldMultiplier: 1.8, expMultiplier: 1.8, dropBonus: 0.4 },
+                description: '第一次死亡復活50%生命'
+            },
+            {
+                id: 'eternal',
+                name: '永恆',
+                icon: '♾️',
+                color: '#ff4444',
+                tier: 'special',
+                effect: { hpMultiplier: 2.5, regen: 0.1 },
+                reward: { goldMultiplier: 2.0, expMultiplier: 2.0, dropBonus: 0.5 },
+                description: '生命+150%, 每回合回復10%'
+            }
+        ];
+        
+        // 🟡 中綴 - 特殊型（僥Boss）
+        const INFIX_AFFIXES = [
+            {
+                id: 'elemental',
+                name: '元素',
+                icon: '🔮',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { elementalAttack: true },
+                reward: { goldMultiplier: 1.3, expMultiplier: 1.3 },
+                description: '攻擊附帶隨機元素效果'
+            },
+            {
+                id: 'astral',
+                name: '星界',
+                icon: '💫',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { stackingAtk: 0.03, maxStacks: 8 },
+                reward: { goldMultiplier: 1.3, expMultiplier: 1.3 },
+                description: '每次攻擊獲得3%攻擊（疊8層）'
+            },
+            {
+                id: 'chaotic',
+                name: '混沌',
+                icon: '🎲',
+                color: '#ffd700',
+                tier: 'boss',
+                effect: { damageVariance: 0.25 },
+                reward: { goldMultiplier: 1.2, expMultiplier: 1.2 },
+                description: '每次攻擊傷害在75%-125%間波動'
+            },
+            {
+                id: 'shadow',
+                name: '暗影',
+                icon: '🌑',
+                color: '#9b59b6',
+                tier: 'boss',
+                effect: { dodgeChance: 0.3, critRate: 0.2 },
+                reward: { goldMultiplier: 1.35, expMultiplier: 1.35 },
+                description: '30%閃避+20%暴擊'
+            },
+            {
+                id: 'frenzy',
+                name: '狂亂',
+                icon: '🔥',
+                color: '#e74c3c',
+                tier: 'boss',
+                effect: { atkMultiplier: 1.4, doubleAttackChance: 0.2 },
+                reward: { goldMultiplier: 1.4, expMultiplier: 1.4 },
+                description: '攻擊+40%+20%雙倍攻擊'
+            },
+            {
+                id: 'colossus',
+                name: '泰坦',
+                icon: '💪',
+                color: '#3498db',
+                tier: 'boss',
+                effect: { hpMultiplier: 2.0, defMultiplier: 1.5 },
+                reward: { goldMultiplier: 1.4, expMultiplier: 1.4 },
+                description: '生命+100%+防禦+50%'
+            },
+            {
+                id: 'void',
+                name: '虛空',
+                icon: '🕳️',
+                color: '#8e44ad',
+                tier: 'boss',
+                effect: { armorPen: 0.5, lifeSteal: 0.25 },
+                reward: { goldMultiplier: 1.45, expMultiplier: 1.45 },
+                description: '無視防禦50%+吸蠀25%'
+            },
+            {
+                id: 'temporal',
+                name: '時空',
+                icon: '⏳',
+                color: '#16a085',
+                tier: 'special',
+                effect: { resetChance: 0.2 },
+                reward: { goldMultiplier: 1.5, expMultiplier: 1.5 },
+                description: '20%機率重置回合'
+            },
+            {
+                id: 'divine',
+                name: '神聖',
+                icon: '✨',
+                color: '#f39c12',
+                tier: 'special',
+                effect: { allStatsMultiplier: 1.4, regen: 0.1 },
+                reward: { goldMultiplier: 1.6, expMultiplier: 1.6 },
+                description: '全屬性+40%+每回合回復10%'
+            },
+            {
+                id: 'apocalypse',
+                name: '末日',
+                icon: '☠️',
+                color: '#c0392b',
+                tier: 'special',
+                effect: { atkMultiplier: 1.8, hpMultiplier: 1.8, damageReduction: 0.3 },
+                reward: { goldMultiplier: 1.8, expMultiplier: 1.8, dropBonus: 0.5 },
+                description: '攻擊+80%+生命+80%+減傷30%'
+            }
+        ];
+        
         // 怪物詞綴機率表
         const MONSTER_AFFIX_CHANCES = {
             normal: { 0: 0.95, 1: 0.05, 2: 0, 3: 0 },
@@ -5750,10 +6084,15 @@ const REGION_CONSUMABLES = {
         function generateMonsterAffixes(enemy) {
             // 決定怪物類型
             let monsterType = 'normal';
+            let isBossType = false;
             if (enemy.isSpecialBoss) {
                 monsterType = 'specialBoss';
+                isBossType = true;
             } else if (enemy.isBoss) {
                 monsterType = 'boss';
+                isBossType = true;
+            } else if (enemy.isElite) {
+                monsterType = 'elite';
             }
             
             // 根據機率決定詞綴數量
@@ -5772,14 +6111,53 @@ const REGION_CONSUMABLES = {
             
             if (affixCount === 0) return;
             
-            // 隨機選擇詞綴（不重複）
-            const availableAffixes = [...MONSTER_AFFIXES];
+            // 選擇詞綴（前中後綴系統）
+            let prefix = null;
+            let infix = null;
+            let suffix = null;
             const selectedAffixes = [];
             
-            for (let i = 0; i < affixCount && availableAffixes.length > 0; i++) {
-                const index = Math.floor(Math.random() * availableAffixes.length);
-                selectedAffixes.push(availableAffixes[index]);
-                availableAffixes.splice(index, 1);
+            // 篩選可用詞綴（根據怪物類型）
+            const filterByTier = (affixes) => {
+                if (monsterType === 'specialBoss') {
+                    return affixes; // 特殊Boss可用所有詞綴
+                } else if (monsterType === 'boss') {
+                    return affixes.filter(a => a.tier !== 'special');
+                } else if (monsterType === 'elite') {
+                    return affixes.filter(a => a.tier === 'basic' || a.tier === 'advanced');
+                } else {
+                    return affixes.filter(a => a.tier === 'basic');
+                }
+            };
+            
+            // 根據詞綴數量選擇
+            if (affixCount === 1) {
+                // 1詞綴：50%前綴，50%後綴
+                if (Math.random() < 0.5) {
+                    const available = filterByTier(PREFIX_AFFIXES);
+                    prefix = available[Math.floor(Math.random() * available.length)];
+                    selectedAffixes.push(prefix);
+                } else {
+                    const available = filterByTier(SUFFIX_AFFIXES);
+                    suffix = available[Math.floor(Math.random() * available.length)];
+                    selectedAffixes.push(suffix);
+                }
+            } else if (affixCount === 2) {
+                // 2詞綴：前綴+後綴
+                const availablePrefix = filterByTier(PREFIX_AFFIXES);
+                const availableSuffix = filterByTier(SUFFIX_AFFIXES);
+                prefix = availablePrefix[Math.floor(Math.random() * availablePrefix.length)];
+                suffix = availableSuffix[Math.floor(Math.random() * availableSuffix.length)];
+                selectedAffixes.push(prefix, suffix);
+            } else if (affixCount === 3 && isBossType) {
+                // 3詞綴（僥Boss）：前綴+中綴+後綴
+                const availablePrefix = filterByTier(PREFIX_AFFIXES);
+                const availableInfix = filterByTier(INFIX_AFFIXES);
+                const availableSuffix = filterByTier(SUFFIX_AFFIXES);
+                prefix = availablePrefix[Math.floor(Math.random() * availablePrefix.length)];
+                infix = availableInfix[Math.floor(Math.random() * availableInfix.length)];
+                suffix = availableSuffix[Math.floor(Math.random() * availableSuffix.length)];
+                selectedAffixes.push(prefix, infix, suffix);
             }
             
             // 應用詞綴效果
@@ -5847,6 +6225,12 @@ const REGION_CONSUMABLES = {
                     enemy.affixEffects.maxStacks = effect.maxStacks;
                     enemy.affixEffects.currentStacks = 0;
                 }
+                if (effect.elementalAttack) {
+                    enemy.affixEffects.elementalAttack = true;
+                }
+                if (effect.resetChance) {
+                    enemy.affixEffects.resetChance = effect.resetChance;
+                }
                 
                 // 累計獎勵
                 totalGoldMult *= affix.reward.goldMultiplier;
@@ -5863,10 +6247,30 @@ const REGION_CONSUMABLES = {
                 drop: totalDropBonus
             };
             
-            // 更新怪物名稱
-            const affixNames = selectedAffixes.map(a => a.name).join('');
-            enemy.name = `${affixNames}${enemy.name}`;
-            enemy.affixIcons = selectedAffixes.map(a => a.icon).join('');
+            // 更新怪物名稱（前中後綴格式）
+            const baseName = enemy.name;
+            let newName = '';
+            let icons = '';
+            
+            if (prefix) {
+                newName += prefix.name;
+                icons += prefix.icon;
+            }
+            if (infix) {
+                newName += infix.name;
+                icons += infix.icon;
+            }
+            newName += baseName;
+            if (suffix) {
+                newName += suffix.name;
+                icons += suffix.icon;
+            }
+            
+            enemy.name = newName;
+            enemy.affixIcons = icons;
+            enemy.prefix = prefix;
+            enemy.infix = infix;
+            enemy.suffix = suffix;
         }
 
         function generateEnemy(region, isBoss) {
@@ -6456,6 +6860,31 @@ const REGION_CONSUMABLES = {
                 const monsterAttackResult = applyMonsterAffixOnAttack(enemy, enemyDmg);
                 enemyDmg = monsterAttackResult.damage;
                 
+                // 元素政擊：隨機觸發元素效果
+                if (enemy.affixEffects && enemy.affixEffects.elementalAttack) {
+                    const elements = ['fire', 'ice', 'thunder', 'poison', 'earth'];
+                    const randomElement = elements[Math.floor(Math.random() * elements.length)];
+                    const elementData = ELEMENTS[randomElement];
+                    
+                    if (elementData.effect.type === 'burn' || elementData.effect.type === 'poison') {
+                        // 燃燒/中毒效果
+                        if (!gameState.player.elementalEffects) gameState.player.elementalEffects = {};
+                        gameState.player.elementalEffects[randomElement] = {
+                            duration: elementData.effect.duration,
+                            damagePercent: elementData.effect.damagePercent
+                        };
+                        addLog('元素', `${elementData.icon} 怪物觸發了${elementData.name}！`);
+                    } else if (elementData.effect.type === 'weaken') {
+                        // 冰凍效果（降低玩家攻擊）
+                        if (!gameState.player.elementalEffects) gameState.player.elementalEffects = {};
+                        gameState.player.elementalEffects.ice = {
+                            duration: elementData.effect.duration,
+                            weakenPercent: elementData.effect.weakenPercent
+                        };
+                        addLog('元素', `${elementData.icon} 怪物觸發了${elementData.name}！你的攻擊力降低了！`);
+                    }
+                }
+                
                 // 處理嘗血效果
                 if (monsterAttackResult.lifeSteal > 0) {
                     enemy.hp = Math.min(enemy.hp + monsterAttackResult.lifeSteal, enemy.maxHp);
@@ -6691,6 +7120,16 @@ const REGION_CONSUMABLES = {
                 
                 // 更新Buff計時
                 updateBuffs();
+                
+                // 時空詞綴：有機率重置回合（怪物再次攻擊）
+                if (enemy.affixEffects && enemy.affixEffects.resetChance && enemyHp > 0) {
+                    if (Math.random() < enemy.affixEffects.resetChance) {
+                        addLog('詞綴', `⏱️ 時空詞綴觸發！怪物重置了回合！`);
+                        // 不更新UI，讓戰鬥繼續下一輪
+                        return; // 不更新UI，直接進入下一回合
+                    }
+                }
+                
                 updateUI();
             }, 1000);
         }
@@ -14913,7 +15352,7 @@ const REGION_CONSUMABLES = {
                 
                 // 確保存檔時包含最新版本號
                 gameState.version = GAME_VERSION;
-                localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
                 addLog('系統', '遊戲已存檔！');
             } catch (e) {
                 addLog('系統', '存檔失敗！');
@@ -15138,7 +15577,7 @@ const REGION_CONSUMABLES = {
         
         function loadGame() {
             try {
-                const save = localStorage.getItem(SAVE_KEY);
+                const save = storage.getItem(SAVE_KEY);
                 if (!save) {
                     alert('沒有找到存檔！');
                     return;
@@ -15304,7 +15743,7 @@ const REGION_CONSUMABLES = {
                     gameState = migratedData;
                     
                     // 存入 localStorage
-                    localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+                    storage.setItem(SAVE_KEY, JSON.stringify(gameState));
                     
                     // 更新界面
                     document.getElementById('start-screen').style.display = 'none';
@@ -15332,7 +15771,7 @@ const REGION_CONSUMABLES = {
 	            try {
 	                // 確保存檔時包含最新版本號
 	                gameState.version = GAME_VERSION;
-	                localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+	                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
 	                console.log('遊戲已在離開前自動存檔！');
 	            } catch (e) {
 	                console.error('自動存檔失敗！', e);
@@ -15347,7 +15786,7 @@ const REGION_CONSUMABLES = {
 	        if (document.getElementById('game-main').style.display === 'block') {
 	             try {
 	                gameState.version = GAME_VERSION;
-	                localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+	                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
 	                console.log('遊戲已在 pagehide 時自動存檔！');
 	            } catch (e) {
 	                console.error('pagehide 自動存檔失敗！', e);

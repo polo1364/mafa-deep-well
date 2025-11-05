@@ -3529,25 +3529,92 @@ const REGION_CONSUMABLES = {
     }
 };
 
-        // ========== 特殊隱藏BOSS ==========
-        const SPECIAL_BOSSES = [
-            // 入門開發層菁英
-            { name: '狂暴工坊鼠', icon: '🐀⚡' },
-            { name: '結晶礦洞蝙蝠', icon: '🦇💎' },
-            { name: '腐蝕見習哥布林', icon: '👺☠️' },
-            // 研發核心層菁英
-            { name: '迅影盜賊刺客', icon: '🥷💨' },
-            { name: '霸盾重盾哥布林', icon: '🛡️👺' },
-            { name: '腐蝕火焰學徒', icon: '🔥☠️' },
-            // 資料裂縫菁英
-            { name: '結晶岩甲魔蟹', icon: '🦀💎' },
-            { name: '嗜血弩手強盜', icon: '🎯🩸' },
-            { name: '狂暴黑鬃惡狼', icon: '🐺⚡' },
-            // 深井臨界層菁英
-            { name: '霸盾熔岩巨人', icon: '🔥🛡️' },
-            { name: '迅影魅影刺客', icon: '👻💨' },
-            { name: '腐蝕雷霆魔蜥', icon: '⚡☠️' }
-        ];
+        // ========== 特殊BOSS ==========
+        const SPECIAL_BOSSES = {
+            '入門開發層': {
+                name: '狂暴死神',
+                icon: '🔥💀',
+                abilities: [
+                    { id: 'berserk', name: '狂暴', icon: '🔥', effect: { atkMultiplier: 1.3 }, reward: { goldMultiplier: 1.2, expMultiplier: 1.2 } },
+                    { id: 'enraged', name: '狂怒', icon: '⚔️', effect: { lowHpAtkBonus: 0.5, lowHpThreshold: 0.5 }, reward: { goldMultiplier: 1.3, expMultiplier: 1.3 } },
+                    { id: 'vampiric', name: '嗜血', icon: '🩸', effect: { lifeSteal: 0.2 }, reward: { goldMultiplier: 1.2, expMultiplier: 1.2 } }
+                ],
+                stats: { hpMultiplier: 5.0, atkMultiplier: 2.2, defMultiplier: 1.8, critRate: 0.10, critDamage: 0.30 },
+                rewardMultiplier: 6.0
+            },
+            '研發核心層': {
+                name: '虛空幽靈',
+                icon: '⚡👻',
+                abilities: [
+                    { id: 'void', name: '虛空', icon: '🕳️', effect: { armorPen: 0.5, lifeSteal: 0.25 }, reward: { goldMultiplier: 1.45, expMultiplier: 1.45 } },
+                    { id: 'evasive', name: '閃避', icon: '⚡', effect: { dodgeChance: 0.3 }, reward: { goldMultiplier: 1.35, expMultiplier: 1.35 } },
+                    { id: 'temporal', name: '時空', icon: '⏳', effect: { resetChance: 0.2 }, reward: { goldMultiplier: 1.5, expMultiplier: 1.5 } }
+                ],
+                stats: { hpMultiplier: 4.5, atkMultiplier: 2.5, defMultiplier: 1.6, critRate: 0.15, critDamage: 0.40 },
+                rewardMultiplier: 7.0
+            },
+            '資料裂縫': {
+                name: '永恆泰坦',
+                icon: '💎🌊',
+                abilities: [
+                    { id: 'resilient', name: '堅韌', icon: '🛡️', effect: { defMultiplier: 1.4, hpMultiplier: 1.3 }, reward: { goldMultiplier: 1.2, expMultiplier: 1.2 } },
+                    { id: 'tidal', name: '潮汐', icon: '🌊', effect: { lowHpDefMultiplier: 2.0, lowHpThreshold: 0.3 }, reward: { goldMultiplier: 1.25, expMultiplier: 1.25 } },
+                    { id: 'regenerative', name: '再生', icon: '💚', effect: { regen: 0.05 }, reward: { goldMultiplier: 1.3, expMultiplier: 1.3 } },
+                    { id: 'thorny', name: '冰甲', icon: '🧊', effect: { reflect: 0.15 }, reward: { goldMultiplier: 1.2, expMultiplier: 1.2 } }
+                ],
+                stats: { hpMultiplier: 6.0, atkMultiplier: 2.0, defMultiplier: 2.5, critRate: 0.05, critDamage: 0.20 },
+                rewardMultiplier: 8.0
+            },
+            '深井臨界層': {
+                name: '不滅魔神',
+                icon: '☠️✨',
+                abilities: [
+                    { id: 'immortal', name: '不滅', icon: '⏰', effect: { revive: true, revivePercent: 0.5 }, reward: { goldMultiplier: 1.8, expMultiplier: 1.8, dropBonus: 0.4 } },
+                    { id: 'deadly', name: '致命', icon: '💀', effect: { critRate: 0.2, critDamage: 0.5 }, reward: { goldMultiplier: 1.25, expMultiplier: 1.25 } },
+                    { id: 'swift', name: '連擊', icon: '⚡', effect: { doubleAttackChance: 0.3 }, reward: { goldMultiplier: 1.2, expMultiplier: 1.2 } },
+                    { id: 'astral', name: '星界', icon: '💫', effect: { stackingAtk: 0.03, maxStacks: 8 }, reward: { goldMultiplier: 1.3, expMultiplier: 1.3 } },
+                    { id: 'ironclad', name: '鋼鐵', icon: '💎', effect: { damageReduction: 0.12 }, reward: { goldMultiplier: 1.2, expMultiplier: 1.2 } }
+                ],
+                stats: { hpMultiplier: 5.5, atkMultiplier: 2.8, defMultiplier: 2.2, critRate: 0.25, critDamage: 0.60 },
+                rewardMultiplier: 10.0
+            }
+        };
+        
+        // ========== 精英怪物 ==========
+        const ELITE_MONSTERS = {
+            '入門開發層': [
+                { name: '電流追蹤者', icon: '⚡🔌' },
+                { name: '晶石守護者', icon: '💎🛡️' },
+                { name: '怒焰狂徒', icon: '🔥💢' },
+                { name: '星光哨兵', icon: '🌟🗡️' }
+            ],
+            '研發核心層': [
+                { name: '風暴行者', icon: '🌪️⚔️' },
+                { name: '烈焰君主', icon: '🔥👑' },
+                { name: '暗影劍聖', icon: '⚔️🌑' },
+                { name: '泰坦石衛', icon: '🗿💪' }
+            ],
+            '資料裂縫': [
+                { name: '虛空行刑者', icon: '👻🗡️' },
+                { name: '雷霆執法者', icon: '⚡⚖️' },
+                { name: '星界術士', icon: '🌌🔮' },
+                { name: '暗夜霸主', icon: '🐺👑' }
+            ],
+            '深井臨界層': [
+                { name: '煉獄暴君', icon: '🔥😈' },
+                { name: '閃電霸王', icon: '⚡👑' },
+                { name: '死神使者', icon: '💀🗡️' },
+                { name: '極寒魔君', icon: '❄️👑' }
+            ]
+        };
+        
+        // ========== 區域Boss ==========
+        const REGION_BOSSES = {
+            '入門開發層': { name: '數據守門者', icon: '⚔️🚪' },
+            '研發核心層': { name: '核心監察官', icon: '👁️⚡' },
+            '資料裂縫': { name: '裂縫主孰', icon: '💀👑' },
+            '深井臨界層': { name: '深淵霸主', icon: '😈👑' }
+        };
 
         const REGIONS = [
             { name: '入門開發層', level: 1, difficulty: 1.0, reward: 1.0 },
@@ -5601,6 +5668,12 @@ const REGION_CONSUMABLES = {
             
             // 顯示怪物詞綴
             let enemyDisplayName = `${enemy.icon} ${enemy.name}`;
+            
+            // 🎯 精英怪物標記
+            if (enemy.isElite) {
+                enemyDisplayName = `⭐精英⭐ ${enemyDisplayName}`;
+            }
+            
             if (enemy.affixes && enemy.affixes.length > 0) {
                 const affixDesc = enemy.affixes.map(a => `${a.icon}${a.name}`).join(' ');
                 enemyDisplayName += ` [${affixDesc}]`;
@@ -6344,27 +6417,63 @@ const REGION_CONSUMABLES = {
             let isSpecialBoss = false;
             
             if (isBoss) {
-                // 5%機率生成特殊Boss（所有區域都可能出現）
+                // 5%機率生成特殊Boss（區域專屬）
                 if (Math.random() < 0.05) {
-                    const specialBoss = SPECIAL_BOSSES[Math.floor(Math.random() * SPECIAL_BOSSES.length)];
-                    enemyName = specialBoss.name;
-                    enemyIcon = specialBoss.icon;
-                    isSpecialBoss = true;
+                    const specialBoss = SPECIAL_BOSSES[region.name];
+                    if (specialBoss) {
+                        enemyName = specialBoss.name;
+                        enemyIcon = specialBoss.icon;
+                        isSpecialBoss = true;
+                    } else {
+                        // 如果沒有定義特殊Boss，生成普通區域Boss
+                        const regionBoss = REGION_BOSSES[region.name];
+                        if (regionBoss) {
+                            enemyName = regionBoss.name;
+                            enemyIcon = regionBoss.icon;
+                        }
+                    }
                 } else {
                     // 生成普通區域Boss（只有當沒有生成特殊Boss時）
-                    enemyName = `${region.name}Boss`;
-                    enemyIcon = '⚡';
+                    const regionBoss = REGION_BOSSES[region.name];
+                    if (regionBoss) {
+                        enemyName = regionBoss.name;
+                        enemyIcon = regionBoss.icon;
+                    } else {
+                        // 如果沒有定義，使用預設名稱
+                        enemyName = `${region.name}Boss`;
+                        enemyIcon = '⚡';
+                    }
                 }
             } else {
-                // 從怪物資料庫隨機選擇
-                const monsters = MONSTERS[region.name] || [];
-                if (monsters.length > 0) {
-                    const monster = monsters[Math.floor(Math.random() * monsters.length)];
-                    enemyName = monster.name;
-                    enemyIcon = monster.icon;
+                // 🎯 判斷是否生成精英怪
+                if (isElite) {
+                    // 從精英怪物資料庫選擇
+                    const eliteMonsters = ELITE_MONSTERS[region.name] || [];
+                    if (eliteMonsters.length > 0) {
+                        const eliteMonster = eliteMonsters[Math.floor(Math.random() * eliteMonsters.length)];
+                        enemyName = eliteMonster.name;
+                        enemyIcon = eliteMonster.icon;
+                    } else {
+                        // 如果沒有精英怪資料，降級為普通怪
+                        isElite = false;
+                        const monsters = MONSTERS[region.name] || [];
+                        if (monsters.length > 0) {
+                            const monster = monsters[Math.floor(Math.random() * monsters.length)];
+                            enemyName = monster.name;
+                            enemyIcon = monster.icon;
+                        }
+                    }
                 } else {
-                    enemyName = `${region.name}Bug`;
-                    enemyIcon = '🐛';
+                    // 從普通怪物資料庫隨機選擇
+                    const monsters = MONSTERS[region.name] || [];
+                    if (monsters.length > 0) {
+                        const monster = monsters[Math.floor(Math.random() * monsters.length)];
+                        enemyName = monster.name;
+                        enemyIcon = monster.icon;
+                    } else {
+                        enemyName = `${region.name}Bug`;
+                        enemyIcon = '🐛';
+                    }
                 }
             }
             
@@ -6384,33 +6493,22 @@ const REGION_CONSUMABLES = {
                 eliteCritDmg = 25;
             }
             
+            // 🎯 特殊Boss屬性設定
             if (isSpecialBoss) {
-                // 根據菁英名稱判斷類型
-                if (enemyName.includes('狂暴')) {
-                    // 狂暴系：高攻擊、低防禦
-                    eliteMultiplier = { hp: 2.5, atk: 2.0, def: 1.2 };
-                } else if (enemyName.includes('結晶')) {
-                    // 結晶系：高防禦、低攻擊
-                    eliteMultiplier = { hp: 3.0, atk: 1.3, def: 2.5 };
-                } else if (enemyName.includes('腐蝕')) {
-                    // 腐蝕系：爆擊流
-                    eliteMultiplier = { hp: 2.2, atk: 1.6, def: 1.5 };
-                    eliteCrit = 30;
-                    eliteCritDmg = 50;
-                } else if (enemyName.includes('迅影')) {
-                    // 迅影系：超高爆擊、脆皮
-                    eliteMultiplier = { hp: 1.8, atk: 1.5, def: 1.3 };
-                    eliteCrit = 50;
-                } else if (enemyName.includes('霸盾')) {
-                    // 霸盾系：超坦、低傷
-                    eliteMultiplier = { hp: 3.5, atk: 1.2, def: 3.0 };
-                } else if (enemyName.includes('嗜血')) {
-                    // 嗜血系：高爆傷
-                    eliteMultiplier = { hp: 2.3, atk: 1.7, def: 1.6 };
-                    eliteCritDmg = 80;
+                const specialBoss = SPECIAL_BOSSES[region.name];
+                if (specialBoss && specialBoss.stats) {
+                    eliteMultiplier = {
+                        hp: specialBoss.stats.hpMultiplier,
+                        atk: specialBoss.stats.atkMultiplier,
+                        def: specialBoss.stats.defMultiplier
+                    };
+                    eliteCrit = specialBoss.stats.critRate * 100;
+                    eliteCritDmg = specialBoss.stats.critDamage * 100;
                 } else {
-                    // 預設菁英屬性
-                    eliteMultiplier = { hp: 2.5, atk: 1.8, def: 2.0 };
+                    // 預設特殊Boss屬性
+                    eliteMultiplier = { hp: 5.0, atk: 2.5, def: 2.0 };
+                    eliteCrit = 20;
+                    eliteCritDmg = 50;
                 }
             }
             
@@ -6459,7 +6557,77 @@ const REGION_CONSUMABLES = {
             };
             
             // ========== 生成怪物詞綴 ==========
-            generateMonsterAffixes(enemy, regionMultiplier);
+            if (isSpecialBoss) {
+                // 特殊Boss使用固定能力
+                const specialBoss = SPECIAL_BOSSES[region.name];
+                if (specialBoss && specialBoss.abilities) {
+                    enemy.affixes = specialBoss.abilities;
+                    enemy.affixEffects = {};
+                    
+                    let totalGoldMult = 1;
+                    let totalExpMult = 1;
+                    let totalDropBonus = 0;
+                    
+                    // 應用每個能力的效果
+                    specialBoss.abilities.forEach(ability => {
+                        const effect = ability.effect;
+                        
+                        // 應用屬性倍率
+                        if (effect.atkMultiplier) enemy.atk = Math.floor(enemy.atk * effect.atkMultiplier);
+                        if (effect.defMultiplier) enemy.def = Math.floor(enemy.def * effect.defMultiplier);
+                        if (effect.hpMultiplier) {
+                            enemy.maxHp = Math.floor(enemy.maxHp * effect.hpMultiplier);
+                            enemy.hp = enemy.maxHp;
+                        }
+                        if (effect.critRate) enemy.crit = (enemy.crit || 0) + effect.critRate * 100;
+                        if (effect.critDamage) enemy.critDmg = (enemy.critDmg || 150) + effect.critDamage * 100;
+                        
+                        // 儲存特殊效果供戰鬥中使用
+                        if (effect.lifeSteal) enemy.affixEffects.lifeSteal = effect.lifeSteal;
+                        if (effect.damageReduction) enemy.affixEffects.damageReduction = effect.damageReduction;
+                        if (effect.reflect) enemy.affixEffects.reflect = effect.reflect;
+                        if (effect.regen) enemy.affixEffects.regen = effect.regen;
+                        if (effect.dodgeChance) enemy.affixEffects.dodgeChance = effect.dodgeChance;
+                        if (effect.armorPen) enemy.affixEffects.armorPen = effect.armorPen;
+                        if (effect.doubleAttackChance) enemy.affixEffects.doubleAttackChance = effect.doubleAttackChance;
+                        if (effect.lowHpAtkBonus) {
+                            enemy.affixEffects.lowHpAtkBonus = effect.lowHpAtkBonus;
+                            enemy.affixEffects.lowHpThreshold = effect.lowHpThreshold;
+                        }
+                        if (effect.lowHpDefMultiplier) {
+                            enemy.affixEffects.lowHpDefMultiplier = effect.lowHpDefMultiplier;
+                            enemy.affixEffects.lowHpThreshold = effect.lowHpThreshold;
+                        }
+                        if (effect.revive) {
+                            enemy.affixEffects.revive = true;
+                            enemy.affixEffects.revivePercent = effect.revivePercent;
+                        }
+                        if (effect.stackingAtk) {
+                            enemy.affixEffects.stackingAtk = effect.stackingAtk;
+                            enemy.affixEffects.maxStacks = effect.maxStacks;
+                            enemy.affixEffects.currentStacks = 0;
+                        }
+                        if (effect.resetChance) {
+                            enemy.affixEffects.resetChance = effect.resetChance;
+                        }
+                        
+                        // 累計獎勵
+                        if (ability.reward) {
+                            if (ability.reward.goldMultiplier) totalGoldMult *= ability.reward.goldMultiplier;
+                            if (ability.reward.expMultiplier) totalExpMult *= ability.reward.expMultiplier;
+                            if (ability.reward.dropBonus) totalDropBonus += ability.reward.dropBonus;
+                        }
+                    });
+                    
+                    // 應用特殊Boss的總獎勵倍率
+                    enemy.goldMultiplier = specialBoss.rewardMultiplier;
+                    enemy.expMultiplier = specialBoss.rewardMultiplier;
+                    enemy.dropBonus = totalDropBonus;
+                }
+            } else {
+                // 普通怪物、精英怪物、區域Boss使用隨機詞綴
+                generateMonsterAffixes(enemy, regionMultiplier);
+            }
             
             // ========== 添加怪物元素屬性 ==========
             const monsterType = isSpecialBoss ? 'boss' : (isBoss ? 'boss' : 'normal');

@@ -1953,20 +1953,54 @@
 
     <!-- 隨從管理模態視窗 -->
     <div class="modal" id="companion-modal">
-        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
             <h2>🐾 隨從管理</h2>
             
-            <!-- 當前裝備的隨從 -->
+            <!-- 當前裝備的隨從和裝備 -->
             <div id="active-companion-display" style="background: rgba(0, 255, 136, 0.08); padding: 15px; border-radius: 8px; border: 2px solid rgba(0, 255, 136, 0.3); margin-bottom: 20px;">
                 <h3 style="color: #00ff88; margin: 0 0 10px 0;">✅ 當前裝備</h3>
-                <div id="active-companion-info" style="color: #7a8fb8;">
-                    無
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <!-- 隨從槽 -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <div style="color: #4ade80; font-size: 0.9rem; margin-bottom: 5px;">🤖 隨從</div>
+                        <div id="active-companion-info" style="color: #7a8fb8;">
+                            無
+                        </div>
+                    </div>
+                    <!-- 裝備槽 -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <div style="color: #4ade80; font-size: 0.9rem; margin-bottom: 5px;">🛠️ 裝備</div>
+                        <div id="active-equipment-info" style="color: #7a8fb8;">
+                            無
+                        </div>
+                    </div>
+                </div>
+                <!-- 組合效果 -->
+                <div id="combo-effect-display" style="display: none; margin-top: 15px; background: rgba(0, 255, 136, 0.15); padding: 12px; border-radius: 8px; border: 2px solid rgba(0, 255, 136, 0.5);">
+                    <!-- 動態生成 -->
+                </div>
+            </div>
+            
+            <!-- 碎片顯示 -->
+            <div style="background: rgba(100, 100, 100, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #4EA5FF;">💎 裝備碎片</h3>
+                <div style="text-align: center; font-size: 1.5rem; color: #ffd700;">
+                    <span id="equipment-shards-display">0</span> 碎片
+                </div>
+                <div style="text-align: center; font-size: 0.8rem; color: #888; margin-top: 5px;">用於升級裝備等級</div>
+            </div>
+            
+            <!-- 裝備收藏 -->
+            <div style="margin-bottom: 15px;">
+                <h3 style="color: #4EA5FF; margin: 0 0 10px 0;">🛠️ 裝備收藏</h3>
+                <div id="equipment-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                    <!-- 裝備卡片將由 JavaScript 生成 -->
                 </div>
             </div>
             
             <!-- 隨從列表 -->
             <div style="margin-bottom: 15px;">
-                <h3 style="color: #4EA5FF; margin: 0 0 10px 0;">📚 擁有的隨從</h3>
+                <h3 style="color: #4EA5FF; margin: 0 0 10px 0;">📚 隨從收藏</h3>
                 <div id="companion-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px;">
                     <!-- 隨從卡片將由 JavaScript 生成 -->
                 </div>
@@ -3667,15 +3701,15 @@ const REGION_CONSUMABLES = {
         };
         // 迭代天賦系統
         const RARITIES = [
-            { name: 'common', label: '普通', color: '#9E9E9E', shards: 1, multiplier: 1.0 },
-            { name: 'uncommon', label: '優質', color: '#4CAF50', shards: 2, multiplier: 1.15 },
-            { name: 'fine', label: '精良', color: '#2196F3', shards: 3, multiplier: 1.3 },
-            { name: 'rare', label: '稀有', color: '#9C27B0', shards: 5, multiplier: 1.5 },
-            { name: 'epic', label: '史詩', color: '#FF6D00', shards: 8, multiplier: 1.75 },
-            { name: 'legendary', label: '傳說', color: '#FFD700', shards: 12, multiplier: 2.0 },
-            { name: 'mythic', label: '神話', color: '#F44336', shards: 20, multiplier: 2.3 },
-            { name: 'eternal', label: '永恆', color: '#E040FB', shards: 35, multiplier: 2.6 },
-            { name: 'set', label: '套裝', color: '#00BCD4', shards: 15, multiplier: 2.2 }
+            { name: 'common', label: '普通', color: '#9E9E9E', shards: 1, multiplier: 1.2 },
+            { name: 'uncommon', label: '優質', color: '#4CAF50', shards: 2, multiplier: 1.6 },
+            { name: 'fine', label: '精良', color: '#2196F3', shards: 3, multiplier: 2.2 },
+            { name: 'rare', label: '稀有', color: '#9C27B0', shards: 5, multiplier: 3.0 },
+            { name: 'epic', label: '史詩', color: '#FF6D00', shards: 8, multiplier: 4.2 },
+            { name: 'legendary', label: '傳說', color: '#FFD700', shards: 12, multiplier: 6.0 },
+            { name: 'mythic', label: '神話', color: '#F44336', shards: 20, multiplier: 8.5 },
+            { name: 'eternal', label: '永恆', color: '#E040FB', shards: 35, multiplier: 12.0 },
+            { name: 'set', label: '套裝', color: '#00BCD4', shards: 15, multiplier: 25.0 }
         ];
 
         // 元素系統
@@ -3765,53 +3799,53 @@ const REGION_CONSUMABLES = {
             '入門開發層': {
                 setName: '啟動者套裝',
                 items: [
-                    // 武器：45點 = 攻擊18 + 暴擊率3%(6點) + 無視防禦4%(8點) + 對首領3%(4.5點)
-                    { type: 'weapon', name: '調試短劍', atk: 18, crit: 3, armorPen: 4, bossDmg: 3 },
-                    // 防具：45點 = 防禦15 + 生命50(10點) + 減傷3%(9點) + 吸血1.2%(3點)
-                    { type: 'armor', name: '預編外套', def: 15, hp: 50, dmgRed: 3, lifeSteal: 1.2 },
-                    // 飾品1：45點 = 攻擊8 + 防禦8 + 生命30(6點) + 暴擊率2%(4點) + 暴擊傷8%(4點) + 吸血1.2%(3點) + 對首領2%(3點)
-                    { type: 'accessory', name: '編譯者指環', atk: 8, def: 8, hp: 30, crit: 2, critDmg: 8, lifeSteal: 1.2, bossDmg: 2 },
-                    // 飾品2：45點 = 攻擊7 + 防禦7 + 生命35(7點) + 暴擊率2%(4點) + 暴擊傷8%(4點) + 減傷2%(6點) + 無視防禦2%(4點)
-                    { type: 'accessory', name: '啟動者徽章', atk: 7, def: 7, hp: 35, crit: 2, critDmg: 8, dmgRed: 2, armorPen: 2 }
+                    // 武器：基礎數值×2.5
+                    { type: 'weapon', name: '調試短劍', atk: 45, crit: 3, armorPen: 4, bossDmg: 3 },
+                    // 防具：基礎數值×2.5
+                    { type: 'armor', name: '預編外套', def: 38, hp: 125, dmgRed: 3, lifeSteal: 1.2 },
+                    // 飾品1：基礎數值×2.5
+                    { type: 'accessory', name: '編譯者指環', atk: 20, def: 20, hp: 75, crit: 2, critDmg: 8, lifeSteal: 1.2, bossDmg: 2 },
+                    // 飾品2：基礎數值×2.5
+                    { type: 'accessory', name: '啟動者徽章', atk: 18, def: 18, hp: 88, crit: 2, critDmg: 8, dmgRed: 2, armorPen: 2 }
                 ]
             },
             '研發核心層': {
                 setName: '研發者套裝',
                 items: [
-                    // 武器：45點 = 攻擊20 + 暴擊率4%(8點) + 暴擊傷6%(3點) + 無視防禦5%(10點) + 對首領2.67%(4點)
-                    { type: 'weapon', name: '相位長槍', atk: 20, crit: 4, critDmg: 6, armorPen: 5, bossDmg: 2.67 },
-                    // 防具：45點 = 防禦16 + 生命60(12點) + 減傷3.5%(10.5點) + 吸血1%(2.5點)
-                    { type: 'armor', name: '實驗室胸甲', def: 16, hp: 60, dmgRed: 3.5, lifeSteal: 1 },
-                    // 飾品1：45點 = 攻擊9 + 防禦9 + 生命35(7點) + 暴擊率3%(6點) + 暴擊傷10%(5點) + 吸血1.2%(3點) + 無視防禦2%(4點)
-                    { type: 'accessory', name: '原型護符', atk: 9, def: 9, hp: 35, crit: 3, critDmg: 10, lifeSteal: 1.2, armorPen: 2 },
-                    // 飾品2：45點 = 攻擊8 + 防禦8 + 生命40(8點) + 暴擊率2%(4點) + 暴擊傷10%(5點) + 減傷3%(9點) + 對首領2%(3點)
-                    { type: 'accessory', name: '校準指環', atk: 8, def: 8, hp: 40, crit: 2, critDmg: 10, dmgRed: 3, bossDmg: 2 }
+                    // 武器：基礎數值×2.5
+                    { type: 'weapon', name: '相位長槍', atk: 50, crit: 4, critDmg: 6, armorPen: 5, bossDmg: 2.67 },
+                    // 防具：基礎數值×2.5
+                    { type: 'armor', name: '實驗室胸甲', def: 40, hp: 150, dmgRed: 3.5, lifeSteal: 1 },
+                    // 飾品1：基礎數值×2.5
+                    { type: 'accessory', name: '原型護符', atk: 23, def: 23, hp: 88, crit: 3, critDmg: 10, lifeSteal: 1.2, armorPen: 2 },
+                    // 飾品2：基礎數值×2.5
+                    { type: 'accessory', name: '校準指環', atk: 20, def: 20, hp: 100, crit: 2, critDmg: 10, dmgRed: 3, bossDmg: 2 }
                 ]
             },
             '資料裂縫': {
                 setName: '機櫃防禦套裝',
                 items: [
-                    // 武器：45點 = 攻擊22 + 暴擊率4%(8點) + 無視防禦6%(12點) + 對首領2%(3點)
-                    { type: 'weapon', name: '負載均衡弓', atk: 22, crit: 4, armorPen: 6, bossDmg: 2 },
-                    // 防具：45點 = 防禦18 + 生命70(14點) + 減傷4%(12點) + 吸血0.4%(1點)
-                    { type: 'armor', name: '機櫃鎧胸', def: 18, hp: 70, dmgRed: 4, lifeSteal: 0.4 },
-                    // 飾品1：45點 = 攻擊10 + 防禦10 + 生命40(8點) + 暴擊率3%(6點) + 減傷3%(9點) + 對首領2.67%(4點)
-                    { type: 'accessory', name: '邊界護符', atk: 10, def: 10, hp: 40, crit: 3, dmgRed: 3, bossDmg: 2.67 },
-                    // 飾品2：45點 = 攻擊9 + 防禦9 + 生命45(9點) + 暴擊率2%(4點) + 暴擊傷10%(5點) + 吸血1.6%(4點) + 無視防禦2%(4點)
-                    { type: 'accessory', name: '隔離指環', atk: 9, def: 9, hp: 45, crit: 2, critDmg: 10, lifeSteal: 1.6, armorPen: 2 }
+                    // 武器：基礎數值×2.5
+                    { type: 'weapon', name: '負載均衡弓', atk: 55, crit: 4, armorPen: 6, bossDmg: 2 },
+                    // 防具：基礎數值×2.5
+                    { type: 'armor', name: '機櫃錘胸', def: 45, hp: 175, dmgRed: 4, lifeSteal: 0.4 },
+                    // 飾品1：基礎數值×2.5
+                    { type: 'accessory', name: '邊界護符', atk: 25, def: 25, hp: 100, crit: 3, dmgRed: 3, bossDmg: 2.67 },
+                    // 飾品2：基礎數值×2.5
+                    { type: 'accessory', name: '隔離指環', atk: 23, def: 23, hp: 112, crit: 2, critDmg: 10, lifeSteal: 1.6, armorPen: 2 }
                 ]
             },
             '深井臨界層': {
                 setName: '量子同步套裝',
                 items: [
-                    // 武器：45點 = 攻擊24 + 暴擊率5%(10點) + 暴擊傷8%(4點) + 無視防禦3%(6點) + 對首領0.67%(1點)
-                    { type: 'weapon', name: '干涉之刃', atk: 24, crit: 5, critDmg: 8, armorPen: 3, bossDmg: 0.67 },
-                    // 防具：45點 = 防禦20 + 生命80(16點) + 減傷3%(9點)
-                    { type: 'armor', name: '奇點胸甲', def: 20, hp: 80, dmgRed: 3 },
-                    // 飾品1：45點 = 攻擊12 + 防禦12 + 生命45(9點) + 暴擊率3%(6點) + 吸血2%(5點) + 對首領0.67%(1點)
-                    { type: 'accessory', name: '普朗克指環', atk: 12, def: 12, hp: 45, crit: 3, lifeSteal: 2, bossDmg: 0.67 },
-                    // 飾品2：45點 = 攻擊11 + 防禦11 + 生命50(10點) + 暴擊率2%(4點) + 暴擊傷12%(6點) + 減傷2%(6點) + 無視防禦1%(2點)
-                    { type: 'accessory', name: '糾纏頸環', atk: 11, def: 11, hp: 50, crit: 2, critDmg: 12, dmgRed: 2, armorPen: 1 }
+                    // 武器：基礎數值×2.5
+                    { type: 'weapon', name: '干涉之刃', atk: 60, crit: 5, critDmg: 8, armorPen: 3, bossDmg: 0.67 },
+                    // 防具：基礎數值×2.5
+                    { type: 'armor', name: '奇點胸甲', def: 50, hp: 200, dmgRed: 3 },
+                    // 飾品1：基礎數值×2.5
+                    { type: 'accessory', name: '普朗克指環', atk: 30, def: 30, hp: 112, crit: 3, lifeSteal: 2, bossDmg: 0.67 },
+                    // 飾品2：基礎數值×2.5
+                    { type: 'accessory', name: '繾纏頸環', atk: 28, def: 28, hp: 125, crit: 2, critDmg: 12, dmgRed: 2, armorPen: 1 }
                 ]
             }
         };
@@ -3826,27 +3860,31 @@ const REGION_CONSUMABLES = {
             Legendary: { name: '傳說', color: '#ffd700', skillCount: 3, bonusRange: [30, 50] }
         };
 
-        // 隨從定義（完整列表見companion_system.js）
+        // 隨從定義（新版4大戰鬥類型）
         const COMPANIONS = {
-            // 治療型 (Healing)
-            repair_bot: { id: 'repair_bot', name: '🤖 修復機器人', type: 'heal', rarity: 'Common', description: '持續為你修復損傷', price: 500, skills: [{ type: 'heal_over_time', name: '持續修復', description: '每回合回復2%生命', value: 2, trigger: 'turn_start' }], maxLevel: 50 },
-            medical_drone: { id: 'medical_drone', name: '🧪 醫療無人機', type: 'heal', rarity: 'Fine', description: '在危急時刻救你一命', price: 1500, skills: [{ type: 'emergency_heal', name: '緊急治療', description: '生命低於30%時回復15%生命', value: 15, threshold: 30, cooldown: 5, trigger: 'low_hp' }, { type: 'heal_over_time', name: '持續修復', description: '每回合回復3%生命', value: 3, trigger: 'turn_start' }], maxLevel: 50 },
-            nano_healer: { id: 'nano_healer', name: '💊 奈米治療師', type: 'heal', rarity: 'Rare', description: '戰後快速恢復狀態', price: 3000, skills: [{ type: 'battle_heal', name: '戰後治療', description: '戰鬥結束回復20%生命', value: 20, trigger: 'battle_end' }, { type: 'heal_over_time', name: '持續修復', description: '每回合回復4%生命', value: 4, trigger: 'turn_start' }], maxLevel: 50 },
+            // 攻擊型 (Attack)
+            attack_core: { id: 'attack_core', name: '🗡️ 攻擊核心', type: 'attack', rarity: 'Common', description: '提升基礎攻擊力', price: 500, skills: [{ type: 'buff_atk', name: '攻擊增幅', description: '攻擊力 +10%', value: 10, trigger: 'passive' }], maxLevel: 50 },
+            combat_ai: { id: 'combat_ai', name: '⚔️ 戰鬥AI', type: 'attack', rarity: 'Fine', description: '提升攻擊和暴擊', price: 1500, skills: [{ type: 'buff_atk', name: '戰術分析', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '精準打擊', description: '暴擊率 +5%', value: 5, trigger: 'passive' }], maxLevel: 50 },
+            destroyer: { id: 'destroyer', name: '💥 毀滅者', type: 'attack', rarity: 'Rare', description: '全面提升攻擊能力', price: 3000, skills: [{ type: 'buff_atk', name: '毀滅之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_crit', name: '致命打擊', description: '暴擊率 +8%', value: 8, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +15%', value: 15, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
+            terminator: { id: 'terminator', name: '⚡ 終結者', type: 'attack', rarity: 'Epic', description: '極致攻擊力量', price: 5000, skills: [{ type: 'buff_atk', name: '終結之力', description: '攻擊力 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '必殺一擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '毀滅暴擊', description: '暴擊傷害 +25%', value: 25, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
             
-            // 增益型 (Buff)
-            signal_amplifier: { id: 'signal_amplifier', name: '📡 信號增幅器', type: 'buff', rarity: 'Common', description: '增強你的攻擊信號', price: 500, skills: [{ type: 'buff_atk', name: '信號增強', description: '攻擊力 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
-            power_core: { id: 'power_core', name: '⚡ 能量核心', type: 'buff', rarity: 'Fine', description: '提升整體戰鬥能力', price: 1500, skills: [{ type: 'buff_atk', name: '能量輸出', description: '攻擊力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_crit', name: '超頻模式', description: '暴擊率 +5%', value: 5, trigger: 'passive' }], maxLevel: 50 },
-            combat_ai: { id: 'combat_ai', name: '🎯 戰鬥AI', type: 'buff', rarity: 'Rare', description: '精準計算最佳攻擊', price: 3000, skills: [{ type: 'buff_atk', name: '戰術分析', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '精準打擊', description: '暴擊率 +8%，暴擊傷害 +15%', value: 8, statType: 'crit', trigger: 'passive' }, { type: 'buff_crit', name: '致命一擊', description: '暴擊傷害 +15%', value: 15, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
+            // 防禦型 (Defense)
+            defense_core: { id: 'defense_core', name: '🛡️ 防護核心', type: 'defense', rarity: 'Common', description: '提升基礎防禦力', price: 500, skills: [{ type: 'buff_def', name: '防禦增幅', description: '防禦力 +12%', value: 12, trigger: 'passive' }], maxLevel: 50 },
+            fortress_guard: { id: 'fortress_guard', name: '🏰 堡壘守衛', type: 'defense', rarity: 'Fine', description: '提升防禦和生命', price: 1500, skills: [{ type: 'buff_def', name: '堅固防禦', description: '防禦力 +18%', value: 18, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +10%', value: 10, trigger: 'passive' }], maxLevel: 50 },
+            titan_shield: { id: 'titan_shield', name: '💎 泰坦護盾', type: 'defense', rarity: 'Rare', description: '全面提升防禦能力', price: 3000, skills: [{ type: 'buff_def', name: '泰坦之盾', description: '防禦力 +25%', value: 25, trigger: 'passive' }, { type: 'buff_hp', name: '泰坦血統', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_dmgred', name: '傷害減免', description: '減傷 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            immortal_guard: { id: 'immortal_guard', name: '🌟 不滅守護', type: 'defense', rarity: 'Epic', description: '極致防禦力量', price: 5000, skills: [{ type: 'buff_def', name: '不滅之盾', description: '防禦力 +30%', value: 30, trigger: 'passive' }, { type: 'buff_hp', name: '不滅之身', description: '最大生命 +20%', value: 20, trigger: 'passive' }, { type: 'buff_dmgred', name: '絕對防禦', description: '減傷 +12%', value: 12, trigger: 'passive' }], maxLevel: 50 },
             
-            // 減益型 (Debuff)
-            emp_generator: { id: 'emp_generator', name: '⚡ EMP發生器', type: 'debuff', rarity: 'Fine', description: '削弱敵人防禦系統', price: 1500, skills: [{ type: 'debuff_def', name: 'EMP脈衝', description: '戰鬥開始降低敵人15%防禦', value: 15, trigger: 'battle_start' }], maxLevel: 50 },
-            virus_injector: { id: 'virus_injector', name: '🦠 病毒注入器', type: 'debuff', rarity: 'Rare', description: '持續削弱敵人', price: 3000, skills: [{ type: 'debuff_def', name: '系統入侵', description: '戰鬥開始降低敵人20%防禦', value: 20, trigger: 'battle_start' }, { type: 'debuff_atk', name: '病毒擴散', description: '降低敵人10%攻擊', value: 10, trigger: 'battle_start' }], maxLevel: 50 },
-            quantum_disruptor: { id: 'quantum_disruptor', name: '🌀 量子干擾器', type: 'debuff', rarity: 'Epic', description: '極大削弱敵人能力', price: 5000, skills: [{ type: 'debuff_def', name: '量子崩解', description: '戰鬥開始降低敵人25%防禦', value: 25, trigger: 'battle_start' }, { type: 'debuff_atk', name: '能量抑制', description: '降低敵人15%攻擊', value: 15, trigger: 'battle_start' }], maxLevel: 50 },
+            // 恢復型 (Recovery)
+            repair_bot: { id: 'repair_bot', name: '🤖 修復機器人', type: 'recovery', rarity: 'Common', description: '持續為你修復損傷', price: 500, skills: [{ type: 'heal_over_time', name: '持續修復', description: '每回合回復2%生命', value: 2, trigger: 'turn_start' }], maxLevel: 50 },
+            medical_drone: { id: 'medical_drone', name: '🧪 醫療無人機', type: 'recovery', rarity: 'Fine', description: '回復和吸血', price: 1500, skills: [{ type: 'heal_over_time', name: '持續治療', description: '每回合回復3%生命', value: 3, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +3%', value: 3, trigger: 'passive' }], maxLevel: 50 },
+            nano_healer: { id: 'nano_healer', name: '💊 奈米治療師', type: 'recovery', rarity: 'Rare', description: '全面回復能力', price: 3000, skills: [{ type: 'heal_over_time', name: '快速治療', description: '每回合回復4%生命', value: 4, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '強力吸血', description: '吸血 +5%', value: 5, trigger: 'passive' }, { type: 'battle_heal', name: '戰後治療', description: '戰鬥結束回復20%生命', value: 20, trigger: 'battle_end' }], maxLevel: 50 },
+            life_source: { id: 'life_source', name: '✨ 生命之源', type: 'recovery', rarity: 'Epic', description: '極致回復力量', price: 5000, skills: [{ type: 'heal_over_time', name: '生命源泉', description: '每回合回復5%生命', value: 5, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +8%', value: 8, trigger: 'passive' }, { type: 'battle_heal', name: '完全恢復', description: '戰鬥結束回復30%生命', value: 30, trigger: 'battle_end' }, { type: 'emergency_heal', name: '緊急治療', description: '生命低於30%時回復20%生命', value: 20, threshold: 30, cooldown: 5, trigger: 'low_hp' }], maxLevel: 50 },
             
-            // 資源型 (Resource)
-            scavenger_bot: { id: 'scavenger_bot', name: '💎 拾荒機器人', type: 'resource', rarity: 'Common', description: '幫你收集更多金幣', price: 500, skills: [{ type: 'bonus_gold', name: '金幣收集', description: '金幣掉落 +15%', value: 15, trigger: 'passive' }], maxLevel: 50 },
-            treasure_hunter: { id: 'treasure_hunter', name: '🔍 尋寶獵人', type: 'resource', rarity: 'Fine', description: '提升掉落與經驗', price: 1500, skills: [{ type: 'bonus_gold', name: '金幣收集', description: '金幣掉落 +20%', value: 20, trigger: 'passive' }, { type: 'bonus_drop', name: '幸運拾取', description: '幸運值 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
-            fortune_core: { id: 'fortune_core', name: '🎰 幸運核心', type: 'resource', rarity: 'Rare', description: '全面提升資源獲取', price: 3000, skills: [{ type: 'bonus_gold', name: '財富磁鐵', description: '金幣掉落 +30%', value: 30, trigger: 'passive' }, { type: 'bonus_drop', name: '幸運光環', description: '幸運值 +12%', value: 12, trigger: 'passive' }, { type: 'bonus_exp', name: '經驗加速', description: '經驗獲取 +15%', value: 15, trigger: 'passive' }], maxLevel: 50 }
+            // 平衡型 (Balance)
+            multi_core: { id: 'multi_core', name: '⚙️ 多功能核心', type: 'balance', rarity: 'Fine', description: '攻防平衡', price: 1500, skills: [{ type: 'buff_atk', name: '攻擊提升', description: '攻擊力 +8%', value: 8, trigger: 'passive' }, { type: 'buff_def', name: '防禦提升', description: '防禦力 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            tactical_ai: { id: 'tactical_ai', name: '🎯 戰術AI', type: 'balance', rarity: 'Rare', description: '全面平衡', price: 3000, skills: [{ type: 'buff_atk', name: '戰術攻擊', description: '攻擊力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_def', name: '戰術防禦', description: '防禦力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            quantum_core: { id: 'quantum_core', name: '🌀 量子核心', type: 'balance', rarity: 'Epic', description: '超強平衡', price: 5000, skills: [{ type: 'buff_atk', name: '量子攻擊', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_def', name: '量子防禦', description: '防禦力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_hp', name: '量子生命', description: '最大生命 +12%', value: 12, trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +4%', value: 4, trigger: 'passive' }], maxLevel: 50 },
+            perfect_wargod: { id: 'perfect_wargod', name: '👑 完美戰神', type: 'balance', rarity: 'Legendary', description: '終極平衡', price: 10000, skills: [{ type: 'buff_atk', name: '戰神之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_def', name: '戰神之盾', description: '防禦力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_hp', name: '戰神之體', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '戰神之眼', description: '暴擊率 +6%', value: 6, trigger: 'passive' }, { type: 'buff_lifesteal', name: '戰神之魂', description: '吸血 +6%', value: 6, trigger: 'passive' }], maxLevel: 50 }
         };
 
         // 卡牌系統定義
@@ -3878,51 +3916,129 @@ const REGION_CONSUMABLES = {
             precision_fine: { id: 'precision_fine', name: '✨ 致命精準', type: 'support', rarity: 'Fine', series: 'precision', description: '暴擊率 +6%，暴擊傷害 +10%', price: 2000, effect: { type: 'passive', stats: [{ stat: 'crit', value: 6 }, { stat: 'critDmg', value: 10 }] }, icon: '✨' },
             precision_rare: { id: 'precision_rare', name: '✨ 完美打擊', type: 'support', rarity: 'Rare', series: 'precision', description: '暴擊率 +9%，暴擊傷害 +18%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'crit', value: 9 }, { stat: 'critDmg', value: 18 }] }, icon: '✨' },
             
-            // 資源型 - 貪婪系列 (Greed)
-            greed_common: { id: 'greed_common', name: '💰 貪婪之手', type: 'resource', rarity: 'Common', series: 'greed', description: '金幣獲得 +15%', price: 500, effect: { type: 'passive', stat: 'goldBonus', value: 15 }, icon: '💰' },
-            greed_fine: { id: 'greed_fine', name: '💰 財富祝福', type: 'resource', rarity: 'Fine', series: 'greed', description: '金幣獲得 +25%', price: 2000, effect: { type: 'passive', stat: 'goldBonus', value: 25 }, icon: '💰' },
-            greed_rare: { id: 'greed_rare', name: '💰 黃金之王', type: 'resource', rarity: 'Rare', series: 'greed', description: '金幣獲得 +40%', price: 8000, effect: { type: 'passive', stat: 'goldBonus', value: 40 }, icon: '💰' },
-            
-            // 資源型 - 智慧系列 (Wisdom)
-            wisdom_common: { id: 'wisdom_common', name: '⭐ 經驗之書', type: 'resource', rarity: 'Common', series: 'wisdom', description: '經驗獲得 +12%', price: 500, effect: { type: 'passive', stat: 'expBonus', value: 12 }, icon: '⭐' },
-            wisdom_fine: { id: 'wisdom_fine', name: '⭐ 智慧之光', type: 'resource', rarity: 'Fine', series: 'wisdom', description: '經驗獲得 +20%', price: 2000, effect: { type: 'passive', stat: 'expBonus', value: 20 }, icon: '⭐' },
-            wisdom_rare: { id: 'wisdom_rare', name: '⭐ 博學者', type: 'resource', rarity: 'Rare', series: 'wisdom', description: '經驗獲得 +35%', price: 8000, effect: { type: 'passive', stat: 'expBonus', value: 35 }, icon: '⭐' },
-            
             // 特殊型 - 反擊系列 (Counter)
             counter_common: { id: 'counter_common', name: '🌟 反擊姿態', type: 'special', rarity: 'Common', series: 'counter', description: '受擊時10%機率反擊造成50%傷害', price: 500, effect: { type: 'trigger', trigger: 'on_hit', chance: 10, effect: 'counter', value: 50 }, icon: '🌟' },
             counter_fine: { id: 'counter_fine', name: '🌟 完美反擊', type: 'special', rarity: 'Fine', series: 'counter', description: '受擊時18%機率反擊造成80%傷害', price: 2000, effect: { type: 'trigger', trigger: 'on_hit', chance: 18, effect: 'counter', value: 80 }, icon: '🌟' },
             counter_rare: { id: 'counter_rare', name: '🌟 致命反擊', type: 'special', rarity: 'Rare', series: 'counter', description: '受擊時25%機率反擊造成120%傷害', price: 8000, effect: { type: 'trigger', trigger: 'on_hit', chance: 25, effect: 'counter', value: 120 }, icon: '🌟' }
         };
 
-        // 套牌效果定義
+        // 隨從裝備定義
+        const COMPANION_EQUIPMENT = {
+            // 攻擊型
+            attack_chip: {
+                id: 'attack_chip',
+                name: '戰鬥芋片',
+                icon: '⚔️',
+                type: 'attack',
+                rarity: 'common',
+                description: '攻擊力 +5%',
+                effects: { atk: 0.05 }
+            },
+            attack_core: {
+                id: 'attack_core',
+                name: '破壞核心',
+                icon: '💥',
+                type: 'attack',
+                rarity: 'rare',
+                description: '攻擊力 +8%, 暴擊率 +3%, 暴擊傷害 +10%',
+                effects: { atk: 0.08, crit: 0.03, critDmg: 0.10 }
+            },
+            attack_engine: {
+                id: 'attack_engine',
+                name: '毀滅引擎',
+                icon: '🔥',
+                type: 'attack',
+                rarity: 'epic',
+                description: '攻擊力 +12%, 暴擊率 +5%, 暴擊傷害 +20%, 無視防禦 +5%',
+                effects: { atk: 0.12, crit: 0.05, critDmg: 0.20, ignoreDefense: 0.05 }
+            },
+            
+            // 防禦型
+            defense_chip: {
+                id: 'defense_chip',
+                name: '防護芋片',
+                icon: '🛡️',
+                type: 'defense',
+                rarity: 'common',
+                description: '防禦力 +5%, 最大生命 +5%',
+                effects: { def: 0.05, hp: 0.05 }
+            },
+            defense_core: {
+                id: 'defense_core',
+                name: '堡壘核心',
+                icon: '💎',
+                type: 'defense',
+                rarity: 'rare',
+                description: '防禦力 +8%, 最大生命 +10%, 減傷 +3%',
+                effects: { def: 0.08, hp: 0.10, dmgRed: 0.03 }
+            },
+            defense_wall: {
+                id: 'defense_wall',
+                name: '不滅壁壘',
+                icon: '🔱',
+                type: 'defense',
+                rarity: 'epic',
+                description: '防禦力 +12%, 最大生命 +15%, 減傷 +5%, 反傷 +3%',
+                effects: { def: 0.12, hp: 0.15, dmgRed: 0.05, reflect: 0.03 }
+            },
+            
+            // 恢復型
+            heal_chip: {
+                id: 'heal_chip',
+                name: '修復芋片',
+                icon: '💚',
+                type: 'heal',
+                rarity: 'common',
+                description: '每回合回復 1.5% 生命, 吸血 +2%',
+                effects: { regen: 0.015, lifeSteal: 0.02 }
+            },
+            heal_core: {
+                id: 'heal_core',
+                name: '再生核心',
+                icon: '💊',
+                type: 'heal',
+                rarity: 'rare',
+                description: '每回合回復 2.5% 生命, 吸血 +4%, 戰後回復 5%',
+                effects: { regen: 0.025, lifeSteal: 0.04, postBattleHeal: 0.05 }
+            },
+            heal_fountain: {
+                id: 'heal_fountain',
+                name: '生命源泉',
+                icon: '🌈',
+                type: 'heal',
+                rarity: 'epic',
+                description: '每回合回復 4% 生命, 吸血 +6%, 戰後回復 10%, 低血回復 +10%',
+                effects: { regen: 0.04, lifeSteal: 0.06, postBattleHeal: 0.10, lowHpHeal: 0.10 }
+            }
+        };
+
+        // 套牌效果定義（新版4大戰鬥類型）
         const DECK_EFFECTS = {
-            blade: { name: '刀刃套牌', bonus: { atk: 12, trigger: { type: 'attack', chance: 18, effect: 'extra_damage', value: 120 } }, description: '攻擊力+12%，攻擊時18%機率造成額外120%傷害' },
-            warrior: { name: '戰士套牌', bonus: { atk: 8, crit: 4, critDmg: 12 }, description: '攻擊力+8%，暴擊率+4%，暴擊傷害+12%' },
-            shield: { name: '守護套牌', bonus: { def: 25, dmgRed: 15 }, description: '防禦力+25%，減傷+15%' },
-            vitality: { name: '生命套牌', bonus: { hp: 15, lifeSteal: 5 }, description: '最大生命+15%，吸血+5%' },
-            precision: { name: '精準套牌', bonus: { crit: 10, critDmg: 25 }, description: '暴擊率+10%，暴擊傷害+25%' },
-            greed: { name: '貪婪套牌', bonus: { goldBonus: 30 }, description: '金幣獲得+30%' },
-            wisdom: { name: '智慧套牌', bonus: { expBonus: 40 }, description: '經驗獲得+40%' },
-            counter: { name: '反擊套牌', bonus: { trigger: { type: 'on_hit', chance: 30, effect: 'counter', value: 150 } }, description: '受擊時30%機率反擊造成150%傷害' }
+            blade: { name: '刀刃套牌', bonus: { atk: 15, trigger: { type: 'attack', chance: 20, effect: 'extra_damage', value: 150 } }, description: '攻擊力+15%，攻擊時20%機率造成額外150%傷害' },
+            warrior: { name: '戰士套牌', bonus: { atk: 12, crit: 6, critDmg: 18 }, description: '攻擊力+12%，暴擊率+6%，暴擊傷害+18%' },
+            shield: { name: '守護套牌', bonus: { def: 30, dmgRed: 18 }, description: '防禦力+30%，減傷+18%' },
+            vitality: { name: '生命套牌', bonus: { hp: 20, lifeSteal: 8 }, description: '最大生命+20%，吸血+8%' },
+            precision: { name: '精準套牌', bonus: { crit: 12, critDmg: 30 }, description: '暴擊率+12%，暴擊傷害+30%' },
+            counter: { name: '反擊套牌', bonus: { trigger: { type: 'on_hit', chance: 35, effect: 'counter', value: 180 } }, description: '受擊時35%機率反擊造成180%傷害' }
         };
 
         // 套裝效果定義（強化版）
         const SET_EFFECTS = {
             '啟動者套裝': {
-                2: { name: '啟動協議', atkPercent: 10, defPercent: 10, hpPercent: 15 },
-                4: { name: '系統加速', critBonus: 8, lifeStealBonus: 5, expBonusBonus: 15, specialEffect: 'kill_heal' }
+                2: { name: '啟動協議', atkPercent: 50, defPercent: 50, hpPercent: 50 },
+                4: { name: '系統加速', critBonus: 20, lifeStealBonus: 15, expBonusBonus: 30, specialEffect: 'kill_heal' }
             },
             '研發者套裝': {
-                2: { name: '研發突破', atkPercent: 15, critBonus: 10, critDmgBonus: 20 },
-                4: { name: '完美代碼', armorPenBonus: 15, critDmgBonus: 25, specialEffect: 'crit_chain' }
+                2: { name: '研發突破', atkPercent: 60, critBonus: 20, critDmgBonus: 50 },
+                4: { name: '完美代碼', armorPenBonus: 30, critDmgBonus: 60, specialEffect: 'crit_chain' }
             },
             '機櫃防禦套裝': {
-                2: { name: '機櫃護盾', defPercent: 20, dmgRedBonus: 10, hpPercent: 25 },
-                4: { name: '數據堡壘', hpRegenBonus: 3, dmgRedBonus: 8, specialEffect: 'counter_heal' }
+                2: { name: '防火牆協議', defPercent: 60, hpPercent: 60, dmgRedBonus: 20 },
+                4: { name: '完全隔離', dmgRedBonus: 25, hpRegenBonus: 8, specialEffect: 'counter_heal' }
             },
             '量子同步套裝': {
-                2: { name: '量子纏纏', atkPercent: 20, defPercent: 15, armorPenBonus: 12, bossDmgBonus: 15 },
-                4: { name: '奇點爆發', critBonus: 12, critDmgBonus: 30, lifeStealBonus: 8, specialEffect: 'quantum_collapse' }
+                2: { name: '量子纏纏', atkPercent: 50, defPercent: 50, armorPenBonus: 30, bossDmgBonus: 40 },
+                4: { name: '奇點爆發', critBonus: 25, critDmgBonus: 80, lifeStealBonus: 20, specialEffect: 'quantum_collapse' }
             }
         };
         // 迭代天賦系統
@@ -4459,6 +4575,13 @@ const REGION_CONSUMABLES = {
             companions: {
                 owned: [],  // 擁有的隨從列表
                 active: null,  // 當前裝備的隨從
+                equipment: null,  // 當前裝備的裝備 (attack/defense/heal)
+                shards: 0,  // 隨從碎片數量
+                equipmentLevels: {  // 裝備等級
+                    attack: 1,
+                    defense: 1,
+                    heal: 1
+                },
                 cooldowns: {}  // 技能冷却時間
             },
             offline: {
@@ -4489,6 +4612,8 @@ const REGION_CONSUMABLES = {
                 highestFloor: 0,           // 歷史最高層數
                 checkpoint: 1,             // 最近檢查點(每10層)
                 buffs: [],                 // 永久Buff列表 [{id, name, type, value, floor}]
+                lastEntryDate: null,       // 上次進入日期 (YYYY-MM-DD)
+                dailyEntered: false,       // 今日是否已進入
                 stats: {
                     totalKills: 0,         // 總擊殺數
                     totalGold: 0,          // 總獲得金幣
@@ -6857,9 +6982,25 @@ const REGION_CONSUMABLES = {
                     });
                 }
                 
-                // 玩家攻擊
-                let playerDmg = calculateDamage(gameState.player.atk, enemy.def, gameState.player.armorPen);
-                let playerCrit = gameState.player.crit;
+                // 獲取隨從裝備組合效果
+                const comboEffects = getCompanionEquipmentCombo();
+                
+                // 保存原始最大生命值到gameState（用於戰鬥結束後恢復）
+                gameState.originalMaxHpBeforeCombat = gameState.player.maxHp;
+                
+                // 應用最大生命組合效果
+                if (comboEffects.hp > 0) {
+                    gameState.player.maxHp = Math.floor(gameState.player.maxHp * (1 + comboEffects.hp));
+                    // 如果生命值是滿的,也要增加當前生命
+                    if (gameState.player.hp === gameState.originalMaxHpBeforeCombat) {
+                        gameState.player.hp = gameState.player.maxHp;
+                    }
+                }
+                
+                // 玩家攻擊（應用組合效果）
+                const playerAtkWithCombo = Math.floor(gameState.player.atk * (1 + comboEffects.atk));
+                let playerDmg = calculateDamage(playerAtkWithCombo, enemy.def, gameState.player.armorPen);
+                let playerCrit = gameState.player.crit + (comboEffects.crit * 100);
                 // 加上套裝暴擊率
                 if (gameState.player.setEffects) {
                     playerCrit += gameState.player.setEffects.crit;
@@ -6882,7 +7023,7 @@ const REGION_CONSUMABLES = {
                 
                 const isCrit = Math.random() * 100 < playerCrit;
                 if (isCrit) trackCrit();
-                let playerCritDmg = gameState.player.critDmg;
+                let playerCritDmg = gameState.player.critDmg + (comboEffects.critDmg * 100);
                 // 加上套裝暴擊傷害
                 if (gameState.player.setEffects) {
                     playerCritDmg += gameState.player.setEffects.critDmg;
@@ -6979,6 +7120,7 @@ const REGION_CONSUMABLES = {
                 }
                 
                 enemyHp -= finalDmg;
+                enemy.hp = enemyHp; // 同步enemy.hp
                 
                 // 反彈傷害
                 if (monsterHitResult.reflect > 0) {
@@ -6988,8 +7130,9 @@ const REGION_CONSUMABLES = {
                 }
                 
                 // 吸血回復
-                if (gameState.player.lifeSteal > 0) {
-                    const lifeStealCap = Math.min(gameState.player.lifeSteal, 30);
+                if (gameState.player.lifeSteal > 0 || comboEffects.lifeSteal > 0) {
+                    const totalLifeSteal = gameState.player.lifeSteal + (comboEffects.lifeSteal * 100);
+                    const lifeStealCap = Math.min(totalLifeSteal, 30);
                     const healAmount = Math.floor(finalDmg * lifeStealCap / 100);
                     if (healAmount > 0) {
                         gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
@@ -7015,15 +7158,15 @@ const REGION_CONSUMABLES = {
                 if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
                     gameState.player.setEffects.specialEffects.forEach(effect => {
                         // 研發者套裝：暴擊連擊
-                        if (effect === 'crit_chain' && isCrit && Math.random() < 0.30) {
-                            const chainDmg = Math.floor(finalDmg * 0.5);
+                        if (effect === 'crit_chain' && isCrit && Math.random() < 0.60) {
+                            const chainDmg = Math.floor(finalDmg * 1.0);
                             enemyHp -= chainDmg;
                             addLog('套裝', `⚔️ 完美代碼！暴擊連擊造成 ${chainDmg} 點額外傷害！`);
                         }
                         
-                        // 量子同步套裝：量子崩塌
-                        if (effect === 'quantum_collapse' && Math.random() < 0.15) {
-                            const collapseDmg = Math.floor(finalDmg * 2.0); // 300%總傷害 = 額外2200%
+                        // 量子同步套裝：量子崩塉
+                        if (effect === 'quantum_collapse' && Math.random() < 0.40) {
+                            const collapseDmg = Math.floor(finalDmg * 4.0); // 500%總傷害 = 額外4.0倍
                             enemyHp -= collapseDmg;
                             // 添加防禦降低buff到怪物
                             if (!enemy.debuffs) enemy.debuffs = [];
@@ -7051,11 +7194,11 @@ const REGION_CONSUMABLES = {
                         updateEnemyHP(enemyHp, enemyMaxHp);
                         playSound('heal');
                     } else {
-                    // 啟動者套裝：擊殺回血
-                    if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
-                        gameState.player.setEffects.specialEffects.forEach(effect => {
-                            if (effect === 'kill_heal' && Math.random() < 0.20) {
-                                const healAmount = Math.floor(gameState.player.maxHp * 0.10);
+                     // 啟動者套裝：擊殺回血
+                     if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
+                         gameState.player.setEffects.specialEffects.forEach(effect => {
+                             if (effect === 'kill_heal' && Math.random() < 0.50) {
+                                 const healAmount = Math.floor(gameState.player.maxHp * 0.20);
                                 gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
                                 addLog('套裝', `💚 系統加速！擊殺回復 ${healAmount} 點生命值！`);
                             }
@@ -7174,20 +7317,21 @@ const REGION_CONSUMABLES = {
                 }
                 
                 // 減傷計算
-                if (gameState.player.dmgRed > 0) {
-                    const dmgRedCap = Math.min(gameState.player.dmgRed, 75);
+                if (gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0) {
+                    const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
+                    const dmgRedCap = Math.min(totalDmgRed, 75);
                     enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
                 }
                 
                 playerHp -= enemyDmg;
                 gameState.player.hp = Math.max(0, playerHp);
                 
-                // 機櫃防禦套裝：反擊回血
-                if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
-                    gameState.player.setEffects.specialEffects.forEach(effect => {
-                        if (effect === 'counter_heal' && Math.random() < 0.25) {
-                            const counterDmg = Math.floor(gameState.player.atk * 0.8);
-                            const healAmount = Math.floor(counterDmg * 0.5);
+                 // 機櫃防禦套裝：反擊回血
+                 if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
+                     gameState.player.setEffects.specialEffects.forEach(effect => {
+                         if (effect === 'counter_heal' && Math.random() < 0.50) {
+                             const counterDmg = Math.floor(gameState.player.atk * 1.5);
+                             const healAmount = Math.floor(counterDmg * 1.0);
                             enemyHp -= counterDmg;
                             gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
                             addLog('套裝', `🛡️ 防火牆反擊！造成 ${counterDmg} 點傷害並回復 ${healAmount} 點生命！`);
@@ -7236,8 +7380,9 @@ const REGION_CONSUMABLES = {
                 if (enemy.burns && enemy.burns.length > 0) {
                     enemy.burns.forEach(burn => {
                         enemyHp -= burn.damage;
+                        enemy.hp = enemyHp; // 同步enemy.hp
                         burn.duration--;
-                        addLog('元素', `🔥 灼燒：${enemy.name}受到${burn.damage}點火焰傷害！`);
+                        addLog('元素', `🔥 灼燒：${enemy.name}受到${burn.damage}點火焰傷害！(剩餘${burn.duration}回合)`);
                     });
                     enemy.burns = enemy.burns.filter(b => b.duration > 0);
                     updateEnemyHP(enemyHp, enemyMaxHp);
@@ -7247,8 +7392,9 @@ const REGION_CONSUMABLES = {
                 if (enemy.poisons && enemy.poisons.length > 0) {
                     enemy.poisons.forEach(poison => {
                         enemyHp -= poison.damage;
+                        enemy.hp = enemyHp; // 同步enemy.hp
                         poison.duration--;
-                        addLog('元素', `🌿 中毒：${enemy.name}受到${poison.damage}點毒傷害！`);
+                        addLog('元素', `🌿 中毒：${enemy.name}受到${poison.damage}點毒傷害！(剩餘${poison.duration}回合)`);
                     });
                     enemy.poisons = enemy.poisons.filter(p => p.duration > 0);
                     updateEnemyHP(enemyHp, enemyMaxHp);
@@ -7261,6 +7407,55 @@ const REGION_CONSUMABLES = {
                         enemy.atk = Math.floor(enemy.atk / 0.8); // 恢復攻擊力
                         addLog('元素', `❄️ ${enemy.name}的冰凍效果消失了！`);
                         delete enemy.iceDebuff;
+                    }
+                }
+                
+                // ========== 玩家元素效果處理 ==========
+                if (gameState.player.elementalEffects) {
+                    const effects = gameState.player.elementalEffects;
+                    
+                    // 處理火元素(燃燒)
+                    if (effects.fire) {
+                        const burnDamage = Math.floor(gameState.player.maxHp * effects.fire.damagePercent);
+                        playerHp -= burnDamage;
+                        gameState.player.hp = Math.max(0, playerHp);
+                        effects.fire.duration--;
+                        addLog('元素', `🔥 燃燒：你受到${burnDamage}點火焰傷害！(剩餘${effects.fire.duration}回合)`);
+                        if (effects.fire.duration <= 0) {
+                            delete effects.fire;
+                            addLog('元素', `🔥 燃燒效果消失了！`);
+                        }
+                    }
+                    
+                    // 處理毒元素(中毒)
+                    if (effects.poison) {
+                        const poisonDamage = Math.floor(gameState.player.maxHp * effects.poison.damagePercent);
+                        playerHp -= poisonDamage;
+                        gameState.player.hp = Math.max(0, playerHp);
+                        effects.poison.duration--;
+                        addLog('元素', `🌿 中毒：你受到${poisonDamage}點毒傷害！(剩餘${effects.poison.duration}回合)`);
+                        if (effects.poison.duration <= 0) {
+                            delete effects.poison;
+                            addLog('元素', `🌿 中毒效果消失了！`);
+                        }
+                    }
+                    
+                    // 處理冰元素(攻擊力降低)
+                    if (effects.ice) {
+                        effects.ice.duration--;
+                        if (effects.ice.duration <= 0) {
+                            delete effects.ice;
+                            addLog('元素', `❄️ 冰凍效果消失了！你的攻擊力恢復正常！`);
+                        }
+                    }
+                    
+                    // 處理土元素(減速)
+                    if (effects.earth) {
+                        effects.earth.duration--;
+                        if (effects.earth.duration <= 0) {
+                            delete effects.earth;
+                            addLog('元素', `🪨 石化效果消失了！`);
+                        }
                     }
                 }
                 
@@ -7732,6 +7927,8 @@ const REGION_CONSUMABLES = {
             updateQuestProgress('gain_exp', expReward);
             
             addLog('勝利', `擊敗了 ${enemy.name}！獲得 ${goldReward} 金幣、${expReward} 經驗`, enemy.isSpecialBoss);
+                    // 恢復原始最大生命值
+                    if (gameState.originalMaxHpBeforeCombat) { gameState.player.maxHp = gameState.originalMaxHpBeforeCombat; delete gameState.originalMaxHpBeforeCombat; }
             playSound('reward'); // 獎勵音效
             
             // 掉落裝備（特殊Boss必定掉2件）
@@ -7744,15 +7941,15 @@ const REGION_CONSUMABLES = {
                     
                     // 更新任務進度：獲得裝備
                     updateQuestProgress('collect_equipment', 1);
-                    if (item.rarity === 'Rare' || item.rarity === 'Epic' || item.rarity === 'Legendary' || item.rarity === 'Set') {
+                    if (item.rarity === 'rare' || item.rarity === 'epic' || item.rarity === 'legendary' || item.rarity === 'set') {
                         updateQuestProgress('collect_rare', 1);
                     }
-                    if (item.rarity === 'Legendary') {
+                    if (item.rarity === 'legendary') {
                         updateQuestProgress('collect_legendary', 1);
                     }
                     
                     // 統計傳說裝備
-                    if (item.rarity === 'Legendary') {
+                    if (item.rarity === 'legendary') {
                             gameState.stats.legendaryItems = (gameState.stats.legendaryItems || 0) + 1;
                         }
                         addLog('掉落', `特殊Boss掉落！獲得了 ${item.name}！`);
@@ -7799,15 +7996,15 @@ const REGION_CONSUMABLES = {
                         
                         // 更新任務進度：獲得裝備
                         updateQuestProgress('collect_equipment', 1);
-                        if (item.rarity === 'Rare' || item.rarity === 'Epic' || item.rarity === 'Legendary' || item.rarity === 'Set') {
+                        if (item.rarity === 'rare' || item.rarity === 'epic' || item.rarity === 'legendary' || item.rarity === 'set') {
                             updateQuestProgress('collect_rare', 1);
                         }
-                        if (item.rarity === 'Legendary') {
+                        if (item.rarity === 'legendary') {
                             updateQuestProgress('collect_legendary', 1);
                         }
                         
                         // 統計傳說裝備
-                        if (item.rarity === 'Legendary') {
+                        if (item.rarity === 'legendary') {
                             gameState.stats.legendaryItems = (gameState.stats.legendaryItems || 0) + 1;
                         }
                         addLog('掉落', `獲得了 ${item.name}！`);
@@ -7877,6 +8074,41 @@ const REGION_CONSUMABLES = {
                         }
                     }
                 }
+            }
+            
+            // 檢查是否掉落隨從裝備
+            let equipmentDropChance = 0;
+            let equipmentId = null;
+            
+            if (enemy.isElite) {
+                // 精英怪：5%機率掉落Common裝備
+                equipmentDropChance = 0.05;
+                if (Math.random() < equipmentDropChance) {
+                    const commonEquipment = ['attack_chip', 'defense_chip', 'heal_chip'];
+                    equipmentId = commonEquipment[Math.floor(Math.random() * commonEquipment.length)];
+                }
+            } else if (enemy.isBoss && !enemy.isSpecialBoss) {
+                // 普通Boss：10%機率掉落Rare裝備
+                equipmentDropChance = 0.10;
+                if (Math.random() < equipmentDropChance) {
+                    const rareEquipment = ['attack_core', 'defense_core', 'heal_core'];
+                    equipmentId = rareEquipment[Math.floor(Math.random() * rareEquipment.length)];
+                }
+            } else if (enemy.isSpecialBoss) {
+                // 特殊Boss：20%機率掉落Epic裝備
+                equipmentDropChance = 0.20;
+                if (Math.random() < equipmentDropChance) {
+                    const epicEquipment = ['attack_engine', 'defense_wall', 'heal_fountain'];
+                    equipmentId = epicEquipment[Math.floor(Math.random() * epicEquipment.length)];
+                }
+            }
+            
+            if (equipmentId) {
+                obtainEquipment(equipmentId);
+                const equipment = COMPANION_EQUIPMENT[equipmentId];
+                const rarityColor = getRarityColor(equipment.rarity);
+                const enemyType = enemy.isSpecialBoss ? '特殊Boss' : (enemy.isBoss ? 'Boss' : '菁英');
+                addLog('隨從', `🎉 ${enemyType}掉落！獲得<span style="color: ${rarityColor}">${equipment.rarity}</span>裝備：${equipment.icon}${equipment.name}！`, enemy.isSpecialBoss || enemy.isBoss);
             }
             
             // 掉落卡牌（普通/菁英/Boss/特殊Boss）
@@ -9010,17 +9242,18 @@ const REGION_CONSUMABLES = {
                     // 根據區域難度調整屬性
                     const difficultyMult = region.difficulty;
                     
-                    // 基礎屬性範圍（隨機）
+                    // 基礎屬性範圍（隨機 + 等級成長）
                     let baseAtk = 0, baseDef = 0, baseHp = 0;
+                    const level = gameState.player.level;
                     if (lootItem.type === 'weapon') {
-                        baseAtk = 5 + Math.random() * 10; // 5-15
+                        baseAtk = (5 + level * 0.7) + Math.random() * 15;
                     } else if (lootItem.type === 'armor') {
-                        baseDef = 3 + Math.random() * 8; // 3-11
-                        baseHp = 10 + Math.random() * 15; // 10-25
+                        baseDef = (3 + level * 0.45) + Math.random() * 12;
+                        baseHp = (12 + level * 1.6) + Math.random() * 25;
                     } else if (lootItem.type === 'accessory') {
-                        baseAtk = 1 + Math.random() * 4; // 1-5
-                        baseDef = 1 + Math.random() * 4; // 1-5
-                        baseHp = 10 + Math.random() * 20; // 10-30
+                        baseAtk = (2 + level * 0.28) + Math.random() * 8;
+                        baseDef = (2 + level * 0.28) + Math.random() * 8;
+                        baseHp = (10 + level * 1.3) + Math.random() * 35;
                     }
                     
                     // 應用品質乘數和區域難度
@@ -9522,14 +9755,8 @@ const REGION_CONSUMABLES = {
                 if (companionBonuses.dmgRed) {
                     totalDmgRed += companionBonuses.dmgRed;
                 }
-                if (companionBonuses.goldBonus) {
-                    totalGoldBonus += companionBonuses.goldBonus;
-                }
-                if (companionBonuses.expBonus) {
-                    totalExpBonus += companionBonuses.expBonus;
-                }
-                if (companionBonuses.dropBonus) {
-                    gameState.player.dropBonus = (gameState.player.dropBonus || 0) + companionBonuses.dropBonus;
+                if (companionBonuses.lifeSteal) {
+                    totalLifeSteal += companionBonuses.lifeSteal;
                 }
             }
             
@@ -9556,12 +9783,6 @@ const REGION_CONSUMABLES = {
                 }
                 if (cardBonuses.lifeSteal) {
                     totalLifeSteal += cardBonuses.lifeSteal;
-                }
-                if (cardBonuses.goldBonus) {
-                    totalGoldBonus += cardBonuses.goldBonus;
-                }
-                if (cardBonuses.expBonus) {
-                    totalExpBonus += cardBonuses.expBonus;
                 }
             }
             
@@ -10664,7 +10885,7 @@ const REGION_CONSUMABLES = {
             }
             
             // 3. 隨機選擇1個Common隨從
-            const commonCompanions = Object.keys(COMPANIONS).filter(id => COMPANIONS[id].rarity === 'Common');
+            const commonCompanions = Object.keys(COMPANIONS).filter(id => COMPANIONS[id].rarity === 'common');
             if (commonCompanions.length > 0) {
                 const randomCompanionId = commonCompanions[Math.floor(Math.random() * commonCompanions.length)];
                 obtainCompanion(randomCompanionId);
@@ -10673,7 +10894,7 @@ const REGION_CONSUMABLES = {
             }
             
             // 4. 隨機選擇1個Common卡牌
-            const commonCards = Object.keys(CARDS).filter(id => CARDS[id].rarity === 'Common');
+            const commonCards = Object.keys(CARDS).filter(id => CARDS[id].rarity === 'common');
             if (commonCards.length > 0) {
                 const randomCardId = commonCards[Math.floor(Math.random() * commonCards.length)];
                 getCard(randomCardId);
@@ -10967,8 +11188,21 @@ const REGION_CONSUMABLES = {
                 gameState.companions = {
                     owned: [],
                     active: null,
+                    equipment: null,
+                    shards: 0,
+                    ownedEquipment: [],
                     cooldowns: {}
                 };
+            }
+            // 確保裝備相關字段存在
+            if (!gameState.companions.ownedEquipment) {
+                gameState.companions.ownedEquipment = [];
+            }
+            if (gameState.companions.equipment === undefined) {
+                gameState.companions.equipment = null;
+            }
+            if (gameState.companions.shards === undefined) {
+                gameState.companions.shards = 0;
             }
         }
 
@@ -10982,7 +11216,11 @@ const REGION_CONSUMABLES = {
             }
             const existing = gameState.companions.owned.find(c => c.id === companionId);
             if (existing) {
-                addLog('隨從', `⚠️ 你已經擁有 ${companion.name}`);
+                // 重複隨從轉換為碎片
+                const shardAmount = getCompanionShardAmount(companion.rarity);
+                gameState.companions.shards += shardAmount;
+                addLog('隨從', `已擁有 ${companion.name}，轉換為 ${shardAmount} 個隨從碎片！（總計: ${gameState.companions.shards}）`);
+                saveGame();
                 return false;
             }
             gameState.companions.owned.push({
@@ -10995,6 +11233,114 @@ const REGION_CONSUMABLES = {
             playSound('levelup');
             saveGame();
             return true;
+        }
+
+        // 獲取隨從碎片數量（根據品質）
+        function getCompanionShardAmount(rarity) {
+            const shardAmounts = {
+                'common': 5,
+                'fine': 10,
+                'rare': 20,
+                'epic': 40
+            };
+            return shardAmounts[rarity.toLowerCase()] || 5;
+        }
+
+        // 獲取隨從裝備
+        function obtainEquipment(equipmentId) {
+            initCompanionSystem();
+            const equipment = COMPANION_EQUIPMENT[equipmentId];
+            if (!equipment) {
+                addLog('系統', '❌ 裝備不存在');
+                return false;
+            }
+            const existing = gameState.companions.ownedEquipment.find(e => e.id === equipmentId);
+            if (existing) {
+                // 重複裝備轉換為碎片
+                const shardAmount = getEquipmentShardAmount(equipment.rarity);
+                gameState.companions.shards += shardAmount;
+                addLog('隨從', `已擁有 ${equipment.icon}${equipment.name}，轉換為 ${shardAmount} 個隨從碎片！（總計: ${gameState.companions.shards}）`);
+                saveGame();
+                return false;
+            }
+            gameState.companions.ownedEquipment.push({
+                id: equipmentId,
+                level: 1
+            });
+            addLog('隨從', `🎉 獲得新裝備：${equipment.icon}${equipment.name}！`);
+            playSound('levelup');
+            saveGame();
+            return true;
+        }
+
+        // 獲取裝備碎片數量（根據品質）
+        function getEquipmentShardAmount(rarity) {
+            const shardAmounts = {
+                'common': 10,
+                'rare': 30,
+                'epic': 60
+            };
+            return shardAmounts[rarity.toLowerCase()] || 10;
+        }
+
+        // 裝備隨從裝備
+        function equipCompanionEquipment(equipmentId) {
+            initCompanionSystem();
+            const owned = gameState.companions.ownedEquipment.find(e => e.id === equipmentId);
+            if (!owned) {
+                addLog('隨從', '❌ 你沒有這個裝備');
+                return false;
+            }
+            gameState.companions.equipment = equipmentId;
+            const equipment = COMPANION_EQUIPMENT[equipmentId];
+            addLog('隨從', `✅ 裝備了 ${equipment.icon}${equipment.name}`);
+            saveGame();
+            return true;
+        }
+
+        // 卸下隨從裝備
+        function unequipCompanionEquipment() {
+            initCompanionSystem();
+            if (!gameState.companions.equipment) {
+                addLog('隨從', '❌ 沒有裝備裝備');
+                return false;
+            }
+            gameState.companions.equipment = null;
+            addLog('隨從', '✅ 已卸下裝備');
+            saveGame();
+            return true;
+        }
+
+        // 升級隨從裝備
+        function upgradeCompanionEquipment(equipmentId) {
+            initCompanionSystem();
+            const owned = gameState.companions.ownedEquipment.find(e => e.id === equipmentId);
+            if (!owned) {
+                addLog('隨從', '❌ 你沒有這個裝備');
+                return false;
+            }
+            if (owned.level >= 10) {
+                addLog('隨從', '❌ 裝備已達最高等級');
+                return false;
+            }
+            const cost = getEquipmentUpgradeCost(owned.level);
+            if (gameState.companions.shards < cost) {
+                addLog('隨從', `❌ 隨從碎片不足（需要 ${cost}，擁有 ${gameState.companions.shards}）`);
+                return false;
+            }
+            gameState.companions.shards -= cost;
+            owned.level++;
+            const equipment = COMPANION_EQUIPMENT[equipmentId];
+            addLog('隨從', `✨ ${equipment.icon}${equipment.name} 升級到 Lv.${owned.level}！`);
+            playSound('levelup');
+            saveGame();
+            return true;
+        }
+
+        // 獲取裝備升級所需碎片
+        function getEquipmentUpgradeCost(currentLevel) {
+            const costs = [10, 15, 20, 25, 30, 35, 40, 45, 50]; // Lv.1-9升級成本
+            return costs[currentLevel - 1] || 50;
         }
 
         // 裝備隨從
@@ -11046,20 +11392,108 @@ const REGION_CONSUMABLES = {
                 const effectValue = skill.value * (1 + levelBonus);
                 switch (skill.type) {
                     case 'buff_atk': bonuses.atk += effectValue; break;
-                    case 'buff_def':
-                        if (skill.statType === 'dmgRed') bonuses.dmgRed += effectValue;
-                        else bonuses.def += effectValue;
-                        break;
+                    case 'buff_def': bonuses.def += effectValue; break;
                     case 'buff_hp': bonuses.hp += effectValue; break;
+                    case 'buff_dmgred': bonuses.dmgRed += effectValue; break;
+                    case 'buff_lifesteal': bonuses.lifeSteal += effectValue; break;
                     case 'buff_crit':
                         if (skill.statType === 'critDmg') bonuses.critDmg += effectValue;
                         else bonuses.crit += effectValue;
                         break;
-                    case 'bonus_gold': bonuses.goldBonus += effectValue; break;
-                    case 'bonus_exp': bonuses.expBonus += effectValue; break;
-                    case 'bonus_drop': bonuses.dropBonus += effectValue; break;
                 }
             });
+            return bonuses;
+        }
+
+        // 獲取隨從裝備組合效果
+        function getCompanionEquipmentCombo() {
+            initCompanionSystem();
+            const bonuses = {
+                atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0,
+                dmgRed: 0, lifeSteal: 0, regen: 0, reflect: 0,
+                postBattleHeal: 0, lowHpHeal: 0, ignoreDefense: 0
+            };
+            
+            // 獲取當前裝備的隨從和裝備
+            const activeCompanionId = gameState.companions.active;
+            const activeEquipmentId = gameState.companions.equipment;
+            
+            if (!activeCompanionId || !activeEquipmentId) {
+                return bonuses; // 沒有裝備兩者，無組合
+            }
+            
+            const companion = COMPANIONS[activeCompanionId];
+            const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
+            const ownedEquipment = gameState.companions.ownedEquipment.find(e => e.id === activeEquipmentId);
+            
+            if (!companion || !equipment || !ownedEquipment) {
+                return bonuses;
+            }
+            
+            // 應用裝備基礎效果（根據等級提升）
+            const levelMultiplier = 1 + (ownedEquipment.level - 1) * 0.1; // 每級+10%
+            Object.keys(equipment.effects).forEach(key => {
+                if (bonuses.hasOwnProperty(key)) {
+                    bonuses[key] += equipment.effects[key] * levelMultiplier;
+                }
+            });
+            
+            // 獲取隨從類型
+            const companionType = companion.type; // attack, defense, heal, balanced
+            const equipmentType = equipment.type; // attack, defense, heal
+            
+            // 計算組合效果
+            if (companionType === 'balanced') {
+                // 平衡型隨從 + 任意裝備 = 裝備效果+25%
+                Object.keys(equipment.effects).forEach(key => {
+                    if (bonuses.hasOwnProperty(key)) {
+                        bonuses[key] *= 1.25;
+                    }
+                });
+            } else if (companionType === equipmentType) {
+                // 同類型組合：強力加成
+                if (companionType === 'attack') {
+                    // 極限攻勢：攻擊+10%, 暴傷+15%
+                    bonuses.atk += 0.10;
+                    bonuses.critDmg += 0.15;
+                } else if (companionType === 'defense') {
+                    // 鐵壁防線：防禦+10%, 生命+15%
+                    bonuses.def += 0.10;
+                    bonuses.hp += 0.15;
+                } else if (companionType === 'heal') {
+                    // 永續再生：回復+50%, 吸血+5%
+                    bonuses.regen *= 1.5;
+                    bonuses.lifeSteal += 0.05;
+                }
+            } else {
+                // 混搭組合：特殊效果
+                if (companionType === 'attack' && equipmentType === 'defense') {
+                    // 攻防一體：攻擊+5%, 防禦+5%
+                    bonuses.atk += 0.05;
+                    bonuses.def += 0.05;
+                } else if (companionType === 'attack' && equipmentType === 'heal') {
+                    // 狂戰士：攻擊+8%, 吸血+3%
+                    bonuses.atk += 0.08;
+                    bonuses.lifeSteal += 0.03;
+                } else if (companionType === 'defense' && equipmentType === 'attack') {
+                    // 反擊戰士：防禦+5%, 反傷+3%
+                    bonuses.def += 0.05;
+                    bonuses.reflect += 0.03;
+                } else if (companionType === 'defense' && equipmentType === 'heal') {
+                    // 不死之身：生命+10%, 回復+1%
+                    bonuses.hp += 0.10;
+                    bonuses.regen += 0.01;
+                } else if (companionType === 'heal' && equipmentType === 'attack') {
+                    // 吸血鬼：吸血+5%, 暴擊+3%
+                    bonuses.lifeSteal += 0.05;
+                    bonuses.crit += 0.03;
+                } else if (companionType === 'heal' && equipmentType === 'defense') {
+                    // 生命堡壘：生命+8%, 減傷+3%
+                    bonuses.hp += 0.08;
+                    bonuses.dmgRed += 0.03;
+                }
+            }
+            
             return bonuses;
         }
 
@@ -11196,6 +11630,54 @@ const REGION_CONSUMABLES = {
                 `;
             } else {
                 activeCompanionInfo.innerHTML = '<div style="text-align: center; color: #7a8fb8;">無</div>';
+            
+            // 更新當前裝備的裝備顯示
+            const activeEquipmentId = gameState.companions.equipment;
+            const activeEquipmentInfo = document.getElementById('active-equipment-info');
+            
+            if (activeEquipmentId) {
+                const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
+                const ownedEquipment = gameState.companions.ownedEquipment.find(e => e.id === activeEquipmentId);
+                if (equipment && ownedEquipment) {
+                    const rarityColor = getRarityColor(equipment.rarity);
+                    const levelMultiplier = 1 + (ownedEquipment.level - 1) * 0.1;
+                    const currentEffect = (equipment.effect * levelMultiplier).toFixed(1);
+                    const typeText = equipment.type === 'attack' ? '攻擊' : equipment.type === 'defense' ? '防禦' : '回復';
+                    
+                    activeEquipmentInfo.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-size: 1.1rem; font-weight: bold; color: ${rarityColor};">${equipment.icon} ${equipment.name}</div>
+                                <div style="color: #7a8fb8; font-size: 0.85rem; margin-top: 3px;">${equipment.description}</div>
+                            </div>
+                            <button onclick="unequipEquipment(); updateCompanionModal(); updateCompanionDisplay();" style="padding: 6px 12px; font-size: 0.85rem; background: rgba(255, 68, 68, 0.2); border: 1px solid #f44336; color: #f44336;">📤 卸下</button>
+                        </div>
+                        <div style="display: flex; gap: 15px; margin-bottom: 8px;">
+                            <div style="color: #7a8fb8; font-size: 0.85rem;">🎯 等級: <span style="color: #00ff88; font-weight: bold;">Lv.${ownedEquipment.level}</span></div>
+                            <div style="color: #7a8fb8; font-size: 0.85rem;">🏆 品質: <span style="color: ${rarityColor}; font-weight: bold;">${equipment.rarity}</span></div>
+                            <div style="color: #7a8fb8; font-size: 0.85rem;">📊 類型: <span style="color: #4EA5FF; font-weight: bold;">${typeText}</span></div>
+                        </div>
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px;">
+                            <div style="color: #00ff88; font-size: 0.9rem; font-weight: bold; margin-bottom: 5px;">✨ 裝備效果</div>
+                            <div style="color: #7a8fb8; font-size: 0.85rem;">${equipment.statType} +${currentEffect}%</div>
+                        </div>
+                    `;
+                }
+            } else {
+                activeEquipmentInfo.innerHTML = '<div style="text-align: center; color: #7a8fb8;">無</div>';
+            }
+            
+            // 更新組合效果顯示
+            updateComboEffectDisplay();
+            
+            // 更新碎片顯示
+            const shardsDisplay = document.getElementById('equipment-shards-display');
+            if (shardsDisplay) {
+                shardsDisplay.textContent = gameState.companions.shards || 0;
+            }
+            
+            // 更新裝備列表
+            updateEquipmentList();
             }
             
             // 更新隨從列表
@@ -11248,82 +11730,372 @@ const REGION_CONSUMABLES = {
         }
         
         function updateCompanionDisplay() {
+            initCompanionSystem();
             const companion = getActiveCompanion();
+            const activeEquipmentId = gameState.companions.equipment;
             const companionInfo = document.getElementById('companion-info');
             
+            // 隨從槽顯示
+            let companionHtml = '';
             if (companion) {
                 const rarityColor = getRarityColor(companion.rarity);
                 
-                // 生成技能描述
-                let skillsText = '';
+                // 生成技能簡要描述
+                let skillsHtml = '';
                 if (companion.skills && companion.skills.length > 0) {
                     const levelBonus = (companion.level - 1) * 0.02;
                     const skillDescriptions = companion.skills.map(skill => {
                         const effectValue = (skill.value * (1 + levelBonus)).toFixed(1);
                         
-                        // 根據技能類型生成動態描述
+                        // 根據技能類型生成簡短描述
                         let description = '';
                         switch (skill.type) {
                             case 'heal_over_time':
-                                description = `每回合回復${effectValue}%生命`;
+                                description = `回復${effectValue}%`;
                                 break;
                             case 'emergency_heal':
-                                description = `生命低於${skill.threshold}%時回復${effectValue}%生命`;
+                                description = `緊急治療${effectValue}%`;
                                 break;
                             case 'battle_heal':
                             case 'post_battle_heal':
-                                description = `戰鬥結束回復${effectValue}%生命`;
+                                description = `戰後回復${effectValue}%`;
                                 break;
                             case 'buff_atk':
-                                description = `攻擊力 +${effectValue}%`;
+                                description = `攻擊+${effectValue}%`;
                                 break;
                             case 'buff_def':
-                                description = skill.statType === 'dmgRed' ? `減傷 +${effectValue}%` : `防禦力 +${effectValue}%`;
+                                description = `防禦+${effectValue}%`;
+                                break;
+                            case 'buff_hp':
+                                description = `生命+${effectValue}%`;
+                                break;
+                            case 'buff_dmgred':
+                                description = `減傷+${effectValue}%`;
+                                break;
+                            case 'buff_lifesteal':
+                                description = `吸血+${effectValue}%`;
                                 break;
                             case 'buff_crit':
-                                description = skill.statType === 'critDmg' ? `暴擊傷害 +${effectValue}%` : `暴擊率 +${effectValue}%`;
+                                description = skill.statType === 'critDmg' ? `爆傷+${effectValue}%` : `爆率+${effectValue}%`;
                                 break;
                             case 'debuff_def':
-                                description = `戰鬥開始降低敵人${effectValue}%防禦`;
+                                description = `降防${effectValue}%`;
                                 break;
                             case 'debuff_atk':
-                                description = `降低敵人${effectValue}%攻擊`;
-                                break;
-                            case 'bonus_gold':
-                                description = `金幣掉落 +${effectValue}%`;
-                                break;
-                            case 'bonus_exp':
-                                description = `經驗獲取 +${effectValue}%`;
-                                break;
-                            case 'bonus_drop':
-                                description = `幸運值 +${effectValue}%`;
+                                description = `降攻${effectValue}%`;
                                 break;
                             default:
                                 description = skill.description;
                         }
                         
-                        return `${skill.name}: ${description}`;
+                        return description;
                     });
-                    skillsText = skillDescriptions.join('<br>• ');
+                    skillsHtml = `
+                        <div style="background: rgba(78, 165, 255, 0.1); padding: 3px 5px; border-radius: 3px; margin-top: 3px;">
+                            <div style="color: #4ea5ff; font-size: 0.65rem;">✨ ${skillDescriptions.join(' | ')}</div>
+                        </div>
+                    `;
                 }
                 
-                companionInfo.innerHTML = `
-                    <div style="font-weight: bold; color: ${rarityColor}; margin-bottom: 3px;">${companion.name}</div>
-                    <div style="color: #7a8fb8; font-size: 0.75rem;">Lv.${companion.level} | ${companion.rarity}</div>
-                    <div style="color: #4ade80; font-size: 0.7rem; margin-top: 5px; line-height: 1.4;">✨ 技能<br>• ${skillsText || '無技能'}</div>
+                companionHtml = `
+                    <div style="font-weight: bold; color: ${rarityColor}; margin-bottom: 2px; font-size: 0.8rem;">${companion.name}</div>
+                    <div style="color: #7a8fb8; font-size: 0.65rem;">Lv.${companion.level} | ${companion.rarity}</div>
+                    ${skillsHtml}
                 `;
             } else {
-                companionInfo.innerHTML = '無裝備隨從<br><span style="color: #ff9a56; font-size: 0.75rem;">點擊管理</span>';
+                companionHtml = '<div style="color: #7a8fb8; font-size: 0.7rem;">無隨從</div>';
+            }
+            
+            // 裝備槽顯示
+            let equipmentHtml = '';
+            let equipmentEffectHtml = '';
+            if (activeEquipmentId) {
+                const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
+                const ownedEquipment = gameState.companions.ownedEquipment.find(e => e.id === activeEquipmentId);
+                if (equipment && ownedEquipment) {
+                    const rarityColor = getRarityColor(equipment.rarity);
+                    const levelMultiplier = 1 + (ownedEquipment.level - 1) * 0.1;
+                    const currentEffect = (equipment.effect * levelMultiplier).toFixed(1);
+                    
+                    equipmentHtml = `
+                        <div style="font-weight: bold; color: ${rarityColor}; margin-bottom: 2px; font-size: 0.8rem;">${equipment.icon}${equipment.name}</div>
+                        <div style="color: #7a8fb8; font-size: 0.65rem;">Lv.${ownedEquipment.level} | ${equipment.rarity}</div>
+                    `;
+                    
+                    equipmentEffectHtml = `
+                        <div style="background: rgba(78, 165, 255, 0.1); padding: 3px 5px; border-radius: 3px; margin-top: 3px;">
+                            <div style="color: #4ea5ff; font-size: 0.65rem;">✨ ${equipment.statType} +${currentEffect}%</div>
+                        </div>
+                    `;
+                }
+            } else {
+                equipmentHtml = '<div style="color: #7a8fb8; font-size: 0.7rem;">無裝備</div>';
+            }
+            
+            // 組合效果顯示
+            let comboHtml = '';
+            if (companion && activeEquipmentId) {
+                const companionType = companion.type;
+                const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
+                const equipmentType = equipment.type;
+                
+                let comboName = '無組合';
+                let comboIcon = '❓';
+                let comboDescription = '';
+                
+                if (companionType === 'balanced') {
+                    comboName = '完美平衡';
+                    comboIcon = '⚖️';
+                    comboDescription = '攻+10% 防+10% 血+10%';
+                } else if (companionType === equipmentType) {
+                    if (companionType === 'attack') {
+                        comboName = '極限攻勢';
+                        comboIcon = '🔥';
+                        comboDescription = '攻+20% 爆率+10% 爆傷+15%';
+                    } else if (companionType === 'defense') {
+                        comboName = '鐵壁防線';
+                        comboIcon = '🛡️';
+                        comboDescription = '防+20% 減傷+10% 血+15%';
+                    } else if (companionType === 'heal') {
+                        comboName = '永續再生';
+                        comboIcon = '💚';
+                        comboDescription = '血+20% 吸血+10% 回復2%';
+                    }
+                } else {
+                    if (companionType === 'attack' && equipmentType === 'defense') {
+                        comboName = '攻防一體';
+                        comboIcon = '⚔️🛡️';
+                        comboDescription = '攻+10% 防+10%';
+                    } else if (companionType === 'attack' && equipmentType === 'heal') {
+                        comboName = '狂戰士';
+                        comboIcon = '⚔️💚';
+                        comboDescription = '攻+10% 吸血+10%';
+                    } else if (companionType === 'defense' && equipmentType === 'attack') {
+                        comboName = '反擊戰士';
+                        comboIcon = '🛡️⚔️';
+                        comboDescription = '防+10% 反傷+15%';
+                    } else if (companionType === 'defense' && equipmentType === 'heal') {
+                        comboName = '不死之身';
+                        comboIcon = '🛡️💚';
+                        comboDescription = '防+10% 血+10%';
+                    } else if (companionType === 'heal' && equipmentType === 'attack') {
+                        comboName = '吸血鬼';
+                        comboIcon = '💚⚔️';
+                        comboDescription = '血+10% 吸血+15%';
+                    } else if (companionType === 'heal' && equipmentType === 'defense') {
+                        comboName = '生命堡壘';
+                        comboIcon = '💚🛡️';
+                        comboDescription = '血+10% 減傷+10%';
+                    }
+                }
+                
+                comboHtml = `
+                    <div style="background: rgba(0, 255, 136, 0.15); padding: 4px 6px; border-radius: 4px; margin-top: 5px; border: 1px solid rgba(0, 255, 136, 0.3);">
+                        <div style="color: #00ff88; font-size: 0.7rem; font-weight: bold; margin-bottom: 2px;">${comboIcon} ${comboName}</div>
+                        <div style="color: #7a8fb8; font-size: 0.6rem;">${comboDescription}</div>
+                    </div>
+                `;
+            }
+            
+            companionInfo.innerHTML = `
+                <div style="margin-bottom: 6px;">
+                    <div style="color: #4ade80; font-size: 0.7rem; margin-bottom: 3px;">🤖 隨從</div>
+                    ${companionHtml}
+                </div>
+                <div style="margin-bottom: 6px;">
+                    <div style="color: #4ade80; font-size: 0.7rem; margin-bottom: 3px;">🛠️ 裝備</div>
+                    ${equipmentHtml}
+                    ${equipmentEffectHtml}
+                </div>
+                ${comboHtml}
+                <div style="text-align: center; margin-top: 8px;">
+                    <span style="color: #ff9a56; font-size: 0.65rem;">點擊管理</span>
+                </div>
+            `;
+        }
+        
+
+        
+        // 更新組合效果顯示
+        function updateComboEffectDisplay() {
+            const comboDisplay = document.getElementById('combo-effect-display');
+            if (!comboDisplay) return;
+            
+            const companion = getActiveCompanion();
+            const activeEquipmentId = gameState.companions.equipment;
+            
+            if (companion && activeEquipmentId) {
+                const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
+                
+                let comboName = '無組合';
+                let comboIcon = '❓';
+                let comboDescription = '';
+                
+                const companionType = companion.type;
+                const equipmentType = equipment.type;
+                
+                if (companionType === 'balanced') {
+                    comboName = '完美平衡';
+                    comboIcon = '⚖️';
+                    comboDescription = '攻擊+10%, 防禦+10%, 最大生命+10%';
+                } else if (companionType === equipmentType) {
+                    if (companionType === 'attack') {
+                        comboName = '極限攻勢';
+                        comboIcon = '🔥';
+                        comboDescription = '攻擊+20%, 暴擊率+10%, 暴擊傷害+15%';
+                    } else if (companionType === 'defense') {
+                        comboName = '鐵壁防線';
+                        comboIcon = '🛡️';
+                        comboDescription = '防禦+20%, 減傷+10%, 最大生命+15%';
+                    } else if (companionType === 'heal') {
+                        comboName = '永續再生';
+                        comboIcon = '💚';
+                        comboDescription = '最大生命+20%, 吸血+10%, 每回合回復2%生命';
+                    }
+                } else {
+                    if (companionType === 'attack' && equipmentType === 'defense') {
+                        comboName = '攻防一體';
+                        comboIcon = '⚔️🛡️';
+                        comboDescription = '攻擊+10%, 防禦+10%';
+                    } else if (companionType === 'attack' && equipmentType === 'heal') {
+                        comboName = '狂戰士';
+                        comboIcon = '⚔️💚';
+                        comboDescription = '攻擊+10%, 吸血+10%';
+                    } else if (companionType === 'defense' && equipmentType === 'attack') {
+                        comboName = '反擊戰士';
+                        comboIcon = '🛡️⚔️';
+                        comboDescription = '防禦+10%, 反擊傷害+15%';
+                    } else if (companionType === 'defense' && equipmentType === 'heal') {
+                        comboName = '不死之身';
+                        comboIcon = '🛡️💚';
+                        comboDescription = '防禦+10%, 最大生命+10%';
+                    } else if (companionType === 'heal' && equipmentType === 'attack') {
+                        comboName = '吸血鬼';
+                        comboIcon = '💚⚔️';
+                        comboDescription = '最大生命+10%, 吸血+15%';
+                    } else if (companionType === 'heal' && equipmentType === 'defense') {
+                        comboName = '生命堡壘';
+                        comboIcon = '💚🛡️';
+                        comboDescription = '最大生命+10%, 減傷+10%';
+                    }
+                }
+                
+                comboDisplay.style.display = 'block';
+                comboDisplay.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #00ff88; margin-bottom: 5px;">${comboIcon} ${comboName}</div>
+                        <div style="font-size: 0.9rem; color: #7a8fb8;">${comboDescription}</div>
+                    </div>
+                `;
+            } else {
+                comboDisplay.style.display = 'none';
             }
         }
         
+        // 更新裝備列表
+        function updateEquipmentList() {
+            const equipmentList = document.getElementById('equipment-list');
+            if (!equipmentList) return;
+            
+            if (!gameState.companions.ownedEquipment || gameState.companions.ownedEquipment.length === 0) {
+                equipmentList.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #7a8fb8; padding: 30px;">你還沒有裝備，擊敗怪物獲取吧！</div>';
+                return;
+            }
+            
+            equipmentList.innerHTML = gameState.companions.ownedEquipment.map(owned => {
+                const equipment = COMPANION_EQUIPMENT[owned.id];
+                if (!equipment) return '';
+                
+                const isEquipped = gameState.companions.equipment === owned.id;
+                const rarityColor = getRarityColor(equipment.rarity);
+                const levelMultiplier = 1 + (owned.level - 1) * 0.1;
+                const currentEffect = (equipment.effect * levelMultiplier).toFixed(1);
+                const nextLevelEffect = (equipment.effect * (levelMultiplier + 0.1)).toFixed(1);
+                
+                const upgradeCost = owned.level * 10 + 20;
+                const canUpgrade = owned.level < 10 && gameState.companions.shards >= upgradeCost;
+                
+                const typeText = equipment.type === 'attack' ? '攻擊' : equipment.type === 'defense' ? '防禦' : '回復';
+                const typeColor = equipment.type === 'attack' ? '#ff6b6b' : equipment.type === 'defense' ? '#4ea5ff' : '#4ade80';
+                
+                return `
+                    <div style="background: ${isEquipped ? 'rgba(0, 255, 136, 0.08)' : 'rgba(78, 165, 255, 0.05)'}; padding: 12px; border-radius: 8px; border: 2px solid ${isEquipped ? 'rgba(0, 255, 136, 0.4)' : rarityColor}; position: relative;">
+                        ${isEquipped ? '<div style="position: absolute; top: 8px; right: 8px; background: #00ff88; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold;">✅ 已裝備</div>' : ''}
+                        <div style="font-size: 1.2rem; margin-bottom: 5px;">${equipment.icon}</div>
+                        <div style="font-size: 1rem; font-weight: bold; color: ${rarityColor}; margin-bottom: 5px;">${equipment.name}</div>
+                        <div style="color: #7a8fb8; font-size: 0.8rem; margin-bottom: 8px;">${equipment.description}</div>
+                        <div style="display: flex; gap: 10px; margin-bottom: 8px; font-size: 0.8rem;">
+                            <div style="color: #7a8fb8;">🎯 Lv.<span style="color: #00ff88; font-weight: bold;">${owned.level}</span></div>
+                            <div style="color: #7a8fb8;">🏆 <span style="color: ${rarityColor};">${equipment.rarity}</span></div>
+                            <div style="color: #7a8fb8;">📊 <span style="color: ${typeColor};">${typeText}</span></div>
+                        </div>
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
+                            <div style="color: #00ff88; font-size: 0.85rem; font-weight: bold; margin-bottom: 3px;">✨ 當前效果</div>
+                            <div style="color: #7a8fb8; font-size: 0.85rem;">${equipment.statType} +${currentEffect}%</div>
+                            ${owned.level < 10 ? `<div style="color: #888; font-size: 0.75rem; margin-top: 3px;">下一級: ${equipment.statType} +${nextLevelEffect}%</div>` : '<div style="color: #ffd700; font-size: 0.75rem; margin-top: 3px;">⭐ 已滿級</div>'}
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            ${!isEquipped ? `<button onclick="equipEquipment('${owned.id}'); updateCompanionModal(); updateCompanionDisplay();" style="flex: 1; padding: 6px; font-size: 0.85rem; background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%); color: #000; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">✅ 裝備</button>` : ''}
+                            ${owned.level < 10 ? `<button onclick="upgradeEquipment('${owned.id}'); updateCompanionModal();" style="flex: 1; padding: 6px; font-size: 0.85rem; background: ${canUpgrade ? 'linear-gradient(135deg, #4ea5ff 0%, #357abd 100%)' : 'rgba(100, 100, 100, 0.3)'}; color: ${canUpgrade ? '#fff' : '#666'}; font-weight: bold; border: none; border-radius: 4px; cursor: ${canUpgrade ? 'pointer' : 'not-allowed'};" ${!canUpgrade ? 'disabled' : ''}>⬆️ 升級 (💎${upgradeCost})</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 裝備裝備
+        function equipEquipment(equipmentId) {
+            gameState.companions.equipment = equipmentId;
+            addLog('裝備', `✅ 已裝備 ${COMPANION_EQUIPMENT[equipmentId].name}`);
+            saveGame();
+        }
+        
+        // 卸下裝備
+        function unequipEquipment() {
+            const equipmentId = gameState.companions.equipment;
+            if (equipmentId) {
+                addLog('裝備', `📤 已卸下 ${COMPANION_EQUIPMENT[equipmentId].name}`);
+                gameState.companions.equipment = null;
+                saveGame();
+            }
+        }
+        
+        // 升級裝備
+        function upgradeEquipment(equipmentId) {
+            const ownedEquipment = gameState.companions.ownedEquipment.find(e => e.id === equipmentId);
+            if (!ownedEquipment) return;
+            
+            if (ownedEquipment.level >= 10) {
+                addLog('裝備', '❌ 裝備已達最高等級');
+                return;
+            }
+            
+            const upgradeCost = ownedEquipment.level * 10 + 20;
+            if (gameState.companions.shards < upgradeCost) {
+                addLog('裝備', `❌ 碎片不足，需要 ${upgradeCost} 碎片`);
+                return;
+            }
+            
+            gameState.companions.shards -= upgradeCost;
+            ownedEquipment.level++;
+            
+            const equipment = COMPANION_EQUIPMENT[equipmentId];
+            addLog('裝備', `⬆️ ${equipment.name} 升級到 Lv.${ownedEquipment.level}`);
+            playSound('upgrade');
+            saveGame();
+        }
+
         function getRarityColor(rarity) {
             const colors = {
-                'Common': '#9e9e9e',
-                'Fine': '#4EA5FF',
-                'Rare': '#9c27b0',
-                'Epic': '#ff6f00',
-                'Legendary': '#ffd700'
+                'common': '#9E9E9E',
+                'uncommon': '#4CAF50',
+                'fine': '#2196F3',
+                'rare': '#9C27B0',
+                'epic': '#FF6D00',
+                'legendary': '#FFD700',
+                'mythic': '#F44336',
+                'eternal': '#E040FB',
+                'set': '#00BCD4'
             };
             return colors[rarity] || '#9e9e9e';
         }
@@ -11500,9 +12272,12 @@ const REGION_CONSUMABLES = {
                 if (!byRarity[rarity]) return;
                 
                 const color = getRarityColor(rarity);
+                const rarityObj = RARITIES.find(r => r.name === rarity);
+                const rarityLabel = rarityObj ? rarityObj.label : rarity;
+                
                 html += `
                     <div style="margin-bottom: 25px;">
-                        <h4 style="color: ${color}; margin-bottom: 12px;">${rarity} (${byRarity[rarity].length})</h4>
+                        <h4 style="color: ${color}; margin-bottom: 12px;">${rarityLabel} (${byRarity[rarity].length})</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
                 `;
                 
@@ -11749,7 +12524,9 @@ const REGION_CONSUMABLES = {
             gameState.cards.collection.push(newCard);
             gameState.cards.stats.totalCardsObtained++;
             const rarityColor = getRarityColor(card.rarity);
-            addLog('卡牌', `獲得卡牌：${card.icon} <span style="color: ${rarityColor}">${card.name}</span> (${card.rarity})！`);
+            const rarityObj = RARITIES.find(r => r.name === card.rarity);
+            const rarityLabel = rarityObj ? rarityObj.label : card.rarity;
+            addLog('卡牌', `獲得卡牌：${card.icon} <span style="color: ${rarityColor}">${card.name}</span> (${rarityLabel})！`);
             return true;
         }
         
@@ -11857,9 +12634,7 @@ const REGION_CONSUMABLES = {
                 crit: 0,
                 critDmg: 0,
                 dmgRed: 0,
-                lifeSteal: 0,
-                goldBonus: 0,
-                expBonus: 0
+                lifeSteal: 0
             };
             
             // 計算每張卡牌的效果
@@ -11875,9 +12650,7 @@ const REGION_CONSUMABLES = {
                             'crit': 'crit',
                             'critDmg': 'critDmg',
                             'dmgRed': 'dmgRed',
-                            'lifeSteal': 'lifeSteal',
-                            'goldBonus': 'goldBonus',
-                            'expBonus': 'expBonus'
+                            'lifeSteal': 'lifeSteal'
                         };
                         const mappedStat = statMap[effect.stat];
                         if (mappedStat && bonuses.hasOwnProperty(mappedStat)) {
@@ -11896,9 +12669,7 @@ const REGION_CONSUMABLES = {
                                 'crit': 'crit',
                                 'critDmg': 'critDmg',
                                 'dmgRed': 'dmgRed',
-                                'lifeSteal': 'lifeSteal',
-                                'goldBonus': 'goldBonus',
-                                'expBonus': 'expBonus'
+                                'lifeSteal': 'lifeSteal'
                             };
                             const mappedStat = statMap[s.stat];
                             if (mappedStat && bonuses.hasOwnProperty(mappedStat)) {
@@ -11922,8 +12693,6 @@ const REGION_CONSUMABLES = {
                 if (bonus.critDmg) bonuses.critDmg += bonus.critDmg;
                 if (bonus.dmgRed) bonuses.dmgRed += bonus.dmgRed;
                 if (bonus.lifeSteal) bonuses.lifeSteal += bonus.lifeSteal;
-                if (bonus.goldBonus) bonuses.goldBonus += bonus.goldBonus;
-                if (bonus.expBonus) bonuses.expBonus += bonus.expBonus;
             }
             
             return bonuses;
@@ -12162,20 +12931,18 @@ const REGION_CONSUMABLES = {
             
             // 時間係數（優化後）
             let timeCoefficient = 1.0;
+            
+            // 限制最多12小時
+            if (offlineHours > 12) {
+                offlineHours = 12;
+            }
+            
             if (offlineHours <= 4) {
                 timeCoefficient = 1.0;      // 100%效率
-            } else if (offlineHours <= 12) {
-                timeCoefficient = 0.9;      // 90%效率
-            } else if (offlineHours <= 24) {
-                timeCoefficient = 0.75;     // 75%效率
-            } else if (offlineHours <= 48) {
-                timeCoefficient = 0.5;      // 50%效率
+            } else if (offlineHours <= 8) {
+                timeCoefficient = 0.95;     // 95%效率
             } else {
-                timeCoefficient = 0.3;      // 30%效率（最多72小時）
-                // 限制最多72小時
-                if (offlineHours > 72) {
-                    offlineHours = 72;
-                }
+                timeCoefficient = 0.9;      // 90%效率
             }
             
             // 獲取當前區域資訊
@@ -12536,7 +13303,9 @@ const REGION_CONSUMABLES = {
             if (rewards.itemDrops && rewards.itemDrops.length > 0) {
                 itemsHtml = rewards.itemDrops.map(item => {
                     const rarityColor = getRarityColor(item.rarity);
-                    return `<div style="color: ${rarityColor}; font-size: 0.85rem; margin: 3px 0;">• ${item.name} (${item.rarity})</div>`;
+                    const rarityObj = RARITIES.find(r => r.name === item.rarity);
+                    const rarityLabel = rarityObj ? rarityObj.label : item.rarity;
+                    return `<div style="color: ${rarityColor}; font-size: 0.85rem; margin: 3px 0;">• ${item.name} (${rarityLabel})</div>`;
                 }).join('');
             } else {
                 itemsHtml = '<div style="color: #7a8fb8; font-size: 0.85rem; text-align: center;">無</div>';
@@ -12561,7 +13330,9 @@ const REGION_CONSUMABLES = {
                 if (rewards.cardDrops && rewards.cardDrops.length > 0) {
                     cardsListHtml += rewards.cardDrops.map(card => {
                         const rarityColor = getRarityColor(card.rarity);
-                        return `<div style="color: ${rarityColor}; font-size: 0.85rem; margin: 3px 0;">• ${card.icon} ${card.name} (${card.rarity})</div>`;
+                        const rarityObj = RARITIES.find(r => r.name === card.rarity);
+                        const rarityLabel = rarityObj ? rarityObj.label : card.rarity;
+                        return `<div style="color: ${rarityColor}; font-size: 0.85rem; margin: 3px 0;">• ${card.icon} ${card.name} (${rarityLabel})</div>`;
                     }).join('');
                 }
                 
@@ -12569,7 +13340,9 @@ const REGION_CONSUMABLES = {
                 if (rewards.shardDrops && Object.keys(rewards.shardDrops).length > 0) {
                     Object.entries(rewards.shardDrops).forEach(([rarity, amount]) => {
                         const rarityColor = getRarityColor(rarity);
-                        cardsListHtml += `<div style="color: ${rarityColor}; font-size: 0.85rem; margin: 3px 0;">• ${rarity} 碎片 ×${amount}</div>`;
+                        const rarityObj = RARITIES.find(r => r.name === rarity);
+                        const rarityLabel = rarityObj ? rarityObj.label : rarity;
+                        cardsListHtml += `<div style="color: ${rarityColor}; font-size: 0.85rem; margin: 3px 0;">• ${rarityLabel}碎片 ×${amount}</div>`;
                     });
                 }
                 
@@ -12718,16 +13491,16 @@ const REGION_CONSUMABLES = {
                         itemsAdded++;
                         
                         // 統計傳說裝備
-                        if (item.rarity === 'Legendary') {
+                        if (item.rarity === 'legendary') {
                             gameState.stats.legendaryItems = (gameState.stats.legendaryItems || 0) + 1;
                         }
                         
                         // 更新任務進度：獲得裝備
                         updateQuestProgress('collect_equipment', 1);
-                        if (item.rarity === 'Rare' || item.rarity === 'Epic' || item.rarity === 'Legendary' || item.rarity === 'Set') {
+                        if (item.rarity === 'rare' || item.rarity === 'epic' || item.rarity === 'legendary' || item.rarity === 'set') {
                             updateQuestProgress('collect_rare', 1);
                         }
-                        if (item.rarity === 'Legendary') {
+                        if (item.rarity === 'legendary') {
                             updateQuestProgress('collect_legendary', 1);
                         }
                     }
@@ -13041,17 +13814,18 @@ const REGION_CONSUMABLES = {
             const region = REGIONS[gameState.region];
             const difficultyMult = region.difficulty;
             
-            // 基礎屬性範圍
+            // 基礎屬性範圍（隨機 + 等級成長）
             let baseAtk = 0, baseDef = 0, baseHp = 0;
+            const level = gameState.player.level;
             if (item.type === 'weapon') {
-                baseAtk = 5 + Math.random() * 10;
+                baseAtk = (5 + level * 0.7) + Math.random() * 15;
             } else if (item.type === 'armor') {
-                baseDef = 3 + Math.random() * 8;
-                baseHp = 10 + Math.random() * 15;
+                baseDef = (3 + level * 0.45) + Math.random() * 12;
+                baseHp = (12 + level * 1.6) + Math.random() * 25;
             } else if (item.type === 'accessory') {
-                baseAtk = 1 + Math.random() * 4;
-                baseDef = 1 + Math.random() * 4;
-                baseHp = 10 + Math.random() * 20;
+                baseAtk = (2 + level * 0.28) + Math.random() * 8;
+                baseDef = (2 + level * 0.28) + Math.random() * 8;
+                baseHp = (10 + level * 1.3) + Math.random() * 35;
             }
             
             // 應用品質和難度
@@ -13144,9 +13918,6 @@ const REGION_CONSUMABLES = {
                 <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                     <button onclick="switchGeneralShopTab('recovery')" style="flex: 1; min-width: 80px; background: ${tab === 'recovery' ? '#00d9ff' : 'rgba(0, 217, 255, 0.1)'}; color: ${tab === 'recovery' ? '#0a1628' : '#00d9ff'};">📦 回復</button>
                     <button onclick="switchGeneralShopTab('battle')" style="flex: 1; min-width: 80px; background: ${tab === 'battle' ? '#00d9ff' : 'rgba(0, 217, 255, 0.1)'}; color: ${tab === 'battle' ? '#0a1628' : '#00d9ff'};">🎲 戰鬥</button>
-                    <button onclick="switchGeneralShopTab('companion')" style="flex: 1; min-width: 80px; background: ${tab === 'companion' ? '#00d9ff' : 'rgba(0, 217, 255, 0.1)'}; color: ${tab === 'companion' ? '#0a1628' : '#00d9ff'};">🐾 隨從</button>
-                    <button onclick="switchGeneralShopTab('card')" style="flex: 1; min-width: 80px; background: ${tab === 'card' ? '#00d9ff' : 'rgba(0, 217, 255, 0.1)'}; color: ${tab === 'card' ? '#0a1628' : '#00d9ff'};">🃏 卡牌</button>
-                    <button onclick="switchGeneralShopTab('shard')" style="flex: 1; min-width: 80px; background: ${tab === 'shard' ? '#00d9ff' : 'rgba(0, 217, 255, 0.1)'}; color: ${tab === 'shard' ? '#0a1628' : '#00d9ff'};">💎 碎片商店</button>
                     <button onclick="switchGeneralShopTab('other')" style="flex: 1; min-width: 80px; background: ${tab === 'other' ? '#00d9ff' : 'rgba(0, 217, 255, 0.1)'}; color: ${tab === 'other' ? '#0a1628' : '#00d9ff'};">📚 其他</button>
                 </div>
             `;
@@ -13156,12 +13927,6 @@ const REGION_CONSUMABLES = {
                 content = renderGeneralRecoveryShop();
             } else if (tab === 'battle') {
                 content = renderGeneralBattleShop();
-            } else if (tab === 'companion') {
-                content = renderCompanionShop();
-            } else if (tab === 'card') {
-                content = renderCardShop();
-            } else if (tab === 'shard') {
-                content = renderShardShop();
             } else if (tab === 'other') {
                 content = renderGeneralOtherShop();
             }
@@ -13244,7 +14009,7 @@ const REGION_CONSUMABLES = {
         function renderCompanionShop() {
             initCompanionSystem();
             // 商店只賣 Common 品質隨從
-            const companionList = Object.values(COMPANIONS).filter(c => c.rarity === 'Common');
+            const companionList = Object.values(COMPANIONS).filter(c => c.rarity === 'common');
             
             return companionList.map(companion => {
                 const owned = gameState.companions.owned.find(c => c.id === companion.id);
@@ -13282,7 +14047,7 @@ const REGION_CONSUMABLES = {
         
         function renderCardShop() {
             // 商店只販售Common品質卡牌
-            const cardList = Object.values(CARDS).filter(c => c.rarity === 'Common');
+            const cardList = Object.values(CARDS).filter(c => c.rarity === 'common');
             
             // 按品質分組
             const rarityOrder = ['Common'];
@@ -14041,7 +14806,7 @@ const REGION_CONSUMABLES = {
                 gameState.inventory.push(item);
                 gameState.stats.items++;
                 // 統計傳說裝備
-                if (item.rarity === 'Legendary') {
+                        if (item.rarity === 'legendary') {
                     gameState.stats.legendaryItems = (gameState.stats.legendaryItems || 0) + 1;
                 }
                 addLog('商店', `花費 ${price} 🔷 碎片購買了 ${item.name}！`);
@@ -15689,6 +16454,9 @@ const REGION_CONSUMABLES = {
                 loadedState.companions = {
                     owned: [],
                     active: null,
+                    equipment: null,
+                    shards: 0,
+                    ownedEquipment: [],
                     cooldowns: {}
                 };
             } else if (Array.isArray(loadedState.companions)) {
@@ -15696,9 +16464,22 @@ const REGION_CONSUMABLES = {
                 loadedState.companions = {
                     owned: loadedState.companions,
                     active: loadedState.activeCompanion || null,
+                    equipment: null,
+                    shards: 0,
+                    ownedEquipment: [],
                     cooldowns: {}
                 };
                 delete loadedState.activeCompanion;
+            }
+            // 確保裝備相關字段存在
+            if (!loadedState.companions.ownedEquipment) {
+                loadedState.companions.ownedEquipment = [];
+            }
+            if (loadedState.companions.equipment === undefined) {
+                loadedState.companions.equipment = null;
+            }
+            if (loadedState.companions.shards === undefined) {
+                loadedState.companions.shards = 0;
             }
             // 確保隨從系統子屬性存在
             if (!loadedState.companions.owned) loadedState.companions.owned = [];
@@ -16808,6 +17589,12 @@ function checkDungeonDailyReset() {
     if (!gameState.dungeons) return;
     
     const now = Date.now();
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    // 檢查無盡模式每日重置
+    if (gameState.endlessMode && gameState.endlessMode.lastEntryDate !== today) {
+        gameState.endlessMode.dailyEntered = false;
+    }
     
     for (const recordId in gameState.dungeons.records) {
         const record = gameState.dungeons.records[recordId];
@@ -16982,10 +17769,11 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
         // 敵人攻擊
         let enemyDmg = calculateDamage(enemy.atk, gameState.player.def);
         
-        if (gameState.player.dmgRed > 0) {
-            const dmgRedCap = Math.min(gameState.player.dmgRed, 75);
-            enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
-        }
+        if (gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0) {
+                    const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
+                    const dmgRedCap = Math.min(totalDmgRed, 75);
+                    enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
+                }
         
         playerHp -= enemyDmg;
         gameState.player.hp = Math.max(0, playerHp);
@@ -17100,7 +17888,7 @@ function applyDungeonRewards(rewards) {
     for (const equipment of rewards.equipment) {
         gameState.inventory.push(equipment);
         gameState.stats.items++;
-        if (equipment.rarity === 'Legendary') {
+        if (equipment.rarity === 'legendary') {
             gameState.stats.legendaryItems++;
         }
         
@@ -17109,7 +17897,7 @@ function applyDungeonRewards(rewards) {
         if (equipment.rarity === 'Rare' || equipment.rarity === 'Epic' || equipment.rarity === 'Legendary' || equipment.rarity === 'Set') {
             updateQuestProgress('collect_rare', 1);
         }
-        if (equipment.rarity === 'Legendary') {
+        if (equipment.rarity === 'legendary') {
             updateQuestProgress('collect_legendary', 1);
         }
     }
@@ -17426,8 +18214,18 @@ function generateEquipmentByRarity(rarity) {
                 }
             }
             
-            // 檢查AP是否足夠
-            if (gameState.player.ap < 10) {
+            // 檢查每日進入限制
+            const today = new Date().toISOString().split('T')[0];
+            const dailyLimitReached = gameState.endlessMode.lastEntryDate === today && gameState.endlessMode.dailyEntered;
+            
+            if (dailyLimitReached) {
+                startBtn.disabled = true;
+                startBtn.style.opacity = '0.5';
+                startBtn.textContent = '⚠️ 今日已進入 (明天再來)';
+                continueBtn.disabled = true;
+                continueBtn.style.opacity = '0.5';
+            } else if (gameState.player.ap < 10) {
+                // 檢查AP是否足夠
                 startBtn.disabled = true;
                 startBtn.style.opacity = '0.5';
                 startBtn.textContent = '🚀 開始挑戰 (AP不足)';
@@ -17470,6 +18268,13 @@ function generateEquipmentByRarity(rarity) {
                 return;
             }
             
+            // 檢查每日進入限制
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            if (gameState.endlessMode.lastEntryDate === today && gameState.endlessMode.dailyEntered) {
+                addLog('系統', '⚠️ 無盡模式每天只能進入一次！明天再來吧！');
+                return;
+            }
+            
             // 檢查是否有足夠的體力
             if (gameState.player.ap < 10) {
                 addLog('系統', '開始無盡模式需要 10 AP！');
@@ -17478,6 +18283,10 @@ function generateEquipmentByRarity(rarity) {
             
             gameState.player.ap -= 10;
             gameState.endlessMode.active = true;
+            
+            // 記錄今日已進入
+            gameState.endlessMode.lastEntryDate = today;
+            gameState.endlessMode.dailyEntered = true;
             
             if (fromCheckpoint && gameState.endlessMode.checkpoint > 1) {
                 gameState.endlessMode.currentFloor = gameState.endlessMode.checkpoint;

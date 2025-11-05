@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 防止瀏覽器快取 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>數位深淵</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -4414,7 +4418,9 @@ const REGION_CONSUMABLES = {
         }
         
         // ========== 遊戲版本控制 ==========
-        const GAME_VERSION = '1.0.0';
+        const GAME_VERSION = '1.0.1'; // 修復快取問題
+        const FILE_VERSION_KEY = 'darui_file_version';
+        const CURRENT_FILE_TIMESTAMP = Date.now(); // 檔案時間戳
         const SAVE_KEY = 'darui_game_save';
         
         // ========== localStorage 包裝器（支援沙盒環境） ==========
@@ -4718,6 +4724,28 @@ const REGION_CONSUMABLES = {
 
         // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
+            // 檢查檔案版本，防止快取
+            try {
+                const storedFileVersion = storage.getItem(FILE_VERSION_KEY);
+                if (storedFileVersion && storedFileVersion !== GAME_VERSION) {
+                    console.log(`檢測到檔案版本更新：${storedFileVersion} -> ${GAME_VERSION}`);
+                    // 更新版本記錄
+                    storage.setItem(FILE_VERSION_KEY, GAME_VERSION);
+                    
+                    // 強制重新載入以清除快取
+                    if (storedFileVersion !== null) {
+                        console.log('清除快取並重新載入...');
+                        location.reload(true);
+                        return;
+                    }
+                } else if (!storedFileVersion) {
+                    // 首次載入，記錄版本
+                    storage.setItem(FILE_VERSION_KEY, GAME_VERSION);
+                }
+            } catch (e) {
+                console.error('版本檢查失敗：', e);
+            }
+            
             // 主選單按鈕
             document.getElementById('new-game-btn').addEventListener('click', () => {
                 // 檢查是否有存檔
@@ -4770,6 +4798,7 @@ const REGION_CONSUMABLES = {
                 if (document.getElementById('game-main').style.display === 'block') {
                     try {
                         gameState.version = GAME_VERSION;
+                        gameState.lastSaveTime = Date.now(); // 記錄存檔時間
                         storage.setItem(SAVE_KEY, JSON.stringify(gameState));
                         console.log('自動存檔完成');
                     } catch (e) {
@@ -16363,8 +16392,9 @@ const REGION_CONSUMABLES = {
                 // 記錄離線時間
                 recordOfflineTime();
                 
-                // 確保存檔時包含最新版本號
+                // 確保存檔時包含最新版本號和時間戳
                 gameState.version = GAME_VERSION;
+                gameState.lastSaveTime = Date.now(); // 記錄存檔時間
                 storage.setItem(SAVE_KEY, JSON.stringify(gameState));
                 addLog('系統', '遊戲已存檔！');
             } catch (e) {
@@ -16631,6 +16661,15 @@ const REGION_CONSUMABLES = {
                 
                 let loadedState = JSON.parse(save);
                 
+                // 檢查存檔時間，提醒使用者檔案年齡
+                if (loadedState.lastSaveTime) {
+                    const saveAge = Date.now() - loadedState.lastSaveTime;
+                    const hoursAgo = Math.floor(saveAge / (1000 * 60 * 60));
+                    if (hoursAgo > 0) {
+                        console.log(`讀取到 ${hoursAgo} 小時前的存檔`);
+                    }
+                }
+                
                 // 執行資料遷移
                 loadedState = migrateGameData(loadedState);
                 
@@ -16788,6 +16827,9 @@ const REGION_CONSUMABLES = {
                     // 載入資料
                     gameState = migratedData;
                     
+                    // 更新時間戳
+                    gameState.lastSaveTime = Date.now();
+                    
                     // 存入 localStorage
                     storage.setItem(SAVE_KEY, JSON.stringify(gameState));
                     
@@ -16814,11 +16856,12 @@ const REGION_CONSUMABLES = {
 	        // 只有在遊戲主畫面顯示時才執行自動存檔
 	        if (document.getElementById('game-main').style.display === 'block') {
 	            // 使用同步的 localStorage 確保在頁面卸載前完成存儲
-	            try {
-	                // 確保存檔時包含最新版本號
-	                gameState.version = GAME_VERSION;
-	                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
-	                console.log('遊戲已在離開前自動存檔！');
+            try {
+                // 確保存檔時包含最新版本號和時間戳
+                gameState.version = GAME_VERSION;
+                gameState.lastSaveTime = Date.now();
+                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
+                console.log('遊戲已在離開前自動存檔！');
 	            } catch (e) {
 	                console.error('自動存檔失敗！', e);
 	            }
@@ -16830,10 +16873,11 @@ const REGION_CONSUMABLES = {
 	    // 額外監聽 pagehide 事件 (適用於某些瀏覽器，如 Safari)
 	    window.addEventListener('pagehide', (event) => {
 	        if (document.getElementById('game-main').style.display === 'block') {
-	             try {
-	                gameState.version = GAME_VERSION;
-	                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
-	                console.log('遊戲已在 pagehide 時自動存檔！');
+             try {
+                gameState.version = GAME_VERSION;
+                gameState.lastSaveTime = Date.now();
+                storage.setItem(SAVE_KEY, JSON.stringify(gameState));
+                console.log('遊戲已在 pagehide 時自動存檔！');
 	            } catch (e) {
 	                console.error('pagehide 自動存檔失敗！', e);
 	            }

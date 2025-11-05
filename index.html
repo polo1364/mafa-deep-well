@@ -3611,6 +3611,89 @@ const REGION_CONSUMABLES = {
             { name: 'set', label: '套裝', color: '#00BCD4', shards: 15, multiplier: 2.2 }
         ];
 
+        // 元素系統
+        const ELEMENTS = {
+            fire: {
+                name: '火元素',
+                icon: '🔥',
+                color: '#FF6B35',
+                effect: 'burn',
+                effectChance: 0.2,
+                effectValue: 0.05,
+                effectDuration: 3,
+                strongAgainst: 'ice',
+                weakAgainst: 'water',
+                description: '攻擊時20%機率灼燒敵人（5% HP×3回合）'
+            },
+            ice: {
+                name: '冰元素',
+                icon: '❄️',
+                color: '#4FC3F7',
+                effect: 'freeze',
+                effectChance: 0.25,
+                effectValue: 0.2,
+                effectDuration: 2,
+                strongAgainst: 'water',
+                weakAgainst: 'fire',
+                description: '攻擊時25%機率降低敵人攻擊力20%（2回合）'
+            },
+            thunder: {
+                name: '雷元素',
+                icon: '⚡',
+                color: '#FFD700',
+                effect: 'shock',
+                effectChance: 0.15,
+                effectValue: 2.0,
+                effectDuration: 0,
+                strongAgainst: 'water',
+                weakAgainst: 'earth',
+                description: '暴擊率+10%，暴擊時15%機率雙倍暴擊傷害'
+            },
+            poison: {
+                name: '毒元素',
+                icon: '🌿',
+                color: '#66BB6A',
+                effect: 'poison',
+                effectChance: 0.3,
+                effectValue: 0.03,
+                effectDuration: 5,
+                strongAgainst: 'earth',
+                weakAgainst: null,
+                description: '攻擊時30%機率中毒（3% HP×5回合）'
+            },
+            earth: {
+                name: '土元素',
+                icon: '🌍',
+                color: '#A1887F',
+                effect: 'shield',
+                effectChance: 0.2,
+                effectValue: 0.3,
+                effectDuration: 0,
+                strongAgainst: 'thunder',
+                weakAgainst: 'poison',
+                description: '防禦+15%，受傷時20%機率減少30%傷害'
+            }
+        };
+
+        // 元素附加機率（根據品質）
+        const ELEMENT_CHANCE_BY_RARITY = {
+            'common': 0,
+            'uncommon': 5,
+            'fine': 10,
+            'rare': 20,
+            'epic': 35,
+            'legendary': 50,
+            'mythic': 70,
+            'eternal': 100
+        };
+
+        // 怪物元素機率
+        const MONSTER_ELEMENT_CHANCE = {
+            'normal': 20,
+            'elite': 40,
+            'boss': 60
+        };
+
         const EQUIPMENT_SETS = {
             '入門開發層': {
                 setName: '啟動者套裝',
@@ -5912,6 +5995,16 @@ const REGION_CONSUMABLES = {
             // ========== 生成怪物詞綴 ==========
             generateMonsterAffixes(enemy);
             
+            // ========== 添加怪物元素屬性 ==========
+            const monsterType = isSpecialBoss ? 'boss' : (isBoss ? 'boss' : 'normal');
+            const elementChance = MONSTER_ELEMENT_CHANCE[monsterType] || 0;
+            if (Math.random() * 100 < elementChance) {
+                const elementTypes = Object.keys(ELEMENTS);
+                const randomElement = elementTypes[Math.floor(Math.random() * elementTypes.length)];
+                enemy.element = randomElement;
+                enemy.elementRes = 30; // 對應元素抗性30%
+            }
+            
             return enemy;
         }
 
@@ -6137,6 +6230,22 @@ const REGION_CONSUMABLES = {
                 if (gameState.player.setEffects) {
                     playerCrit += gameState.player.setEffects.crit;
                 }
+                
+                // 雷元素被動：暴擊率+10%
+                let playerElement = null;
+                if (gameState.player.equipment.weapon && gameState.player.equipment.weapon.element) {
+                    playerElement = gameState.player.equipment.weapon.element;
+                } else if (gameState.player.equipment.armor && gameState.player.equipment.armor.element) {
+                    playerElement = gameState.player.equipment.armor.element;
+                } else if (gameState.player.equipment.accessory1 && gameState.player.equipment.accessory1.element) {
+                    playerElement = gameState.player.equipment.accessory1.element;
+                } else if (gameState.player.equipment.accessory2 && gameState.player.equipment.accessory2.element) {
+                    playerElement = gameState.player.equipment.accessory2.element;
+                }
+                if (playerElement === 'thunder') {
+                    playerCrit += 10;
+                }
+                
                 const isCrit = Math.random() * 100 < playerCrit;
                 if (isCrit) trackCrit();
                 let playerCritDmg = gameState.player.critDmg;
@@ -6161,6 +6270,52 @@ const REGION_CONSUMABLES = {
                 if ((enemy.isBoss || enemy.isSpecialBoss) && gameState.player.bossDmg > 0) {
                     const bossDmgBonus = Math.min(gameState.player.bossDmg, 100);
                     finalDmg = Math.floor(finalDmg * (1 + bossDmgBonus / 100));
+                }
+                
+                // ========== 元素克制計算 ==========
+                // 使用之前已經宣告的playerElement變數
+                
+                if (playerElement && enemy.element) {
+                    const playerElem = ELEMENTS[playerElement];
+                    const enemyElem = ELEMENTS[enemy.element];
+                    
+                    // 克制關係
+                    if (playerElem.strongAgainst === enemy.element) {
+                        finalDmg = Math.floor(finalDmg * 1.3);
+                        addLog('元素', `${playerElem.icon} ${playerElem.name}克制${enemyElem.icon} ${enemyElem.name}！額外傷害！`);
+                    } else if (playerElem.weakAgainst === enemy.element) {
+                        finalDmg = Math.floor(finalDmg * 0.7);
+                        addLog('元素', `${playerElem.icon} ${playerElem.name}被${enemyElem.icon} ${enemyElem.name}克制！傷害降低！`);
+                    }
+                }
+                
+                // 元素特效觸發
+                if (playerElement) {
+                    const elem = ELEMENTS[playerElement];
+                    if (Math.random() < elem.effectChance) {
+                        if (elem.effect === 'burn') {
+                            const burnDmg = Math.floor(enemy.maxHp * elem.effectValue);
+                            if (!enemy.burns) enemy.burns = [];
+                            enemy.burns.push({ damage: burnDmg, duration: elem.effectDuration });
+                            addLog('元素', `${elem.icon} 灼燒效果！目標每回合受到${burnDmg}點傷害！`);
+                        } else if (elem.effect === 'freeze') {
+                            if (!enemy.iceDebuff) {
+                                enemy.iceDebuff = { duration: elem.effectDuration };
+                                enemy.atk = Math.floor(enemy.atk * (1 - elem.effectValue));
+                                addLog('元素', `${elem.icon} 冰凍效果！目標攻擊力降低20%！`);
+                            }
+                        } else if (elem.effect === 'shock' && isCrit) {
+                            finalDmg = Math.floor(finalDmg * elem.effectValue);
+                            addLog('元素', `${elem.icon} 雷鳴暴擊！造成雙倍傷害！`);
+                        } else if (elem.effect === 'poison') {
+                            const poisonDmg = Math.floor(enemy.maxHp * elem.effectValue);
+                            const duration = enemy.isBoss ? 3 : elem.effectDuration;
+                            if (!enemy.poisons) enemy.poisons = [];
+                            enemy.poisons.push({ damage: poisonDmg, duration: duration });
+                            addLog('元素', `${elem.icon} 中毒效果！目標每回合受到${poisonDmg}點毒傷害！`);
+                        }
+                    }
+                    
                 }
                 
                 // 應用怪物詞綴效果（受擊時）
@@ -6417,6 +6572,39 @@ const REGION_CONSUMABLES = {
                     }
                 }
                 
+                // ========== 元素持續效果處理 ==========
+                // 灼燒傷害
+                if (enemy.burns && enemy.burns.length > 0) {
+                    enemy.burns.forEach(burn => {
+                        enemyHp -= burn.damage;
+                        burn.duration--;
+                        addLog('元素', `🔥 灼燒：${enemy.name}受到${burn.damage}點火焰傷害！`);
+                    });
+                    enemy.burns = enemy.burns.filter(b => b.duration > 0);
+                    updateEnemyHP(enemyHp, enemyMaxHp);
+                }
+                
+                // 中毒傷害
+                if (enemy.poisons && enemy.poisons.length > 0) {
+                    enemy.poisons.forEach(poison => {
+                        enemyHp -= poison.damage;
+                        poison.duration--;
+                        addLog('元素', `🌿 中毒：${enemy.name}受到${poison.damage}點毒傷害！`);
+                    });
+                    enemy.poisons = enemy.poisons.filter(p => p.duration > 0);
+                    updateEnemyHP(enemyHp, enemyMaxHp);
+                }
+                
+                // 冰凍效果減少
+                if (enemy.iceDebuff && enemy.iceDebuff.duration > 0) {
+                    enemy.iceDebuff.duration--;
+                    if (enemy.iceDebuff.duration === 0) {
+                        enemy.atk = Math.floor(enemy.atk / 0.8); // 恢復攻擊力
+                        addLog('元素', `❄️ ${enemy.name}的冰凍效果消失了！`);
+                        delete enemy.iceDebuff;
+                    }
+                }
+                
                 // 生命回復機制（每回合結束時）
                 if (gameState.player.hpRegen && gameState.player.hpRegen > 0) {
                     const regenAmount = Math.floor(gameState.player.maxHp * gameState.player.hpRegen / 100);
@@ -6577,6 +6765,14 @@ const REGION_CONSUMABLES = {
                 statsHTML += `<div style="color: #ff8787;">💢 暴擊傷害: <span style="color: #fff; font-weight: bold;">${enemy.critDmg}%</span></div>`;
             }
             statsHTML += '</div>';
+            
+            // 元素屬性
+            if (enemy.element && ELEMENTS[enemy.element]) {
+                const elem = ELEMENTS[enemy.element];
+                statsHTML += '<div style="color: #ffd700; font-weight: bold; margin-top: 8px; margin-bottom: 6px; border-top: 1px solid rgba(255, 215, 0, 0.3); padding-top: 8px;">✨ 元素屬性</div>';
+                statsHTML += `<div style="color: ${elem.color}; font-weight: bold;">${elem.icon} ${elem.name}元素</div>`;
+                statsHTML += `<div style="color: #b0b0b0; font-size: 0.9em; margin-top: 2px;">${elem.description}</div>`;
+            }
             
             // 詞條效果
             if (enemy.affixes && enemy.affixes.length > 0) {
@@ -8108,6 +8304,14 @@ const REGION_CONSUMABLES = {
                 }
                 // ===== 套裝詞綴系統結束 =====
                 
+                // ===== 添加元素屬性 =====
+                const elementChance = ELEMENT_CHANCE_BY_RARITY['set'] || 50; // 套裝50%機率
+                if (Math.random() * 100 < elementChance) {
+                    const elementTypes = Object.keys(ELEMENTS);
+                    const randomElement = elementTypes[Math.floor(Math.random() * elementTypes.length)];
+                    item.element = randomElement;
+                }
+                
                 return item;
             } else {
                 // 掉落普通裝備（區域專屬）
@@ -8219,6 +8423,14 @@ const REGION_CONSUMABLES = {
                     // ========== 生成裝備詞綴 ==========
                     generateEquipmentAffix(item, rarity.name);
                     
+                    // ========== 添加元素屬性 ==========
+                    const elementChance = ELEMENT_CHANCE_BY_RARITY[rarity.name] || 0;
+                    if (Math.random() * 100 < elementChance) {
+                        const elementTypes = Object.keys(ELEMENTS);
+                        const randomElement = elementTypes[Math.floor(Math.random() * elementTypes.length)];
+                        item.element = randomElement;
+                    }
+                    
                     return item;
                 } else {
                     // 備用：無區域掉落表時使用通用裝備
@@ -8317,6 +8529,13 @@ const REGION_CONSUMABLES = {
                     stats.push(statDisplay + comparison);
                 }
             });
+            
+            // 顯示元素屬性
+            if (item.element && ELEMENTS[item.element]) {
+                const elem = ELEMENTS[item.element];
+                stats.push(`<br><span style="color: ${elem.color}; font-weight: bold;">${elem.icon} ${elem.name}元素</span>`);
+                stats.push(`<span style="color: #b0b0b0; font-size: 0.9em;"> - ${elem.description}</span>`);
+            }
             
             // 顯示裝備詞綴
             if (item.equipmentAffix) {

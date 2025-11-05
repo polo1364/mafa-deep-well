@@ -6081,7 +6081,7 @@ const REGION_CONSUMABLES = {
         // 迭代天賦系統
 
         // 怪物詞綴生成函數
-        function generateMonsterAffixes(enemy) {
+        function generateMonsterAffixes(enemy, regionMultiplier = 1.0) {
             // 決定怪物類型
             let monsterType = 'normal';
             let isBossType = false;
@@ -6095,8 +6095,28 @@ const REGION_CONSUMABLES = {
                 monsterType = 'elite';
             }
             
+            // 🎯 應用區域倍率到詞綴機率
+            const baseChances = MONSTER_AFFIX_CHANCES[monsterType];
+            const chances = {};
+            
+            // 計算調整後的機率（從高到低調整）
+            // 策略：降低0詞綴機率，提高有詞綴機率
+            const noAffixReduction = Math.min(0.5, (regionMultiplier - 1.0) * 0.5); // 最多降低50%
+            chances[0] = Math.max(0, baseChances[0] - noAffixReduction);
+            
+            // 將降低的機率分配給有詞綴的情況
+            const redistributed = baseChances[0] - chances[0];
+            chances[1] = Math.min(1.0, baseChances[1] + redistributed * 0.4);
+            chances[2] = Math.min(1.0, baseChances[2] + redistributed * 0.35);
+            chances[3] = Math.min(1.0, baseChances[3] + redistributed * 0.25);
+            
+            // 歸一化機率（確保總和為1）
+            const total = chances[0] + chances[1] + chances[2] + chances[3];
+            for (let i = 0; i <= 3; i++) {
+                chances[i] = chances[i] / total;
+            }
+            
             // 根據機率決定詞綴數量
-            const chances = MONSTER_AFFIX_CHANCES[monsterType];
             let affixCount = 0;
             const random = Math.random();
             let cumulative = 0;
@@ -6135,29 +6155,46 @@ const REGION_CONSUMABLES = {
                 // 1詞綴：50%前綴，50%後綴
                 if (Math.random() < 0.5) {
                     const available = filterByTier(PREFIX_AFFIXES);
-                    prefix = available[Math.floor(Math.random() * available.length)];
-                    selectedAffixes.push(prefix);
+                    if (available.length > 0) {
+                        prefix = available[Math.floor(Math.random() * available.length)];
+                        if (prefix) selectedAffixes.push(prefix);
+                    }
                 } else {
                     const available = filterByTier(SUFFIX_AFFIXES);
-                    suffix = available[Math.floor(Math.random() * available.length)];
-                    selectedAffixes.push(suffix);
+                    if (available.length > 0) {
+                        suffix = available[Math.floor(Math.random() * available.length)];
+                        if (suffix) selectedAffixes.push(suffix);
+                    }
                 }
             } else if (affixCount === 2) {
                 // 2詞綴：前綴+後綴
                 const availablePrefix = filterByTier(PREFIX_AFFIXES);
                 const availableSuffix = filterByTier(SUFFIX_AFFIXES);
-                prefix = availablePrefix[Math.floor(Math.random() * availablePrefix.length)];
-                suffix = availableSuffix[Math.floor(Math.random() * availableSuffix.length)];
-                selectedAffixes.push(prefix, suffix);
+                if (availablePrefix.length > 0) {
+                    prefix = availablePrefix[Math.floor(Math.random() * availablePrefix.length)];
+                    if (prefix) selectedAffixes.push(prefix);
+                }
+                if (availableSuffix.length > 0) {
+                    suffix = availableSuffix[Math.floor(Math.random() * availableSuffix.length)];
+                    if (suffix) selectedAffixes.push(suffix);
+                }
             } else if (affixCount === 3 && isBossType) {
                 // 3詞綴（僥Boss）：前綴+中綴+後綴
                 const availablePrefix = filterByTier(PREFIX_AFFIXES);
                 const availableInfix = filterByTier(INFIX_AFFIXES);
                 const availableSuffix = filterByTier(SUFFIX_AFFIXES);
-                prefix = availablePrefix[Math.floor(Math.random() * availablePrefix.length)];
-                infix = availableInfix[Math.floor(Math.random() * availableInfix.length)];
-                suffix = availableSuffix[Math.floor(Math.random() * availableSuffix.length)];
-                selectedAffixes.push(prefix, infix, suffix);
+                if (availablePrefix.length > 0) {
+                    prefix = availablePrefix[Math.floor(Math.random() * availablePrefix.length)];
+                    if (prefix) selectedAffixes.push(prefix);
+                }
+                if (availableInfix.length > 0) {
+                    infix = availableInfix[Math.floor(Math.random() * availableInfix.length)];
+                    if (infix) selectedAffixes.push(infix);
+                }
+                if (availableSuffix.length > 0) {
+                    suffix = availableSuffix[Math.floor(Math.random() * availableSuffix.length)];
+                    if (suffix) selectedAffixes.push(suffix);
+                }
             }
             
             // 應用詞綴效果
@@ -6169,6 +6206,9 @@ const REGION_CONSUMABLES = {
             let totalDropBonus = 0;
             
             selectedAffixes.forEach(affix => {
+                // 安全檢查
+                if (!affix || !affix.effect) return;
+                
                 // 應用效果
                 const effect = affix.effect;
                 
@@ -6233,10 +6273,10 @@ const REGION_CONSUMABLES = {
                 }
                 
                 // 累計獎勵
-                totalGoldMult *= affix.reward.goldMultiplier;
-                totalExpMult *= affix.reward.expMultiplier;
-                if (affix.reward.dropBonus) {
-                    totalDropBonus += affix.reward.dropBonus;
+                if (affix.reward) {
+                    if (affix.reward.goldMultiplier) totalGoldMult *= affix.reward.goldMultiplier;
+                    if (affix.reward.expMultiplier) totalExpMult *= affix.reward.expMultiplier;
+                    if (affix.reward.dropBonus) totalDropBonus += affix.reward.dropBonus;
                 }
             });
             
@@ -6278,6 +6318,19 @@ const REGION_CONSUMABLES = {
             if (!region) {
                 console.error('generateEnemy: region不存在');
                 region = REGIONS[0]; // 使用預設區域
+            }
+            
+            // 🎯 區域漸進難度系統：根據區域決定倍率
+            const regionIndex = REGIONS.indexOf(region);
+            const REGION_MULTIPLIERS = [1.0, 1.3, 1.6, 2.0]; // 4個區域的倍率
+            const regionMultiplier = REGION_MULTIPLIERS[regionIndex] || 1.0;
+            
+            // 🎯 精英怪生成機制（非Boss時才判定）
+            let isElite = false;
+            if (!isBoss) {
+                const baseEliteChance = 0.10; // 基礎10%機率
+                const eliteChance = baseEliteChance * regionMultiplier; // 應用區域倍率
+                isElite = Math.random() < eliteChance;
             }
             
             // 新的怪物基礎數值公式（提升難度）
@@ -6324,6 +6377,13 @@ const REGION_CONSUMABLES = {
             let eliteCrit = 0;
             let eliteCritDmg = 0;
             
+            // 🎯 精英怪物屬性加成
+            if (isElite) {
+                eliteMultiplier = { hp: 1.8, atk: 1.4, def: 1.3 };
+                eliteCrit = 15;
+                eliteCritDmg = 25;
+            }
+            
             if (isSpecialBoss) {
                 // 根據菁英名稱判斷類型
                 if (enemyName.includes('狂暴')) {
@@ -6356,9 +6416,9 @@ const REGION_CONSUMABLES = {
             
             // 怪物類型係數（提升難度）
             const typeMultiplier = {
-                hp: isSpecialBoss ? eliteMultiplier.hp : (isBoss ? 4.0 : 1.3), // Boss 3.5→4.0, 普通 1.2→1.3
-                atk: isSpecialBoss ? eliteMultiplier.atk : (isBoss ? 1.8 : 1.2), // 普通 1.1→1.2
-                def: isSpecialBoss ? eliteMultiplier.def : (isBoss ? 1.6 : 1.4) // Boss 2.0→1.6, 普通 1.5→1.4
+                hp: isSpecialBoss ? eliteMultiplier.hp : (isBoss ? 4.0 : (isElite ? eliteMultiplier.hp : 1.3)),
+                atk: isSpecialBoss ? eliteMultiplier.atk : (isBoss ? 1.8 : (isElite ? eliteMultiplier.atk : 1.2)),
+                def: isSpecialBoss ? eliteMultiplier.def : (isBoss ? 1.6 : (isElite ? eliteMultiplier.def : 1.4))
             };
             
             // 計算最終屬性
@@ -6393,11 +6453,13 @@ const REGION_CONSUMABLES = {
                 crit: finalCrit,
                 critDmg: Math.max(150, finalCritDmg), // 最低150%
                 isBoss: isBoss,
-                isSpecialBoss: isSpecialBoss
+                isSpecialBoss: isSpecialBoss,
+                isElite: isElite, // 🎯 標記精英怪物
+                regionMultiplier: regionMultiplier // 🎯 儲存區域倍率供詞綴系統使用
             };
             
             // ========== 生成怪物詞綴 ==========
-            generateMonsterAffixes(enemy);
+            generateMonsterAffixes(enemy, regionMultiplier);
             
             // ========== 添加怪物元素屬性 ==========
             const monsterType = isSpecialBoss ? 'boss' : (isBoss ? 'boss' : 'normal');
@@ -7419,13 +7481,14 @@ const REGION_CONSUMABLES = {
                 });
             }
             
-            // 獎勵（特殊Boss獎勱5倍）
+            // 獎勱（特殊Boss獎勱5倍）
             const region = REGIONS[gameState.region];
             if (!region) {
                 console.error('區域不存在:', gameState.region);
                 return;
             }
-            const rewardMultiplier = enemy.isSpecialBoss ? 5 : (enemy.isBoss ? 3 : 1);
+            // 🎯 精英怪物獎勱1.5倍
+            const rewardMultiplier = enemy.isSpecialBoss ? 5 : (enemy.isBoss ? 3 : (enemy.isElite ? 1.5 : 1));
             
             // 應用怪物詞綴獎勵加成
             let affixGoldMult = 1;

@@ -34,19 +34,20 @@
             font-family: inherit; 
             color: #00d9ff; 
             text-align: center;
-            font-size: clamp(1.5rem, 5vw, 2.5rem); 
-            margin: 20px 0;
-            text-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4);
-            letter-spacing: 4px; 
+            font-size: clamp(1.8rem, 6vw, 3rem); 
+            margin: 25px 0;
+            text-shadow: 0 0 25px rgba(0, 217, 255, 1), 0 0 50px rgba(0, 217, 255, 0.6), 0 0 75px rgba(0, 217, 255, 0.3);
+            letter-spacing: 6px; 
             font-weight: 900;
         }
         
         .subtitle { 
             text-align: center; 
             color: #7a8fb8; 
-            font-size: clamp(0.8rem, 2vw, 1rem); 
-            margin-bottom: 20px; 
-            font-style: italic; 
+            font-size: clamp(0.9rem, 2.2vw, 1.1rem); 
+            margin-bottom: 25px; 
+            font-style: italic;
+            font-weight: 500; 
         }
         
         .game-layout { 
@@ -102,11 +103,11 @@
         }
         
         .panel { 
-            background: linear-gradient(135deg, rgba(26, 31, 53, 0.95) 0%, rgba(15, 20, 40, 0.95) 100%);
-            border: 2px solid #00d9ff; 
-            border-radius: 12px; 
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), inset 0 0 30px rgba(0, 217, 255, 0.05);
+            background: linear-gradient(135deg, rgba(26, 31, 53, 0.98) 0%, rgba(15, 20, 40, 0.98) 100%);
+            border: 3px solid #00d9ff; 
+            border-radius: 15px; 
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.4), inset 0 0 40px rgba(0, 217, 255, 0.08), 0 5px 20px rgba(0, 0, 0, 0.5);
             position: relative;
         }
         
@@ -125,12 +126,13 @@
         h2 {
             font-family: inherit; 
             color: #00d9ff; 
-            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-            margin-bottom: 15px; 
-            padding-bottom: 10px; 
-            border-bottom: 2px solid #00d9ff;
-            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5); 
+            font-size: clamp(1.2rem, 2.8vw, 1.5rem);
+            margin-bottom: 18px; 
+            padding-bottom: 12px; 
+            border-bottom: 3px solid #00d9ff;
+            text-shadow: 0 0 15px rgba(0, 217, 255, 0.7), 0 0 30px rgba(0, 217, 255, 0.3); 
             font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .stats-grid { 
@@ -148,11 +150,12 @@
         }
         
         .stat-item { 
-            background: rgba(0, 217, 255, 0.05); 
-            padding: 10px; 
-            border-radius: 8px;
-            border: 1px solid rgba(0, 217, 255, 0.3); 
+            background: rgba(0, 217, 255, 0.08); 
+            padding: 12px; 
+            border-radius: 10px;
+            border: 2px solid rgba(0, 217, 255, 0.4); 
             transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 217, 255, 0.1);
         }
         
         .stat-item:hover { 
@@ -161,17 +164,19 @@
         }
         
         .stat-label { 
-            font-size: 0.7rem; 
+            font-size: 0.75rem; 
             color: #7a8fb8; 
             text-transform: uppercase; 
-            letter-spacing: 1px; 
+            letter-spacing: 1px;
+            font-weight: 600; 
         }
         
         .stat-value { 
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem); 
+            font-size: clamp(1.3rem, 3vw, 1.6rem); 
             font-weight: bold; 
             color: #00d9ff; 
-            margin-top: 3px; 
+            margin-top: 5px;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5); 
         }
         
         .resources { 
@@ -182,14 +187,22 @@
         }
         
         .resource { 
-            background: rgba(0, 217, 255, 0.05); 
-            padding: 8px 12px; 
-            border-radius: 8px;
-            border: 1px solid rgba(0, 217, 255, 0.3); 
-            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            background: rgba(0, 217, 255, 0.08); 
+            padding: 12px 16px; 
+            border-radius: 10px;
+            border: 2px solid rgba(0, 217, 255, 0.4); 
+            font-size: clamp(0.9rem, 2.2vw, 1rem);
             flex: 1; 
-            min-width: 90px; 
+            min-width: 100px; 
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 217, 255, 0.15);
+            transition: all 0.3s;
+        }
+        
+        .resource:hover {
+            border-color: #00d9ff;
+            box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+            transform: translateY(-2px);
         }
         
         .log-container { 
@@ -221,12 +234,20 @@
         .log-container::-webkit-scrollbar-thumb:hover { background: #00ffff; }
         
         .log-entry { 
-            margin-bottom: 10px; 
-            padding: 12px; 
-            background: rgba(0, 217, 255, 0.05);
-            border-left: 3px solid #00d9ff; 
-            border-radius: 4px; 
+            margin-bottom: 12px; 
+            padding: 14px; 
+            background: rgba(0, 217, 255, 0.08);
+            border-left: 4px solid #00d9ff; 
+            border-radius: 6px; 
             animation: fadeIn 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+        }
+        
+        .log-entry:hover {
+            background: rgba(0, 217, 255, 0.12);
+            border-left-color: #00ffff;
+            box-shadow: 0 3px 10px rgba(0, 217, 255, 0.2);
         }
         
         @keyframes fadeIn { 
@@ -247,8 +268,9 @@
         }
         
         .log-text { 
-            margin-top: 5px; 
-            font-size: clamp(0.8rem, 2vw, 0.9rem); 
+            margin-top: 6px; 
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            line-height: 1.5; 
         }
         
         .controls { 
@@ -262,16 +284,17 @@
             background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
             color: #0a0e1a; 
             border: none; 
-            padding: 10px 16px; 
-            border-radius: 8px;
+            padding: 12px 20px; 
+            border-radius: 10px;
             cursor: pointer; 
             font-weight: bold; 
             font-family: inherit;
-            font-size: clamp(0.8rem, 2vw, 0.95rem); 
+            font-size: clamp(0.9rem, 2.2vw, 1.05rem); 
             transition: all 0.3s;
             box-shadow: 0 0 15px rgba(0, 217, 255, 0.5); 
             position: relative; 
             overflow: hidden;
+            border: 2px solid rgba(0, 217, 255, 0.3);
         }
         
         button::before {
@@ -340,30 +363,32 @@
         
         .hp-bar { 
             width: 100%; 
-            height: 20px; 
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px; 
+            height: 24px; 
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px; 
             overflow: hidden; 
-            margin-top: 6px; 
-            border: 1px solid rgba(0, 217, 255, 0.3);
+            margin-top: 8px; 
+            border: 2px solid rgba(0, 217, 255, 0.4);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
         }
         
         .hp-fill { 
             height: 100%; 
             background: linear-gradient(90deg, #ff3366 0%, #00d9ff 50%, #00ff88 100%);
             transition: width 0.5s ease; 
-            box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
         
         .equipment-slot {
-            background: rgba(0, 217, 255, 0.05); 
-            border: 2px dashed rgba(0, 217, 255, 0.3);
-            border-radius: 8px; 
-            padding: 12px; 
-            margin-bottom: 10px;
+            background: rgba(0, 217, 255, 0.08); 
+            border: 2px dashed rgba(0, 217, 255, 0.4);
+            border-radius: 10px; 
+            padding: 14px; 
+            margin-bottom: 12px;
             cursor: pointer; 
             transition: all 0.3s;
-            min-height: 60px;
+            min-height: 65px;
+            box-shadow: 0 2px 6px rgba(0, 217, 255, 0.1);
         }
         
         .equipment-slot:hover { 
@@ -755,9 +780,15 @@
                     <h2 style="background: linear-gradient(135deg, #00d9ff 0%, #4EA5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.2rem; margin-bottom: 15px;">👤 角色狀態</h2>
                     
                     <!-- 角色資訊卡片 -->
-                    <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px; text-align: center;">
-                        <div style="font-size: 1.4rem; font-weight: bold; color: #00d9ff; text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);" id="player-name">工程師</div>
-                        <div style="font-size: 0.9rem; color: #7a8fb8; margin-top: 5px;" id="player-class">系統架構師</div>
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                        <!-- 等級 + 角色名 -->
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 5px 12px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; color: #000; text-shadow: none; box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);">
+                                Lv.<span id="player-level">1</span>
+                            </div>
+                            <div style="font-size: 1.4rem; font-weight: bold; color: #00d9ff; text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);" id="player-name">工程師</div>
+                        </div>
+                        <div style="font-size: 0.9rem; color: #7a8fb8; text-align: center; margin-bottom: 10px;" id="player-class">系統架構師</div>
                         
                         <!-- 職業被動顯示 -->
                         <div id="class-bonus-display" style="margin-top: 10px; padding: 6px 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px;">
@@ -777,44 +808,55 @@
                         </div>
                     </div>
                     
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-label">等級</div>
-                            <div class="stat-value" id="player-level">1</div>
+                    <!-- HP血條 -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="font-size: 0.85rem; color: #7a8fb8;">❤️ 生命值</span>
+                            <span style="font-size: 0.9rem; font-weight: bold; color: #ff6b6b;" id="player-hp">100/100</span>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">經驗</div>
-                            <div class="stat-value" id="player-exp">0</div>
+                        <div style="background: rgba(0, 0, 0, 0.3); height: 24px; border-radius: 12px; border: 2px solid rgba(255, 107, 107, 0.5); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);">
+                            <div id="player-hp-bar" style="height: 100%; background: linear-gradient(90deg, #ff6b6b 0%, #ee5a6f 100%); transition: width 0.3s ease; box-shadow: 0 0 10px rgba(255, 107, 107, 0.5); width: 100%;"></div>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">生命值</div>
-                            <div class="stat-value" id="player-hp">100/100</div>
-                            <div class="hp-bar">
-                                <div class="hp-fill" id="player-hp-bar" style="width: 100%"></div>
-                            </div>
-                            <div style="margin-top: 8px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-                                <input type="checkbox" id="auto-potion-toggle" onchange="toggleAutoPotion()" style="cursor: pointer;">
-                                <label for="auto-potion-toggle" style="color: #7a8fb8; cursor: pointer;">自動喝藥</label>
-                                <select id="auto-potion-threshold" onchange="updateAutoPotionThreshold()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                                    <option value="30">30%</option>
-                                    <option value="40">40%</option>
-                                    <option value="50" selected>50%</option>
-                                    <option value="60">60%</option>
-                                    <option value="70">70%</option>
-                                </select>
-                                <select id="auto-potion-mode" onchange="updateAutoPotionMode()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                                    <option value="economy" selected>優先經濟</option>
-                                    <option value="best">優先最佳</option>
-                                    <option value="small_first">優先小瓶</option>
-                                </select>
+                        <div style="margin-top: 8px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                            <input type="checkbox" id="auto-potion-toggle" onchange="toggleAutoPotion()" style="cursor: pointer;">
+                            <label for="auto-potion-toggle" style="color: #7a8fb8; cursor: pointer;">自動喝藥</label>
+                            <select id="auto-potion-threshold" onchange="updateAutoPotionThreshold()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                                <option value="30">30%</option>
+                                <option value="40">40%</option>
+                                <option value="50" selected>50%</option>
+                                <option value="60">60%</option>
+                                <option value="70">70%</option>
+                            </select>
+                            <select id="auto-potion-mode" onchange="updateAutoPotionMode()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                                <option value="economy" selected>優先經濟</option>
+                                <option value="best">優先最佳</option>
+                                <option value="small_first">優先小瓶</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 體力血條 -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="font-size: 0.85rem; color: #7a8fb8;">⚡ 體力</span>
+                            <div>
+                                <span style="font-size: 0.9rem; font-weight: bold; color: #4EA5FF;" id="player-ap">20/20</span>
+                                <span id="ap-timer" style="font-size: 0.75rem; color: #00ff88; margin-left: 5px;"></span>
                             </div>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">體力</div>
-                            <div class="stat-value">
-                                <span id="player-ap">20/20</span>
-                                <span id="ap-timer" style="font-size: 0.8em; color: #00ff88; margin-left: 5px;"></span>
-                            </div>
+                        <div style="background: rgba(0, 0, 0, 0.3); height: 20px; border-radius: 10px; border: 2px solid rgba(78, 165, 255, 0.5); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);">
+                            <div id="player-ap-bar" style="height: 100%; background: linear-gradient(90deg, #4EA5FF 0%, #00d9ff 100%); transition: width 0.3s ease; box-shadow: 0 0 10px rgba(78, 165, 255, 0.5); width: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 經驗值血條 -->
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="font-size: 0.85rem; color: #7a8fb8;">⭐ 經驗值</span>
+                            <span style="font-size: 0.9rem; font-weight: bold; color: #FFD700;" id="player-exp">0/100</span>
+                        </div>
+                        <div style="background: rgba(0, 0, 0, 0.3); height: 18px; border-radius: 9px; border: 2px solid rgba(255, 215, 0, 0.5); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);">
+                            <div id="player-exp-bar" style="height: 100%; background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%); transition: width 0.3s ease; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); width: 0%;"></div>
                         </div>
                     </div>
                     
@@ -3456,21 +3498,21 @@ const TITLES_DATA = {
 // 區域專屬消耗品
 const REGION_CONSUMABLES = {
     '入門開發層': {
-        hp: { name: '小型生命藥水', type: 'hp', recovery: 0.30, dropRate: 0.05 },
+        hp: { name: '小型生命藥水', type: 'hp', recovery: 0.20, dropRate: 0.05 }, // 0.30 → 0.20 (-33%)
         ap: { name: '小型能量藥水', type: 'ap', recovery: 5, dropRate: 0.03 },
         exp: { name: '小型經驗卷軸', type: 'exp', exp: 500, dropRate: 0.02 },
         lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
         expBoost: { name: '雙倍經驗卷', type: 'expBoost', dropRate: 0.008 }
     },
     '研發核心層': {
-        hp: { name: '中型生命藥水', type: 'hp', recovery: 0.50, dropRate: 0.03 },
+        hp: { name: '中型生命藥水', type: 'hp', recovery: 0.40, dropRate: 0.03 }, // 0.50 → 0.40 (-20%)
         ap: { name: '中型能量藥水', type: 'ap', recovery: 10, dropRate: 0.02 },
         exp: { name: '中型經驗卷軸', type: 'exp', exp: 2000, dropRate: 0.015 },
         lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
         expBoost: { name: '雙倍經驗卷', type: 'expBoost', dropRate: 0.008 }
     },
     '資料裂縫': {
-        hp: { name: '大型生命藥水', type: 'hp', recovery: 0.80, dropRate: 0.02 },
+        hp: { name: '大型生命藥水', type: 'hp', recovery: 0.60, dropRate: 0.02 }, // 0.80 → 0.60 (-25%)
         ap: { name: '大型能量藥水', type: 'ap', recovery: 20, dropRate: 0.015 },
         exp: { name: '大型經驗卷軸', type: 'exp', exp: 8000, dropRate: 0.01 },
         lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
@@ -3478,7 +3520,7 @@ const REGION_CONSUMABLES = {
         protection: { name: '保護符咒', type: 'protection', dropRate: 0.003 }
     },
     '深井臨界層': {
-        hp: { name: '完全生命藥水', type: 'hp', recovery: 1.00, dropRate: 0.01 },
+        hp: { name: '完全生命藥水', type: 'hp', recovery: 0.75, dropRate: 0.01 }, // 1.00 → 0.75 (-25%)
         ap: { name: '完全能量藥水', type: 'ap', recovery: 40, dropRate: 0.008 },
         exp: { name: '完美經驗卷軸', type: 'exp', exp: 20000, dropRate: 0.005 },
         lucky: { name: '幸運硬幣', type: 'lucky', dropRate: 0.005 },
@@ -3562,9 +3604,10 @@ const REGION_CONSUMABLES = {
             { name: 'uncommon', label: '優質', color: '#4CAF50', shards: 2, multiplier: 1.15 },
             { name: 'fine', label: '精良', color: '#2196F3', shards: 3, multiplier: 1.3 },
             { name: 'rare', label: '稀有', color: '#9C27B0', shards: 5, multiplier: 1.5 },
-            { name: 'epic', label: '史詩', color: '#FF9800', shards: 8, multiplier: 1.75 },
-            { name: 'legendary', label: '傳說', color: '#F44336', shards: 12, multiplier: 2.0 },
-            { name: 'mythic', label: '神話', color: '#FFD700', shards: 20, multiplier: 2.5 },
+            { name: 'epic', label: '史詩', color: '#FF6D00', shards: 8, multiplier: 1.75 },
+            { name: 'legendary', label: '傳說', color: '#FFD700', shards: 12, multiplier: 2.0 },
+            { name: 'mythic', label: '神話', color: '#F44336', shards: 20, multiplier: 2.3 },
+            { name: 'eternal', label: '永恆', color: '#E040FB', shards: 35, multiplier: 2.6 },
             { name: 'set', label: '套裝', color: '#00BCD4', shards: 15, multiplier: 2.2 }
         ];
 
@@ -5750,10 +5793,10 @@ const REGION_CONSUMABLES = {
                 region = REGIONS[0]; // 使用預設區域
             }
             
-            // 新的怪物基礎數值公式（平衡挑戰性）
-            const baseHp = 100 + gameState.player.level * 12; 
-            const baseAtk = 8 + gameState.player.level * 2;
-            const baseDef = 3 + gameState.player.level * 1; // 新增基礎防禦定義
+            // 新的怪物基礎數值公式（提升難度）
+            const baseHp = 100 + gameState.player.level * 15; // 12 → 15 (+25%)
+            const baseAtk = 8 + gameState.player.level * 2.5; // 2 → 2.5 (+25%)
+            const baseDef = 3 + gameState.player.level * 1.3; // 1 → 1.3 (+30%)
 
             
             let enemyName = '';
@@ -5824,11 +5867,11 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            // 怪物類型係數
+            // 怪物類型係數（提升難度）
             const typeMultiplier = {
-                hp: isSpecialBoss ? eliteMultiplier.hp : (isBoss ? 3.5 : 1.2),
-                atk: isSpecialBoss ? eliteMultiplier.atk : (isBoss ? 1.8 : 1.1),
-                def: isSpecialBoss ? eliteMultiplier.def : (isBoss ? 2.0 : 1.5)
+                hp: isSpecialBoss ? eliteMultiplier.hp : (isBoss ? 4.0 : 1.3), // Boss 3.5→4.0, 普通 1.2→1.3
+                atk: isSpecialBoss ? eliteMultiplier.atk : (isBoss ? 1.8 : 1.2), // 普通 1.1→1.2
+                def: isSpecialBoss ? eliteMultiplier.def : (isBoss ? 1.6 : 1.4) // Boss 2.0→1.6, 普通 1.5→1.4
             };
             
             // 計算最終屬性
@@ -6759,8 +6802,9 @@ const REGION_CONSUMABLES = {
                 affixDropBonus = enemy.rewardMultipliers.drop;
             }
             
-            const goldReward = Math.floor((10 + gameState.player.level * 2) * region.reward * rewardMultiplier * affixGoldMult);
-            let expReward = Math.floor((20 + gameState.player.level * 5) * region.reward * rewardMultiplier * affixExpMult);
+            // 降低金幣和經驗獎勵（提升難度）
+            const goldReward = Math.floor((10 + gameState.player.level * 1.2) * region.reward * rewardMultiplier * affixGoldMult); // 2 → 1.2 (-40%)
+            let expReward = Math.floor((20 + gameState.player.level * 3.5) * region.reward * rewardMultiplier * affixExpMult); // 5 → 3.5 (-30%)
             
             // 應用裝備經驗加成
             if (gameState.player.expBonus && gameState.player.expBonus > 0) {
@@ -6872,8 +6916,8 @@ const REGION_CONSUMABLES = {
                     });
                 }
                 
-                // 計算最終掉落率
-                let baseDropRate = 0.35 + affixDropBonus + totalDropBonus;
+                // 降低掉落率（提升難度）
+                let baseDropRate = 0.25 + affixDropBonus + totalDropBonus; // 0.35 → 0.25 (-30%)
                 let finalDropRate = baseDropRate;
                 
                 // 應用幸運值（倍增效果）
@@ -7330,24 +7374,24 @@ const REGION_CONSUMABLES = {
             playSound('levelup'); // 升級音效
             gameState.player.level++;
             gameState.player.exp -= gameState.player.expToNext;
-            // 新的經驗成長係數（平滑曲線）
+            // 提高經驗成長係數（提升難度）
             let growthRate;
             if (gameState.player.level <= 25) {
-                growthRate = 1.12;  // 入門開發層（1-25級）
+                growthRate = 1.15;  // 入門開發層（1-25級） 1.12 → 1.15
             } else if (gameState.player.level <= 50) {
-                growthRate = 1.07;  // 研發核心層（26-50級）
+                growthRate = 1.10;  // 研發核心層（26-50級） 1.07 → 1.10
             } else if (gameState.player.level <= 75) {
-                growthRate = 1.05;  // 資料裂縫（51-75級）
+                growthRate = 1.08;  // 資料裂縫（51-75級） 1.05 → 1.08
             } else {
-                growthRate = 1.03;  // 深井臨界層（76-100級）
+                growthRate = 1.06;  // 深井臨界層（76-100級） 1.03 → 1.06
             }
             gameState.player.expToNext = Math.floor(gameState.player.expToNext * growthRate);
             
-            // 屬性提升
-            gameState.player.maxHp += 10;
+            // 降低屬性成長（提升難度）
+            gameState.player.maxHp += 8; // 10 → 8 (-20%)
             gameState.player.hp = gameState.player.maxHp;
-            gameState.player.atk += 2;
-            gameState.player.def += 1;
+            gameState.player.atk += 1.5; // 2 → 1.5 (-25%)
+            gameState.player.def += 0.8; // 1 → 0.8 (-20%)
             
             addLog('升級', `恭喜！升級到 Lv.${gameState.player.level}！`);
             
@@ -7609,7 +7653,8 @@ const REGION_CONSUMABLES = {
                 'Rare': 6,
                 'Epic': 3,
                 'Legendary': 0.8,
-                'Mythic': 0.18,
+                'Mythic': 0.15,
+                'Eternal': 0.05,
                 'Set': 0.02
             },
             'elite': {  // 菁英小怪
@@ -7619,7 +7664,8 @@ const REGION_CONSUMABLES = {
                 'Rare': 12,
                 'Epic': 7,
                 'Legendary': 3,
-                'Mythic': 1.8,
+                'Mythic': 1.5,
+                'Eternal': 0.3,
                 'Set': 0.2
             },
             'boss': {  // Boss
@@ -7629,7 +7675,8 @@ const REGION_CONSUMABLES = {
                 'Rare': 22,
                 'Epic': 14,
                 'Legendary': 8,
-                'Mythic': 3.5,
+                'Mythic': 3,
+                'Eternal': 0.5,
                 'Set': 0.5
             }
         };
@@ -7662,6 +7709,7 @@ const REGION_CONSUMABLES = {
             'epic': 'Epic',
             'legendary': 'Legendary',
             'mythic': 'Mythic',
+            'eternal': 'Eternal',
             'set': 'Set'
         };
         // 迭代天賦系統
@@ -7969,7 +8017,7 @@ const REGION_CONSUMABLES = {
             if (selectedRarity === 'Set' && equipmentSet) {
                 // 掉落套裝裝備
                 const setItem = equipmentSet.items[Math.floor(Math.random() * equipmentSet.items.length)];
-                const rarity = RARITIES[7]; // 套裝品質（青色）
+                const rarity = RARITIES[8]; // 套裝品質（青色）
                 
                 const item = {
                     id: Date.now() + Math.random(),
@@ -8080,7 +8128,8 @@ const REGION_CONSUMABLES = {
                         'Rare': 3, 'rare': 3,
                         'Epic': 4, 'epic': 4,
                         'Legendary': 5, 'legendary': 5,
-                        'Mythic': 6, 'mythic': 6
+                        'Mythic': 6, 'mythic': 6,
+                        'Eternal': 7, 'eternal': 7
                     }[selectedRarity] || 0;
                     const rarity = RARITIES[rarityIndex];
                     
@@ -8719,6 +8768,16 @@ const REGION_CONSUMABLES = {
             document.getElementById('player-hp').textContent = `${gameState.player.hp}/${gameState.player.maxHp}`;
             document.getElementById('player-hp-bar').style.width = `${(gameState.player.hp / gameState.player.maxHp) * 100}%`;
             document.getElementById('player-ap').textContent = `${gameState.player.ap}/${gameState.player.maxAp}`;
+            
+            // 更新體力條和經驗條寬度
+            const apBar = document.getElementById('player-ap-bar');
+            if (apBar) {
+                apBar.style.width = `${(gameState.player.ap / gameState.player.maxAp) * 100}%`;
+            }
+            const expBar = document.getElementById('player-exp-bar');
+            if (expBar) {
+                expBar.style.width = `${(gameState.player.exp / gameState.player.expToNext) * 100}%`;
+            }
             
             // 體力回復倒數計時
             const apTimerElement = document.getElementById('ap-timer');
@@ -11248,6 +11307,7 @@ const REGION_CONSUMABLES = {
                         'Epic': 200,       // 深井臨界層
                         'Legendary': 300,  // 傳說裝備
                         'Mythic': 400,     // 神話裝備
+                        'Eternal': 550,    // 永恆裝備
                         'Set': 180
                     };
                     equipmentScore += rarityScores[item.rarity] || 50;
@@ -11374,13 +11434,14 @@ const REGION_CONSUMABLES = {
                 else if (rand < 0.98) rarity = 'Epic';
                 else rarity = 'Legendary';
             } else {
-                // 76-100級: Common 10%, Fine 20%, Rare 35%, Epic 25%, Legendary 9%, Mythic 1%
+                // 76-100級: Common 10%, Fine 20%, Rare 35%, Epic 24%, Legendary 8%, Mythic 2.5%, Eternal 0.5%
                 if (rand < 0.10) rarity = 'Common';
                 else if (rand < 0.30) rarity = 'Fine';
                 else if (rand < 0.65) rarity = 'Rare';
-                else if (rand < 0.90) rarity = 'Epic';
-                else if (rand < 0.99) rarity = 'Legendary';
-                else rarity = 'Mythic';
+                else if (rand < 0.89) rarity = 'Epic';
+                else if (rand < 0.97) rarity = 'Legendary';
+                else if (rand < 0.995) rarity = 'Mythic';
+                else rarity = 'Eternal';
             }
             
             // 隨機選擇裝備類型
@@ -13201,19 +13262,19 @@ const REGION_CONSUMABLES = {
             
             switch(itemType) {
                 case 'set_box':
-                    price = 200;
+                    price = 280; // 200 → 280 (+40%)
                     itemName = '套裝寶箱';
                     break;
                 case 'legendary_box':
-                    price = 100;
+                    price = 140; // 100 → 140 (+40%)
                     itemName = '傳說寶箱';
                     break;
                 case 'skill_reset':
-                    price = 50;
+                    price = 70; // 50 → 70 (+40%)
                     itemName = '技能重置卷';
                     break;
                 case 'bag_expand':
-                    price = 100;
+                    price = 150; // 100 → 150 (+50%)
                     itemName = '背包擴充';
                     break;
             }

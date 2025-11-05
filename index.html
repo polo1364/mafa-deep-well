@@ -5156,6 +5156,12 @@ const REGION_CONSUMABLES = {
         function tryAutoPotion() {
             if (!gameState.autoPotion) return false;
             
+            // 防止NaN：檢查maxHp是否有效
+            if (!gameState.player.maxHp || gameState.player.maxHp <= 0) {
+                console.error('自動喝藥錯誤：maxHp無效', gameState.player.maxHp);
+                return false;
+            }
+            
             const hpPercent = (gameState.player.hp / gameState.player.maxHp) * 100;
             const isEmergency = hpPercent < 20; // 緊急門檻: 20%
             
@@ -5187,9 +5193,11 @@ const REGION_CONSUMABLES = {
                 const potionsWithHeal = hpPotions.map(p => {
                     let healAmount = 0;
                     if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
-                        healAmount = Math.floor(gameState.player.maxHp * p.recovery);
+                        // 防止NaN：檢查recovery是否有效
+                        const recovery = (p.recovery !== undefined && !isNaN(p.recovery)) ? p.recovery : 0;
+                        healAmount = Math.floor(gameState.player.maxHp * recovery);
                     } else if (p.subtype === 'hp_fixed') {
-                        healAmount = p.recovery;
+                        healAmount = p.recovery || 0;
                     }
                     return { ...p, healAmount };
                 });
@@ -5210,9 +5218,10 @@ const REGION_CONSUMABLES = {
                 const potionsWithHeal = hpPotions.map(p => {
                     let healAmount = 0;
                     if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
-                        healAmount = Math.floor(gameState.player.maxHp * p.recovery);
+                        const recovery = (p.recovery !== undefined && !isNaN(p.recovery)) ? p.recovery : 0;
+                        healAmount = Math.floor(gameState.player.maxHp * recovery);
                     } else if (p.subtype === 'hp_fixed') {
-                        healAmount = p.recovery;
+                        healAmount = p.recovery || 0;
                     }
                     return { ...p, healAmount };
                 });
@@ -5223,9 +5232,10 @@ const REGION_CONSUMABLES = {
                 const potionsWithHeal = hpPotions.map(p => {
                     let healAmount = 0;
                     if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
-                        healAmount = Math.floor(gameState.player.maxHp * p.recovery);
+                        const recovery = (p.recovery !== undefined && !isNaN(p.recovery)) ? p.recovery : 0;
+                        healAmount = Math.floor(gameState.player.maxHp * recovery);
                     } else if (p.subtype === 'hp_fixed') {
-                        healAmount = p.recovery;
+                        healAmount = p.recovery || 0;
                     }
                     return { ...p, healAmount };
                 });
@@ -5237,9 +5247,16 @@ const REGION_CONSUMABLES = {
             // 計算回復量
             let healAmount = 0;
             if (potion.subtype === 'hp_percent' || potion.subtype === 'hp' || potion.subtype === 'hp_potion') {
-                healAmount = Math.floor(gameState.player.maxHp * potion.recovery);
+                const recovery = (potion.recovery !== undefined && !isNaN(potion.recovery)) ? potion.recovery : 0;
+                healAmount = Math.floor(gameState.player.maxHp * recovery);
             } else if (potion.subtype === 'hp_fixed') {
-                healAmount = potion.recovery;
+                healAmount = potion.recovery || 0;
+            }
+            
+            // 防止NaN：檢查healAmount是否有效
+            if (isNaN(healAmount) || healAmount <= 0) {
+                console.error('自動喝藥錯誤：healAmount無效', healAmount, potion);
+                return false;
             }
             
             gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
@@ -9680,9 +9697,9 @@ const REGION_CONSUMABLES = {
                 });
             }
             
-            gameState.player.atk = baseAtk;
-            gameState.player.def = baseDef;
-            gameState.player.maxHp = baseMaxHp;
+            gameState.player.atk = Math.floor(baseAtk);
+            gameState.player.def = Math.floor(baseDef);
+            gameState.player.maxHp = Math.floor(baseMaxHp);
             gameState.player.crit = baseCrit;
             gameState.player.critDmg = baseCritDmg;
             
@@ -16558,6 +16575,23 @@ const REGION_CONSUMABLES = {
             
             // 教學系統已移除
             
+            // 確保自動喝藥相關屬性存在
+            if (loadedState.autoPotion === undefined) {
+                loadedState.autoPotion = false;
+            }
+            if (loadedState.autoPotionThreshold === undefined) {
+                loadedState.autoPotionThreshold = 50;
+            }
+            if (loadedState.autoPotionMode === undefined) {
+                loadedState.autoPotionMode = 'economy';
+            }
+            if (loadedState.autoPotionType === undefined) {
+                loadedState.autoPotionType = 'best';
+            }
+            if (loadedState.potionCooldown === undefined) {
+                loadedState.potionCooldown = 0;
+            }
+            
             // 確保endlessMode屬性存在
             if (!loadedState.endlessMode) {
                 loadedState.endlessMode = {
@@ -17697,6 +17731,9 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
         level: gameState.player.level  // 添加怪物等級
     };
     const battleStartTime = Date.now();
+    
+    // 獲取隨從裝備組合效果
+    const comboEffects = getCompanionEquipmentCombo();
     
     // 關閉副本界面
     closeDungeonDetailModal();

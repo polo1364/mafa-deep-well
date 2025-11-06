@@ -3887,6 +3887,46 @@ const REGION_CONSUMABLES = {
                 ]
             }
         };
+        
+        // 第二套套裝（Boss 掉落，特化型）
+        const EQUIPMENT_SETS_2 = {
+            '入門開發層': {
+                setName: '暴擊獵殺套裝',
+                items: [
+                    { type: 'weapon', name: '獵殺者利刃', atk: 40, crit: 8, critDmg: 20, bossDmg: 5 },
+                    { type: 'armor', name: '獵殺者輕甲', def: 25, hp: 80, crit: 5, dodge: 3 },
+                    { type: 'accessory', name: '獵殺者印記', atk: 18, def: 10, hp: 50, crit: 6, critDmg: 15 },
+                    { type: 'accessory', name: '獵殺者徽記', atk: 15, def: 10, hp: 60, crit: 5, critDmg: 12, bossDmg: 3 }
+                ]
+            },
+            '研發核心層': {
+                setName: '生命汲取套裝',
+                items: [
+                    { type: 'weapon', name: '汲取之刃', atk: 48, crit: 3, lifeSteal: 5, armorPen: 8 },
+                    { type: 'armor', name: '汲取護甲', def: 42, hp: 180, lifeSteal: 4, dmgRed: 5 },
+                    { type: 'accessory', name: '汲取符文', atk: 22, def: 22, hp: 100, lifeSteal: 6, crit: 2 },
+                    { type: 'accessory', name: '汲取寶石', atk: 20, def: 20, hp: 120, lifeSteal: 5, dmgRed: 4 }
+                ]
+            },
+            '資料裂縫': {
+                setName: '鐵壁防禦套裝',
+                items: [
+                    { type: 'weapon', name: '鐵壁重錘', atk: 45, def: 15, crit: 2, dmgRed: 3 },
+                    { type: 'armor', name: '鐵壁重甲', def: 60, hp: 250, dmgRed: 8, reflect: 5 },
+                    { type: 'accessory', name: '鐵壁護符', atk: 15, def: 35, hp: 150, dmgRed: 6, lifeSteal: 2 },
+                    { type: 'accessory', name: '鐵壁盾徽', atk: 12, def: 38, hp: 180, dmgRed: 7, reflect: 4 }
+                ]
+            },
+            '深井臨界層': {
+                setName: '無視穿透套裝',
+                items: [
+                    { type: 'weapon', name: '穿透之矛', atk: 65, crit: 4, armorPen: 15, bossDmg: 8 },
+                    { type: 'armor', name: '穿透戰甲', def: 48, hp: 200, armorPen: 8, dmgRed: 4 },
+                    { type: 'accessory', name: '穿透符印', atk: 32, def: 25, hp: 100, armorPen: 10, crit: 3 },
+                    { type: 'accessory', name: '穿透寶珠', atk: 30, def: 25, hp: 120, armorPen: 12, bossDmg: 5 }
+                ]
+            }
+        };
         // 迭代天賦系統
 
         // 隨從系統常量
@@ -9243,7 +9283,9 @@ const REGION_CONSUMABLES = {
                 console.error('generateItem: region不存在:', gameState.region);
                 return null;
             }
-            const equipmentSet = EQUIPMENT_SETS[region.name];
+            // 隨機選擇第一套或第二套
+            const useSet2 = Math.random() < 0.5; // 50% 機率選擇第二套
+            const equipmentSet = useSet2 ? EQUIPMENT_SETS_2[region.name] : EQUIPMENT_SETS[region.name];
             
             // 根據敵人類型選擇稀有度（或使用指定品質）
             const selectedRarity = forceRarity || selectRarityByWeight(enemyType);
@@ -9270,7 +9312,9 @@ const REGION_CONSUMABLES = {
                     dmgRed: setItem.dmgRed || 0,
                     lifeSteal: setItem.lifeSteal || 0,
                     armorPen: setItem.armorPen || 0,
-                    bossDmg: setItem.bossDmg || 0
+                    bossDmg: setItem.bossDmg || 0,
+                    dodge: setItem.dodge || 0,      // ✅ 新增
+                    reflect: setItem.reflect || 0    // ✅ 新增
                 };
                 
                 // ===== 套裝詞綴系統 =====
@@ -11403,22 +11447,52 @@ const REGION_CONSUMABLES = {
                 gameState.codex.equipment = {};
             }
             
-            // 遍歷所有套裝裝備
+            // 遍歷所有套裝裝備（第一套）
             for (const regionName in EQUIPMENT_SETS) {
                 const setData = EQUIPMENT_SETS[regionName];
                 setData.items.forEach(item => {
                     const key = item.name; // 使用裝備名稱作為鍵值
                     if (!gameState.codex.equipment[key]) {
+                        // 新建條目
                         gameState.codex.equipment[key] = {
                             name: item.name,
                             type: item.type,
                             region: regionName,
                             setName: setData.setName,
+                            setNumber: 1, // 第一套
                             icon: item.type === 'weapon' ? '🗡️' : item.type === 'armor' ? '🛡️' : '💍',
                             obtained: false,
                             firstObtainTime: null,
                             obtainCount: 0
                         };
+                    } else if (gameState.codex.equipment[key].setNumber === undefined) {
+                        // 舊存檔相容：更新 setNumber
+                        gameState.codex.equipment[key].setNumber = 1;
+                    }
+                });
+            }
+            
+            // 遍歷所有套裝裝備（第二套）
+            for (const regionName in EQUIPMENT_SETS_2) {
+                const setData = EQUIPMENT_SETS_2[regionName];
+                setData.items.forEach(item => {
+                    const key = item.name; // 使用裝備名稱作為鍵值
+                    if (!gameState.codex.equipment[key]) {
+                        // 新建條目
+                        gameState.codex.equipment[key] = {
+                            name: item.name,
+                            type: item.type,
+                            region: regionName,
+                            setName: setData.setName,
+                            setNumber: 2, // 第二套
+                            icon: item.type === 'weapon' ? '🗡️' : item.type === 'armor' ? '🛡️' : '💍',
+                            obtained: false,
+                            firstObtainTime: null,
+                            obtainCount: 0
+                        };
+                    } else if (gameState.codex.equipment[key].setNumber === undefined) {
+                        // 舊存檔相容：更新 setNumber
+                        gameState.codex.equipment[key].setNumber = 2;
                     }
                 });
             }
@@ -15932,48 +16006,98 @@ const REGION_CONSUMABLES = {
             
             regions.forEach(regionName => {
                 // 獲取該區域的所有裝備
-                const regionEquipment = Object.values(gameState.codex.equipment).filter(e => e.region === regionName);
+                const set1Equipment = Object.values(gameState.codex.equipment).filter(e => e.region === regionName && e.setNumber === 1);
+                const set2Equipment = Object.values(gameState.codex.equipment).filter(e => e.region === regionName && e.setNumber === 2);
                 
-                if (regionEquipment.length === 0) return;
+                if (set1Equipment.length === 0 && set2Equipment.length === 0) return;
                 
-                const obtainedCount = regionEquipment.filter(e => e.obtained).length;
-                const totalCount = regionEquipment.length;
-                const setName = regionEquipment[0].setName;
-                
+                // 區域標題
                 html += `
-                    <div style="background: rgba(0, 217, 255, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2); margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <div>
-                                <h3 style="color: #00d9ff; margin: 0;">🎯 ${regionName}</h3>
-                                <div style="color: #7a8fb8; font-size: 0.8rem; margin-top: 2px;">${setName}</div>
-                            </div>
-                            <span style="color: #7a8fb8; font-size: 0.9rem;">${obtainedCount}/${totalCount}</span>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
+                    <div style="background: rgba(0, 217, 255, 0.08); padding: 15px; border-radius: 10px; border: 2px solid rgba(0, 217, 255, 0.3); margin-bottom: 20px;">
+                        <h2 style="color: #00d9ff; margin: 0 0 15px 0; text-align: center;">🎯 ${regionName}</h2>
                 `;
                 
-                regionEquipment.forEach(equipment => {
-                    const obtained = equipment.obtained;
+                // 第一套
+                if (set1Equipment.length > 0) {
+                    const obtained1 = set1Equipment.filter(e => e.obtained).length;
+                    const total1 = set1Equipment.length;
+                    const setName1 = set1Equipment[0].setName;
                     
                     html += `
-                        <div style="background: ${obtained ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.3)'}; padding: 8px; border-radius: 6px; border: 1px solid ${obtained ? 'rgba(0, 217, 255, 0.4)' : 'rgba(255, 255, 255, 0.1)'}; text-align: center;">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">${equipment.icon}</div>
-                            <div style="font-size: 0.85rem; color: ${obtained ? '#00d9ff' : '#555'}; font-weight: bold;">
-                                ${obtained ? equipment.name : '???'}
+                        <div style="background: rgba(255, 215, 0, 0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <div style="color: #FFD700; font-weight: bold;">① ${setName1}</div>
+                                <span style="color: #7a8fb8; font-size: 0.9rem;">${obtained1}/${total1}</span>
                             </div>
-                            ${obtained ? `
-                                <div style="font-size: 0.75rem; color: #7a8fb8; margin-top: 3px;">
-                                    獲得 ${equipment.obtainCount} 次
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;">
+                    `;
+                    
+                    set1Equipment.forEach(equipment => {
+                        const obtained = equipment.obtained;
+                        html += `
+                            <div style="background: ${obtained ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.3)'}; padding: 8px; border-radius: 6px; border: 1px solid ${obtained ? 'rgba(255, 215, 0, 0.4)' : 'rgba(255, 255, 255, 0.1)'}; text-align: center;">
+                                <div style="font-size: 1.3rem; margin-bottom: 5px;">${equipment.icon}</div>
+                                <div style="font-size: 0.8rem; color: ${obtained ? '#FFD700' : '#555'}; font-weight: bold;">
+                                    ${obtained ? equipment.name : '???'}
                                 </div>
-                            ` : `
-                                <div style="font-size: 0.75rem; color: #555; margin-top: 3px;">尚未獲得</div>
-                            `}
+                                ${obtained ? `
+                                    <div style="font-size: 0.7rem; color: #7a8fb8; margin-top: 3px;">
+                                        獲得 ${equipment.obtainCount} 次
+                                    </div>
+                                ` : `
+                                    <div style="font-size: 0.7rem; color: #555; margin-top: 3px;">尚未獲得</div>
+                                `}
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
                         </div>
                     `;
-                });
+                }
+                
+                // 第二套
+                if (set2Equipment.length > 0) {
+                    const obtained2 = set2Equipment.filter(e => e.obtained).length;
+                    const total2 = set2Equipment.length;
+                    const setName2 = set2Equipment[0].setName;
+                    
+                    html += `
+                        <div style="background: rgba(138, 43, 226, 0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(138, 43, 226, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <div style="color: #9370DB; font-weight: bold;">② ${setName2}</div>
+                                <span style="color: #7a8fb8; font-size: 0.9rem;">${obtained2}/${total2}</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;">
+                    `;
+                    
+                    set2Equipment.forEach(equipment => {
+                        const obtained = equipment.obtained;
+                        html += `
+                            <div style="background: ${obtained ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.3)'}; padding: 8px; border-radius: 6px; border: 1px solid ${obtained ? 'rgba(138, 43, 226, 0.4)' : 'rgba(255, 255, 255, 0.1)'}; text-align: center;">
+                                <div style="font-size: 1.3rem; margin-bottom: 5px;">${equipment.icon}</div>
+                                <div style="font-size: 0.8rem; color: ${obtained ? '#9370DB' : '#555'}; font-weight: bold;">
+                                    ${obtained ? equipment.name : '???'}
+                                </div>
+                                ${obtained ? `
+                                    <div style="font-size: 0.7rem; color: #7a8fb8; margin-top: 3px;">
+                                        獲得 ${equipment.obtainCount} 次
+                                    </div>
+                                ` : `
+                                    <div style="font-size: 0.7rem; color: #555; margin-top: 3px;">尚未獲得</div>
+                                `}
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
                 
                 html += `
-                        </div>
                     </div>
                 `;
             });

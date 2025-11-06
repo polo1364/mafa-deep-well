@@ -863,13 +863,21 @@
                     </div>
                     
                     <div class="resources" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                        <div class="resource" style="background: rgba(255, 215, 0, 0.08); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); text-align: center;">
-                            <div style="color: #7a8fb8; font-size: 0.75rem; margin-bottom: 5px;">💰 金幣</div>
-                            <div style="color: #FFD700; font-weight: bold; font-size: 1.3rem;" id="player-gold">100</div>
+                        <div class="resource" style="background: rgba(255, 215, 0, 0.08); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); text-align: center;">
+                            <div style="color: #7a8fb8; font-size: 0.7rem; margin-bottom: 4px;">💰 金幣</div>
+                            <div style="color: #FFD700; font-weight: bold; font-size: 1.1rem;" id="player-gold">100</div>
                         </div>
-                        <div class="resource" style="background: rgba(78, 165, 255, 0.08); padding: 12px; border-radius: 8px; border: 1px solid rgba(78, 165, 255, 0.3); text-align: center;">
-                            <div style="color: #7a8fb8; font-size: 0.75rem; margin-bottom: 5px;">🔷 碎片</div>
-                            <div style="color: #4EA5FF; font-weight: bold; font-size: 1.3rem;" id="player-shards">0</div>
+                        <div class="resource" style="background: rgba(78, 165, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid rgba(78, 165, 255, 0.3); text-align: center;">
+                            <div style="color: #7a8fb8; font-size: 0.7rem; margin-bottom: 4px;">🔷 碎片</div>
+                            <div style="color: #4EA5FF; font-weight: bold; font-size: 1.1rem;" id="player-shards">0</div>
+                        </div>
+                        <div class="resource" style="background: rgba(156, 39, 176, 0.08); padding: 10px; border-radius: 8px; border: 1px solid rgba(156, 39, 176, 0.3); text-align: center;">
+                            <div style="color: #7a8fb8; font-size: 0.7rem; margin-bottom: 4px;">🔨 強化石</div>
+                            <div style="color: #9C27B0; font-weight: bold; font-size: 1.1rem;" id="player-enhance-stone">0</div>
+                        </div>
+                        <div class="resource" style="background: rgba(255, 152, 0, 0.08); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); text-align: center;">
+                            <div style="color: #7a8fb8; font-size: 0.7rem; margin-bottom: 4px;">🎲 重鑄石</div>
+                            <div style="color: #FF9800; font-weight: bold; font-size: 1.1rem;" id="player-reforge-stone">0</div>
                         </div>
                     </div>
                     
@@ -5658,6 +5666,10 @@ const REGION_CONSUMABLES = {
                     autoSalvaged: 0,  // 自動分解次數
                     materialsGained: 0  // 獲得的材料數
                 }
+            },
+            materials: {
+                enhanceStone: 0,  // 強化石
+                reforgeStone: 0   // 重鑄石
             }
         };
         // 迭代天賦系統
@@ -11031,6 +11043,13 @@ const REGION_CONSUMABLES = {
             document.getElementById('player-gold').textContent = gameState.player.gold;
             document.getElementById('player-shards').textContent = gameState.player.shards;
             
+            // 更新材料顯示
+            if (!gameState.materials) {
+                gameState.materials = { enhanceStone: 0, reforgeStone: 0 };
+            }
+            document.getElementById('player-enhance-stone').textContent = gameState.materials.enhanceStone || 0;
+            document.getElementById('player-reforge-stone').textContent = gameState.materials.reforgeStone || 0;
+            
             // 屬性（計算Buff加成）
             let buffAtk = 0, buffDef = 0, buffCrit = 0;
             if (gameState.player.buffs && gameState.player.buffs.length > 0) {
@@ -12176,13 +12195,22 @@ const REGION_CONSUMABLES = {
                         // 強化按鈕
                         const enhanceCost = ENHANCE_COST[enhanceLevel] || 0;
                         const enhanceRate = ENHANCE_SUCCESS_RATE[enhanceLevel] || 0;
+                        let enhanceStoneReq = 1;
+                        if (enhanceLevel >= 11) enhanceStoneReq = 3;
+                        else if (enhanceLevel >= 6) enhanceStoneReq = 2;
                         const enhanceBtn = enhanceLevel < 15 ? 
-                            `<button onclick="enhanceEquipment('${item.id}')" style="padding: 6px 12px; background: #FFD700; color: #0a1628; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-right: 5px;" title="成功率: ${enhanceRate}%, 消耗: ${enhanceCost}金幣">🔨 強化</button>` : 
+                            `<button onclick="enhanceEquipment('${item.id}')" style="padding: 6px 12px; background: #FFD700; color: #0a1628; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-right: 5px;" title="成功率: ${enhanceRate}%\n消耗: ${enhanceCost}金幣 + ${enhanceStoneReq}強化石">🔨 強化</button>` : 
                             '';
                         
-                        // 重鐄按鈕
+                        // 重鑄按鈕
                         const reforgeCost = REFORGE_COST[item.rarity] || 10;
-                        const reforgeBtn = `<button onclick="reforgeEquipment('${item.id}')" style="padding: 6px 12px; background: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-right: 5px;" title="消耗: ${reforgeCost}碎片">🎲 重鐄</button>`;
+                        const reforgeGoldCost = reforgeCost * 10;
+                        let reforgeStoneReq = 1;
+                        if (item.rarity === 'mythic' || item.rarity === 'eternal') reforgeStoneReq = 8;
+                        else if (item.rarity === 'legendary') reforgeStoneReq = 5;
+                        else if (item.rarity === 'epic') reforgeStoneReq = 3;
+                        else if (item.rarity === 'rare') reforgeStoneReq = 2;
+                        const reforgeBtn = `<button onclick="reforgeEquipment('${item.id}')" style="padding: 6px 12px; background: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-right: 5px;" title="消耗: ${reforgeGoldCost}金幣 + ${reforgeCost}碎片 + ${reforgeStoneReq}重鑄石">🎲 重鑄</button>`;
                         
                         return `
                             <div style="padding: 12px; margin: 8px 0; background: rgba(0, 217, 255, 0.05); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 8px;">
@@ -15669,15 +15697,33 @@ const REGION_CONSUMABLES = {
                 return false;
             }
             
-            // 計算消耗金幣
+            // 計算消耗金幣和強化石
             const cost = ENHANCE_COST[item.enhance];
+            let stoneRequired = 1;  // 預設 1 個
+            if (item.enhance >= 11) {
+                stoneRequired = 3;
+            } else if (item.enhance >= 6) {
+                stoneRequired = 2;
+            }
+            
+            // 檢查金幣
             if (gameState.player.gold < cost) {
                 addLog('強化', `金幣不足！需要 ${cost} 金幣`);
                 return false;
             }
             
-            // 扣除金幣
+            // 檢查強化石
+            if (!gameState.materials) {
+                gameState.materials = { enhanceStone: 0, reforgeStone: 0 };
+            }
+            if (gameState.materials.enhanceStone < stoneRequired) {
+                addLog('強化', `強化石不足！需要 ${stoneRequired} 個強化石`);
+                return false;
+            }
+            
+            // 扣除金幣和強化石
             gameState.player.gold -= cost;
+            gameState.materials.enhanceStone -= stoneRequired;
             
             // 計算成功率
             const successRate = ENHANCE_SUCCESS_RATE[item.enhance];
@@ -15749,15 +15795,47 @@ const REGION_CONSUMABLES = {
                 return false;
             }
             
-            // 計算消耗碎片
-            const cost = REFORGE_COST[item.rarity] || 10;
-            if (gameState.player.shards < cost) {
-                addLog('重鐄', `碎片不足！需要 ${cost} 碎片`);
+            // 計算消耗金幣、碎片和重鑄石
+            const shardCost = REFORGE_COST[item.rarity] || 10;
+            const goldCost = shardCost * 10;
+            
+            // 根據品質決定重鑄石消耗
+            let stoneRequired = 1;
+            if (item.rarity === 'mythic' || item.rarity === 'eternal') {
+                stoneRequired = 8;
+            } else if (item.rarity === 'legendary') {
+                stoneRequired = 5;
+            } else if (item.rarity === 'epic') {
+                stoneRequired = 3;
+            } else if (item.rarity === 'rare') {
+                stoneRequired = 2;
+            }
+            
+            // 檢查金幣
+            if (gameState.player.gold < goldCost) {
+                addLog('重鑄', `金幣不足！需要 ${goldCost} 金幣`);
                 return false;
             }
             
-            // 扣除碎片
-            gameState.player.shards -= cost;
+            // 檢查碎片
+            if (gameState.player.shards < shardCost) {
+                addLog('重鑄', `碎片不足！需要 ${shardCost} 碎片`);
+                return false;
+            }
+            
+            // 檢查重鑄石
+            if (!gameState.materials) {
+                gameState.materials = { enhanceStone: 0, reforgeStone: 0 };
+            }
+            if (gameState.materials.reforgeStone < stoneRequired) {
+                addLog('重鑄', `重鑄石不足！需要 ${stoneRequired} 個重鑄石`);
+                return false;
+            }
+            
+            // 扣除資源
+            gameState.player.gold -= goldCost;
+            gameState.player.shards -= shardCost;
+            gameState.materials.reforgeStone -= stoneRequired;
             
             // 重新生成屬性（使用與掉落相同的邏輯）
             const rarity = RARITIES.find(r => r.name === item.rarity);
@@ -20243,12 +20321,15 @@ function applyDungeonRewards(rewards) {
         }
     }
     
-    // 材料（暫時轉換為金幣）
+    // 材料
+    if (!gameState.materials) {
+        gameState.materials = { enhanceStone: 0, reforgeStone: 0 };
+    }
     if (rewards.materials.enhanceStone > 0) {
-        gameState.player.gold += rewards.materials.enhanceStone * 10;
+        gameState.materials.enhanceStone += rewards.materials.enhanceStone;
     }
     if (rewards.materials.reforgeStone > 0) {
-        gameState.player.gold += rewards.materials.reforgeStone * 50;
+        gameState.materials.reforgeStone += rewards.materials.reforgeStone;
     }
 }
 

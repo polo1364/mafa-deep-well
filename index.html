@@ -824,17 +824,15 @@
                         <div style="margin-top: 8px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
                             <input type="checkbox" id="auto-potion-toggle" onchange="toggleAutoPotion()" style="cursor: pointer;">
                             <label for="auto-potion-toggle" style="color: #7a8fb8; cursor: pointer;">自動喝藥</label>
+                            <select id="potion-selector" onchange="selectPotionType()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                                <option value="">選擇藥水...</option>
+                            </select>
                             <select id="auto-potion-threshold" onchange="updateAutoPotionThreshold()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
                                 <option value="30">30%</option>
                                 <option value="40">40%</option>
                                 <option value="50" selected>50%</option>
                                 <option value="60">60%</option>
                                 <option value="70">70%</option>
-                            </select>
-                            <select id="auto-potion-mode" onchange="updateAutoPotionMode()" style="background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                                <option value="economy" selected>優先經濟</option>
-                                <option value="best">優先最佳</option>
-                                <option value="small_first">優先小瓶</option>
                             </select>
                         </div>
                     </div>
@@ -5091,13 +5089,12 @@ const REGION_CONSUMABLES = {
         // 自動喝藥相關函數
         function toggleAutoPotion() {
             gameState.autoPotion = document.getElementById('auto-potion-toggle').checked;
-            // 確保門檻值存在
-            if (!gameState.autoPotionThreshold) {
-                gameState.autoPotionThreshold = parseInt(document.getElementById('auto-potion-threshold').value) || 50;
-            }
             saveGame();
             if (gameState.autoPotion) {
-                addLog('系統', `已開啟自動喝藥（生命 < ${gameState.autoPotionThreshold}% 時自動使用）`);
+                const potionName = gameState.selectedPotionId ? 
+                    (gameState.inventory.find(i => i.id == gameState.selectedPotionId)?.name || '未選擇') : 
+                    '未選擇';
+                addLog('系統', `已開啟自動喝藥（生命 < ${gameState.autoPotionThreshold || 50}% 時使用 ${potionName}）`);
                 // 立即檢查是否需要喝藥
                 if (tryAutoPotion()) {
                     updateUI();
@@ -5119,29 +5116,29 @@ const REGION_CONSUMABLES = {
             }
         }
         
-        function updateAutoPotionMode() {
-            gameState.autoPotionMode = document.getElementById('auto-potion-mode').value;
+        function selectPotionType() {
+            const select = document.getElementById('potion-selector');
+            gameState.selectedPotionId = select.value;
             saveGame();
-            if (gameState.autoPotion) {
-                const modeNames = {
-                    'economy': '優先經濟',
-                    'best': '優先最佳',
-                    'small_first': '優先小瓶'
-                };
-                const modeName = modeNames[gameState.autoPotionMode] || gameState.autoPotionMode;
-                addLog('系統', `自動喝藥模式已調整為：${modeName}`);
+            
+            if (gameState.selectedPotionId) {
+                const item = gameState.inventory.find(i => i.id == gameState.selectedPotionId);
+                if (item) {
+                    addLog('系統', `已選擇藥水：${item.name}`);
+                }
             }
         }
         
-        // 更新自動喝藥下拉選單（根據背包中的藥水）
-        function updateAutoPotionDropdown() {
-            const select = document.getElementById('auto-potion-type');
+        // 更新藥水選擇器（根據背包中的藥水）
+        function updatePotionSelector() {
+            const select = document.getElementById('potion-selector');
             if (!select) return;
             
-            // 獲取所有HP藥水
+            // 獲取所有HP藥水（支持所有類型）
             const hpPotions = gameState.inventory.filter(item => 
                 item.type === 'consumable' && 
-                item.subtype === 'hp' &&
+                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || 
+                 item.subtype === 'hp_potion' || item.subtype === 'both_percent' || item.subtype === 'both_fixed') &&
                 (item.quantity || 1) > 0
             );
             
@@ -5156,30 +5153,94 @@ const REGION_CONSUMABLES = {
             });
             
             // 按回復量排序（從高到低）
-            uniquePotions.sort((a, b) => b.recovery - a.recovery);
+            uniquePotions.sort((a, b) => {
+                const aRecovery = a.recovery || a.hpPercent || 0;
+                const bRecovery = b.recovery || b.hpPercent || 0;
+                return bRecovery - aRecovery;
+            });
             
             // 保存當前選擇
-            const currentValue = gameState.autoPotionType || 'best';
+            const currentValue = gameState.selectedPotionId || '';
             
             // 清空選項
-            select.innerHTML = '<option value="best">優先最佳</option>';
+            select.innerHTML = '<option value="">選擇藥水...</option>';
             
             // 添加藥水選項
             uniquePotions.forEach(potion => {
                 const option = document.createElement('option');
-                option.value = potion.name;
-                const percent = Math.round(potion.recovery * 100);
-                option.textContent = `${potion.name} (${percent}%)`;
+                option.value = potion.id;
+                let percent;
+                if (potion.subtype === 'hp' || potion.subtype === 'hp_percent' || potion.subtype === 'hp_potion') {
+                    percent = Math.round(potion.recovery * 100);
+                } else if (potion.subtype === 'hp_fixed') {
+                    percent = potion.recovery;
+                } else if (potion.subtype === 'both_percent') {
+                    percent = Math.round(potion.hpPercent * 100);
+                } else if (potion.subtype === 'both_fixed') {
+                    percent = potion.hpRecovery;
+                }
+                option.textContent = `${potion.name} (${percent}${potion.subtype.includes('fixed') ? '' : '%'})`;
                 select.appendChild(option);
             });
             
-            // 恢復選擇（如果還存在）
-            if (currentValue !== 'best' && uniquePotions.some(p => p.name === currentValue)) {
+            // 恢復選擇
+            if (currentValue && uniquePotions.some(p => p.id == currentValue)) {
                 select.value = currentValue;
-            } else {
-                select.value = 'best';
-                gameState.autoPotionType = 'best';
             }
+        }
+        
+        // 從選擇器使用藥水
+        function usePotionFromSelector() {
+            const select = document.getElementById('potion-selector');
+            const itemId = select.value;
+            
+            if (!itemId) return;
+            
+            // 找到藥水
+            const item = gameState.inventory.find(i => i.id == itemId);
+            if (!item) {
+                addLog('系統', '藥水不存在！');
+                select.value = '';
+                updatePotionSelector();
+                return;
+            }
+            
+            // 使用藥水
+            if (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_potion') {
+                const healAmount = Math.floor(gameState.player.maxHp * item.recovery);
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
+            } else if (item.subtype === 'hp_fixed') {
+                const healAmount = item.recovery;
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
+            } else if (item.subtype === 'both_percent') {
+                const healAmount = Math.floor(gameState.player.maxHp * item.hpPercent);
+                const restoreAmount = item.apRecovery;
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + restoreAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} HP 和 ${restoreAmount} AP！`);
+            } else if (item.subtype === 'both_fixed') {
+                const healAmount = item.hpRecovery;
+                const restoreAmount = item.apRecovery;
+                gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + restoreAmount);
+                addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} HP 和 ${restoreAmount} AP！`);
+            }
+            
+            // 減少數量或移除
+            if (item.quantity && item.quantity > 1) {
+                item.quantity--;
+            } else {
+                gameState.inventory = gameState.inventory.filter(i => i.id != itemId);
+            }
+            
+            // 重置選擇器
+            select.value = '';
+            
+            // 更新UI
+            updateUI();
+            saveGame();
         }
         
         function tryAutoPotion() {
@@ -5192,101 +5253,36 @@ const REGION_CONSUMABLES = {
             }
             
             const hpPercent = (gameState.player.hp / gameState.player.maxHp) * 100;
-            const isEmergency = hpPercent < 20; // 緊急門檻: 20%
             
             // 檢查是否需要喝藥
-            if (!isEmergency && hpPercent >= gameState.autoPotionThreshold) return false;
+            if (hpPercent >= (gameState.autoPotionThreshold || 50)) return false;
             
-            // 檢查冷卻（緊急模式無視冷卻）
-            const now = Date.now();
-            if (!isEmergency && now < gameState.potionCooldown) return false;
+            // 檢查是否有選擇藥水
+            if (!gameState.selectedPotionId) {
+                addLog('系統', '未選擇藥水！請先選擇要使用的藥水。');
+                gameState.autoPotion = false;
+                document.getElementById('auto-potion-toggle').checked = false;
+                return false;
+            }
             
-            // 獲取所有HP藥水（支持百分比、固定值和組合藥水）
-            const hpPotions = gameState.inventory.filter(item => 
+            // 找到選定的藥水
+            let potion = gameState.inventory.find(item => 
+                item.id == gameState.selectedPotionId &&
                 item.type === 'consumable' && 
-                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || item.subtype === 'hp_potion' || item.subtype === 'both_percent' || item.subtype === 'both_fixed') &&
+                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || 
+                 item.subtype === 'hp_potion' || item.subtype === 'both_percent' || item.subtype === 'both_fixed') &&
                 (item.quantity || 1) > 0
             );
             
-            if (hpPotions.length === 0) return false;
-            
-            // 根據模式選擇藥水
-            let potion = null;
-            const mode = gameState.autoPotionMode || 'economy';
-            
-            if (mode === 'economy') {
-                // 經濟模式：選擇剛好夠用的最便宜藥水
-                const hpNeeded = gameState.player.maxHp - gameState.player.hp;
-                
-                // 計算每個藥水的回復量
-                const potionsWithHeal = hpPotions.map(p => {
-                    let healAmount = 0;
-                    if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
-                        // 防止NaN：檢查recovery是否有效
-                        const recovery = (p.recovery !== undefined && !isNaN(p.recovery)) ? p.recovery : 0;
-                        healAmount = Math.floor(gameState.player.maxHp * recovery);
-                    } else if (p.subtype === 'hp_fixed') {
-                        healAmount = p.recovery || 0;
-                    } else if (p.subtype === 'both_percent') {
-                        const hpPercent = (p.hpPercent !== undefined && !isNaN(p.hpPercent)) ? p.hpPercent : 0;
-                        healAmount = Math.floor(gameState.player.maxHp * hpPercent);
-                    } else if (p.subtype === 'both_fixed') {
-                        healAmount = p.hpRecovery || 0;
-                    }
-                    return { ...p, healAmount };
-                });
-                
-                // 按回復量排序（從小到大）
-                potionsWithHeal.sort((a, b) => a.healAmount - b.healAmount);
-                
-                // 找到第一個能回復足夠HP的藥水（至少回復80%需求）
-                potion = potionsWithHeal.find(p => p.healAmount >= hpNeeded * 0.8);
-                
-                // 如果沒有合適的，就用最大的
-                if (!potion) {
-                    potion = potionsWithHeal[potionsWithHeal.length - 1];
-                }
-                
-            } else if (mode === 'small_first') {
-                // 優先小瓶：選擇回復量最小的
-                const potionsWithHeal = hpPotions.map(p => {
-                    let healAmount = 0;
-                    if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
-                        const recovery = (p.recovery !== undefined && !isNaN(p.recovery)) ? p.recovery : 0;
-                        healAmount = Math.floor(gameState.player.maxHp * recovery);
-                    } else if (p.subtype === 'hp_fixed') {
-                        healAmount = p.recovery || 0;
-                    } else if (p.subtype === 'both_percent') {
-                        const hpPercent = (p.hpPercent !== undefined && !isNaN(p.hpPercent)) ? p.hpPercent : 0;
-                        healAmount = Math.floor(gameState.player.maxHp * hpPercent);
-                    } else if (p.subtype === 'both_fixed') {
-                        healAmount = p.hpRecovery || 0;
-                    }
-                    return { ...p, healAmount };
-                });
-                potion = potionsWithHeal.sort((a, b) => a.healAmount - b.healAmount)[0];
-                
-            } else {
-                // 優先最佳：選擇回復量最高的
-                const potionsWithHeal = hpPotions.map(p => {
-                    let healAmount = 0;
-                    if (p.subtype === 'hp_percent' || p.subtype === 'hp' || p.subtype === 'hp_potion') {
-                        const recovery = (p.recovery !== undefined && !isNaN(p.recovery)) ? p.recovery : 0;
-                        healAmount = Math.floor(gameState.player.maxHp * recovery);
-                    } else if (p.subtype === 'hp_fixed') {
-                        healAmount = p.recovery || 0;
-                    } else if (p.subtype === 'both_percent') {
-                        const hpPercent = (p.hpPercent !== undefined && !isNaN(p.hpPercent)) ? p.hpPercent : 0;
-                        healAmount = Math.floor(gameState.player.maxHp * hpPercent);
-                    } else if (p.subtype === 'both_fixed') {
-                        healAmount = p.hpRecovery || 0;
-                    }
-                    return { ...p, healAmount };
-                });
-                potion = potionsWithHeal.sort((a, b) => b.healAmount - a.healAmount)[0];
+            if (!potion) {
+                addLog('系統', '選定的藥水已用完！請重新選擇。');
+                gameState.selectedPotionId = null;
+                gameState.autoPotion = false;
+                document.getElementById('auto-potion-toggle').checked = false;
+                updatePotionSelector();
+                return false;
             }
-            
-            if (!potion) return false;
+            // potion 已經在上面找到了
             
             // 計算回復量
             let healAmount = 0;
@@ -5320,20 +5316,17 @@ const REGION_CONSUMABLES = {
             
             gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
             
-            // 設置冷卻（緊急模式無冷卻）
-            if (!isEmergency) {
-                gameState.potionCooldown = now + 5000; // 5秒冷卻
-            }
-            
             // 減少數量
             if (potion.quantity && potion.quantity > 1) {
                 potion.quantity--;
             } else {
                 gameState.inventory = gameState.inventory.filter(i => i.id !== potion.id);
+                // 藥水用完了，清除選擇
+                gameState.selectedPotionId = null;
+                updatePotionSelector();
             }
             
-            const modeText = isEmergency ? '[緊急]' : '[自動]';
-            addLog('自動喝藥', `${modeText} 使用了 ${potion.name}，恢復了 ${healAmount} 點生命！`);
+            addLog('自動喝藥', `[自動] 使用了 ${potion.name}，恢復了 ${healAmount} 點生命！`);
             
             return true;
         }
@@ -5351,10 +5344,11 @@ const REGION_CONSUMABLES = {
             calculateSetEffects(); // 初始化套裝效果
             
             // 初始化自動喝藥UI狀態
-            document.getElementById('auto-potion-toggle').checked = gameState.autoPotion || false;
-            document.getElementById('auto-potion-threshold').value = gameState.autoPotionThreshold || 50;
-            if (document.getElementById('auto-potion-mode')) {
-                document.getElementById('auto-potion-mode').value = gameState.autoPotionMode || 'economy';
+            if (document.getElementById('auto-potion-toggle')) {
+                document.getElementById('auto-potion-toggle').checked = gameState.autoPotion || false;
+            }
+            if (document.getElementById('auto-potion-threshold')) {
+                document.getElementById('auto-potion-threshold').value = gameState.autoPotionThreshold || 50;
             }
             
             // 初始化隨從系統（不再贈送初始隨從，由出生禮包提供）
@@ -10076,50 +10070,32 @@ const REGION_CONSUMABLES = {
             // 防禦力（只顯示最終總值）
             document.getElementById('player-def').textContent = Math.round(gameState.player.def);
             
-            // 暴擊率
-            if (breakdown.crit && breakdown.crit.equipment > 0) {
-                const totalBonus = (gameState.player.crit - breakdown.crit.base).toFixed(1);
-                const critValue = parseFloat(gameState.player.crit.toFixed(1));
-                const critText = buffCrit > 0
-                    ? `${critValue}% (+${totalBonus}%+${buffCrit}%)`
-                    : `${critValue}% (+${totalBonus}%)`;
-                document.getElementById('player-crit').textContent = critText;
-            } else {
-                const critValue = parseFloat(gameState.player.crit.toFixed(1));
-                document.getElementById('player-crit').textContent = buffCrit > 0 ? `${critValue}% (+${buffCrit}%)` : `${critValue}%`;
-            }
+            // 暴擊率（只顯示最終總值）
+            const critValue = parseFloat(gameState.player.crit.toFixed(1));
+            document.getElementById('player-crit').textContent = `${critValue}%`;
             
-            // 暴擊傷害
-            if (breakdown.critDmg && breakdown.critDmg.equipment > 0) {
-                const totalBonus = (gameState.player.critDmg - breakdown.critDmg.base).toFixed(1);
-                const critDmgValue = parseFloat(gameState.player.critDmg.toFixed(1));
-                document.getElementById('player-critdmg').textContent = `${critDmgValue}% (+${totalBonus}%)`;
-            } else {
-                const critDmgValue = parseFloat(gameState.player.critDmg.toFixed(1));
-                document.getElementById('player-critdmg').textContent = `${critDmgValue}%`;
-            }
+            // 暴擊傷害（只顯示最終總值）
+            const critDmgValue = parseFloat(gameState.player.critDmg.toFixed(1));
+            document.getElementById('player-critdmg').textContent = `${critDmgValue}%`;
             
-            // 新增屬性顯示（簡潔格式）
+            // 新增屬性顯示（只顯示最終總值）
             const dmgRedValue = gameState.player.dmgRed.toFixed(1);
-            document.getElementById('player-dmgred').textContent = dmgRedValue > 0 ? `${dmgRedValue}%` : `${dmgRedValue}%`;
+            document.getElementById('player-dmgred').textContent = `${dmgRedValue}%`;
             
             const lifeStealValue = gameState.player.lifeSteal.toFixed(1);
-            document.getElementById('player-lifesteal').textContent = lifeStealValue > 0 ? `${lifeStealValue}%` : `${lifeStealValue}%`;
+            document.getElementById('player-lifesteal').textContent = `${lifeStealValue}%`;
             
             const armorPenValue = gameState.player.armorPen.toFixed(1);
-            document.getElementById('player-armorpen').textContent = armorPenValue > 0 ? `${armorPenValue}%` : `${armorPenValue}%`;
+            document.getElementById('player-armorpen').textContent = `${armorPenValue}%`;
             
             const bossDmgValue = gameState.player.bossDmg.toFixed(1);
-            document.getElementById('player-bossdmg').textContent = bossDmgValue > 0 ? `${bossDmgValue}%` : `${bossDmgValue}%`;
+            document.getElementById('player-bossdmg').textContent = `${bossDmgValue}%`;
             
             const hpRegenValue = (gameState.player.hpRegen || 0).toFixed(1);
-            document.getElementById('player-hpregen').textContent = hpRegenValue > 0 ? `${hpRegenValue}%` : `${hpRegenValue}%`;
+            document.getElementById('player-hpregen').textContent = `${hpRegenValue}%`;
             
-            if (breakdown.expBonus && breakdown.expBonus.equipment > 0) {
-                document.getElementById('player-expbonus').textContent = `${(gameState.player.expBonus || 0).toFixed(1)}% (0+${breakdown.expBonus.equipment.toFixed(1)})`;
-            } else {
-                document.getElementById('player-expbonus').textContent = `${(gameState.player.expBonus || 0).toFixed(1)}%`;
-            }
+            const expBonusValue = (gameState.player.expBonus || 0).toFixed(1);
+            document.getElementById('player-expbonus').textContent = `${expBonusValue}%`;
             
             // 幸運值
             document.getElementById('player-luck').textContent = `${(gameState.player.luck || 0).toFixed(1)}%`;
@@ -10144,8 +10120,8 @@ const REGION_CONSUMABLES = {
             const maxInv = gameState.maxInventory || 50;
             document.getElementById('bag-count').textContent = `${gameState.inventory.length}/${maxInv}`;
             
-            // 更新自動喝藥下拉選單
-            updateAutoPotionDropdown();
+            // 更新藥水選擇器
+            updatePotionSelector();
             
             // 更新增益狀態顯示
             updateBuffsDisplay();
@@ -12971,7 +12947,7 @@ const REGION_CONSUMABLES = {
         
         // 計算離線收益
         function calculateOfflineRewards(offlineTimeMs) {
-            const offlineHours = offlineTimeMs / (1000 * 60 * 60);
+            let offlineHours = offlineTimeMs / (1000 * 60 * 60);
             
             // 時間係數（優化後）
             let timeCoefficient = 1.0;

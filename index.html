@@ -1853,10 +1853,11 @@
             <div style="display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap;">
                 <button onclick="switchTitleCategory('all')" id="title-cat-all" class="title-category-tab active" style="flex: 1; min-width: 80px;">🌐 全部</button>
                 <button onclick="switchTitleCategory('combat')" id="title-cat-combat" class="title-category-tab" style="flex: 1; min-width: 80px;">⚔️ 戰鬥</button>
-                <button onclick="switchTitleCategory('growth')" id="title-cat-growth" class="title-category-tab" style="flex: 1; min-width: 80px;">🌱 成長</button>
-                <button onclick="switchTitleCategory('wealth')" id="title-cat-wealth" class="title-category-tab" style="flex: 1; min-width: 80px;">💰 財富</button>
+                <button onclick="switchTitleCategory('collection')" id="title-cat-collection" class="title-category-tab" style="flex: 1; min-width: 80px;">📦 收集</button>
+                <button onclick="switchTitleCategory('achievement')" id="title-cat-achievement" class="title-category-tab" style="flex: 1; min-width: 80px;">🏆 成就</button>
                 <button onclick="switchTitleCategory('exploration')" id="title-cat-exploration" class="title-category-tab" style="flex: 1; min-width: 80px;">🗺️ 探索</button>
                 <button onclick="switchTitleCategory('special')" id="title-cat-special" class="title-category-tab" style="flex: 1; min-width: 80px;">✨ 特殊</button>
+                <button onclick="switchTitleCategory('codex')" id="title-cat-codex" class="title-category-tab" style="flex: 1; min-width: 80px;">📖 圖鑑</button>
             </div>
             
             <!-- 稱號內容區域 -->
@@ -3179,6 +3180,691 @@ const TITLES_DATA = {
         rarity: 'epic',
         condition: { type: 'crit_count', value: 5000 },
         bonus: { crit: 5, critDmg: 10 }
+    }
+    ,
+    
+    // ==================== 圖鑑系統稱號 ====================
+    
+    // 怪物圖鑑稱號 - 普通怪物 1000 殺（示例）
+    'monster_master_工坊鼠': {
+        name: '🐭 工坊鼠殺手',
+        desc: '擊殺工坊鼠 1000 次',
+        howToGet: '在入門開發層擊殺工坊鼠，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '工坊鼠', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_電流追蹤者': {
+        name: '⚡ 電流追蹤者殺手',
+        desc: '擊殺電流追蹤者 1000 次',
+        howToGet: '在入門開發層擊殺電流追蹤者，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '電流追蹤者', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_怒焰狂徒': {
+        name: '🔥 怒焰狂徒殺手',
+        desc: '擊殺怒焰狂徒 1000 次',
+        howToGet: '在入門開發層擊殺怒焰狂徒，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '怒焰狂徒', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_數據呑噬者': {
+        name: '💾 數據呑噬者殺手',
+        desc: '擊殺數據呑噬者 1000 次',
+        howToGet: '在入門開發層擊殺數據呑噬者，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '數據呑噬者', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_迷你史萊姆': {
+        name: '🟢 迷你史萊姆殺手',
+        desc: '擊殺迷你史萊姆 1000 次',
+        howToGet: '在入門開發層擊殺迷你史萊姆，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '迷你史萊姆', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_礦洞蝙蝠': {
+        name: '🦇 礦洞蝙蝠殺手',
+        desc: '擊殺礦洞蝙蝠 1000 次',
+        howToGet: '在入門開發層擊殺礦洞蝙蝠，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '礦洞蝙蝠', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_見習哥布林': {
+        name: '👺 見習哥布林殺手',
+        desc: '擊殺見習哥布林 1000 次',
+        howToGet: '在入門開發層擊殺見習哥布林，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '見習哥布林', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_木棍強盜': {
+        name: '🏹 木棍強盜殺手',
+        desc: '擊殺木棍強盜 1000 次',
+        howToGet: '在入門開發層擊殺木棍強盜，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '木棍強盜', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_流寇弓手': {
+        name: '🎯 流寇弓手殺手',
+        desc: '擊殺流寇弓手 1000 次',
+        howToGet: '在入門開發層擊殺流寇弓手，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '流寇弓手', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_流浪野犬': {
+        name: '🐕 流浪野犬殺手',
+        desc: '擊殺流浪野犬 1000 次',
+        howToGet: '在入門開發層擊殺流浪野犬，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '流浪野犬', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_銅甲甲蟲': {
+        name: '🪲 銅甲甲蟲殺手',
+        desc: '擊殺銅甲甲蟲 1000 次',
+        howToGet: '在入門開發層擊殺銅甲甲蟲，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '銅甲甲蟲', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_鋼殼甲蟲': {
+        name: '🪲 鋼殼甲蟲殺手',
+        desc: '擊殺鋼殼甲蟲 1000 次',
+        howToGet: '在研發核心層擊殺鋼殼甲蟲，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '鋼殼甲蟲', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_森林灰狼': {
+        name: '🐺 森林灰狼殺手',
+        desc: '擊殺森林灰狼 1000 次',
+        howToGet: '在研發核心層擊殺森林灰狼，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '森林灰狼', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_盜賊刺客': {
+        name: '🥷 盜賊刺客殺手',
+        desc: '擊殺盜賊刺客 1000 次',
+        howToGet: '在研發核心層擊殺盜賊刺客，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '盜賊刺客', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_火焰學徒': {
+        name: '🔥 火焰學徒殺手',
+        desc: '擊殺火焰學徒 1000 次',
+        howToGet: '在研發核心層擊殺火焰學徒，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '火焰學徒', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_石像鬼': {
+        name: '🗿 石像鬼殺手',
+        desc: '擊殺石像鬼 1000 次',
+        howToGet: '在研發核心層擊殺石像鬼，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '石像鬼', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_骷髏兵': {
+        name: '💀 骷髏兵殺手',
+        desc: '擊殺骷髏兵 1000 次',
+        howToGet: '在研發核心層擊殺骷髏兵，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '骷髏兵', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_重盾哥布林': {
+        name: '🛡️ 重盾哥布林殺手',
+        desc: '擊殺重盾哥布林 1000 次',
+        howToGet: '在研發核心層擊殺重盾哥布林，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '重盾哥布林', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_霧林弓手': {
+        name: '🏹 霧林弓手殺手',
+        desc: '擊殺霧林弓手 1000 次',
+        howToGet: '在研發核心層擊殺霧林弓手，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '霧林弓手', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_黑鬃惡狼': {
+        name: '🐺 黑鬃惡狼殺手',
+        desc: '擊殺黑鬃惡狼 1000 次',
+        howToGet: '在資料裂縫擊殺黑鬃惡狼，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '黑鬃惡狼', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_暗影刺客': {
+        name: '🥷 暗影刺客殺手',
+        desc: '擊殺暗影刺客 1000 次',
+        howToGet: '在資料裂縫擊殺暗影刺客，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '暗影刺客', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_巫骨法師': {
+        name: '🧙 巫骨法師殺手',
+        desc: '擊殺巫骨法師 1000 次',
+        howToGet: '在資料裂縫擊殺巫骨法師，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '巫骨法師', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_深穴巨蝙蝠': {
+        name: '🦇 深穴巨蝙蝠殺手',
+        desc: '擊殺深穴巨蝙蝠 1000 次',
+        howToGet: '在資料裂縫擊殺深穴巨蝙蝠，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '深穴巨蝙蝠', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_岩甲魔蟹': {
+        name: '🦀 岩甲魔蟹殺手',
+        desc: '擊殺岩甲魔蟹 1000 次',
+        howToGet: '在資料裂縫擊殺岩甲魔蟹，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '岩甲魔蟹', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_弩手強盜': {
+        name: '🎯 弩手強盜殺手',
+        desc: '擊殺弩手強盜 1000 次',
+        howToGet: '在資料裂縫擊殺弩手強盜，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '弩手強盜', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_泥岩巨人': {
+        name: '🧌 泥岩巨人殺手',
+        desc: '擊殺泥岩巨人 1000 次',
+        howToGet: '在資料裂縫擊殺泥岩巨人，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '泥岩巨人', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_亡靈弓手': {
+        name: '💀 亡靈弓手殺手',
+        desc: '擊殺亡靈弓手 1000 次',
+        howToGet: '在資料裂縫擊殺亡靈弓手，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '亡靈弓手', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_地獄獵犬': {
+        name: '🐕‍🦶 地獄獵犬殺手',
+        desc: '擊殺地獄獵犬 1000 次',
+        howToGet: '在深井臨界層擊殺地獄獵犬，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '地獄獵犬', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_魅影刺客': {
+        name: '👻 魅影刺客殺手',
+        desc: '擊殺魅影刺客 1000 次',
+        howToGet: '在深井臨界層擊殺魅影刺客，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '魅影刺客', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_幽冥骷髏': {
+        name: '💀 幽冥骷髏殺手',
+        desc: '擊殺幽冥骷髏 1000 次',
+        howToGet: '在深井臨界層擊殺幽冥骷髏，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '幽冥骷髏', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_熔岩巨人': {
+        name: '🔥 熔岩巨人殺手',
+        desc: '擊殺熔岩巨人 1000 次',
+        howToGet: '在深井臨界層擊殺熔岩巨人，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '熔岩巨人', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_雷霆魔蜥': {
+        name: '⚡ 雷霆魔蜥殺手',
+        desc: '擊殺雷霆魔蜥 1000 次',
+        howToGet: '在深井臨界層擊殺雷霆魔蜥，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '雷霆魔蜥', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_魅影弓手': {
+        name: '👻 魅影弓手殺手',
+        desc: '擊殺魅影弓手 1000 次',
+        howToGet: '在深井臨界層擊殺魅影弓手，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '魅影弓手', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_暗黑術士': {
+        name: '🧙‍♂️ 暗黑術士殺手',
+        desc: '擊殺暗黑術士 1000 次',
+        howToGet: '在深井臨界層擊殺暗黑術士，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '暗黑術士', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    'monster_master_寒霜魔靈': {
+        name: '❄️ 寒霜魔靈殺手',
+        desc: '擊殺寒霜魔靈 1000 次',
+        howToGet: '在深井臨界層擊殺寒霜魔靈，累計達到 1000 次即可解鎖',
+        category: 'codex_monster',
+        rarity: 'rare',
+        condition: { type: 'monster_kills', monster: '寒霜魔靈', value: 1000 },
+        bonus: { atk: 3, monsterDmg: 5 }
+    },
+    
+    // 怪物圖鑑稱號 - 精英怪物 1000 殺
+    'elite_master_風暴行者': {
+        name: '🌪️ 風暴行者獵人',
+        desc: '擊殺風暴行者 1000 次',
+        howToGet: '擊殺精英怪物風暴行者，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '風暴行者', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_電流追蹤者': {
+        name: '⚡ 電流追蹤者獵人',
+        desc: '擊殺電流追蹤者 1000 次',
+        howToGet: '擊殺精英怪物電流追蹤者，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '電流追蹤者', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_晶石守護者': {
+        name: '💎 晶石守護者獵人',
+        desc: '擊殺晶石守護者 1000 次',
+        howToGet: '擊殺精英怪物晶石守護者，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '晶石守護者', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_怒焰狂徒': {
+        name: '🔥 怒焰狂徒獵人',
+        desc: '擊殺怒焰狂徒 1000 次',
+        howToGet: '擊殺精英怪物怒焰狂徒，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '怒焰狂徒', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_星光哨兵': {
+        name: '🌟 星光哨兵獵人',
+        desc: '擊殺星光哨兵 1000 次',
+        howToGet: '擊殺精英怪物星光哨兵，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '星光哨兵', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_烈焰君主': {
+        name: '🔥 烈焰君主獵人',
+        desc: '擊殺烈焰君主 1000 次',
+        howToGet: '擊殺精英怪物烈焰君主，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '烈焰君主', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_暗影劍聖': {
+        name: '⚔️ 暗影劍聖獵人',
+        desc: '擊殺暗影劍聖 1000 次',
+        howToGet: '擊殺精英怪物暗影劍聖，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '暗影劍聖', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_泰坦石衛': {
+        name: '🗿 泰坦石衛獵人',
+        desc: '擊殺泰坦石衛 1000 次',
+        howToGet: '擊殺精英怪物泰坦石衛，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '泰坦石衛', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_虛空行刑者': {
+        name: '👻 虛空行刑者獵人',
+        desc: '擊殺虛空行刑者 1000 次',
+        howToGet: '擊殺精英怪物虛空行刑者，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '虛空行刑者', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_雷霆執法者': {
+        name: '⚡ 雷霆執法者獵人',
+        desc: '擊殺雷霆執法者 1000 次',
+        howToGet: '擊殺精英怪物雷霆執法者，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '雷霆執法者', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_星界術士': {
+        name: '🌌 星界術士獵人',
+        desc: '擊殺星界術士 1000 次',
+        howToGet: '擊殺精英怪物星界術士，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '星界術士', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_暗夜霸主': {
+        name: '🐺 暗夜霸主獵人',
+        desc: '擊殺暗夜霸主 1000 次',
+        howToGet: '擊殺精英怪物暗夜霸主，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '暗夜霸主', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_煉獄暴君': {
+        name: '🔥 煉獄暴君獵人',
+        desc: '擊殺煉獄暴君 1000 次',
+        howToGet: '擊殺精英怪物煉獄暴君，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '煉獄暴君', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_閃電霸王': {
+        name: '⚡ 閃電霸王獵人',
+        desc: '擊殺閃電霸王 1000 次',
+        howToGet: '擊殺精英怪物閃電霸王，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '閃電霸王', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_死神使者': {
+        name: '💀 死神使者獵人',
+        desc: '擊殺死神使者 1000 次',
+        howToGet: '擊殺精英怪物死神使者，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '死神使者', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    'elite_master_極寒魔君': {
+        name: '❄️ 極寒魔君獵人',
+        desc: '擊殺極寒魔君 1000 次',
+        howToGet: '擊殺精英怪物極寒魔君，累計達到 1000 次即可解鎖',
+        category: 'codex_elite',
+        rarity: 'epic',
+        condition: { type: 'monster_kills', monster: '極寒魔君', value: 1000 },
+        bonus: { atk: 5, eliteDmg: 10 }
+    },
+    
+    // 怪物圖鑑稱號 - Boss 1000 殺
+    'boss_master_破碎守衛': {
+        name: '🤖 破碎守衛征服者',
+        desc: '擊殺破碎守衛 1000 次',
+        howToGet: '擊殺入門開發層 Boss 破碎守衛，累計達到 1000 次即可解鎖',
+        category: 'codex_boss',
+        rarity: 'legendary',
+        condition: { type: 'monster_kills', monster: '破碎守衛', value: 1000 },
+        bonus: { atk: 8, bossDmg: 15 }
+    },
+    'boss_master_數據守門者': {
+        name: '⚔️ 數據守門者征服者',
+        desc: '擊殺數據守門者 1000 次',
+        howToGet: '擊殺入門開發層 Boss 數據守門者，累計達到 1000 次即可解鎖',
+        category: 'codex_boss',
+        rarity: 'legendary',
+        condition: { type: 'monster_kills', monster: '數據守門者', value: 1000 },
+        bonus: { atk: 8, bossDmg: 15 }
+    },
+    'boss_master_核心監察官': {
+        name: '👁️ 核心監察官征服者',
+        desc: '擊殺核心監察官 1000 次',
+        howToGet: '擊殺研發核心層 Boss 核心監察官，累計達到 1000 次即可解鎖',
+        category: 'codex_boss',
+        rarity: 'legendary',
+        condition: { type: 'monster_kills', monster: '核心監察官', value: 1000 },
+        bonus: { atk: 8, bossDmg: 15 }
+    },
+    'boss_master_裂縫主孰': {
+        name: '💀 裂縫主孰征服者',
+        desc: '擊殺裂縫主孰 1000 次',
+        howToGet: '擊殺資料裂縫 Boss 裂縫主孰，累計達到 1000 次即可解鎖',
+        category: 'codex_boss',
+        rarity: 'legendary',
+        condition: { type: 'monster_kills', monster: '裂縫主孰', value: 1000 },
+        bonus: { atk: 8, bossDmg: 15 }
+    },
+    'boss_master_深淵霸主': {
+        name: '😈 深淵霸主征服者',
+        desc: '擊殺深淵霸主 1000 次',
+        howToGet: '擊殺深井臨界層 Boss 深淵霸主，累計達到 1000 次即可解鎖',
+        category: 'codex_boss',
+        rarity: 'legendary',
+        condition: { type: 'monster_kills', monster: '深淵霸主', value: 1000 },
+        bonus: { atk: 8, bossDmg: 15 }
+    },
+    
+    // 裝備圖鑑稱號 - 套裝收集
+    'equipment_collector_half': {
+        name: '📦 裝備收藏家',
+        desc: '收集 16 件套裝裝備',
+        howToGet: '收集並獲得 16 件套裝裝備（半數）',
+        category: 'codex_equipment',
+        rarity: 'rare',
+        condition: { type: 'equipment_collected', value: 16 },
+        bonus: { setBonus: 5 }
+    },
+    'equipment_collector_full': {
+        name: '🎁 裝備大師',
+        desc: '收集全部 32 件套裝裝備',
+        howToGet: '收集並獲得所有 32 件套裝裝備（4 個區域 × 2 套 × 4 件）',
+        category: 'codex_equipment',
+        rarity: 'legendary',
+        condition: { type: 'equipment_collected', value: 32 },
+        bonus: { setBonus: 10, atk: 5, def: 5 }
+    },
+    
+    // 裝備圖鑑稱號 - 區域套裝
+    'region_set_master_入門開發層': {
+        name: '⚔️ 入門裝備專家',
+        desc: '收集入門開發層的兩套套裝',
+        howToGet: '收集入門開發層的啟動者套裝和暴擊獵殺套裝',
+        category: 'codex_equipment',
+        rarity: 'rare',
+        condition: { type: 'region_sets', region: '入門開發層', value: 2 },
+        bonus: { regionDmg: 5, setBonus: 5 }
+    },
+    'region_set_master_研發核心層': {
+        name: '🔬 研發裝備專家',
+        desc: '收集研發核心層的兩套套裝',
+        howToGet: '收集研發核心層的研發者套裝和生命汲取套裝',
+        category: 'codex_equipment',
+        rarity: 'rare',
+        condition: { type: 'region_sets', region: '研發核心層', value: 2 },
+        bonus: { regionDmg: 5, setBonus: 5 }
+    },
+    'region_set_master_資料裂縫': {
+        name: '💿 資料裝備專家',
+        desc: '收集資料裂縫的兩套套裝',
+        howToGet: '收集資料裂縫的機櫃防禦套裝和鐵壁防禦套裝',
+        category: 'codex_equipment',
+        rarity: 'rare',
+        condition: { type: 'region_sets', region: '資料裂縫', value: 2 },
+        bonus: { regionDmg: 5, setBonus: 5 }
+    },
+    'region_set_master_深井臨界層': {
+        name: '🕳️ 深井裝備專家',
+        desc: '收集深井臨界層的兩套套裝',
+        howToGet: '收集深井臨界層的量子同步套裝和無視穿透套裝',
+        category: 'codex_equipment',
+        rarity: 'rare',
+        condition: { type: 'region_sets', region: '深井臨界層', value: 2 },
+        bonus: { regionDmg: 5, setBonus: 5 }
+    },
+    
+    // 隨從圖鑑稱號
+    'companion_collector_5': {
+        name: '🤖 隨從收集者',
+        desc: '收集 5 個隨從',
+        howToGet: '獲得並收集 5 個不同的隨從',
+        category: 'codex_companion',
+        rarity: 'common',
+        condition: { type: 'companions_collected', value: 5 },
+        bonus: { companionBonus: 5 }
+    },
+    'companion_collector_10': {
+        name: '🤖 隨從愛好者',
+        desc: '收集 10 個隨從',
+        howToGet: '獲得並收集 10 個不同的隨從',
+        category: 'codex_companion',
+        rarity: 'rare',
+        condition: { type: 'companions_collected', value: 10 },
+        bonus: { companionBonus: 10 }
+    },
+    'companion_collector_15': {
+        name: '🤖 隨從專家',
+        desc: '收集 15 個隨從',
+        howToGet: '獲得並收集 15 個不同的隨從',
+        category: 'codex_companion',
+        rarity: 'epic',
+        condition: { type: 'companions_collected', value: 15 },
+        bonus: { companionBonus: 15 }
+    },
+    'companion_collector_20': {
+        name: '🤖 隨從大師',
+        desc: '收集 20 個隨從',
+        howToGet: '獲得並收集 20 個隨從',
+        category: 'codex_companion',
+        rarity: 'legendary',
+        condition: { type: 'companions_collected', value: 20 },
+        bonus: { companionBonus: 20, atk: 3, def: 3 }
+    },
+    
+    // 隨從類型稱號
+    'companion_type_master_attack': {
+        name: '⚔️ 攻擊隨從專家',
+        desc: '收集所有攻擊型隨從',
+        howToGet: '收集所有攻擊型隨從（共 4 個）',
+        category: 'codex_companion',
+        rarity: 'rare',
+        condition: { type: 'companion_type', companionType: 'attack', value: 4 },
+        bonus: { companionAttackBonus: 15 }
+    },
+    'companion_type_master_defense': {
+        name: '🛡️ 防禦隨從專家',
+        desc: '收集所有防禦型隨從',
+        howToGet: '收集所有防禦型隨從（共 3 個）',
+        category: 'codex_companion',
+        rarity: 'rare',
+        condition: { type: 'companion_type', companionType: 'defense', value: 3 },
+        bonus: { companionDefenseBonus: 15 }
+    },
+    'companion_type_master_recovery': {
+        name: '💚 恢復隨從專家',
+        desc: '收集所有恢復型隨從',
+        howToGet: '收集所有恢復型隨從（共 3 個）',
+        category: 'codex_companion',
+        rarity: 'rare',
+        condition: { type: 'companion_type', companionType: 'recovery', value: 3 },
+        bonus: { companionRecoveryBonus: 15 }
+    },
+    'companion_type_master_balanced': {
+        name: '⚖️ 平衡隨從專家',
+        desc: '收集所有平衡型隨從',
+        howToGet: '收集所有平衡型隨從（共 3 個）',
+        category: 'codex_companion',
+        rarity: 'rare',
+        condition: { type: 'companion_type', companionType: 'balanced', value: 3 },
+        bonus: { companionBalancedBonus: 15 }
+    },
+    
+    // 卡牌圖鑑稱號
+    'card_collector_10': {
+        name: '🎴 卡牌收集者',
+        desc: '收集 10 張卡牌',
+        howToGet: '獲得並收集 10 張不同的卡牌',
+        category: 'codex_card',
+        rarity: 'common',
+        condition: { type: 'cards_collected', value: 10 },
+        bonus: { cardBonus: 5 }
+    },
+    'card_collector_20': {
+        name: '🎴 卡牌愛好者',
+        desc: '收集 20 張卡牌',
+        howToGet: '獲得並收集 20 張不同的卡牌',
+        category: 'codex_card',
+        rarity: 'rare',
+        condition: { type: 'cards_collected', value: 20 },
+        bonus: { cardBonus: 10 }
+    },
+    'card_collector_30': {
+        name: '🎴 卡牌專家',
+        desc: '收集 30 張卡牌',
+        howToGet: '獲得並收集 30 張不同的卡牌',
+        category: 'codex_card',
+        rarity: 'epic',
+        condition: { type: 'cards_collected', value: 30 },
+        bonus: { cardBonus: 15 }
+    },
+    'card_collector_40': {
+        name: '🎴 卡牌大師',
+        desc: '收集 40 張卡牌',
+        howToGet: '獲得並收集 40 張卡牌',
+        category: 'codex_card',
+        rarity: 'legendary',
+        condition: { type: 'cards_collected', value: 40 },
+        bonus: { cardBonus: 20, atk: 3, def: 3 }
     }
 
 };
@@ -11601,6 +12287,10 @@ const REGION_CONSUMABLES = {
             }
             
             equipment.obtainCount++;
+            
+            // 檢查套裝收集稱號
+            checkEquipmentCodexTitles();
+            
             saveGame();
         }
         
@@ -11622,6 +12312,9 @@ const REGION_CONSUMABLES = {
                 companion.firstObtainTime = Date.now();
                 gameState.codex.stats.totalCompanionsObtained++;
                 addLog('圖鑑', `📖 解鎖隨從圖鑑：${companion.name}`);
+                
+                // 檢查隨從收集稱號
+                checkCompanionCodexTitles();
             }
             
             saveGame();
@@ -11645,6 +12338,9 @@ const REGION_CONSUMABLES = {
                 card.firstObtainTime = Date.now();
                 gameState.codex.stats.totalCardsObtained++;
                 addLog('圖鑑', `📖 解鎖卡牌圖鑑：${card.name}`);
+                
+                // 檢查卡牌收集稱號
+                checkCardCodexTitles();
             }
             
             saveGame();
@@ -11749,22 +12445,128 @@ const REGION_CONSUMABLES = {
         
         // 解鎖圖鑑稱號
         function unlockCodexTitle(titleType, monsterName) {
-            let titleId, titleName, titleEffect;
+            let titleId;
             
+            // 根據怪物類型生成稱號 ID
             if (titleType === 'monster_slayer') {
-                titleId = `slayer_${monsterName}`;
-                titleName = `${monsterName}剋星`;
-                titleEffect = { type: 'monster_damage', target: monsterName, value: 5 };
+                titleId = `monster_master_${monsterName}`;
+            } else if (titleType === 'elite_slayer') {
+                titleId = `elite_master_${monsterName}`;
             } else if (titleType === 'boss_conqueror') {
-                titleId = `conqueror_${monsterName}`;
-                titleName = `${monsterName}征服者`;
-                titleEffect = { type: 'boss_damage', target: monsterName, value: 10, goldBonus: 5 };
+                titleId = `boss_master_${monsterName}`;
             }
             
+            // 檢查稱號是否存在於 TITLES_DATA
+            if (!TITLES_DATA[titleId]) {
+                console.log(`稱號 ${titleId} 不存在於 TITLES_DATA`);
+                return;
+            }
+            
+            // 解鎖稱號
             if (!gameState.titles.unlocked.includes(titleId)) {
                 gameState.titles.unlocked.push(titleId);
-                addLog('稱號', `🏆 解鎖稱號：${titleName}！`);
+                const titleData = TITLES_DATA[titleId];
+                addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
                 playSound('levelup');
+            }
+        }
+        
+        // 檢查裝備收集稱號
+        function checkEquipmentCodexTitles() {
+            const totalObtained = gameState.codex.stats.totalEquipmentObtained;
+            
+            // 檢查套裝完成稱號
+            const setCompletion = {};
+            for (const key in gameState.codex.equipment) {
+                const eq = gameState.codex.equipment[key];
+                if (eq.obtained) {
+                    if (!setCompletion[eq.setName]) {
+                        setCompletion[eq.setName] = 0;
+                    }
+                    setCompletion[eq.setName]++;
+                }
+            }
+            
+            // 檢查是否有套裝已完成（4件）
+            for (const setName in setCompletion) {
+                if (setCompletion[setName] >= 4) {
+                    const titleId = `equipment_set_${setName}`;
+                    if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
+                        gameState.titles.unlocked.push(titleId);
+                        const titleData = TITLES_DATA[titleId];
+                        addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                        playSound('levelup');
+                    }
+                }
+            }
+            
+            // 檢查總收集稱號
+            if (totalObtained >= 16) {
+                const titleId = 'equipment_collector_half';
+                if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
+                    gameState.titles.unlocked.push(titleId);
+                    const titleData = TITLES_DATA[titleId];
+                    addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                    playSound('levelup');
+                }
+            }
+            
+            if (totalObtained >= 32) {
+                const titleId = 'equipment_collector_full';
+                if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
+                    gameState.titles.unlocked.push(titleId);
+                    const titleData = TITLES_DATA[titleId];
+                    addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                    playSound('levelup');
+                }
+            }
+        }
+        
+        // 檢查隨從收集稱號
+        function checkCompanionCodexTitles() {
+            const totalObtained = gameState.codex.stats.totalCompanionsObtained;
+            
+            const milestones = [
+                { count: 5, titleId: 'companion_collector_5' },
+                { count: 10, titleId: 'companion_collector_10' },
+                { count: 15, titleId: 'companion_collector_15' },
+                { count: 20, titleId: 'companion_collector_20' }
+            ];
+            
+            for (const milestone of milestones) {
+                if (totalObtained >= milestone.count) {
+                    const titleId = milestone.titleId;
+                    if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
+                        gameState.titles.unlocked.push(titleId);
+                        const titleData = TITLES_DATA[titleId];
+                        addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                        playSound('levelup');
+                    }
+                }
+            }
+        }
+        
+        // 檢查卡牌收集稱號
+        function checkCardCodexTitles() {
+            const totalObtained = gameState.codex.stats.totalCardsObtained;
+            
+            const milestones = [
+                { count: 10, titleId: 'card_collector_10' },
+                { count: 20, titleId: 'card_collector_20' },
+                { count: 30, titleId: 'card_collector_30' },
+                { count: 40, titleId: 'card_collector_40' }
+            ];
+            
+            for (const milestone of milestones) {
+                if (totalObtained >= milestone.count) {
+                    const titleId = milestone.titleId;
+                    if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
+                        gameState.titles.unlocked.push(titleId);
+                        const titleData = TITLES_DATA[titleId];
+                        addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                        playSound('levelup');
+                    }
+                }
             }
         }
         
@@ -16252,13 +17054,18 @@ const REGION_CONSUMABLES = {
         
         // ========== 每日任務UI函數 ==========
         function openTitlesModal() {
-            updateTitlesUI();
             document.getElementById('titles-modal').style.display = 'flex';
+            // 使用 setTimeout 確保 DOM 已經顯示
+            setTimeout(() => {
+                updateTitlesUI();
+            }, 0);
         }
         
         function closeTitlesModal() {
             document.getElementById('titles-modal').style.display = 'none';
         }
+        
+        let currentTitleCategory = 'all'; // 稱號分類狀態
         
         function switchTitleCategory(category) {
             currentTitleCategory = category;
@@ -16324,7 +17131,12 @@ const REGION_CONSUMABLES = {
             // 過濾稱號
             let titlesToShow = titlesArray;
             if (category !== 'all') {
-                titlesToShow = titlesArray.filter(t => t.category === category);
+                if (category === 'codex') {
+                    // 圖鑑類別包含所有 codex_ 開頭的稱號
+                    titlesToShow = titlesArray.filter(t => t.category && t.category.startsWith('codex_'));
+                } else {
+                    titlesToShow = titlesArray.filter(t => t.category === category);
+                }
             }
             
             let html = '';
@@ -17185,6 +17997,11 @@ const REGION_CONSUMABLES = {
             }
             
             const title = TITLES_DATA[titleId];
+            if (!title) {
+                console.error(`稱號 ${titleId} 不存在於 TITLES_DATA`);
+                alert('稱號數據錯誤！');
+                return;
+            }
             
             // 取消裝備
             if (gameState.titles.equipped === titleId) {
@@ -17206,7 +18023,9 @@ const REGION_CONSUMABLES = {
                 // 如果已有裝備的稱號，顯示更換訊息
                 if (gameState.titles.equipped) {
                     const currentTitle = TITLES_DATA[gameState.titles.equipped];
-                    confirmMessage = `是否要將稱號從「${currentTitle.name}」\n更換為「${title.name}」？`;
+                    if (currentTitle) {
+                        confirmMessage = `是否要將稱號從「${currentTitle.name}」\n更換為「${title.name}」？`;
+                    }
                 }
                 
                 if (confirm(confirmMessage)) {
@@ -17253,109 +18072,7 @@ const REGION_CONSUMABLES = {
             gameState.titleBonuses = bonus;
         }
         
-        // 打開稱號面板
-        function openTitlesModal() {
-            updateTitlesUI();
-            document.getElementById('titles-modal').style.display = 'flex';
-        }
-        
-        function closeTitlesModal() {
-            document.getElementById('titles-modal').style.display = 'none';
-        }
-        
-        // 更新稱號UI
-        function updateTitlesUI() {
-            const container = document.getElementById('titles-list');
-            if (!container) return;
-            
-            const unlocked = gameState.titles.unlocked || [];
-            const equipped = gameState.titles.equipped;
-            
-            // 統計
-            const totalTitles = Object.keys(TITLES_DATA).length;
-            const unlockedCount = unlocked.length;
-            
-            let html = '<div class="titles-header">';
-            html += `<div class="titles-stats">已解鎖：${unlockedCount}/${totalTitles}</div>`;
-            if (equipped) {
-                const equippedTitle = TITLES_DATA[equipped];
-                html += `<div class="titles-equipped">當前裝備：${equippedTitle.name}</div>`;
-            }
-            html += '</div>';
-            
-            // 分類顯示
-            const categories = {
-                combat: '⚔️ 戰鬥稱號',
-                collection: '📦 收集稱號',
-                exploration: '🗺️ 探索稱號',
-                achievement: '🏆 成就稱號',
-                special: '✨ 特殊稱號'
-            };
-            
-            for (const category in categories) {
-                html += `<div class="titles-category">`;
-                html += `<div class="titles-category-name">${categories[category]}</div>`;
-                html += `<div class="titles-grid">`;
-                
-                for (const titleId in TITLES_DATA) {
-                    const title = TITLES_DATA[titleId];
-                    if (title.category !== category) continue;
-                    
-                    const isUnlocked = unlocked.includes(titleId);
-                    const isEquipped = equipped === titleId;
-                    
-                    html += `<div class="title-card ${isUnlocked ? 'unlocked' : 'locked'} ${isEquipped ? 'equipped' : ''}" onclick="${isUnlocked ? `equipTitle('${titleId}')` : ''}">`;
-                    html += `<div class="title-name ${title.rarity}">${isUnlocked ? title.name : '???'}</div>`;
-                    html += `<div class="title-desc">${isUnlocked ? title.desc : '未解鎖'}</div>`;
-                    if (isUnlocked) {
-                        html += `<div class="title-bonus">${formatTitleBonus(title.bonus)}</div>`;
-                        if (isEquipped) {
-                            html += `<div class="title-equipped-badge">✅ 已裝備</div>`;
-                        } else {
-                            html += `<div class="title-equip-hint">點擊裝備</div>`;
-                        }
-                    } else {
-                        html += `<div class="title-condition">${formatTitleCondition(title.condition)}</div>`;
-                    }
-                    html += `</div>`;
-                }
-                
-                html += `</div></div>`;
-            }
-            
-            container.innerHTML = html;
-        }
-        
-        function formatTitleBonus(bonus) {
-            const parts = [];
-            if (bonus.atk) parts.push(`攻擊+${bonus.atk}%`);
-            if (bonus.def) parts.push(`防禦+${bonus.def}%`);
-            if (bonus.hp) parts.push(`生命+${bonus.hp}%`);
-            if (bonus.crit) parts.push(`暴擊率+${bonus.crit}%`);
-            if (bonus.critDmg) parts.push(`暴擊傷害+${bonus.critDmg}%`);
-            if (bonus.bossDmg) parts.push(`Boss傷害+${bonus.bossDmg}%`);
-            if (bonus.dmgRed) parts.push(`減傷+${bonus.dmgRed}%`);
-            if (bonus.lifeSteal) parts.push(`吸血+${bonus.lifeSteal}%`);
-            if (bonus.goldBonus) parts.push(`金幣+${bonus.goldBonus}%`);
-            if (bonus.expBonus) parts.push(`經驗+${bonus.expBonus}%`);
-            if (bonus.dropRate) parts.push(`掉落率+${bonus.dropRate}%`);
-            if (bonus.shardBonus) parts.push(`碎片+${bonus.shardBonus}%`);
-            return parts.join('、') || '無加成';
-        }
-        
-        function formatTitleCondition(condition) {
-            const typeNames = {
-                kills: '擊敗敵人',
-                elite_kills: '擊敗菁英',
-                boss_kills: '擊敗Boss',
-                items: '獲得裝備',
-                legendaryItems: '獲得傳說裝備',
-                level: '達到等級',
-                iterations: '完成迭代',
-                quests_completed: '完成任務'
-            };
-            return `${typeNames[condition.type] || condition.type}：${condition.value}`;
-        }
+
 
         // ========== 存檔系統 ==========
         function saveGame() {

@@ -994,6 +994,7 @@
                         <button onclick="openTalentsModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✨ 天賦</button>
                         <button onclick="openCompanionModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">🐾 隨從</button>
                         <button onclick="openCardModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎴 卡牌</button>
+                        <button onclick="openCodexModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);">📖 圖鑑</button>
                         <button onclick="openIterationModal()" id="quick-iteration-btn" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: none;">🔄 迭代</button>
                     </div>
                     
@@ -1793,6 +1794,41 @@
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="closeDailyQuestsModal()" style="flex: 1;">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 圖鑑模態視窗 -->
+    <div class="modal" id="codex-modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <h2>📖 圖鑑系統</h2>
+            
+            <!-- 分頁標籤 -->
+            <div style="display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 2px solid rgba(0, 217, 255, 0.3); padding-bottom: 10px;">
+                <button id="codex-tab-monsters" onclick="switchCodexTab('monsters')" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">👹 怪物</button>
+                <button id="codex-tab-equipment" onclick="switchCodexTab('equipment')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 8px; color: #7a8fb8; cursor: pointer;">🗡️ 裝備</button>
+                <button id="codex-tab-companions" onclick="switchCodexTab('companions')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 8px; color: #7a8fb8; cursor: pointer;">🐾 隨從</button>
+                <button id="codex-tab-cards" onclick="switchCodexTab('cards')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 8px; color: #7a8fb8; cursor: pointer;">🎴 卡牌</button>
+            </div>
+            
+            <!-- 總進度顯示 -->
+            <div id="codex-progress" style="background: rgba(0, 217, 255, 0.08); padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3); margin-bottom: 15px;">
+                <div style="color: #7a8fb8; font-size: 0.85rem; margin-bottom: 5px;">總進度</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div id="codex-progress-text" style="font-size: 1.1rem; font-weight: bold; color: #00d9ff;">0/0 (0%)</div>
+                    <div id="codex-progress-bar-container" style="flex: 1; margin-left: 15px; background: rgba(0, 0, 0, 0.3); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div id="codex-progress-bar" style="height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 內容區域 -->
+            <div id="codex-content" style="max-height: 500px; overflow-y: auto; padding: 10px;">
+                <!-- 內容將由 JavaScript 動態生成 -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="closeCodexModal()" style="flex: 1;">關閉</button>
             </div>
         </div>
     </div>
@@ -4625,6 +4661,24 @@ const REGION_CONSUMABLES = {
                     totalRuns: 0,          // 總挑戰次數
                     averageFloor: 0        // 平均層數
                 }
+            },
+            codex: {
+                monsters: {},      // 怪物圖鑑 {monsterName: {name, icon, region, type, killCount, firstKillTime, unlocked, rewardsCollected}}
+                equipment: {},     // 裝備圖鑑 {equipKey: {name, type, rarity, icon, obtained, firstObtainTime, obtainCount}}
+                companions: {},    // 隨從圖鑑 {companionId: {id, name, type, rarity, obtained, firstObtainTime}}
+                cards: {},         // 卡牌圖鑑 {cardId: {id, name, type, rarity, series, obtained, firstObtainTime}}
+                stats: {
+                    totalMonstersUnlocked: 0,
+                    totalEquipmentObtained: 0,
+                    totalCompanionsObtained: 0,
+                    totalCardsObtained: 0
+                },
+                rewardsCollected: {  // 已領取的進度獎勵
+                    monsters: [],    // [區域名稱]
+                    equipment: [],   // [5, 10, 15, 21]
+                    companions: [],  // [3, 6, 10, 13]
+                    cards: []        // [5, 10, 15, 20]
+                }
             }
         };
         // 迭代天賦系統
@@ -5353,6 +5407,9 @@ const REGION_CONSUMABLES = {
             
             // 初始化隨從系統（不再贈送初始隨從，由出生禮包提供）
             initCompanionSystem();
+            
+            // 初始化圖鑑系統
+            initCodexSystem();
             
             // 檢查每日任務重置
             // checkDailyReset(); // 已移除，副本系統有自己的重置邏輯
@@ -6574,6 +6631,7 @@ const REGION_CONSUMABLES = {
                 icons += suffix.icon;
             }
             
+            enemy.baseName = baseName;  // 保存基礎名稱供圖鑑使用
             enemy.name = newName;
             enemy.affixIcons = icons;
             enemy.prefix = prefix;
@@ -7996,6 +8054,9 @@ const REGION_CONSUMABLES = {
             updateQuestProgress('collect_gold', goldReward);
             updateQuestProgress('gain_exp', expReward);
             
+            // 記錄怪物圖鑑（使用基礎名稱，去除詞綴）
+            recordMonsterKill(enemy.name, enemy.baseName);
+            
             addLog('勝利', `擊敗了 ${enemy.name}！獲得 ${goldReward} 金幣、${expReward} 經驗`, enemy.isSpecialBoss);
                     // 恢復原始最大生命值
                     if (gameState.originalMaxHpBeforeCombat) { gameState.player.maxHp = gameState.originalMaxHpBeforeCombat; delete gameState.originalMaxHpBeforeCombat; }
@@ -8008,6 +8069,9 @@ const REGION_CONSUMABLES = {
                 const item = generateItem('boss');
                 if (item && addToInventory(item)) {
                     gameState.stats.items++;
+                    
+                    // 記錄裝備圖鑑
+                    recordEquipmentObtained(item);
                     
                     // 更新任務進度：獲得裝備
                     updateQuestProgress('collect_equipment', 1);
@@ -8063,6 +8127,9 @@ const REGION_CONSUMABLES = {
                     const item = generateItem(enemyType);
                     if (item && addToInventory(item)) {
                         gameState.stats.items++;
+                        
+                        // 記錄裝備圖鑑
+                        recordEquipmentObtained(item);
                         
                         // 更新任務進度：獲得裝備
                         updateQuestProgress('collect_equipment', 1);
@@ -9373,6 +9440,7 @@ const REGION_CONSUMABLES = {
                         id: Date.now() + Math.random(),
                         type: lootItem.type,
                         name: lootItem.name,
+                        region: region.name, // 添加區域資訊供圖鑑使用
                         rarity: rarity.name,
                         rarityLabel: rarity.label,
                         color: rarity.color,
@@ -11226,6 +11294,421 @@ const REGION_CONSUMABLES = {
             }
         }
 
+        // ========== 圖鑑系統 ==========
+        
+        // 初始化圖鑑系統
+        function initCodexSystem() {
+            if (!gameState.codex) {
+                gameState.codex = {
+                    monsters: {},
+                    equipment: {},
+                    companions: {},
+                    cards: {},
+                    stats: {
+                        totalMonstersUnlocked: 0,
+                        totalEquipmentObtained: 0,
+                        totalCompanionsObtained: 0,
+                        totalCardsObtained: 0
+                    },
+                    rewardsCollected: {
+                        monsters: [],
+                        equipment: [],
+                        companions: [],
+                        cards: []
+                    }
+                };
+            }
+            
+            // 初始化怪物圖鑑
+            initMonsterCodex();
+            // 初始化裝備圖鑑
+            initEquipmentCodex();
+            // 初始化隨從圖鑑
+            initCompanionCodex();
+            // 初始化卡牌圖鑑
+            initCardCodex();
+        }
+        
+        // 初始化怪物圖鑑
+        function initMonsterCodex() {
+            // 遍歷所有區域的普通怪物
+            for (const regionName in MONSTERS) {
+                const enemies = MONSTERS[regionName];
+                enemies.forEach(enemy => {
+                    if (!gameState.codex.monsters[enemy.name]) {
+                        gameState.codex.monsters[enemy.name] = {
+                            name: enemy.name,
+                            icon: enemy.icon,
+                            region: regionName,
+                            type: 'normal',
+                            killCount: 0,
+                            firstKillTime: null,
+                            unlocked: false,
+                            rewardsCollected: []
+                        };
+                    }
+                });
+            }
+            
+            // 遍歷所有Boss
+            for (const regionName in REGION_BOSSES) {
+                const boss = REGION_BOSSES[regionName];
+                if (!gameState.codex.monsters[boss.name]) {
+                    gameState.codex.monsters[boss.name] = {
+                        name: boss.name,
+                        icon: boss.icon,
+                        region: regionName,
+                        type: 'boss',
+                        killCount: 0,
+                        firstKillTime: null,
+                        unlocked: false,
+                        rewardsCollected: []
+                    };
+                }
+            }
+            
+            // 遍歷所有精英怪物
+            for (const regionName in ELITE_MONSTERS) {
+                const elites = ELITE_MONSTERS[regionName];
+                elites.forEach(elite => {
+                    if (!gameState.codex.monsters[elite.name]) {
+                        gameState.codex.monsters[elite.name] = {
+                            name: elite.name,
+                            icon: elite.icon,
+                            region: regionName,
+                            type: 'elite',
+                            killCount: 0,
+                            firstKillTime: null,
+                            unlocked: false,
+                            rewardsCollected: []
+                        };
+                    }
+                });
+            }
+        }
+        
+        // 初始化裝備圖鑑（只記錄套裝裝備）
+        function initEquipmentCodex() {
+            // 檢查是否需要重建（舊存檔相容）
+            const needsRebuild = Object.keys(gameState.codex.equipment).some(key => {
+                // 如果存在舊的結構，則需要重建
+                const rarities = ['common', 'uncommon', 'fine', 'rare', 'epic', 'legendary', 'mythic'];
+                const regions = ['入門開發層', '研發核心層', '資料裂縫', '深井臨界層'];
+                return rarities.some(rarity => key.includes(`_${rarity}`)) || 
+                       regions.some(region => key.includes(`_${region}`));
+            });
+            
+            if (needsRebuild) {
+                console.log('偵測到舊的裝備圖鑑結構，正在重建...');
+                gameState.codex.equipment = {};
+            }
+            
+            // 遍歷所有套裝裝備
+            for (const regionName in EQUIPMENT_SETS) {
+                const setData = EQUIPMENT_SETS[regionName];
+                setData.items.forEach(item => {
+                    const key = item.name; // 使用裝備名稱作為鍵值
+                    if (!gameState.codex.equipment[key]) {
+                        gameState.codex.equipment[key] = {
+                            name: item.name,
+                            type: item.type,
+                            region: regionName,
+                            setName: setData.setName,
+                            icon: item.type === 'weapon' ? '🗡️' : item.type === 'armor' ? '🛡️' : '💍',
+                            obtained: false,
+                            firstObtainTime: null,
+                            obtainCount: 0
+                        };
+                    }
+                });
+            }
+        }
+        
+        // 初始化隨從圖鑑
+        function initCompanionCodex() {
+            for (const companionId in COMPANIONS) {
+                const companion = COMPANIONS[companionId];
+                if (!gameState.codex.companions[companionId]) {
+                    gameState.codex.companions[companionId] = {
+                        id: companionId,
+                        name: companion.name,
+                        type: companion.type,
+                        rarity: companion.rarity,
+                        obtained: false,
+                        firstObtainTime: null
+                    };
+                }
+            }
+        }
+        
+        // 初始化卡牌圖鑑
+        function initCardCodex() {
+            for (const cardId in CARDS) {
+                const card = CARDS[cardId];
+                if (!gameState.codex.cards[cardId]) {
+                    gameState.codex.cards[cardId] = {
+                        id: cardId,
+                        name: card.name,
+                        type: card.type,
+                        rarity: card.rarity,
+                        series: card.series,
+                        obtained: false,
+                        firstObtainTime: null
+                    };
+                }
+            }
+        }
+        
+        // 記錄怪物擊殺
+        function recordMonsterKill(monsterName, baseName = null) {
+            if (!gameState.codex || !gameState.codex.monsters) {
+                initCodexSystem();
+            }
+            
+            // 優先使用基礎名稱（去除詞綴）
+            const nameToRecord = baseName || monsterName;
+            
+            const monster = gameState.codex.monsters[nameToRecord];
+            if (!monster) {
+                console.warn('圖鑑中找不到怪物：', nameToRecord, '（原始名稱：', monsterName, '）');
+                return;
+            }
+            
+            // 首次擊殺
+            if (!monster.unlocked) {
+                monster.unlocked = true;
+                monster.firstKillTime = Date.now();
+                gameState.codex.stats.totalMonstersUnlocked++;
+                addLog('圖鑑', `📖 解鎖怪物圖鑑：${monster.icon} ${monster.name}`);
+                playSound('levelup');
+            }
+            
+            // 增加擊殺數
+            monster.killCount++;
+            
+            // 檢查是否達到獎勵里程碑
+            const milestones = [10, 50, 100, 500, 1000];
+            milestones.forEach(milestone => {
+                if (monster.killCount === milestone && !monster.rewardsCollected.includes(milestone)) {
+                    addLog('圖鑑', `🎉 ${monster.name} 擊殺數達到 ${milestone} 次！可在圖鑑中領取獎勵！`);
+                    playSound('reward');
+                }
+            });
+            
+            saveGame();
+        }
+        
+        // 記錄裝備獲得（只記錄套裝裝備）
+        function recordEquipmentObtained(item) {
+            if (!gameState.codex || !gameState.codex.equipment) {
+                initCodexSystem();
+            }
+            
+            // 只記錄套裝裝備，使用裝備名稱作為鍵值
+            if (!item.setName) {
+                // 不是套裝裝備，不記錄
+                return;
+            }
+            
+            const key = item.name;
+            const equipment = gameState.codex.equipment[key];
+            
+            if (!equipment) {
+                console.warn('圖鑑中找不到裝備：', key, '（名稱：', item.name, '，套裝：', item.setName, '）');
+                return;
+            }
+            
+            // 首次獲得
+            if (!equipment.obtained) {
+                equipment.obtained = true;
+                equipment.firstObtainTime = Date.now();
+                gameState.codex.stats.totalEquipmentObtained++;
+                addLog('圖鑑', `📖 解鎖裝備圖鑑：${equipment.icon} ${equipment.name}`);
+            }
+            
+            equipment.obtainCount++;
+            saveGame();
+        }
+        
+        // 記錄隨從獲得
+        function recordCompanionObtained(companionId) {
+            if (!gameState.codex || !gameState.codex.companions) {
+                initCodexSystem();
+            }
+            
+            const companion = gameState.codex.companions[companionId];
+            if (!companion) {
+                console.warn('圖鑑中找不到隨從：', companionId);
+                return;
+            }
+            
+            // 首次獲得
+            if (!companion.obtained) {
+                companion.obtained = true;
+                companion.firstObtainTime = Date.now();
+                gameState.codex.stats.totalCompanionsObtained++;
+                addLog('圖鑑', `📖 解鎖隨從圖鑑：${companion.name}`);
+            }
+            
+            saveGame();
+        }
+        
+        // 記錄卡牌獲得
+        function recordCardObtained(cardId) {
+            if (!gameState.codex || !gameState.codex.cards) {
+                initCodexSystem();
+            }
+            
+            const card = gameState.codex.cards[cardId];
+            if (!card) {
+                console.warn('圖鑑中找不到卡牌：', cardId);
+                return;
+            }
+            
+            // 首次獲得
+            if (!card.obtained) {
+                card.obtained = true;
+                card.firstObtainTime = Date.now();
+                gameState.codex.stats.totalCardsObtained++;
+                addLog('圖鑑', `📖 解鎖卡牌圖鑑：${card.name}`);
+            }
+            
+            saveGame();
+        }
+        
+        // ========== 圖鑑獎勵系統 ==========
+        
+        // 獲取怪物擊殺獎勵
+        function getMonsterReward(monsterType, milestone) {
+            const rewards = {
+                normal: {
+                    10: { gold: 500, exp: 0, shards: 0, item: null, title: null },
+                    50: { gold: 2000, exp: 500, shards: 0, item: null, title: null },
+                    100: { gold: 5000, exp: 0, shards: 50, item: null, title: null },
+                    500: { gold: 20000, exp: 0, shards: 200, item: 'fine', title: null },
+                    1000: { gold: 50000, exp: 0, shards: 500, item: 'rare', title: 'monster_slayer' }
+                },
+                boss: {
+                    10: { gold: 2000, exp: 0, shards: 0, item: null, title: null },
+                    50: { gold: 5000, exp: 2000, shards: 0, item: null, title: null },
+                    100: { gold: 10000, exp: 0, shards: 200, item: null, title: null },
+                    500: { gold: 50000, exp: 0, shards: 500, item: 'rare', title: null },
+                    1000: { gold: 100000, exp: 0, shards: 1000, item: 'epic', title: 'boss_conqueror' }
+                },
+                elite: {
+                    10: { gold: 1000, exp: 0, shards: 0, item: null, title: null },
+                    50: { gold: 3000, exp: 1000, shards: 0, item: null, title: null },
+                    100: { gold: 7000, exp: 0, shards: 100, item: null, title: null },
+                    500: { gold: 30000, exp: 0, shards: 300, item: 'fine', title: null },
+                    1000: { gold: 70000, exp: 0, shards: 700, item: 'rare', title: 'elite_hunter' }
+                }
+            };
+            
+            return rewards[monsterType] ? rewards[monsterType][milestone] : rewards['normal'][milestone];
+        }
+        
+        // 領取怪物擊殺獎勵
+        function claimMonsterReward(monsterName, milestone) {
+            const monster = gameState.codex.monsters[monsterName];
+            
+            if (!monster) {
+                addLog('圖鑑', '❌ 怪物不存在');
+                return false;
+            }
+            
+            // 檢查是否達到里程碑
+            if (monster.killCount < milestone) {
+                addLog('圖鑑', `❌ 尚未達到 ${milestone} 次擊殺！（當前：${monster.killCount}）`);
+                return false;
+            }
+            
+            // 檢查是否已領取
+            if (monster.rewardsCollected.includes(milestone)) {
+                addLog('圖鑑', '❌ 該獎勵已領取過！');
+                return false;
+            }
+            
+            // 獲取獎勵
+            const reward = getMonsterReward(monster.type, milestone);
+            
+            // 發放金幣
+            if (reward.gold > 0) {
+                gameState.player.gold += reward.gold;
+                addLog('獎勵', `💰 獲得金幣 ${reward.gold}`);
+            }
+            
+            // 發放經驗
+            if (reward.exp > 0) {
+                gameState.player.exp += reward.exp;
+                addLog('獎勵', `⭐ 獲得經驗 ${reward.exp}`);
+            }
+            
+            // 發放碎片
+            if (reward.shards > 0) {
+                gameState.companions.shards += reward.shards;
+                addLog('獎勵', `💎 獲得隨從碎片 ${reward.shards}`);
+            }
+            
+            // 發放裝備
+            if (reward.item) {
+                const item = generateItem('normal', reward.item);
+                if (item && addToInventory(item)) {
+                    addLog('獎勵', `🎁 獲得 ${reward.item} 裝備：${item.name}`);
+                }
+            }
+            
+            // 發放稱號
+            if (reward.title) {
+                unlockCodexTitle(reward.title, monsterName);
+            }
+            
+            // 記錄已領取
+            monster.rewardsCollected.push(milestone);
+            
+            addLog('圖鑑', `✅ 成功領取 ${monster.name} ${milestone}殺獎勵！`);
+            playSound('reward');
+            saveGame();
+            updateUI();
+            
+            return true;
+        }
+        
+        // 解鎖圖鑑稱號
+        function unlockCodexTitle(titleType, monsterName) {
+            let titleId, titleName, titleEffect;
+            
+            if (titleType === 'monster_slayer') {
+                titleId = `slayer_${monsterName}`;
+                titleName = `${monsterName}剋星`;
+                titleEffect = { type: 'monster_damage', target: monsterName, value: 5 };
+            } else if (titleType === 'boss_conqueror') {
+                titleId = `conqueror_${monsterName}`;
+                titleName = `${monsterName}征服者`;
+                titleEffect = { type: 'boss_damage', target: monsterName, value: 10, goldBonus: 5 };
+            }
+            
+            if (!gameState.titles.unlocked.includes(titleId)) {
+                gameState.titles.unlocked.push(titleId);
+                addLog('稱號', `🏆 解鎖稱號：${titleName}！`);
+                playSound('levelup');
+            }
+        }
+        
+        // 獲取圖鑑進度
+        function getCodexProgress(category) {
+            const codex = gameState.codex[category];
+            const total = Object.keys(codex).length;
+            const unlocked = Object.values(codex).filter(item => 
+                category === 'monsters' ? item.unlocked : item.obtained
+            ).length;
+            
+            return {
+                unlocked: unlocked,
+                total: total,
+                percentage: (unlocked / total * 100).toFixed(1)
+            };
+        }
+        
         // 獲取隨從
         function obtainCompanion(companionId) {
             initCompanionSystem();
@@ -11249,6 +11732,10 @@ const REGION_CONSUMABLES = {
                 exp: 0,
                 expToNext: 100
             });
+            
+            // 記錄隨從圖鑑
+            recordCompanionObtained(companionId);
+            
             addLog('隨從', `🎉 獲得新隨從：${companion.name}！`);
             playSound('levelup');
             saveGame();
@@ -12543,6 +13030,10 @@ const REGION_CONSUMABLES = {
             
             gameState.cards.collection.push(newCard);
             gameState.cards.stats.totalCardsObtained++;
+            
+            // 記錄卡牌圖鑑
+            recordCardObtained(card.id);
+            
             const rarityColor = getRarityColor(card.rarity);
             const rarityObj = RARITIES.find(r => r.name === card.rarity);
             const rarityLabel = rarityObj ? rarityObj.label : card.rarity;
@@ -15253,6 +15744,388 @@ const REGION_CONSUMABLES = {
             document.getElementById('talents-modal').style.display = 'none';
         }
         
+        // ========== 圖鑑UI函數 ==========
+        
+        let currentCodexTab = 'monsters';
+        
+        function openCodexModal() {
+            // 確保圖鑑系統已初始化
+            if (!gameState.codex || Object.keys(gameState.codex.monsters).length === 0) {
+                initCodexSystem();
+            }
+            
+            currentCodexTab = 'monsters';
+            switchCodexTab('monsters');
+            document.getElementById('codex-modal').style.display = 'flex';
+        }
+        
+        function closeCodexModal() {
+            document.getElementById('codex-modal').style.display = 'none';
+        }
+        
+        function switchCodexTab(tab) {
+            currentCodexTab = tab;
+            
+            // 更新標籤樣式
+            const tabs = ['monsters', 'equipment', 'companions', 'cards'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`codex-tab-${t}`);
+                if (t === tab) {
+                    btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    btn.style.color = 'white';
+                    btn.style.fontWeight = 'bold';
+                } else {
+                    btn.style.background = 'rgba(255, 255, 255, 0.1)';
+                    btn.style.color = '#7a8fb8';
+                    btn.style.fontWeight = 'normal';
+                }
+            });
+            
+            // 更新進度
+            updateCodexProgress(tab);
+            
+            // 更新內容
+            if (tab === 'monsters') {
+                renderMonstersCodex();
+            } else if (tab === 'equipment') {
+                renderEquipmentCodex();
+            } else if (tab === 'companions') {
+                renderCompanionsCodex();
+            } else if (tab === 'cards') {
+                renderCardsCodex();
+            }
+        }
+        
+        function updateCodexProgress(category) {
+            const progress = getCodexProgress(category);
+            document.getElementById('codex-progress-text').textContent = `${progress.unlocked}/${progress.total} (${progress.percentage}%)`;
+            document.getElementById('codex-progress-bar').style.width = `${progress.percentage}%`;
+        }
+        
+        function renderMonstersCodex() {
+            const content = document.getElementById('codex-content');
+            let html = '';
+            
+            // 按區域分組
+            const regions = {};
+            for (const monsterName in gameState.codex.monsters) {
+                const monster = gameState.codex.monsters[monsterName];
+                if (!regions[monster.region]) {
+                    regions[monster.region] = [];
+                }
+                regions[monster.region].push(monster);
+            }
+            
+            // 渲染每個區域
+            for (const regionName in regions) {
+                const monsters = regions[regionName];
+                const regionProgress = monsters.filter(m => m.unlocked).length;
+                const regionTotal = monsters.length;
+                
+                html += `
+                    <div style="background: rgba(0, 217, 255, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2); margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="color: #00d9ff; margin: 0;">${regionName}</h3>
+                            <span style="color: #7a8fb8; font-size: 0.9rem;">${regionProgress}/${regionTotal}</span>
+                        </div>
+                `;
+                
+                // 渲染怪物
+                monsters.forEach(monster => {
+                    const unlocked = monster.unlocked;
+                    const isBoss = monster.type === 'boss';
+                    const isElite = monster.type === 'elite';
+                    let bgColor, borderColor;
+                    if (isBoss) {
+                        bgColor = 'rgba(255, 0, 0, 0.1)';
+                        borderColor = 'rgba(255, 0, 0, 0.3)';
+                    } else if (isElite) {
+                        bgColor = 'rgba(255, 165, 0, 0.1)';
+                        borderColor = 'rgba(255, 165, 0, 0.3)';
+                    } else {
+                        bgColor = 'rgba(255, 255, 255, 0.05)';
+                        borderColor = 'rgba(255, 255, 255, 0.1)';
+                    }
+                    
+                    html += `
+                        <div style="background: ${bgColor}; padding: 10px; border-radius: 6px; border: 1px solid ${borderColor}; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: bold; color: ${unlocked ? '#00d9ff' : '#555'}; margin-bottom: 5px;">
+                                        ${monster.icon} ${unlocked ? monster.name : '???'}
+                                        ${isBoss ? '<span style="color: #ff4444; font-size: 0.8rem; margin-left: 5px;">[BOSS]</span>' : ''}
+                                        ${isElite ? '<span style="color: #ffa500; font-size: 0.8rem; margin-left: 5px;">[精英]</span>' : ''}
+                                    </div>
+                                    ${unlocked ? `
+                                        <div style="color: #7a8fb8; font-size: 0.85rem;">
+                                            擊殺數：<span style="color: #00d9ff; font-weight: bold;">${monster.killCount}</span> 次
+                                        </div>
+                                        <div style="margin-top: 8px;">
+                                            ${renderMonsterRewards(monster)}
+                                        </div>
+                                    ` : `
+                                        <div style="color: #555; font-size: 0.85rem;">尚未解鎖</div>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            }
+            
+            content.innerHTML = html;
+        }
+        
+        function renderMonsterRewards(monster) {
+            const milestones = [10, 50, 100, 500, 1000];
+            let html = '<div style="display: flex; gap: 5px; flex-wrap: wrap;">';
+            
+            milestones.forEach(milestone => {
+                const reached = monster.killCount >= milestone;
+                const collected = monster.rewardsCollected.includes(milestone);
+                const reward = getMonsterReward(monster.type, milestone);
+                
+                let btnStyle = '';
+                let btnText = '';
+                let btnOnclick = '';
+                
+                if (collected) {
+                    btnStyle = 'background: rgba(0, 255, 0, 0.2); color: #4CAF50; border: 1px solid rgba(0, 255, 0, 0.3); cursor: default;';
+                    btnText = `✅ ${milestone}`;
+                    btnOnclick = '';
+                } else if (reached) {
+                    btnStyle = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; cursor: pointer;';
+                    btnText = `🎁 ${milestone}`;
+                    btnOnclick = `onclick="claimMonsterReward('${monster.name}', ${milestone}); renderMonstersCodex();"`;
+                } else {
+                    btnStyle = 'background: rgba(255, 255, 255, 0.05); color: #555; border: 1px solid rgba(255, 255, 255, 0.1); cursor: default;';
+                    btnText = `🔒 ${milestone}`;
+                    btnOnclick = '';
+                }
+                
+                let rewardText = [];
+                if (reward.gold > 0) rewardText.push(`💰${reward.gold}`);
+                if (reward.exp > 0) rewardText.push(`⭐${reward.exp}`);
+                if (reward.shards > 0) rewardText.push(`💎${reward.shards}`);
+                if (reward.item) rewardText.push(`🎁${reward.item}`);
+                if (reward.title) rewardText.push(`🏆稱號`);
+                
+                html += `
+                    <button ${btnOnclick} style="padding: 6px 10px; border-radius: 5px; font-size: 0.8rem; ${btnStyle}" title="${rewardText.join(', ')}">
+                        ${btnText}
+                    </button>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function renderEquipmentCodex() {
+            const content = document.getElementById('codex-content');
+            let html = '';
+            
+            // 按區域分組顯示套裝裝備
+            const regions = ['入門開發層', '研發核心層', '資料裂縫', '深井臨界層'];
+            
+            regions.forEach(regionName => {
+                // 獲取該區域的所有裝備
+                const regionEquipment = Object.values(gameState.codex.equipment).filter(e => e.region === regionName);
+                
+                if (regionEquipment.length === 0) return;
+                
+                const obtainedCount = regionEquipment.filter(e => e.obtained).length;
+                const totalCount = regionEquipment.length;
+                const setName = regionEquipment[0].setName;
+                
+                html += `
+                    <div style="background: rgba(0, 217, 255, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2); margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div>
+                                <h3 style="color: #00d9ff; margin: 0;">🎯 ${regionName}</h3>
+                                <div style="color: #7a8fb8; font-size: 0.8rem; margin-top: 2px;">${setName}</div>
+                            </div>
+                            <span style="color: #7a8fb8; font-size: 0.9rem;">${obtainedCount}/${totalCount}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
+                `;
+                
+                regionEquipment.forEach(equipment => {
+                    const obtained = equipment.obtained;
+                    
+                    html += `
+                        <div style="background: ${obtained ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.3)'}; padding: 8px; border-radius: 6px; border: 1px solid ${obtained ? 'rgba(0, 217, 255, 0.4)' : 'rgba(255, 255, 255, 0.1)'}; text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">${equipment.icon}</div>
+                            <div style="font-size: 0.85rem; color: ${obtained ? '#00d9ff' : '#555'}; font-weight: bold;">
+                                ${obtained ? equipment.name : '???'}
+                            </div>
+                            ${obtained ? `
+                                <div style="font-size: 0.75rem; color: #7a8fb8; margin-top: 3px;">
+                                    獲得 ${equipment.obtainCount} 次
+                                </div>
+                            ` : `
+                                <div style="font-size: 0.75rem; color: #555; margin-top: 3px;">尚未獲得</div>
+                            `}
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+        
+        function renderCompanionsCodex() {
+            const content = document.getElementById('codex-content');
+            let html = '';
+            
+            // 按類型分組
+            const typeGroups = {
+                'attack': { name: '攻擊型', icon: '⚔️', companions: [] },
+                'defense': { name: '防禦型', icon: '🛡️', companions: [] },
+                'heal': { name: '恢復型', icon: '❤️', companions: [] },
+                'balance': { name: '平衡型', icon: '⚖️', companions: [] }
+            };
+            
+            // 分組隨從
+            for (const companionId in gameState.codex.companions) {
+                const companion = gameState.codex.companions[companionId];
+                const companionData = COMPANIONS[companionId];
+                if (companionData && typeGroups[companionData.type]) {
+                    typeGroups[companionData.type].companions.push({ ...companion, data: companionData });
+                }
+            }
+            
+            // 渲染每個類型
+            for (const typeKey in typeGroups) {
+                const group = typeGroups[typeKey];
+                if (group.companions.length === 0) continue;
+                
+                const obtainedCount = group.companions.filter(c => c.obtained).length;
+                const totalCount = group.companions.length;
+                
+                html += `
+                    <div style="background: rgba(0, 217, 255, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2); margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="color: #00d9ff; margin: 0;">${group.icon} ${group.name}</h3>
+                            <span style="color: #7a8fb8; font-size: 0.9rem;">${obtainedCount}/${totalCount}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                `;
+                
+                group.companions.forEach(companion => {
+                    const obtained = companion.obtained;
+                    const rarityColor = getRarityColor(companion.rarity);
+                    
+                    html += `
+                        <div style="background: ${obtained ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.3)'}; padding: 10px; border-radius: 6px; border: 1px solid ${obtained ? rarityColor : 'rgba(255, 255, 255, 0.1)'};">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="font-size: 2rem;">${obtained ? companion.data.icon : '❓'}</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: bold; color: ${obtained ? rarityColor : '#555'}; margin-bottom: 3px;">
+                                        ${obtained ? companion.name : '???'}
+                                    </div>
+                                    ${obtained ? `
+                                        <div style="font-size: 0.75rem; color: #7a8fb8;">
+                                            ${companion.data.description}
+                                        </div>
+                                    ` : `
+                                        <div style="font-size: 0.75rem; color: #555;">尚未獲得</div>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (html === '') {
+                html = '<div style="color: #7a8fb8; text-align: center; padding: 20px;">沒有隨從數據</div>';
+            }
+            content.innerHTML = html;
+        }
+        
+        function renderCardsCodex() {
+            const content = document.getElementById('codex-content');
+            let html = '';
+            
+            // 按系列分組
+            const seriesGroups = {};
+            
+            for (const cardId in gameState.codex.cards) {
+                const card = gameState.codex.cards[cardId];
+                const cardData = CARDS[cardId];
+                if (!cardData) continue;
+                
+                const series = cardData.series || '其他';
+                if (!seriesGroups[series]) {
+                    seriesGroups[series] = [];
+                }
+                seriesGroups[series].push({ ...card, data: cardData });
+            }
+            
+            // 渲染每個系列
+            for (const series in seriesGroups) {
+                const cards = seriesGroups[series];
+                const obtainedCount = cards.filter(c => c.obtained).length;
+                const totalCount = cards.length;
+                
+                html += `
+                    <div style="background: rgba(0, 217, 255, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2); margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="color: #00d9ff; margin: 0;">🎴 ${series}系列</h3>
+                            <span style="color: #7a8fb8; font-size: 0.9rem;">${obtainedCount}/${totalCount}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
+                `;
+                
+                cards.forEach(card => {
+                    const obtained = card.obtained;
+                    const rarityColor = getRarityColor(card.rarity);
+                    
+                    html += `
+                        <div style="background: ${obtained ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.3)'}; padding: 10px; border-radius: 6px; border: 1px solid ${obtained ? rarityColor : 'rgba(255, 255, 255, 0.1)'};">
+                            <div style="text-align: center; margin-bottom: 5px;">
+                                <div style="font-size: 2rem;">${obtained ? card.data.icon : '❓'}</div>
+                            </div>
+                            <div style="font-weight: bold; color: ${obtained ? rarityColor : '#555'}; text-align: center; margin-bottom: 5px;">
+                                ${obtained ? card.name : '???'}
+                            </div>
+                            ${obtained ? `
+                                <div style="font-size: 0.75rem; color: #7a8fb8; text-align: center;">
+                                    ${card.data.description}
+                                </div>
+                            ` : `
+                                <div style="font-size: 0.75rem; color: #555; text-align: center;">尚未獲得</div>
+                            `}
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (html === '') {
+                html = '<div style="color: #7a8fb8; text-align: center; padding: 20px;">沒有卡牌數據</div>';
+            }
+            
+            content.innerHTML = html;
+        }
+        
         // ========== 每日任務UI函數 ==========
         function openTitlesModal() {
             updateTitlesUI();
@@ -16652,6 +17525,9 @@ const REGION_CONSUMABLES = {
                 
                 // 修復舊存檔中沒有quantity的藥水
                 fixLegacyConsumables();
+                
+                // 初始化圖鑑系統（確保舊存檔相容）
+                initCodexSystem();
                 
                 // 離線體力恢復計算
                 const now = Date.now();

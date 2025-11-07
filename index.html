@@ -17118,8 +17118,21 @@ const REGION_CONSUMABLES = {
 
         // ========== 寵物系統函數 ==========
         
+        // 初始化寵物系統
+        function initPetSystem() {
+            if (!gameState.pets) {
+                gameState.pets = {
+                    collection: [],
+                    eggs: [],
+                    equipped: null,
+                    discovered: []
+                };
+            }
+        }
+        
         // 孵化寵物蛋
         function hatchPetEgg(eggIndex) {
+            initPetSystem();
             if (!gameState.pets.eggs[eggIndex]) {
                 addLog('寵物', '❓ 寵物蛋不存在');
                 return false;
@@ -17195,6 +17208,7 @@ const REGION_CONSUMABLES = {
         
         // 裝備寵物
         function equipPet(instanceId) {
+            initPetSystem();
             const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
             if (!pet) {
                 addLog('寵物', '❓ 寵物不存在');
@@ -17211,6 +17225,7 @@ const REGION_CONSUMABLES = {
         
         // 卸下寵物
         function unequipPet() {
+            initPetSystem();
             if (!gameState.pets.equipped) {
                 addLog('寵物', '❓ 沒有裝備寵物');
                 return false;
@@ -17226,6 +17241,7 @@ const REGION_CONSUMABLES = {
         
         // 寵物獲得經驗
         function addPetExp(instanceId, expAmount) {
+            initPetSystem();
             const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
             if (!pet) return false;
             
@@ -17257,6 +17273,7 @@ const REGION_CONSUMABLES = {
         
         // 進化寵物
         function evolvePet(instanceId) {
+            initPetSystem();
             const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
             if (!pet) {
                 addLog('寵物', '❓ 寵物不存在');
@@ -17342,6 +17359,7 @@ const REGION_CONSUMABLES = {
         
         // 覺醒寵物
         function awakenPet(instanceId) {
+            initPetSystem();
             const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
             if (!pet) {
                 addLog('寵物', '❓ 寵物不存在');
@@ -17427,6 +17445,7 @@ const REGION_CONSUMABLES = {
         
         // 獲取裝備的寵物
         function getEquippedPet() {
+            initPetSystem();
             if (!gameState.pets.equipped) return null;
             return gameState.pets.collection.find(p => p.instanceId === gameState.pets.equipped);
         }

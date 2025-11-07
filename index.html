@@ -1001,6 +1001,7 @@
                         <button onclick="openDailyQuestsModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">📋 任務</button>
                         <button onclick="openTalentsModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✨ 天賦</button>
                         <button onclick="openCompanionModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">🐾 隨從</button>
+                        <button onclick="openPetModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🐲 寵物</button>
                         <button onclick="openCardModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎴 卡牌</button>
                         <button onclick="openCodexModal()" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);">📖 圖鑑</button>
                         <button onclick="openIterationModal()" id="quick-iteration-btn" style="flex: 1; min-width: 80px; padding: 8px; font-size: 0.9rem; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: none;">🔄 迭代</button>
@@ -2139,6 +2140,98 @@
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="closeCompanionModal()" style="flex: 1;">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 寵物管理模態視窗 -->
+    <div class="modal" id="pet-modal">
+        <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <h2>🐲 寵物系統</h2>
+            
+            <!-- 當前裝備的寵物 -->
+            <div id="equipped-pet-display" style="background: rgba(250, 112, 154, 0.1); padding: 15px; border-radius: 8px; border: 2px solid rgba(250, 112, 154, 0.3); margin-bottom: 20px;">
+                <h3 style="color: #fa709a; margin: 0 0 10px 0;">✅ 當前裝備的寵物</h3>
+                <div id="equipped-pet-info" style="color: #7a8fb8;">
+                    無
+                </div>
+            </div>
+            
+            <!-- 分頁標籤 -->
+            <div style="display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 2px solid rgba(250, 112, 154, 0.3); padding-bottom: 10px;">
+                <button id="pet-tab-eggs" onclick="switchPetTab('eggs')" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">🥚 寵物蛋</button>
+                <button id="pet-tab-collection" onclick="switchPetTab('collection')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 8px; color: #7a8fb8; cursor: pointer;">🐾 寵物收藏</button>
+                <button id="pet-tab-materials" onclick="switchPetTab('materials')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 8px; color: #7a8fb8; cursor: pointer;">📎 材料</button>
+            </div>
+            
+            <!-- 寵物蛋頁面 -->
+            <div id="pet-eggs-content" style="display: block;">
+                <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 15px;">
+                    <p style="color: #ffd700; margin: 0; font-size: 0.9rem;">💡 在第3和第4區域擊殺怪物有機率掉落寵物蛋！</p>
+                </div>
+                <div id="pet-eggs-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                    <!-- 寵物蛋列表將由 JavaScript 生成 -->
+                </div>
+            </div>
+            
+            <!-- 寵物收藏頁面 -->
+            <div id="pet-collection-content" style="display: none;">
+                <div id="pet-collection-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px;">
+                    <!-- 寵物列表將由 JavaScript 生成 -->
+                </div>
+            </div>
+            
+            <!-- 材料頁面 -->
+            <div id="pet-materials-content" style="display: none;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                    <!-- 進化石 -->
+                    <div style="background: rgba(138, 43, 226, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(138, 43, 226, 0.3);">
+                        <div style="font-size: 1.2rem; margin-bottom: 8px;">💎 進化石</div>
+                        <div style="color: #7a8fb8; font-size: 0.85rem; margin-bottom: 10px;">用於寵物進化</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #8a2be2;" id="evolution-stone-count">0</div>
+                    </div>
+                    
+                    <!-- 永恆之源 -->
+                    <div style="background: rgba(224, 64, 251, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(224, 64, 251, 0.3);">
+                        <div style="font-size: 1.2rem; margin-bottom: 8px;">⭐ 永恆之源</div>
+                        <div style="color: #7a8fb8; font-size: 0.85rem; margin-bottom: 10px;">用於寵物覺醒</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #e040fb;" id="eternal-source-count">0</div>
+                    </div>
+                    
+                    <!-- 龍族碎片 -->
+                    <div style="background: rgba(255, 69, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 69, 0, 0.3);">
+                        <div style="font-size: 1.2rem; margin-bottom: 8px;">🐉 龍族碎片</div>
+                        <div style="color: #7a8fb8; font-size: 0.85rem; margin-bottom: 10px;">龍族寵物專用</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #ff4500;" id="dragon-shards-count">0</div>
+                    </div>
+                    
+                    <!-- 機械族碎片 -->
+                    <div style="background: rgba(70, 130, 180, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(70, 130, 180, 0.3);">
+                        <div style="font-size: 1.2rem; margin-bottom: 8px;">🤖 機械族碎片</div>
+                        <div style="color: #7a8fb8; font-size: 0.85rem; margin-bottom: 10px;">機械族寵物專用</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #4682b4;" id="mecha-shards-count">0</div>
+                    </div>
+                    
+                    <!-- 虛空族碎片 -->
+                    <div style="background: rgba(75, 0, 130, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(75, 0, 130, 0.3);">
+                        <div style="font-size: 1.2rem; margin-bottom: 8px;">👁️ 虛空族碎片</div>
+                        <div style="color: #7a8fb8; font-size: 0.85rem; margin-bottom: 10px;">虛空族寵物專用</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #4b0082;" id="void-shards-count">0</div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-top: 20px;">
+                    <h4 style="color: #ffd700; margin: 0 0 10px 0;">📎 材料獲得方式</h4>
+                    <ul style="color: #7a8fb8; margin: 0; padding-left: 20px; font-size: 0.9rem;">
+                        <li>💎 進化石：擊殺 Boss 有機率掉落</li>
+                        <li>⭐ 永恆之源：第4區域 Boss 有機率掉落</li>
+                        <li>🐾 寵物碎片：分解重複寵物或寵物蛋獲得</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closePetModal()" style="flex: 1;">關閉</button>
             </div>
         </div>
     </div>
@@ -5045,6 +5138,385 @@ const REGION_CONSUMABLES = {
             }
         };
 
+        // ========== 寵物系統 ==========
+        // 寵物定義
+        const PETS = {
+            // 龍族
+            drake_hatchling: {
+                id: 'drake_hatchling',
+                name: '幼龍',
+                family: 'dragon',
+                stage: 1,
+                rarity: 'epic',
+                icon: '🐲',
+                description: '剛孵化的幼龍，擁有火焰的力量',
+                baseStats: { atk: 50, def: 20, hp: 200 },
+                growthRate: { atk: 3, def: 1.5, hp: 12 },
+                skills: [
+                    {
+                        id: 'spark',
+                        name: '小火花',
+                        chance: 0.4,
+                        description: '噴出小火花攻擊敵人',
+                        effect: { type: 'damage', multiplier: 1.2, element: 'fire', burnChance: 0.15 }
+                    }
+                ],
+                evolution: {
+                    nextStage: 'wyvern',
+                    requiredLevel: 30,
+                    materials: { evolutionStone: 50, petShards: 20 }
+                }
+            },
+            wyvern: {
+                id: 'wyvern',
+                name: '飛龍',
+                family: 'dragon',
+                stage: 2,
+                rarity: 'legendary',
+                icon: '🐉',
+                description: '成長後的飛龍，火焰更加強大',
+                baseStats: { atk: 120, def: 50, hp: 500 },
+                growthRate: { atk: 5, def: 2.5, hp: 20 },
+                skills: [
+                    {
+                        id: 'flame_burst',
+                        name: '烈焰噴射',
+                        chance: 0.35,
+                        description: '噴出強力烈焰',
+                        effect: { type: 'damage', multiplier: 1.8, element: 'fire', burnChance: 0.3 }
+                    },
+                    {
+                        id: 'dragon_roar',
+                        name: '龍之咆哮',
+                        chance: 0.2,
+                        description: '咆哮削弱敵人',
+                        effect: { type: 'debuff', stat: 'atk', value: 0.1, duration: 3 }
+                    }
+                ],
+                evolution: {
+                    nextStage: 'elder_dragon',
+                    requiredLevel: 60,
+                    materials: { evolutionStone: 200, petShards: 100 }
+                }
+            },
+            elder_dragon: {
+                id: 'elder_dragon',
+                name: '巨龍',
+                family: 'dragon',
+                stage: 3,
+                rarity: 'mythic',
+                icon: '🔥',
+                description: '古老而強大的巨龍',
+                baseStats: { atk: 300, def: 120, hp: 1200 },
+                growthRate: { atk: 8, def: 4, hp: 35 },
+                skills: [
+                    {
+                        id: 'inferno_sea',
+                        name: '煉獄火海',
+                        chance: 0.3,
+                        description: '對全體敵人造成火焰傷害',
+                        effect: { type: 'aoe_damage', multiplier: 1.5, element: 'fire', burnChance: 0.5 }
+                    },
+                    {
+                        id: 'ancient_majesty',
+                        name: '上古龍威',
+                        chance: 0.25,
+                        description: '威壓削弱敵人防禦',
+                        effect: { type: 'debuff', stat: 'def', value: 0.2, duration: 3, stunChance: 0.3 }
+                    }
+                ],
+                awakening: {
+                    nextStage: 'dragon_god',
+                    requiredLevel: 90,
+                    materials: { eternalSource: 1, petShards: 500 }
+                }
+            },
+            dragon_god: {
+                id: 'dragon_god',
+                name: '龍神',
+                family: 'dragon',
+                stage: 4,
+                rarity: 'eternal',
+                icon: '⭐',
+                description: '超越凡龍的神聖存在',
+                baseStats: { atk: 600, def: 250, hp: 2500 },
+                growthRate: { atk: 12, def: 6, hp: 50 },
+                skills: [
+                    {
+                        id: 'inferno_sea',
+                        name: '煉獄火海',
+                        chance: 0.3,
+                        description: '對全體敵人造成火焰傷害',
+                        effect: { type: 'aoe_damage', multiplier: 1.5, element: 'fire', burnChance: 0.5 }
+                    },
+                    {
+                        id: 'ancient_majesty',
+                        name: '上古龍威',
+                        chance: 0.25,
+                        description: '威壓削弱敵人防禦',
+                        effect: { type: 'debuff', stat: 'def', value: 0.2, duration: 3, stunChance: 0.3 }
+                    },
+                    {
+                        id: 'celestial_annihilation',
+                        name: '星辰寂滅',
+                        chance: 0.15,
+                        description: '永恆技能：造成真實傷害並清除增益',
+                        effect: { type: 'true_damage', multiplier: 3.0, clearBuffs: true }
+                    }
+                ]
+            },
+            
+            // 機械族
+            scout_drone: {
+                id: 'scout_drone',
+                name: '偵察機兵',
+                family: 'mecha',
+                stage: 1,
+                rarity: 'epic',
+                icon: '🤖',
+                description: '小型偵察無人機',
+                baseStats: { atk: 60, def: 15, hp: 150 },
+                growthRate: { atk: 3.5, def: 1, hp: 10 },
+                skills: [
+                    {
+                        id: 'laser_shot',
+                        name: '激光射擊',
+                        chance: 0.45,
+                        description: '發射精準激光',
+                        effect: { type: 'damage', multiplier: 1.3, element: 'tech' }
+                    }
+                ],
+                evolution: {
+                    nextStage: 'assault_mech',
+                    requiredLevel: 30,
+                    materials: { evolutionStone: 50, petShards: 20 }
+                }
+            },
+            assault_mech: {
+                id: 'assault_mech',
+                name: '重裝機甲',
+                family: 'mecha',
+                stage: 2,
+                rarity: 'legendary',
+                icon: '🦾',
+                description: '配備重型武器的機甲',
+                baseStats: { atk: 140, def: 40, hp: 400 },
+                growthRate: { atk: 6, def: 2, hp: 18 },
+                skills: [
+                    {
+                        id: 'gatling_fire',
+                        name: '加特林掃射',
+                        chance: 0.35,
+                        description: '高速連射',
+                        effect: { type: 'multi_hit', hits: 3, multiplier: 0.7, element: 'tech' }
+                    },
+                    {
+                        id: 'missile_barrage',
+                        name: '導彈齊射',
+                        chance: 0.25,
+                        description: '發射多枚導彈',
+                        effect: { type: 'aoe_damage', multiplier: 1.4, element: 'tech' }
+                    }
+                ],
+                evolution: {
+                    nextStage: 'fortress_golem',
+                    requiredLevel: 60,
+                    materials: { evolutionStone: 200, petShards: 100 }
+                }
+            },
+            fortress_golem: {
+                id: 'fortress_golem',
+                name: '要塞堡壘',
+                family: 'mecha',
+                stage: 3,
+                rarity: 'mythic',
+                icon: '🏰',
+                description: '移動要塞，火力強大',
+                baseStats: { atk: 280, def: 150, hp: 1500 },
+                growthRate: { atk: 7, def: 5, hp: 40 },
+                skills: [
+                    {
+                        id: 'artillery_strike',
+                        name: '炮火打擊',
+                        chance: 0.3,
+                        description: '重型炮火轟擊',
+                        effect: { type: 'aoe_damage', multiplier: 1.8, element: 'tech' }
+                    },
+                    {
+                        id: 'shield_generator',
+                        name: '護盾生成',
+                        chance: 0.25,
+                        description: '為自己生成護盾',
+                        effect: { type: 'shield', value: 0.3, duration: 2 }
+                    }
+                ],
+                awakening: {
+                    nextStage: 'genesis_core',
+                    requiredLevel: 90,
+                    materials: { eternalSource: 1, petShards: 500 }
+                }
+            },
+            genesis_core: {
+                id: 'genesis_core',
+                name: '創世核心',
+                family: 'mecha',
+                stage: 4,
+                rarity: 'eternal',
+                icon: '💠',
+                description: '終極機械核心',
+                baseStats: { atk: 550, def: 300, hp: 3000 },
+                growthRate: { atk: 10, def: 8, hp: 60 },
+                skills: [
+                    {
+                        id: 'artillery_strike',
+                        name: '炮火打擊',
+                        chance: 0.3,
+                        description: '重型炮火轟擊',
+                        effect: { type: 'aoe_damage', multiplier: 1.8, element: 'tech' }
+                    },
+                    {
+                        id: 'shield_generator',
+                        name: '護盾生成',
+                        chance: 0.25,
+                        description: '為自己生成護盾',
+                        effect: { type: 'shield', value: 0.3, duration: 2 }
+                    },
+                    {
+                        id: 'genesis_beam',
+                        name: '創世光束',
+                        chance: 0.15,
+                        description: '永恆技能：毀滅性能量光束',
+                        effect: { type: 'true_damage', multiplier: 2.8, defenseBreak: 0.5 }
+                    }
+                ]
+            },
+            
+            // 虛空族
+            void_gazer: {
+                id: 'void_gazer',
+                name: '虛空之眼',
+                family: 'void',
+                stage: 1,
+                rarity: 'epic',
+                icon: '👁️',
+                description: '漂浮的虛空之眼',
+                baseStats: { atk: 55, def: 10, hp: 180 },
+                growthRate: { atk: 3.2, def: 0.8, hp: 11 },
+                skills: [
+                    {
+                        id: 'void_gaze',
+                        name: '虛空凝視',
+                        chance: 0.4,
+                        description: '虛空能量侵蝕',
+                        effect: { type: 'damage', multiplier: 1.25, element: 'void', drainHp: 0.1 }
+                    }
+                ],
+                evolution: {
+                    nextStage: 'shadow_stalker',
+                    requiredLevel: 30,
+                    materials: { evolutionStone: 50, petShards: 20 }
+                }
+            },
+            shadow_stalker: {
+                id: 'shadow_stalker',
+                name: '暗影獵手',
+                family: 'void',
+                stage: 2,
+                rarity: 'legendary',
+                icon: '🌑',
+                description: '潛行於暗影中的獵手',
+                baseStats: { atk: 150, def: 35, hp: 450 },
+                growthRate: { atk: 6.5, def: 1.8, hp: 19 },
+                skills: [
+                    {
+                        id: 'shadow_strike',
+                        name: '暗影突襲',
+                        chance: 0.35,
+                        description: '從暗影中突襲',
+                        effect: { type: 'damage', multiplier: 2.0, element: 'void', critBonus: 0.3 }
+                    },
+                    {
+                        id: 'void_drain',
+                        name: '虛空汲取',
+                        chance: 0.25,
+                        description: '吸取敵人生命',
+                        effect: { type: 'damage', multiplier: 1.5, element: 'void', drainHp: 0.5 }
+                    }
+                ],
+                evolution: {
+                    nextStage: 'abyss_lord',
+                    requiredLevel: 60,
+                    materials: { evolutionStone: 200, petShards: 100 }
+                }
+            },
+            abyss_lord: {
+                id: 'abyss_lord',
+                name: '深淵領主',
+                family: 'void',
+                stage: 3,
+                rarity: 'mythic',
+                icon: '👹',
+                description: '深淵的統治者',
+                baseStats: { atk: 320, def: 100, hp: 1100 },
+                growthRate: { atk: 9, def: 3.5, hp: 32 },
+                skills: [
+                    {
+                        id: 'abyss_wave',
+                        name: '深淵波動',
+                        chance: 0.3,
+                        description: '虛空能量波動',
+                        effect: { type: 'aoe_damage', multiplier: 1.6, element: 'void', drainHp: 0.3 }
+                    },
+                    {
+                        id: 'void_prison',
+                        name: '虛空囚籠',
+                        chance: 0.25,
+                        description: '束縛敵人',
+                        effect: { type: 'debuff', stat: 'spd', value: 0.5, duration: 2, stunChance: 0.4 }
+                    }
+                ],
+                awakening: {
+                    nextStage: 'chaos_singularity',
+                    requiredLevel: 90,
+                    materials: { eternalSource: 1, petShards: 500 }
+                }
+            },
+            chaos_singularity: {
+                id: 'chaos_singularity',
+                name: '混沌奇點',
+                family: 'void',
+                stage: 4,
+                rarity: 'eternal',
+                icon: '⚫',
+                description: '混沌的化身',
+                baseStats: { atk: 580, def: 200, hp: 2200 },
+                growthRate: { atk: 11, def: 5, hp: 45 },
+                skills: [
+                    {
+                        id: 'abyss_wave',
+                        name: '深淵波動',
+                        chance: 0.3,
+                        description: '虛空能量波動',
+                        effect: { type: 'aoe_damage', multiplier: 1.6, element: 'void', drainHp: 0.3 }
+                    },
+                    {
+                        id: 'void_prison',
+                        name: '虛空囚籠',
+                        chance: 0.25,
+                        description: '束縛敵人',
+                        effect: { type: 'debuff', stat: 'spd', value: 0.5, duration: 2, stunChance: 0.4 }
+                    },
+                    {
+                        id: 'chaos_collapse',
+                        name: '混沌崩塌',
+                        chance: 0.15,
+                        description: '永恆技能：吞噬一切',
+                        effect: { type: 'true_damage', multiplier: 3.2, clearBuffs: true, drainHp: 0.8 }
+                    }
+                ]
+            }
+        };
+
         // 套牌效果定義（新版4大戰鬥類型）
         const DECK_EFFECTS = {
             blade: { name: '刀刃套牌', bonus: { atk: 15, trigger: { type: 'attack', chance: 20, effect: 'extra_damage', value: 150 } }, description: '攻擊力+15%，攻擊時20%機率造成額外150%傷害' },
@@ -5662,11 +6134,13 @@ const REGION_CONSUMABLES = {
                 equipment: {},     // 裝備圖鑑 {equipKey: {name, type, rarity, icon, obtained, firstObtainTime, obtainCount}}
                 companions: {},    // 隨從圖鑑 {companionId: {id, name, type, rarity, obtained, firstObtainTime}}
                 cards: {},         // 卡牌圖鑑 {cardId: {id, name, type, rarity, series, obtained, firstObtainTime}}
+                pets: {},          // 寵物圖鑑 {petId: {id, name, family, stage, rarity, obtained, firstObtainTime}}
                 stats: {
                     totalMonstersUnlocked: 0,
                     totalEquipmentObtained: 0,
                     totalCompanionsObtained: 0,
-                    totalCardsObtained: 0
+                    totalCardsObtained: 0,
+                    totalPetsObtained: 0
                 },
                 rewardsCollected: {  // 已領取的進度獎勵
                     monsters: [],    // [區域名稱]
@@ -5689,7 +6163,15 @@ const REGION_CONSUMABLES = {
             },
             materials: {
                 enhanceStone: 0,  // 強化石
-                reforgeStone: 0   // 重鑄石
+                reforgeStone: 0,  // 重鋱石
+                evolutionStone: 0, // 進化石
+                eternalSource: 0   // 永恆之源
+            },
+            pets: {
+                collection: [],    // 已擁有的寵物 [{instanceId, baseId, name, level, exp, stats, skills, ...}]
+                equipped: null,    // 當前裝備的寵物 (instanceId)
+                eggs: [],          // 寵物蛋 [{family, hatchTime}]
+                shards: {}         // 寵物碎片 {family: count}
             }
         };
         // 迭代天賦系統
@@ -8704,6 +9186,117 @@ const REGION_CONSUMABLES = {
                 // 更新Buff計時
                 updateBuffs();
                 
+                // ========== 寵物行動 ==========
+                const equippedPet = getEquippedPet();
+                if (equippedPet && enemyHp > 0) {
+                    // 隨機選擇一個技能
+                    if (equippedPet.skills && equippedPet.skills.length > 0) {
+                        const skill = equippedPet.skills[Math.floor(Math.random() * equippedPet.skills.length)];
+                        
+                        // 判定觸發機率
+                        if (Math.random() < skill.chance) {
+                            // 技能觸發！
+                            let skillMessage = `${equippedPet.icon} ${equippedPet.name} 使用了 ${skill.name}！`;
+                            
+                            if (skill.type === 'damage') {
+                                // 傷害技能
+                                const petDamage = Math.floor(equippedPet.stats.atk * skill.multiplier);
+                                enemyHp -= petDamage;
+                                enemy.hp = enemyHp;
+                                skillMessage += ` 造成 ${petDamage} 點傷害！`;
+                                updateEnemyHP(enemyHp, enemyMaxHp);
+                                
+                                // 額外效果
+                                if (skill.effect) {
+                                    if (skill.effect.type === 'burn') {
+                                        const burnDmg = Math.floor(enemy.maxHp * skill.effect.value);
+                                        if (!enemy.burns) enemy.burns = [];
+                                        enemy.burns.push({ damage: burnDmg, duration: skill.effect.duration });
+                                        skillMessage += ` 附加灼燒效果！`;
+                                    } else if (skill.effect.type === 'weaken') {
+                                        if (!enemy.debuffs) enemy.debuffs = [];
+                                        enemy.debuffs.push({ type: 'atk_down', value: skill.effect.value * 100, duration: skill.effect.duration });
+                                        enemy.atk = Math.floor(enemy.atk * (1 - skill.effect.value));
+                                        skillMessage += ` 降低敵人攻擊力！`;
+                                    }
+                                }
+                            } else if (skill.type === 'heal') {
+                                // 治療技能
+                                const healAmount = Math.floor(gameState.player.maxHp * skill.value);
+                                const actualHeal = Math.min(healAmount, gameState.player.maxHp - gameState.player.hp);
+                                gameState.player.hp += actualHeal;
+                                playerHp = gameState.player.hp;
+                                skillMessage += ` 回復 ${actualHeal} 點生命值！`;
+                            } else if (skill.type === 'buff') {
+                                // 增益技能
+                                if (skill.stat === 'atk') {
+                                    const buffValue = Math.floor(gameState.player.atk * skill.value);
+                                    gameState.player.atk += buffValue;
+                                    skillMessage += ` 提升攻擊力！`;
+                                } else if (skill.stat === 'def') {
+                                    const buffValue = Math.floor(gameState.player.def * skill.value);
+                                    gameState.player.def += buffValue;
+                                    skillMessage += ` 提升防禦力！`;
+                                }
+                            } else if (skill.type === 'aoe') {
+                                // AOE傷害
+                                const aoeDamage = Math.floor(equippedPet.stats.atk * skill.multiplier);
+                                enemyHp -= aoeDamage;
+                                enemy.hp = enemyHp;
+                                skillMessage += ` 群體攻擊造成 ${aoeDamage} 點傷害！`;
+                                updateEnemyHP(enemyHp, enemyMaxHp);
+                            } else if (skill.type === 'true_damage') {
+                                // 真實傷害
+                                const trueDamage = Math.floor(enemy.maxHp * skill.value);
+                                enemyHp -= trueDamage;
+                                enemy.hp = enemyHp;
+                                skillMessage += ` 造成 ${trueDamage} 點真實傷害！`;
+                                updateEnemyHP(enemyHp, enemyMaxHp);
+                            } else if (skill.type === 'devour') {
+                                // 吞噬
+                                const devourDamage = Math.floor(enemy.maxHp * skill.value);
+                                enemyHp -= devourDamage;
+                                enemy.hp = enemyHp;
+                                const healAmount = Math.floor(devourDamage * 0.5);
+                                gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                                playerHp = gameState.player.hp;
+                                skillMessage += ` 吞噬造成 ${devourDamage} 點傷害並回復 ${healAmount} 點生命！`;
+                                updateEnemyHP(enemyHp, enemyMaxHp);
+                            }
+                            
+                            addLog('寵物', skillMessage);
+                            playSound('skill');
+                            
+                            // 寵物獲得經驗
+                            addPetExp(equippedPet.instanceId, 5);
+                            
+                            // 檢查敵人是否死亡
+                            if (enemyHp <= 0) {
+                                clearInterval(battleInterval);
+                                victory(enemy);
+                                return;
+                            }
+                        } else {
+                            // 技能未觸發，普通攻擊
+                            const petAttack = Math.floor(equippedPet.stats.atk * 0.5);
+                            enemyHp -= petAttack;
+                            enemy.hp = enemyHp;
+                            addLog('寵物', `${equippedPet.icon} ${equippedPet.name} 進行普通攻擊，造成 ${petAttack} 點傷害`);
+                            updateEnemyHP(enemyHp, enemyMaxHp);
+                            
+                            // 寵物獲得少量經驗
+                            addPetExp(equippedPet.instanceId, 2);
+                            
+                            // 檢查敵人是否死亡
+                            if (enemyHp <= 0) {
+                                clearInterval(battleInterval);
+                                victory(enemy);
+                                return;
+                            }
+                        }
+                    }
+                }
+                
                 // 時空詞綴：有機率重置回合（怪物再次攻擊）
                 if (enemy.affixEffects && enemy.affixEffects.resetChance && enemyHp > 0) {
                     if (Math.random() < enemy.affixEffects.resetChance) {
@@ -9353,6 +9946,51 @@ const REGION_CONSUMABLES = {
                             addLog('卡牌', `已擁有 ${randomCard.icon} ${randomCard.name}，轉換為 <span style="color: ${rarityColor}">${shardAmount}</span> 個碎片！`);
                         }
                     }
+                }
+            }
+            
+            // 掉落寵物蛋（只在區域3和區域4）
+            if (gameState.region >= 2) { // 區域3是 index 2，區域4是 index 3
+                let petEggDropChance = 0;
+                
+                if (gameState.region === 2) { // 區域3：資料裂縫
+                    if (enemy.isSpecialBoss || enemy.isBoss) {
+                        petEggDropChance = 0.025; // 2.5%
+                    } else if (enemy.isElite) {
+                        petEggDropChance = 0.005; // 0.5%
+                    } else {
+                        petEggDropChance = 0.0005; // 0.05%
+                    }
+                } else if (gameState.region === 3) { // 區域4：深井臨界層
+                    if (enemy.isSpecialBoss || enemy.isBoss) {
+                        petEggDropChance = 0.05; // 5.0%
+                    } else if (enemy.isElite) {
+                        petEggDropChance = 0.015; // 1.5%
+                    } else {
+                        petEggDropChance = 0.0015; // 0.15%
+                    }
+                }
+                
+                // 檢查是否掉落寵物蛋
+                if (petEggDropChance > 0 && Math.random() < petEggDropChance) {
+                    // 隨機選擇寵物家族
+                    const families = ['dragon', 'mecha', 'void'];
+                    const randomFamily = families[Math.floor(Math.random() * families.length)];
+                    
+                    // 添加寵物蛋到背包
+                    gameState.pets.eggs.push({
+                        family: randomFamily,
+                        hatchTime: null // 立即孵化，無需等待
+                    });
+                    
+                    const familyNames = {
+                        'dragon': '🐲 龍族',
+                        'mecha': '🤖 機械族',
+                        'void': '👁️ 虛空族'
+                    };
+                    
+                    const enemyType = enemy.isSpecialBoss ? '特殊Boss' : (enemy.isBoss ? 'Boss' : (enemy.isElite ? '菁英' : '普通怪物'));
+                    addLog('寵物', `🥚 ${enemyType}掉落！獲得 ${familyNames[randomFamily]} 寵物蛋！`, enemy.isSpecialBoss || enemy.isBoss);
                 }
             }
             
@@ -14164,6 +14802,22 @@ const REGION_CONSUMABLES = {
             return colors[rarity] || '#9e9e9e';
         }
         
+        // 獲取品階標籤
+        function getRarityLabel(rarity) {
+            const labels = {
+                'common': '破舊',
+                'uncommon': '優質',
+                'fine': '精良',
+                'rare': '稀有',
+                'epic': '史詩',
+                'legendary': '傳說',
+                'mythic': '神話',
+                'eternal': '永恆',
+                'set': '套裝'
+            };
+            return labels[rarity] || '未知';
+        }
+        
         // ========== 卡牌UI函數 ==========
         
         function openCardModal() {
@@ -15977,6 +16631,606 @@ const REGION_CONSUMABLES = {
             openBagModal();
             saveGame();
             return true;
+        }
+
+        // ========== 寵物系統函數 ==========
+        
+        // 孵化寵物蛋
+        function hatchPetEgg(eggIndex) {
+            if (!gameState.pets.eggs[eggIndex]) {
+                addLog('寵物', '❓ 寵物蛋不存在');
+                return false;
+            }
+            
+            const egg = gameState.pets.eggs[eggIndex];
+            const family = egg.family;
+            
+            // 根據家族獲取幼年期寵物
+            const petIds = {
+                'dragon': 'drake_hatchling',
+                'mecha': 'scout_drone',
+                'void': 'void_gazer'
+            };
+            
+            const petId = petIds[family];
+            if (!petId || !PETS[petId]) {
+                addLog('寵物', '❓ 寵物不存在');
+                return false;
+            }
+            
+            const petData = PETS[petId];
+            
+            // 生成寵物實例
+            const petInstance = {
+                instanceId: Date.now() + Math.random(), // 唯一ID
+                baseId: petId,
+                name: petData.name,
+                family: petData.family,
+                stage: petData.stage,
+                rarity: petData.rarity,
+                icon: petData.icon,
+                level: 1,
+                exp: 0,
+                expToNext: 100,
+                stats: {
+                    atk: petData.baseStats.atk,
+                    def: petData.baseStats.def,
+                    hp: petData.baseStats.hp,
+                    maxHp: petData.baseStats.hp
+                },
+                skills: JSON.parse(JSON.stringify(petData.skills)), // 深拷貝
+                evolution: petData.evolution,
+                awakening: petData.awakening
+            };
+            
+            // 添加到收藏
+            gameState.pets.collection.push(petInstance);
+            
+            // 移除寵物蛋
+            gameState.pets.eggs.splice(eggIndex, 1);
+            
+            // 記錄圖鑑
+            if (!gameState.codex.pets[petId]) {
+                gameState.codex.pets[petId] = {
+                    id: petId,
+                    name: petData.name,
+                    family: petData.family,
+                    stage: petData.stage,
+                    rarity: petData.rarity,
+                    obtained: true,
+                    firstObtainTime: Date.now()
+                };
+                gameState.codex.stats.totalPetsObtained++;
+            }
+            
+            const rarityColor = getRarityColor(petData.rarity);
+            addLog('寵物', `🎉 孵化成功！獲得 <span style="color: ${rarityColor}">${petData.rarity}</span> 寵物：${petData.icon} ${petData.name}！`, true);
+            
+            saveGame();
+            return true;
+        }
+        
+        // 裝備寵物
+        function equipPet(instanceId) {
+            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            if (!pet) {
+                addLog('寵物', '❓ 寵物不存在');
+                return false;
+            }
+            
+            gameState.pets.equipped = instanceId;
+            addLog('寵物', `✅ 裝備了 ${pet.icon} ${pet.name}`);
+            
+            saveGame();
+            updateUI();
+            return true;
+        }
+        
+        // 卸下寵物
+        function unequipPet() {
+            if (!gameState.pets.equipped) {
+                addLog('寵物', '❓ 沒有裝備寵物');
+                return false;
+            }
+            
+            gameState.pets.equipped = null;
+            addLog('寵物', '✅ 已卸下寵物');
+            
+            saveGame();
+            updateUI();
+            return true;
+        }
+        
+        // 寵物獲得經驗
+        function addPetExp(instanceId, expAmount) {
+            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            if (!pet) return false;
+            
+            pet.exp += expAmount;
+            
+            // 檢查升級
+            while (pet.exp >= pet.expToNext && pet.level < 100) {
+                pet.exp -= pet.expToNext;
+                pet.level++;
+                
+                // 更新屬性
+                const petData = PETS[pet.baseId];
+                if (petData) {
+                    pet.stats.atk = petData.baseStats.atk + petData.growthRate.atk * (pet.level - 1);
+                    pet.stats.def = petData.baseStats.def + petData.growthRate.def * (pet.level - 1);
+                    pet.stats.hp = petData.baseStats.hp + petData.growthRate.hp * (pet.level - 1);
+                    pet.stats.maxHp = pet.stats.hp;
+                }
+                
+                // 計算下一級經驗
+                pet.expToNext = Math.floor(100 * Math.pow(1.15, pet.level - 1));
+                
+                addLog('寵物', `⭐ ${pet.icon} ${pet.name} 升級至 Lv.${pet.level}！`);
+            }
+            
+            saveGame();
+            return true;
+        }
+        
+        // 進化寵物
+        function evolvePet(instanceId) {
+            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            if (!pet) {
+                addLog('寵物', '❓ 寵物不存在');
+                return false;
+            }
+            
+            if (!pet.evolution) {
+                addLog('寵物', '❓ 此寵物無法進化');
+                return false;
+            }
+            
+            // 檢查等級
+            if (pet.level < pet.evolution.requiredLevel) {
+                addLog('寵物', `❓ 需要 Lv.${pet.evolution.requiredLevel} 才能進化（當前 Lv.${pet.level}）`);
+                return false;
+            }
+            
+            // 檢查材料
+            const materials = pet.evolution.materials;
+            if (materials.evolutionStone > gameState.materials.evolutionStone) {
+                addLog('寵物', `❓ 進化石不足（需要 ${materials.evolutionStone}，擁有 ${gameState.materials.evolutionStone}）`);
+                return false;
+            }
+            
+            const familyShards = gameState.pets.shards[pet.family] || 0;
+            if (materials.petShards > familyShards) {
+                addLog('寵物', `❓ 寵物碎片不足（需要 ${materials.petShards}，擁有 ${familyShards}）`);
+                return false;
+            }
+            
+            // 扣除材料
+            gameState.materials.evolutionStone -= materials.evolutionStone;
+            gameState.pets.shards[pet.family] -= materials.petShards;
+            
+            // 獲取下一階段數據
+            const nextPetData = PETS[pet.evolution.nextStage];
+            if (!nextPetData) {
+                addLog('寵物', '❓ 進化失敗：下一階段不存在');
+                return false;
+            }
+            
+            // 保留等級和經驗
+            const oldLevel = pet.level;
+            const oldExp = pet.exp;
+            const oldName = pet.name;
+            
+            // 更新寵物數據
+            pet.baseId = nextPetData.id;
+            pet.name = nextPetData.name;
+            pet.stage = nextPetData.stage;
+            pet.rarity = nextPetData.rarity;
+            pet.icon = nextPetData.icon;
+            pet.skills = JSON.parse(JSON.stringify(nextPetData.skills));
+            pet.evolution = nextPetData.evolution;
+            pet.awakening = nextPetData.awakening;
+            
+            // 重新計算屬性（使用新的基礎值和成長率）
+            pet.stats.atk = nextPetData.baseStats.atk + nextPetData.growthRate.atk * (oldLevel - 1);
+            pet.stats.def = nextPetData.baseStats.def + nextPetData.growthRate.def * (oldLevel - 1);
+            pet.stats.hp = nextPetData.baseStats.hp + nextPetData.growthRate.hp * (oldLevel - 1);
+            pet.stats.maxHp = pet.stats.hp;
+            
+            // 記錄圖鑑
+            if (!gameState.codex.pets[nextPetData.id]) {
+                gameState.codex.pets[nextPetData.id] = {
+                    id: nextPetData.id,
+                    name: nextPetData.name,
+                    family: nextPetData.family,
+                    stage: nextPetData.stage,
+                    rarity: nextPetData.rarity,
+                    obtained: true,
+                    firstObtainTime: Date.now()
+                };
+                gameState.codex.stats.totalPetsObtained++;
+            }
+            
+            const rarityColor = getRarityColor(nextPetData.rarity);
+            addLog('寵物', `✨ ${oldName} 進化成 <span style="color: ${rarityColor}">${nextPetData.rarity}</span> ${pet.icon} ${pet.name}！`, true);
+            
+            saveGame();
+            return true;
+        }
+        
+        // 覺醒寵物
+        function awakenPet(instanceId) {
+            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            if (!pet) {
+                addLog('寵物', '❓ 寵物不存在');
+                return false;
+            }
+            
+            if (!pet.awakening) {
+                addLog('寵物', '❓ 此寵物無法覺醒');
+                return false;
+            }
+            
+            // 檢查等級
+            if (pet.level < pet.awakening.requiredLevel) {
+                addLog('寵物', `❓ 需要 Lv.${pet.awakening.requiredLevel} 才能覺醒（當前 Lv.${pet.level}）`);
+                return false;
+            }
+            
+            // 檢查材料
+            const materials = pet.awakening.materials;
+            if (materials.eternalSource > gameState.materials.eternalSource) {
+                addLog('寵物', `❓ 永恆之源不足（需要 ${materials.eternalSource}，擁有 ${gameState.materials.eternalSource}）`);
+                return false;
+            }
+            
+            const familyShards = gameState.pets.shards[pet.family] || 0;
+            if (materials.petShards > familyShards) {
+                addLog('寵物', `❓ 寵物碎片不足（需要 ${materials.petShards}，擁有 ${familyShards}）`);
+                return false;
+            }
+            
+            // 扣除材料
+            gameState.materials.eternalSource -= materials.eternalSource;
+            gameState.pets.shards[pet.family] -= materials.petShards;
+            
+            // 獲取覺醒形態數據
+            const awakenedPetData = PETS[pet.awakening.nextStage];
+            if (!awakenedPetData) {
+                addLog('寵物', '❓ 覺醒失敗：覺醒形態不存在');
+                return false;
+            }
+            
+            // 保留等級和經驗
+            const oldLevel = pet.level;
+            const oldExp = pet.exp;
+            const oldName = pet.name;
+            
+            // 更新寵物數據
+            pet.baseId = awakenedPetData.id;
+            pet.name = awakenedPetData.name;
+            pet.stage = awakenedPetData.stage;
+            pet.rarity = awakenedPetData.rarity;
+            pet.icon = awakenedPetData.icon;
+            pet.skills = JSON.parse(JSON.stringify(awakenedPetData.skills));
+            pet.evolution = null; // 覺醒後無法再進化
+            pet.awakening = null;
+            
+            // 重新計算屬性
+            pet.stats.atk = awakenedPetData.baseStats.atk + awakenedPetData.growthRate.atk * (oldLevel - 1);
+            pet.stats.def = awakenedPetData.baseStats.def + awakenedPetData.growthRate.def * (oldLevel - 1);
+            pet.stats.hp = awakenedPetData.baseStats.hp + awakenedPetData.growthRate.hp * (oldLevel - 1);
+            pet.stats.maxHp = pet.stats.hp;
+            
+            // 記錄圖鑑
+            if (!gameState.codex.pets[awakenedPetData.id]) {
+                gameState.codex.pets[awakenedPetData.id] = {
+                    id: awakenedPetData.id,
+                    name: awakenedPetData.name,
+                    family: awakenedPetData.family,
+                    stage: awakenedPetData.stage,
+                    rarity: awakenedPetData.rarity,
+                    obtained: true,
+                    firstObtainTime: Date.now()
+                };
+                gameState.codex.stats.totalPetsObtained++;
+            }
+            
+            const rarityColor = getRarityColor('eternal');
+            addLog('寵物', `🌟 ${oldName} 覺醒成 <span style="color: ${rarityColor}">Eternal</span> ${pet.icon} ${pet.name}！`, true);
+            
+            saveGame();
+            return true;
+        }
+        
+        // 獲取裝備的寵物
+        function getEquippedPet() {
+            if (!gameState.pets.equipped) return null;
+            return gameState.pets.collection.find(p => p.instanceId === gameState.pets.equipped);
+        }
+        
+        // 寵物行動函數（用於測試）
+        function petAction() {
+            const equippedPet = getEquippedPet();
+            if (!equippedPet) return;
+            if (!gameState.combat || !gameState.combat.active) return;
+            if (!gameState.combat.enemy || gameState.combat.enemy.hp <= 0) return;
+            
+            const enemy = gameState.combat.enemy;
+            
+            // 隨機選擇一個技能
+            if (equippedPet.skills && equippedPet.skills.length > 0) {
+                const skill = equippedPet.skills[Math.floor(Math.random() * equippedPet.skills.length)];
+                
+                // 判定觸發機率
+                if (Math.random() < skill.chance) {
+                    // 技能觸發！
+                    let skillMessage = `${equippedPet.icon} ${equippedPet.name} 使用了 ${skill.name}！`;
+                    
+                    if (skill.type === 'damage') {
+                        const petDamage = Math.floor(equippedPet.stats.atk * skill.multiplier);
+                        enemy.hp -= petDamage;
+                        skillMessage += ` 造成 ${petDamage} 點傷害！`;
+                    } else if (skill.type === 'heal') {
+                        const healAmount = Math.floor(gameState.player.maxHp * skill.value);
+                        const actualHeal = Math.min(healAmount, gameState.player.maxHp - gameState.player.hp);
+                        gameState.player.hp += actualHeal;
+                        skillMessage += ` 回復 ${actualHeal} 點生命值！`;
+                    } else if (skill.type === 'buff') {
+                        if (skill.stat === 'atk') {
+                            const buffValue = Math.floor(gameState.player.atk * skill.value);
+                            gameState.player.atk += buffValue;
+                            skillMessage += ` 提升攻擊力！`;
+                        } else if (skill.stat === 'def') {
+                            const buffValue = Math.floor(gameState.player.def * skill.value);
+                            gameState.player.def += buffValue;
+                            skillMessage += ` 提升防禦力！`;
+                        }
+                    } else if (skill.type === 'aoe') {
+                        const aoeDamage = Math.floor(equippedPet.stats.atk * skill.multiplier);
+                        enemy.hp -= aoeDamage;
+                        skillMessage += ` 群體攻擊造成 ${aoeDamage} 點傷害！`;
+                    } else if (skill.type === 'true_damage') {
+                        const trueDamage = Math.floor(enemy.maxHp * skill.value);
+                        enemy.hp -= trueDamage;
+                        skillMessage += ` 造成 ${trueDamage} 點真實傷害！`;
+                    } else if (skill.type === 'devour') {
+                        const devourDamage = Math.floor(enemy.maxHp * skill.value);
+                        enemy.hp -= devourDamage;
+                        const healAmount = Math.floor(devourDamage * 0.5);
+                        gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                        skillMessage += ` 吞噬造成 ${devourDamage} 點傷害並回復 ${healAmount} 點生命！`;
+                    }
+                    
+                    addLog('寵物', skillMessage);
+                    addPetExp(equippedPet.instanceId, 5);
+                } else {
+                    // 技能未觸發，普通攻擊
+                    const petAttack = Math.floor(equippedPet.stats.atk * 0.5);
+                    enemy.hp -= petAttack;
+                    addLog('寵物', `${equippedPet.icon} ${equippedPet.name} 進行普通攻擊，造成 ${petAttack} 點傷害`);
+                    addPetExp(equippedPet.instanceId, 2);
+                }
+            }
+        }
+        
+        // ========== 寵物 UI 函數 ==========
+        
+        // 打開寵物面板
+        function openPetModal() {
+            updatePetModal();
+            document.getElementById('pet-modal').classList.add('active');
+        }
+        
+        // 關閉寵物面板
+        function closePetModal() {
+            document.getElementById('pet-modal').classList.remove('active');
+        }
+        
+        // 切換寵物頁面
+        function switchPetTab(tab) {
+            // 隱藏所有頁面
+            document.getElementById('pet-eggs-content').style.display = 'none';
+            document.getElementById('pet-collection-content').style.display = 'none';
+            document.getElementById('pet-materials-content').style.display = 'none';
+            
+            // 重置所有按鈕樣式
+            document.getElementById('pet-tab-eggs').style.background = 'rgba(255, 255, 255, 0.1)';
+            document.getElementById('pet-tab-eggs').style.color = '#7a8fb8';
+            document.getElementById('pet-tab-collection').style.background = 'rgba(255, 255, 255, 0.1)';
+            document.getElementById('pet-tab-collection').style.color = '#7a8fb8';
+            document.getElementById('pet-tab-materials').style.background = 'rgba(255, 255, 255, 0.1)';
+            document.getElementById('pet-tab-materials').style.color = '#7a8fb8';
+            
+            // 顯示選中的頁面
+            if (tab === 'eggs') {
+                document.getElementById('pet-eggs-content').style.display = 'block';
+                document.getElementById('pet-tab-eggs').style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                document.getElementById('pet-tab-eggs').style.color = 'white';
+            } else if (tab === 'collection') {
+                document.getElementById('pet-collection-content').style.display = 'block';
+                document.getElementById('pet-tab-collection').style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                document.getElementById('pet-tab-collection').style.color = 'white';
+            } else if (tab === 'materials') {
+                document.getElementById('pet-materials-content').style.display = 'block';
+                document.getElementById('pet-tab-materials').style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                document.getElementById('pet-tab-materials').style.color = 'white';
+            }
+        }
+        
+        // 更新寵物面板
+        function updatePetModal() {
+            updateEquippedPetDisplay();
+            updatePetEggsList();
+            updatePetCollectionList();
+            updatePetMaterials();
+        }
+        
+        // 更新當前裝備的寵物顯示
+        function updateEquippedPetDisplay() {
+            const equippedPet = getEquippedPet();
+            const equippedPetInfo = document.getElementById('equipped-pet-info');
+            
+            if (!equippedPet) {
+                equippedPetInfo.innerHTML = '無';
+                return;
+            }
+            
+            const rarityColor = getRarityColor(equippedPet.rarity);
+            const skillsHtml = equippedPet.skills.map(skill => {
+                const chancePercent = Math.round(skill.chance * 100);
+                return `<div style="font-size: 0.75rem; color: #7a8fb8; margin-top: 3px;">• ${skill.name} (${chancePercent}%)</div>`;
+            }).join('');
+            
+            equippedPetInfo.innerHTML = `
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div style="font-size: 3rem;">${equippedPet.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: ${rarityColor}; margin-bottom: 5px;">${equippedPet.name}</div>
+                        <div style="color: #7a8fb8; font-size: 0.9rem;">Lv.${equippedPet.level} | <span style="color: ${rarityColor};">${getRarityLabel(equippedPet.rarity)}</span></div>
+                        <div style="margin-top: 8px;">
+                            <div style="font-size: 0.85rem; color: #00ff88;">⚔️ ${equippedPet.stats.atk} | 🛡️ ${equippedPet.stats.def} | ❤️ ${equippedPet.stats.hp}/${equippedPet.stats.maxHp}</div>
+                        </div>
+                        ${skillsHtml}
+                    </div>
+                    <button onclick="unequipPet()" style="padding: 8px 15px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">卸下</button>
+                </div>
+            `;
+        }
+        
+        // 更新寵物蛋列表
+        function updatePetEggsList() {
+            const eggsList = document.getElementById('pet-eggs-list');
+            
+            if (!gameState.pets.eggs || gameState.pets.eggs.length === 0) {
+                eggsList.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #7a8fb8; padding: 30px;">你還沒有寵物蛋，去第3或第4區域打怪吧！</div>';
+                return;
+            }
+            
+            eggsList.innerHTML = gameState.pets.eggs.map((egg, index) => {
+                const familyNames = {
+                    'dragon': '🐉 龍族',
+                    'mecha': '🤖 機械族',
+                    'void': '👁️ 虛空族'
+                };
+                const familyName = familyNames[egg.family] || '未知';
+                const obtainedDate = new Date(egg.obtainedAt).toLocaleString('zh-TW');
+                
+                return `
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 2px solid rgba(255, 215, 0, 0.3);">
+                        <div style="text-align: center; font-size: 3rem; margin-bottom: 10px;">🥚</div>
+                        <div style="font-size: 1.1rem; font-weight: bold; color: #ffd700; text-align: center; margin-bottom: 8px;">${familyName}寵物蛋</div>
+                        <div style="color: #7a8fb8; font-size: 0.85rem; text-align: center; margin-bottom: 10px;">獲得時間：${obtainedDate}</div>
+                        <button onclick="hatchPetEgg(${index})" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🐣 孵化</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 更新寵物收藏列表
+        function updatePetCollectionList() {
+            const collectionList = document.getElementById('pet-collection-list');
+            
+            if (!gameState.pets.collection || gameState.pets.collection.length === 0) {
+                collectionList.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #7a8fb8; padding: 30px;">你還沒有寵物，孵化寵物蛋獲得吧！</div>';
+                return;
+            }
+            
+            collectionList.innerHTML = gameState.pets.collection.map(pet => {
+                const rarityColor = getRarityColor(pet.rarity);
+                const isEquipped = gameState.pets.equipped === pet.instanceId;
+                const expPercent = pet.expToNext > 0 ? (pet.exp / pet.expToNext * 100).toFixed(1) : 100;
+                
+                // 技能列表
+                const skillsHtml = pet.skills.map(skill => {
+                    const chancePercent = Math.round(skill.chance * 100);
+                    return `<div style="font-size: 0.75rem; color: #7a8fb8; margin-top: 3px;">• ${skill.name} (${chancePercent}%): ${skill.description}</div>`;
+                }).join('');
+                
+                // 進化按鈕
+                let evolutionButton = '';
+                if (pet.evolution) {
+                    const canEvolve = pet.level >= pet.evolution.requiredLevel;
+                    const materials = pet.evolution.materials;
+                    const hasStone = gameState.materials.evolutionStone >= materials.evolutionStone;
+                    const hasShards = (gameState.pets.shards[pet.family] || 0) >= materials.petShards;
+                    const canAfford = hasStone && hasShards;
+                    
+                    if (canEvolve && canAfford) {
+                        evolutionButton = `<button onclick="evolvePet('${pet.instanceId}')" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #8a2be2 0%, #da70d6 100%);">🔄 進化</button>`;
+                    } else {
+                        const reason = !canEvolve ? `Lv.${pet.evolution.requiredLevel}` : '材料不足';
+                        evolutionButton = `<button disabled style="flex: 1; padding: 8px; opacity: 0.5;">🔄 進化 (${reason})</button>`;
+                    }
+                }
+                
+                // 覺醒按鈕
+                let awakeningButton = '';
+                if (pet.awakening) {
+                    const canAwaken = pet.level >= pet.awakening.requiredLevel;
+                    const materials = pet.awakening.materials;
+                    const hasSource = gameState.materials.eternalSource >= materials.eternalSource;
+                    const hasShards = (gameState.pets.shards[pet.family] || 0) >= materials.petShards;
+                    const canAfford = hasSource && hasShards;
+                    
+                    if (canEvolve && canAfford) {
+                        awakeningButton = `<button onclick="awakenPet('${pet.instanceId}')" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #e040fb 0%, #ffd700 100%);">⭐ 覺醒</button>`;
+                    } else {
+                        const reason = !canAwaken ? `Lv.${pet.awakening.requiredLevel}` : '材料不足';
+                        awakeningButton = `<button disabled style="flex: 1; padding: 8px; opacity: 0.5;">⭐ 覺醒 (${reason})</button>`;
+                    }
+                }
+                
+                return `
+                    <div style="background: rgba(250, 112, 154, 0.1); padding: 15px; border-radius: 8px; border: 2px solid ${isEquipped ? rarityColor : 'rgba(250, 112, 154, 0.3)'}; ${isEquipped ? 'box-shadow: 0 0 15px ' + rarityColor + ';' : ''}">
+                        <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+                            <div style="font-size: 3rem;">${pet.icon}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.1rem; font-weight: bold; color: ${rarityColor}; margin-bottom: 3px;">${pet.name} ${isEquipped ? '✅' : ''}</div>
+                                <div style="color: #7a8fb8; font-size: 0.85rem;">Lv.${pet.level} | <span style="color: ${rarityColor};">${getRarityLabel(pet.rarity)}</span></div>
+                                <div style="margin-top: 5px;">
+                                    <div style="font-size: 0.8rem; color: #00ff88;">⚔️ ${pet.stats.atk} | 🛡️ ${pet.stats.def} | ❤️ ${pet.stats.hp}/${pet.stats.maxHp}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 經驗條 -->
+                        <div style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #7a8fb8; margin-bottom: 3px;">
+                                <span>EXP</span>
+                                <span>${pet.exp}/${pet.expToNext} (${expPercent}%)</span>
+                            </div>
+                            <div style="background: rgba(0, 0, 0, 0.3); height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #00ff88 0%, #00d9ff 100%); height: 100%; width: ${expPercent}%; transition: width 0.3s;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 技能列表 -->
+                        <div style="background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                            <div style="font-size: 0.85rem; font-weight: bold; color: #00d9ff; margin-bottom: 5px;">🎯 技能</div>
+                            ${skillsHtml}
+                        </div>
+                        
+                        <!-- 按鈕區 -->
+                        <div style="display: flex; gap: 8px;">
+                            ${isEquipped ? 
+                                '<button onclick="unequipPet()" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">📤 卸下</button>' :
+                                `<button onclick="equipPet('${pet.instanceId}')" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✅ 裝備</button>`
+                            }
+                            ${evolutionButton}
+                            ${awakeningButton}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 更新寵物材料顯示
+        function updatePetMaterials() {
+            document.getElementById('evolution-stone-count').textContent = gameState.materials.evolutionStone || 0;
+            document.getElementById('eternal-source-count').textContent = gameState.materials.eternalSource || 0;
+            document.getElementById('dragon-shards-count').textContent = gameState.pets.shards['dragon'] || 0;
+            document.getElementById('mecha-shards-count').textContent = gameState.pets.shards['mecha'] || 0;
+            document.getElementById('void-shards-count').textContent = gameState.pets.shards['void'] || 0;
         }
 
         function openRegionModal() {

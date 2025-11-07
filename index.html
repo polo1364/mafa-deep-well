@@ -2227,7 +2227,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-common" value="common" onchange="updateSalvageQuality()" checked style="margin-right: 8px;">
-                        <span style="color: #9ca3af;">⚪ 普通</span>
+                        <span style="color: #9ca3af;">⚪ 破舊</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-fine" value="fine" onchange="updateSalvageQuality()" style="margin-right: 8px;">
@@ -4694,7 +4694,7 @@ const REGION_CONSUMABLES = {
         };
         // 迭代天賦系統
         const RARITIES = [
-            { name: 'common', label: '普通', color: '#9E9E9E', shards: 1, multiplier: 1.2 },
+            { name: 'common', label: '破舊', color: '#9E9E9E', shards: 1, multiplier: 1.2 },
             { name: 'uncommon', label: '優質', color: '#4CAF50', shards: 2, multiplier: 1.6 },
             { name: 'fine', label: '精良', color: '#2196F3', shards: 3, multiplier: 2.2 },
             { name: 'rare', label: '稀有', color: '#9C27B0', shards: 5, multiplier: 3.0 },
@@ -4886,7 +4886,7 @@ const REGION_CONSUMABLES = {
 
         // 隨從系統常量
         const COMPANION_RARITIES = {
-            Common: { name: '普通', color: '#9e9e9e', skillCount: 1, bonusRange: [5, 10] },
+            Common: { name: '破舊', color: '#9e9e9e', skillCount: 1, bonusRange: [5, 10] },
             Fine: { name: '優質', color: '#4caf50', skillCount: 1, bonusRange: [10, 15] },
             Rare: { name: '稀有', color: '#2196f3', skillCount: 2, bonusRange: [15, 20] },
             Epic: { name: '史詩', color: '#9c27b0', skillCount: 2, bonusRange: [20, 30] },
@@ -21664,7 +21664,7 @@ function manualSalvageSelected() {
     
     // 品質名稱對照
     const qualityNames = {
-        'common': '普通',
+        'common': '破舊',
         'fine': '精良',
         'rare': '稀有',
         'epic': '史詩',
@@ -21695,39 +21695,18 @@ function manualSalvageSelected() {
     let totalMaterials = 0;
     let totalFragments = 0;
     
-    // 調試：記錄背包裝備
-    console.log('=== 一鍵分解調試 ===');
-    console.log('勾選品階:', selectedQualities);
-    console.log('目標稀有度:', targetRarities);
-    const equipCount = gameState.inventory.filter(i => i && i.type !== 'consumable').length;
-    console.log('背包裝備總數:', equipCount);
-    
     gameState.inventory = gameState.inventory.filter(item => {
         if (!item || item.type === 'consumable') return true;
         
-        // 調試：記錄每件裝備的處理
-        console.log('\n檢查裝備:', item.name, '| 類型:', item.type, '| 稀有度:', item.rarity, '| subtype:', item.subtype);
-        
         // 套裝特殊處理：檢查 setName 屬性
         const isSet = item.setName ? true : false;
-        const itemRarity = isSet && selectedQualities.includes('set') ? 'Set' : item.rarity;
+        const itemRarity = isSet && selectedQualities.includes('set') ? 'set' : item.rarity;
         
-        if (!targetRarities.includes(itemRarity)) {
-            console.log('  → 保留：稀有度不匹配');
-            return true;
-        }
-        
-        const isProtected = shouldProtectEquipment(item);
-        if (isProtected) {
-            console.log('  → 保留：被保護');
-            return true;
-        }
-        
-        console.log('  → 分解！');
+        if (!targetRarities.includes(itemRarity)) return true;
+        if (shouldProtectEquipment(item)) return true;
         
         const materials = salvageEquipment(item);
         totalMaterials += materials;
-        console.log('  獲得材料:', materials);
         
         // 稀有以上的裝備額外獲得碎片
         if (['rare', 'epic', 'legendary', 'mythic', 'eternal', 'set'].includes(itemRarity)) {

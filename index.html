@@ -4994,7 +4994,8 @@ const REGION_CONSUMABLES = {
             Fine: { name: '優質', color: '#4caf50', skillCount: 1, bonusRange: [10, 15] },
             Rare: { name: '稀有', color: '#2196f3', skillCount: 2, bonusRange: [15, 20] },
             Epic: { name: '史詩', color: '#9c27b0', skillCount: 2, bonusRange: [20, 30] },
-            Legendary: { name: '傳說', color: '#ffd700', skillCount: 3, bonusRange: [30, 50] }
+            Legendary: { name: '傳說', color: '#ffd700', skillCount: 3, bonusRange: [30, 50] },
+            Eternal: { name: '永恆', color: '#E040FB', skillCount: 5, bonusRange: [50, 100] }
         };
 
         // 隨從定義（新版4大戰鬥類型）
@@ -5021,7 +5022,10 @@ const REGION_CONSUMABLES = {
             multi_core: { id: 'multi_core', name: '⚙️ 多功能核心', type: 'balance', rarity: 'Fine', description: '攻防平衡', price: 1500, skills: [{ type: 'buff_atk', name: '攻擊提升', description: '攻擊力 +8%', value: 8, trigger: 'passive' }, { type: 'buff_def', name: '防禦提升', description: '防禦力 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
             tactical_ai: { id: 'tactical_ai', name: '🎯 戰術AI', type: 'balance', rarity: 'Rare', description: '全面平衡', price: 3000, skills: [{ type: 'buff_atk', name: '戰術攻擊', description: '攻擊力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_def', name: '戰術防禦', description: '防禦力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
             quantum_core: { id: 'quantum_core', name: '🌀 量子核心', type: 'balance', rarity: 'Epic', description: '超強平衡', price: 5000, skills: [{ type: 'buff_atk', name: '量子攻擊', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_def', name: '量子防禦', description: '防禦力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_hp', name: '量子生命', description: '最大生命 +12%', value: 12, trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +4%', value: 4, trigger: 'passive' }], maxLevel: 50 },
-            perfect_wargod: { id: 'perfect_wargod', name: '👑 完美戰神', type: 'balance', rarity: 'Legendary', description: '終極平衡', price: 10000, skills: [{ type: 'buff_atk', name: '戰神之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_def', name: '戰神之盾', description: '防禦力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_hp', name: '戰神之體', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '戰神之眼', description: '暴擊率 +6%', value: 6, trigger: 'passive' }, { type: 'buff_lifesteal', name: '戰神之魂', description: '吸血 +6%', value: 6, trigger: 'passive' }], maxLevel: 50 }
+            perfect_wargod: { id: 'perfect_wargod', name: '👑 完美戰神', type: 'balance', rarity: 'Legendary', description: '終極平衡', price: 10000, skills: [{ type: 'buff_atk', name: '戰神之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_def', name: '戰神之盾', description: '防禦力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_hp', name: '戰神之體', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '戰神之眼', description: '暴擊率 +6%', value: 6, trigger: 'passive' }, { type: 'buff_lifesteal', name: '戰神之魂', description: '吸血 +6%', value: 6, trigger: 'passive' }], maxLevel: 50 },
+            
+            // 永恆階級 (Eternal)
+            eternal_guardian: { id: 'eternal_guardian', name: '🌌 時空守護者', type: 'balance', rarity: 'Eternal', description: '永恆之力，時空之主', price: 50000, skills: [{ type: 'buff_atk', name: '時空之力', description: '攻擊力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_def', name: '時空護盾', description: '防禦力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_hp', name: '永恆生命', description: '最大生命 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '時空暴擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +30%', value: 30, statType: 'critDmg', trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +10%', value: 10, trigger: 'passive' }, { type: 'heal_over_time', name: '時空回溯', description: '每回合回復6%生命', value: 6, trigger: 'turn_start' }, { type: 'battle_heal', name: '永恆祝福', description: '戰鬥結束回復50%生命', value: 50, trigger: 'battle_end' }], maxLevel: 50 }
         };
 
         // 卡牌系統定義
@@ -5056,7 +5060,10 @@ const REGION_CONSUMABLES = {
             // 特殊型 - 反擊系列 (Counter)
             counter_common: { id: 'counter_common', name: '🌟 反擊姿態', type: 'special', rarity: 'Common', series: 'counter', description: '受擊時10%機率反擊造成50%傷害', price: 500, effect: { type: 'trigger', trigger: 'on_hit', chance: 10, effect: 'counter', value: 50 }, icon: '🌟' },
             counter_fine: { id: 'counter_fine', name: '🌟 完美反擊', type: 'special', rarity: 'Fine', series: 'counter', description: '受擊時18%機率反擊造成80%傷害', price: 2000, effect: { type: 'trigger', trigger: 'on_hit', chance: 18, effect: 'counter', value: 80 }, icon: '🌟' },
-            counter_rare: { id: 'counter_rare', name: '🌟 致命反擊', type: 'special', rarity: 'Rare', series: 'counter', description: '受擊時25%機率反擊造成120%傷害', price: 8000, effect: { type: 'trigger', trigger: 'on_hit', chance: 25, effect: 'counter', value: 120 }, icon: '🌟' }
+            counter_rare: { id: 'counter_rare', name: '🌟 致命反擊', type: 'special', rarity: 'Rare', series: 'counter', description: '受擊時25%機率反擊造成120%傷害', price: 8000, effect: { type: 'trigger', trigger: 'on_hit', chance: 25, effect: 'counter', value: 120 }, icon: '🌟' },
+            
+            // 永恆階級 - 雷霆系列 (Thunder)
+            eternal_thunder: { id: 'eternal_thunder', name: '⚡ 永恆雷霆', type: 'attack', rarity: 'Eternal', series: 'thunder', description: '攻擊力 +40%，暴擊率 +8%，暴擊傷害 +25%。攻擊時15%機率觸發「雷霆審判」：造成400%傷害並回復10%生命，額外獲得20%金幣', price: 150000, effect: { type: 'passive', stats: [{ stat: 'atk', value: 40 }, { stat: 'crit', value: 8 }, { stat: 'critDmg', value: 25 }], trigger: { type: 'attack', chance: 15, effect: 'thunder_judgment', value: 400, heal: 10, goldBonus: 20 } }, icon: '⚡' }
         };
 
         // 卡牌詞綴系統定義
@@ -5568,7 +5575,8 @@ const REGION_CONSUMABLES = {
             shield: { name: '守護套牌', bonus: { def: 30, dmgRed: 18 }, description: '防禦力+30%，減傷+18%' },
             vitality: { name: '生命套牌', bonus: { hp: 20, lifeSteal: 8 }, description: '最大生命+20%，吸血+8%' },
             precision: { name: '精準套牌', bonus: { crit: 12, critDmg: 30 }, description: '暴擊率+12%，暴擊傷害+30%' },
-            counter: { name: '反擊套牌', bonus: { trigger: { type: 'on_hit', chance: 35, effect: 'counter', value: 180 } }, description: '受擊時35%機率反擊造成180%傷害' }
+            counter: { name: '反擊套牌', bonus: { trigger: { type: 'on_hit', chance: 35, effect: 'counter', value: 180 } }, description: '受擊時35%機率反擊造成180%傷害' },
+            thunder: { name: '雷霆套牌', bonus: { atk: 50, crit: 15, critDmg: 40, trigger: { type: 'attack', chance: 25, effect: 'thunder_judgment', value: 500, heal: 15, goldBonus: 30 } }, description: '攻擊力+50%，暴擊率+15%，暴擊傷害+40%。攻擊時25%機率觸發雷霆審判：造成500%傷害並回復15%生命，額外獲得30%金幣' }
         };
 
         // 套裝效果定義（強化版）
@@ -9880,6 +9888,28 @@ const REGION_CONSUMABLES = {
                 }
             }
             
+            // 永恆階級掉落（僅第4區域）
+            if (gameState.region === 3) {
+                // 第4區域：深井臨界層
+                const enemyLevel = enemy.level || gameState.player.level;
+                
+                // 隨從掉落機率：0.001 + (enemyLevel * 0.0001)
+                const eternalCompanionChance = 0.001 + (enemyLevel * 0.0001);
+                if (Math.random() < eternalCompanionChance) {
+                    obtainCompanion('eternal_guardian');
+                    addLog('永恆', `🌌 永恆降臨！獲得<span style="color: #E040FB">永恆</span>隨從：🌌 時空守護者！`, true);
+                    playSound('levelup');
+                }
+                
+                // 卡牌掉落機率：0.002 + (enemyLevel * 0.0002)
+                const eternalCardChance = 0.002 + (enemyLevel * 0.0002);
+                if (Math.random() < eternalCardChance) {
+                    getCard('eternal_thunder');
+                    addLog('永恆', `⚡ 永恆降臨！獲得<span style="color: #E040FB">永恆</span>卡牌：⚡ 永恆雷霆！`, true);
+                    playSound('levelup');
+                }
+            }
+            
             // 檢查是否掉落隨從裝備
             let equipmentDropChance = 0;
             let equipmentId = null;
@@ -13987,7 +14017,9 @@ const REGION_CONSUMABLES = {
                 'common': 5,
                 'fine': 10,
                 'rare': 20,
-                'epic': 40
+                'epic': 40,
+                'legendary': 60,
+                'eternal': 100
             };
             return shardAmounts[rarity.toLowerCase()] || 5;
         }
@@ -14131,7 +14163,7 @@ const REGION_CONSUMABLES = {
         function applyCompanionPassiveSkills() {
             const companion = getActiveCompanion();
             if (!companion) return {};
-            const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, goldBonus: 0, expBonus: 0, dropBonus: 0 };
+            const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0 };
             companion.skills.forEach(skill => {
                 if (skill.trigger !== 'passive') return;
                 const levelBonus = (companion.level - 1) * 0.02;
@@ -15041,13 +15073,13 @@ const REGION_CONSUMABLES = {
             });
             
             let html = '';
-            const rarities = ['Legendary', 'Epic', 'Rare', 'Fine', 'Common'];
+            const rarities = ['Eternal', 'Legendary', 'Epic', 'Rare', 'Fine', 'Common'];
             
             rarities.forEach(rarity => {
                 if (!byRarity[rarity]) return;
                 
-                const color = getRarityColor(rarity);
-                const rarityObj = RARITIES.find(r => r.name === rarity);
+                const color = getRarityColor(rarity.toLowerCase());
+                const rarityObj = RARITIES.find(r => r.name === rarity.toLowerCase());
                 const rarityLabel = rarityObj ? rarityObj.label : rarity;
                 
                 html += `
@@ -15669,7 +15701,8 @@ const REGION_CONSUMABLES = {
                 'Fine': 3,
                 'Rare': 10,
                 'Epic': 30,
-                'Legendary': 100
+                'Legendary': 100,
+                'Eternal': 300
             };
             return shardAmounts[rarity] || 1;
         }

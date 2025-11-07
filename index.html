@@ -2224,18 +2224,38 @@
             <!-- 分解品質選擇 -->
             <div style="margin-top: 15px;">
                 <div style="margin-bottom: 8px; font-weight: bold;">自動分解的品質：</div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-common" value="common" onchange="updateSalvageQuality()" checked style="margin-right: 8px;">
-                        <span style="color: #9ca3af;">⚪ 普通 (Common)</span>
+                        <span style="color: #9ca3af;">⚪ 普通</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-fine" value="fine" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #3b82f6;">🔵 精良 (Fine)</span>
+                        <span style="color: #3b82f6;">🔵 精良</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-rare" value="rare" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #8b5cf6;">🟣 稀有 (Rare)</span>
+                        <span style="color: #8b5cf6;">🟣 稀有</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="salvage-epic" value="epic" onchange="updateSalvageQuality()" style="margin-right: 8px;">
+                        <span style="color: #a855f7;">🟣 史詩</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="salvage-legendary" value="legendary" onchange="updateSalvageQuality()" style="margin-right: 8px;">
+                        <span style="color: #f97316;">🟠 傳說</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="salvage-mythic" value="mythic" onchange="updateSalvageQuality()" style="margin-right: 8px;">
+                        <span style="color: #ec4899;">🔴 神話</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="salvage-eternal" value="eternal" onchange="updateSalvageQuality()" style="margin-right: 8px;">
+                        <span style="color: #fbbf24;">⭐ 永恆</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="salvage-set" value="set" onchange="updateSalvageQuality()" style="margin-right: 8px;">
+                        <span style="color: #10b981;">🟢 套裝</span>
                     </label>
                 </div>
             </div>
@@ -2280,9 +2300,9 @@
         <!-- 手動操作 -->
         <div style="background: rgba(255, 154, 86, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
             <h3 style="margin: 0 0 10px 0; color: #ff9a56;">🔨 批量操作</h3>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="manualSalvageAll('common')" style="flex: 1; background: #9ca3af;">分解所有普通</button>
-                <button onclick="manualSalvageAll('fine')" style="flex: 1; background: #3b82f6;">分解所有精良</button>
+            <button onclick="manualSalvageSelected()" style="width: 100%; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); padding: 12px; font-size: 1rem; font-weight: bold;">🛠️ 一鍵分解（根據勾選品階）</button>
+            <div style="color: #7a8fb8; font-size: 0.85rem; margin-top: 8px; text-align: center;">
+                分解所有符合上方勾選品質的裝備
             </div>
         </div>
         
@@ -6221,16 +6241,27 @@ const REGION_CONSUMABLES = {
                 const option = document.createElement('option');
                 option.value = potion.id;
                 let percent;
-                if (potion.subtype === 'hp' || potion.subtype === 'hp_percent' || potion.subtype === 'hp_potion') {
-                    percent = Math.round(potion.recovery * 100);
-                } else if (potion.subtype === 'hp_fixed') {
-                    percent = potion.recovery;
+                
+                // 優先檢查 hpPercent 屬性（新手包藥水使用）
+                if (potion.hpPercent !== undefined) {
+                    percent = Math.round(potion.hpPercent * 100);
+                } else if (potion.recovery !== undefined) {
+                    // 檢查是否為百分比類型
+                    if (potion.subtype === 'hp' || potion.subtype === 'hp_percent' || potion.subtype === 'hp_potion') {
+                        percent = Math.round(potion.recovery * 100);
+                    } else if (potion.subtype === 'hp_fixed') {
+                        percent = potion.recovery;
+                    }
                 } else if (potion.subtype === 'both_percent') {
                     percent = Math.round(potion.hpPercent * 100);
                 } else if (potion.subtype === 'both_fixed') {
                     percent = potion.hpRecovery;
+                } else {
+                    // 預設值，防止 NaN
+                    percent = 0;
                 }
-                option.textContent = `${potion.name} (${percent}${potion.subtype.includes('fixed') ? '' : '%'})`;
+                
+                option.textContent = `${potion.name} (${percent}${potion.subtype && potion.subtype.includes('fixed') ? '' : '%'})`;
                 select.appendChild(option);
             });
             
@@ -6338,7 +6369,9 @@ const REGION_CONSUMABLES = {
             // 計算回復量
             let healAmount = 0;
             if (potion.subtype === 'hp_percent' || potion.subtype === 'hp' || potion.subtype === 'hp_potion') {
-                const recovery = (potion.recovery !== undefined && !isNaN(potion.recovery)) ? potion.recovery : 0;
+                // 支援 recovery 和 hpPercent 兩種屬性
+                const recovery = (potion.recovery !== undefined && !isNaN(potion.recovery)) ? potion.recovery : 
+                                 (potion.hpPercent !== undefined && !isNaN(potion.hpPercent)) ? potion.hpPercent : 0;
                 healAmount = Math.floor(gameState.player.maxHp * recovery);
             } else if (potion.subtype === 'hp_fixed') {
                 healAmount = potion.recovery || 0;
@@ -11856,20 +11889,39 @@ const REGION_CONSUMABLES = {
             }
             
             // 保護套裝裝備（如果啟用）
-            if (gameState.autoEquipment.protectSet && equipment.set) {
+            if (gameState.autoEquipment.protectSet && equipment.setName) {
                 return true;
             }
             
-            // 保護每個部位最好的裝備
-            const sameTypeEquips = gameState.inventory.filter(item => 
-                item && item.type === equipment.type && item !== equipment
-            );
+            // 保護每個部位評分最高的裝備（只保護一件）
+            // 對於 accessory 類型，需要進一步檢查 subtype（ring 或 necklace）
+            const sameTypeEquips = gameState.inventory.filter(item => {
+                if (!item || item.type !== equipment.type) return false;
+                
+                // 如果是 accessory，還要檢查 subtype 是否相同
+                if (equipment.type === 'accessory') {
+                    return item.subtype === equipment.subtype;
+                }
+                
+                return true;
+            });
             
-            if (sameTypeEquips.length > 0) {
-                const maxScore = Math.max(...sameTypeEquips.map(e => calculateEquipmentScore(e)));
-                const currentScore = calculateEquipmentScore(equipment);
-                if (currentScore >= maxScore) {
-                    return true;  // 這是最好的，保護
+            if (sameTypeEquips.length > 1) {
+                // 找到評分最高的裝備
+                let bestEquip = sameTypeEquips[0];
+                let bestScore = calculateEquipmentScore(bestEquip);
+                
+                for (let i = 1; i < sameTypeEquips.length; i++) {
+                    const score = calculateEquipmentScore(sameTypeEquips[i]);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestEquip = sameTypeEquips[i];
+                    }
+                }
+                
+                // 只保護評分最高的那一件（使用 ID 比對）
+                if (equipment.id === bestEquip.id) {
+                    return true;
                 }
             }
             
@@ -11904,18 +11956,22 @@ const REGION_CONSUMABLES = {
         function autoSalvageItems() {
             if (!gameState.autoEquipment.autoSalvage) return;
             
-            const salvageQualities = gameState.autoEquipment.salvageQuality || ['common'];
-            const rarityMap = {
-                'common': 'Common',
-                'uncommon': 'Common',  // 兼容舊版本
-                'fine': 'Fine',
-                'rare': 'Rare',
-                'epic': 'Epic',
-                'legendary': 'Legendary'
-            };
+        const salvageQualities = gameState.autoEquipment.salvageQuality || ['common'];
+        const rarityMap = {
+            'common': 'common',
+            'uncommon': 'common',  // 兼容舊版本
+            'fine': 'fine',
+            'rare': 'rare',
+            'epic': 'epic',
+            'legendary': 'legendary',
+            'mythic': 'mythic',
+            'eternal': 'eternal',
+            'set': 'set'
+        };
             
             let salvaged = 0;
             let totalMaterials = 0;
+            let totalFragments = 0;
             
             // 篩選需要分解的裝備
             gameState.inventory = gameState.inventory.filter(item => {
@@ -11924,15 +11980,35 @@ const REGION_CONSUMABLES = {
                 // 檢查是否應該保護
                 if (shouldProtectEquipment(item)) return true;
                 
+                // 套裝特殊處理：檢查 setName 屬性
+                const isSet = item.setName ? true : false;
+                
                 // 檢查是否在分解列表中
                 const shouldSalvage = salvageQualities.some(quality => {
                     const rarity = rarityMap[quality.toLowerCase()];
+                    // 套裝特殊判斷
+                    if (quality.toLowerCase() === 'set' && isSet) return true;
                     return item.rarity === rarity;
                 });
                 
                 if (shouldSalvage) {
                     const materials = salvageEquipment(item);
                     totalMaterials += materials;
+                    
+                // 稀有以上的裝備額外獲得碎片
+                const itemRarity = isSet ? 'set' : item.rarity;
+                if (['rare', 'epic', 'legendary', 'mythic', 'eternal', 'set'].includes(itemRarity)) {
+                    const fragmentAmount = {
+                        'rare': 1,
+                        'epic': 2,
+                        'legendary': 5,
+                        'mythic': 10,
+                        'eternal': 20,
+                        'set': 3
+                    }[itemRarity] || 0;
+                    totalFragments += fragmentAmount;
+                }
+                    
                     salvaged++;
                     return false;  // 移除這個物品
                 }
@@ -11943,15 +12019,23 @@ const REGION_CONSUMABLES = {
             if (salvaged > 0) {
                 // 添加材料
                 if (!gameState.materials) {
-                    gameState.materials = { enhanceStone: 0 };
+                    gameState.materials = { enhanceStone: 0, fragment: 0 };
                 }
-                gameState.materials.enhanceStone = (gameState.materials.enhanceStone || 0) + totalMaterials;
+                if (!gameState.materials.enhanceStone) gameState.materials.enhanceStone = 0;
+                if (!gameState.materials.fragment) gameState.materials.fragment = 0;
+                
+                gameState.materials.enhanceStone += totalMaterials;
+                gameState.materials.fragment += totalFragments;
                 
                 // 統計
                 gameState.autoEquipment.stats.autoSalvaged += salvaged;
                 gameState.autoEquipment.stats.materialsGained += totalMaterials;
                 
-                addLog('自動分解', `🔧 自動分解了 ${salvaged} 件裝備，獲得 ${totalMaterials} 個強化石`);
+                let logMessage = `🔧 自動分解了 ${salvaged} 件裝備`;
+                if (totalMaterials > 0) logMessage += `，獲得 ${totalMaterials} 個強化石`;
+                if (totalFragments > 0) logMessage += `、${totalFragments} 個碎片`;
+                
+                addLog('自動分解', logMessage);
             }
         }
         
@@ -20305,19 +20389,21 @@ function applyDungeonRewards(rewards) {
     
     // 裝備
     for (const equipment of rewards.equipment) {
-        gameState.inventory.push(equipment);
-        gameState.stats.items++;
-        if (equipment.rarity === 'legendary') {
-            gameState.stats.legendaryItems++;
-        }
-        
-        // 更新任務進度：獲得裝備
-        updateQuestProgress('collect_equipment', 1);
-        if (equipment.rarity === 'Rare' || equipment.rarity === 'Epic' || equipment.rarity === 'Legendary' || equipment.rarity === 'Set') {
-            updateQuestProgress('collect_rare', 1);
-        }
-        if (equipment.rarity === 'legendary') {
-            updateQuestProgress('collect_legendary', 1);
+        // 使用 addToInventory 以觸發自動裝備
+        if (addToInventory(equipment, false)) {
+            gameState.stats.items++;
+            if (equipment.rarity === 'legendary') {
+                gameState.stats.legendaryItems++;
+            }
+            
+            // 更新任務進度：獲得裝備
+            updateQuestProgress('collect_equipment', 1);
+            if (equipment.rarity === 'Rare' || equipment.rarity === 'Epic' || equipment.rarity === 'Legendary' || equipment.rarity === 'Set') {
+                updateQuestProgress('collect_rare', 1);
+            }
+            if (equipment.rarity === 'legendary') {
+                updateQuestProgress('collect_legendary', 1);
+            }
         }
     }
     
@@ -21400,6 +21486,11 @@ function openAutoEquipSettings() {
         document.getElementById('salvage-common').checked = qualities.includes('common');
         document.getElementById('salvage-fine').checked = qualities.includes('fine');
         document.getElementById('salvage-rare').checked = qualities.includes('rare');
+        document.getElementById('salvage-epic').checked = qualities.includes('epic');
+        document.getElementById('salvage-legendary').checked = qualities.includes('legendary');
+        document.getElementById('salvage-mythic').checked = qualities.includes('mythic');
+        document.getElementById('salvage-eternal').checked = qualities.includes('eternal');
+        document.getElementById('salvage-set').checked = qualities.includes('set');
         
 
         // 更新統計
@@ -21473,6 +21564,11 @@ function updateSalvageQuality() {
     if (document.getElementById('salvage-common').checked) qualities.push('common');
     if (document.getElementById('salvage-fine').checked) qualities.push('fine');
     if (document.getElementById('salvage-rare').checked) qualities.push('rare');
+    if (document.getElementById('salvage-epic').checked) qualities.push('epic');
+    if (document.getElementById('salvage-legendary').checked) qualities.push('legendary');
+    if (document.getElementById('salvage-mythic').checked) qualities.push('mythic');
+    if (document.getElementById('salvage-eternal').checked) qualities.push('eternal');
+    if (document.getElementById('salvage-set').checked) qualities.push('set');
     
     gameState.autoEquipment.salvageQuality = qualities;
     addLog('設定', `🔧 更新分解品質：${qualities.join(', ')}`);
@@ -21502,7 +21598,7 @@ function updateAutoEquipStats() {
     document.getElementById('materials-gained').textContent = gameState.autoEquipment.stats.materialsGained || 0;
 }
 
-// 手動批量分解
+// 手動批量分解（舊版，保留以防相容性問題）
 function manualSalvageAll(quality) {
     if (!confirm(`確定要分解所有${quality === 'common' ? '普通' : '精良'}品質的裝備嗎？`)) return;
     
@@ -21546,6 +21642,137 @@ function manualSalvageAll(quality) {
         addLog('批量分解', '沒有可分解的裝備');
     }
         
+}
+
+// 一鍵分解（根據勾選品階）
+function manualSalvageSelected() {
+    // 獲取勾選的品質
+    const selectedQualities = [];
+    if (document.getElementById('salvage-common')?.checked) selectedQualities.push('common');
+    if (document.getElementById('salvage-fine')?.checked) selectedQualities.push('fine');
+    if (document.getElementById('salvage-rare')?.checked) selectedQualities.push('rare');
+    if (document.getElementById('salvage-epic')?.checked) selectedQualities.push('epic');
+    if (document.getElementById('salvage-legendary')?.checked) selectedQualities.push('legendary');
+    if (document.getElementById('salvage-mythic')?.checked) selectedQualities.push('mythic');
+    if (document.getElementById('salvage-eternal')?.checked) selectedQualities.push('eternal');
+    if (document.getElementById('salvage-set')?.checked) selectedQualities.push('set');
+    
+    if (selectedQualities.length === 0) {
+        addLog('批量分解', '請至少勾選一個品質');
+        return;
+    }
+    
+    // 品質名稱對照
+    const qualityNames = {
+        'common': '普通',
+        'fine': '精良',
+        'rare': '稀有',
+        'epic': '史詩',
+        'legendary': '傳說',
+        'mythic': '神話',
+        'eternal': '永恆',
+        'set': '套裝'
+    };
+    
+    const qualityList = selectedQualities.map(q => qualityNames[q]).join('、');
+    
+    if (!confirm(`確定要分解所有以下品質的裝備嗎？\n\n${qualityList}\n\n（已裝備和每個部位最好的裝備會被保留）`)) return;
+    
+    // 品質對照表（保持小寫，與遊戲中的 rarity 屬性一致）
+    const rarityMap = {
+        'common': 'common',
+        'fine': 'fine',
+        'rare': 'rare',
+        'epic': 'epic',
+        'legendary': 'legendary',
+        'mythic': 'mythic',
+        'eternal': 'eternal',
+        'set': 'set'
+    };
+    
+    const targetRarities = selectedQualities.map(q => rarityMap[q]);
+    let salvaged = 0;
+    let totalMaterials = 0;
+    let totalFragments = 0;
+    
+    // 調試：記錄背包裝備
+    console.log('=== 一鍵分解調試 ===');
+    console.log('勾選品階:', selectedQualities);
+    console.log('目標稀有度:', targetRarities);
+    const equipCount = gameState.inventory.filter(i => i && i.type !== 'consumable').length;
+    console.log('背包裝備總數:', equipCount);
+    
+    gameState.inventory = gameState.inventory.filter(item => {
+        if (!item || item.type === 'consumable') return true;
+        
+        // 調試：記錄每件裝備的處理
+        console.log('\n檢查裝備:', item.name, '| 類型:', item.type, '| 稀有度:', item.rarity, '| subtype:', item.subtype);
+        
+        // 套裝特殊處理：檢查 setName 屬性
+        const isSet = item.setName ? true : false;
+        const itemRarity = isSet && selectedQualities.includes('set') ? 'Set' : item.rarity;
+        
+        if (!targetRarities.includes(itemRarity)) {
+            console.log('  → 保留：稀有度不匹配');
+            return true;
+        }
+        
+        const isProtected = shouldProtectEquipment(item);
+        if (isProtected) {
+            console.log('  → 保留：被保護');
+            return true;
+        }
+        
+        console.log('  → 分解！');
+        
+        const materials = salvageEquipment(item);
+        totalMaterials += materials;
+        console.log('  獲得材料:', materials);
+        
+        // 稀有以上的裝備額外獲得碎片
+        if (['rare', 'epic', 'legendary', 'mythic', 'eternal', 'set'].includes(itemRarity)) {
+            const fragmentAmount = {
+                'rare': 1,
+                'epic': 2,
+                'legendary': 5,
+                'mythic': 10,
+                'eternal': 20,
+                'set': 3
+            }[itemRarity] || 0;
+            totalFragments += fragmentAmount;
+        }
+        
+        salvaged++;
+        return false;
+    });
+    
+    if (salvaged > 0) {
+        // 初始化資源
+        if (!gameState.materials) {
+            gameState.materials = { enhanceStone: 0, fragment: 0 };
+        }
+        if (!gameState.materials.enhanceStone) gameState.materials.enhanceStone = 0;
+        if (!gameState.materials.fragment) gameState.materials.fragment = 0;
+        
+        gameState.materials.enhanceStone += totalMaterials;
+        gameState.materials.fragment += totalFragments;
+        
+        gameState.autoEquipment.stats.autoSalvaged += salvaged;
+        gameState.autoEquipment.stats.materialsGained += totalMaterials;
+        
+        let logMessage = `🔧 分解了 ${salvaged} 件裝備（${qualityList}）`;
+        if (totalMaterials > 0) logMessage += `\n獲得 ${totalMaterials} 個強化石`;
+        if (totalFragments > 0) logMessage += `、${totalFragments} 個碎片`;
+        
+        addLog('批量分解', logMessage);
+        playSound('item');
+        
+        updateAutoEquipStats();
+        updateUI();
+        saveGame();
+    } else {
+        addLog('批量分解', '沒有符合條件的裝備可分解');
+    }
 }
 </script>
 

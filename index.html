@@ -20823,6 +20823,43 @@ const REGION_CONSUMABLES = {
             
             // v2.0 遷移代碼已移除
             
+            // ========== 卡牌 UUID 遷移 (v3.0) ==========
+            // 為舊存檔中沒有 UUID 的卡牌添加 UUID
+            if (loadedState.cards && loadedState.cards.collection) {
+                let needsMigration = false;
+                loadedState.cards.collection.forEach(card => {
+                    if (!card.uuid) {
+                        card.uuid = Date.now() + Math.random();
+                        needsMigration = true;
+                    }
+                });
+                
+                // 如果 slot1/slot2 存儲的是舊的 ID，轉換為 UUID
+                if (needsMigration) {
+                    // 轉換 slot1
+                    if (loadedState.cards.slot1 && typeof loadedState.cards.slot1 === 'string') {
+                        const card1 = loadedState.cards.collection.find(c => c.id === loadedState.cards.slot1);
+                        if (card1) {
+                            loadedState.cards.slot1 = card1.uuid;
+                        } else {
+                            loadedState.cards.slot1 = null;
+                        }
+                    }
+                    
+                    // 轉換 slot2
+                    if (loadedState.cards.slot2 && typeof loadedState.cards.slot2 === 'string') {
+                        const card2 = loadedState.cards.collection.find(c => c.id === loadedState.cards.slot2);
+                        if (card2) {
+                            loadedState.cards.slot2 = card2.uuid;
+                        } else {
+                            loadedState.cards.slot2 = null;
+                        }
+                    }
+                    
+                    console.log('✅ 卡牌 UUID 遷移完成');
+                }
+            }
+            
             return loadedState;
         }
         

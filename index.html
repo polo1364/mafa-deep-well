@@ -2270,6 +2270,17 @@
                 </div>
             </div>
             
+            <!-- 卡牌融合 -->
+            <div style="margin-top: 20px; background: rgba(255, 140, 0, 0.08); padding: 15px; border-radius: 8px; border: 2px solid rgba(255, 140, 0, 0.3);">
+                <h3 style="margin-top: 0; color: rgba(255, 140, 0, 1);">🔥 卡牌融合</h3>
+                <div style="color: #7a8fb8; font-size: 0.9rem; margin-bottom: 15px;">
+                    將 3 張相同系列、相同品階的滿級 (Lv.10) 卡牌融合成 1 張更高品階的卡牌！
+                </div>
+                <div id="fusion-groups-display">
+                    <!-- 動態生成 -->
+                </div>
+            </div>
+            
             <button onclick="closeCardModal()" style="width: 100%; padding: 12px; margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 8px; color: white; font-size: 16px; cursor: pointer; font-weight: bold;">✔️ 關閉</button>
         </div>
     </div>
@@ -5046,6 +5057,39 @@ const REGION_CONSUMABLES = {
             counter_common: { id: 'counter_common', name: '🌟 反擊姿態', type: 'special', rarity: 'Common', series: 'counter', description: '受擊時10%機率反擊造成50%傷害', price: 500, effect: { type: 'trigger', trigger: 'on_hit', chance: 10, effect: 'counter', value: 50 }, icon: '🌟' },
             counter_fine: { id: 'counter_fine', name: '🌟 完美反擊', type: 'special', rarity: 'Fine', series: 'counter', description: '受擊時18%機率反擊造成80%傷害', price: 2000, effect: { type: 'trigger', trigger: 'on_hit', chance: 18, effect: 'counter', value: 80 }, icon: '🌟' },
             counter_rare: { id: 'counter_rare', name: '🌟 致命反擊', type: 'special', rarity: 'Rare', series: 'counter', description: '受擊時25%機率反擊造成120%傷害', price: 8000, effect: { type: 'trigger', trigger: 'on_hit', chance: 25, effect: 'counter', value: 120 }, icon: '🌟' }
+        };
+
+        // 卡牌詞綴系統定義
+        const CARD_AFFIXES = {
+            // 攻擊類詞綴
+            sharp: { id: 'sharp', name: '鋒銳', category: 'attack', stat: 'atk', value: 3, type: 'percent', weight: 100, color: '#ff6b6b' },
+            deadly: { id: 'deadly', name: '致命', category: 'attack', stat: 'crit', value: 2, type: 'flat', weight: 80, color: '#ff6b6b' },
+            brutal: { id: 'brutal', name: '殘暴', category: 'attack', stat: 'critDmg', value: 8, type: 'percent', weight: 70, color: '#ff6b6b' },
+            piercing: { id: 'piercing', name: '穿透', category: 'attack', stat: 'ignoreDefense', value: 5, type: 'percent', weight: 60, color: '#ff6b6b' },
+            furious: { id: 'furious', name: '狂暴', category: 'attack', stats: [{stat: 'atk', value: 5}, {stat: 'def', value: -2}], type: 'percent', weight: 50, color: '#ff6b6b' },
+            
+            // 防禦類詞綴
+            sturdy: { id: 'sturdy', name: '堅固', category: 'defense', stat: 'def', value: 4, type: 'percent', weight: 100, color: '#4dabf7' },
+            vital: { id: 'vital', name: '活力', category: 'defense', stat: 'hp', value: 5, type: 'percent', weight: 90, color: '#4dabf7' },
+            resilient: { id: 'resilient', name: '韌性', category: 'defense', stat: 'dmgRed', value: 2, type: 'percent', weight: 70, color: '#4dabf7' },
+            regenerating: { id: 'regenerating', name: '再生', category: 'defense', stat: 'regen', value: 1, type: 'percent', weight: 60, color: '#4dabf7' },
+            vampiric: { id: 'vampiric', name: '吸血', category: 'defense', stat: 'lifeSteal', value: 3, type: 'percent', weight: 80, color: '#4dabf7' },
+            
+            // 特殊類詞綴
+            lucky: { id: 'lucky', name: '幸運', category: 'special', stat: 'luck', value: 2, type: 'percent', weight: 70, color: '#ffd43b' },
+            wealthy: { id: 'wealthy', name: '富裕', category: 'special', stat: 'goldBonus', value: 3, type: 'percent', weight: 80, color: '#ffd43b' },
+            studious: { id: 'studious', name: '學習', category: 'special', stat: 'expBonus', value: 2, type: 'percent', weight: 80, color: '#ffd43b' },
+            swift: { id: 'swift', name: '迅捷', category: 'special', stat: 'speed', value: 5, type: 'percent', weight: 60, color: '#ffd43b' },
+            divine: { id: 'divine', name: '神聖', category: 'special', stats: [{stat: 'atk', value: 1}, {stat: 'def', value: 1}, {stat: 'hp', value: 1}], type: 'percent', weight: 30, color: '#ffd43b' }
+        };
+
+        // 詞綴生成機率配置（按品階）
+        const AFFIX_CHANCES = {
+            'Common': { one: 0.10, two: 0 },
+            'Fine': { one: 0.20, two: 0 },
+            'Rare': { one: 0.40, two: 0.10 },
+            'Epic': { one: 0.60, two: 0.20 },
+            'Legendary': { one: 0.80, two: 0.40 }
         };
 
         // 隨從裝備定義
@@ -14843,6 +14887,9 @@ const REGION_CONSUMABLES = {
             
             // 更新卡牌收藏
             updateCardCollectionDisplay();
+            
+            // 更新融合界面
+            updateFusionGroupsDisplay();
         }
         
         function updateEquippedCardsDisplay() {
@@ -14856,8 +14903,8 @@ const REGION_CONSUMABLES = {
             
             // 卡槽1
             if (slot1) {
-                const card = gameState.cards.collection.find(c => c.id === slot1);
-                const cardData = CARDS[slot1];
+                const card = gameState.cards.collection.find(c => c.uuid === slot1);
+                const cardData = card ? CARDS[card.id] : null;
                 if (card && cardData) {
                     html += renderCardSlot(card, cardData, 1);
                 } else {
@@ -14869,8 +14916,8 @@ const REGION_CONSUMABLES = {
             
             // 卡槽2
             if (slot2) {
-                const card = gameState.cards.collection.find(c => c.id === slot2);
-                const cardData = CARDS[slot2];
+                const card = gameState.cards.collection.find(c => c.uuid === slot2);
+                const cardData = card ? CARDS[card.id] : null;
                 if (card && cardData) {
                     html += renderCardSlot(card, cardData, 2);
                 } else {
@@ -14903,6 +14950,16 @@ const REGION_CONSUMABLES = {
                     <div style="font-size: 0.9rem; color: #ccc; margin-bottom: 10px;">
                         ${cardData.description}
                     </div>
+                    ${card.affixes && card.affixes.length > 0 ? `
+                        <div style="margin-bottom: 10px;">
+                            ${card.affixes.map(affix => {
+                                const affixText = affix.stat ? 
+                                    `${affix.name}: ${affix.stat} +${affix.value}${affix.type === 'percent' ? '%' : ''}` :
+                                    `${affix.name}: ${affix.stats.map(s => `${s.stat} ${s.value > 0 ? '+' : ''}${s.value}%`).join(', ')}`;
+                                return `<span style="display: inline-block; background: ${affix.color}22; color: ${affix.color}; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; margin-bottom: 5px; border: 1px solid ${affix.color};">✨ ${affixText}</span>`;
+                            }).join('')}
+                        </div>
+                    ` : ''}
                     <div style="font-size: 0.85rem; color: #4EA5FF;">
                         效果倍率: ${(levelMultiplier * 100).toFixed(0)}%
                     </div>
@@ -15012,10 +15069,117 @@ const REGION_CONSUMABLES = {
             container.innerHTML = html;
         }
         
+        // 更新融合界面
+        function updateFusionGroupsDisplay() {
+            const container = document.getElementById('fusion-groups-display');
+            if (!container) return;
+            
+            const fusibleGroups = getFusibleCardGroups();
+            
+            if (fusibleGroups.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">無可融合的卡牌。需要 3 張相同系列、相同品階的滿級 (Lv.10) 卡牌。</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            fusibleGroups.forEach(group => {
+                const rarityColor = getRarityColor(group.rarity);
+                const nextRarity = getNextRarity(group.rarity);
+                const nextRarityColor = getRarityColor(nextRarity);
+                const cost = getFusionCost(group.rarity);
+                const canAfford = gameState.gold >= cost;
+                
+                // 找到下一品階的卡牌
+                const nextCard = Object.values(CARDS).find(c => c.series === group.series && c.rarity === nextRarity);
+                
+                html += `
+                    <div style="background: rgba(100, 100, 100, 0.15); padding: 15px; border-radius: 8px; border: 2px solid ${rarityColor}; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 1.2rem; font-weight: bold; color: ${rarityColor};">${group.series}系列 - ${group.rarity}</span>
+                                <span style="color: #888; font-size: 0.9rem; margin-left: 10px;">可用: ${group.cards.length} 張</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.85rem; color: #888;">融合成本</div>
+                                <div style="font-size: 1.1rem; font-weight: bold; color: ${canAfford ? '#ffd700' : '#ff6b6b'};">💰 ${cost}</div>
+                            </div>
+                        </div>
+                        
+                        ${nextCard ? `
+                            <div style="background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
+                                <div style="font-size: 0.85rem; color: #888; margin-bottom: 5px;">融合結果：</div>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 1.5rem;">${nextCard.icon}</span>
+                                    <span style="color: ${nextRarityColor}; font-weight: bold;">${nextCard.name}</span>
+                                    <span style="color: #888; font-size: 0.85rem;">(${nextRarity})</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                            ${group.cards.slice(0, 3).map((card, idx) => {
+                                const cardData = CARDS[card.id];
+                                return `
+                                    <div id="fusion-card-${group.series}-${group.rarity}-${idx}" onclick="toggleFusionCardSelection('${group.series}', '${group.rarity}', ${idx}, '${card.id}')" style="background: rgba(100, 100, 100, 0.2); padding: 10px; border-radius: 6px; border: 2px solid rgba(100, 100, 100, 0.3); cursor: pointer; text-align: center; transition: all 0.2s;">
+                                        <div style="font-size: 1.2rem; margin-bottom: 5px;">${cardData.icon}</div>
+                                        <div style="font-size: 0.75rem; color: #ccc;">${cardData.name}</div>
+                                        <div style="font-size: 0.7rem; color: #888; margin-top: 3px;">Lv.${card.level}</div>
+                                        ${card.affixes && card.affixes.length > 0 ? `
+                                            <div style="margin-top: 5px;">
+                                                ${card.affixes.map(a => `<span style="font-size: 0.65rem; color: ${a.color};">✨${a.name}</span>`).join(' ')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <button onclick="performFusion('${group.series}', '${group.rarity}')" ${!canAfford ? 'disabled' : ''} style="width: 100%; padding: 12px; background: ${canAfford ? 'linear-gradient(135deg, #ff8c00 0%, #ff6347 100%)' : 'rgba(100, 100, 100, 0.3)'}; border: none; border-radius: 6px; color: ${canAfford ? 'white' : '#666'}; font-size: 1rem; font-weight: bold; cursor: ${canAfford ? 'pointer' : 'not-allowed'};">🔥 融合 (3 張 ${group.rarity} → 1 張 ${nextRarity})</button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // 切換融合卡牌選擇（用於視覺反饋）
+        function toggleFusionCardSelection(series, rarity, idx, cardId) {
+            const element = document.getElementById(`fusion-card-${series}-${rarity}-${idx}`);
+            if (!element) return;
+            
+            const isSelected = element.style.borderColor === 'rgb(255, 215, 0)';
+            
+            if (isSelected) {
+                element.style.borderColor = 'rgba(100, 100, 100, 0.3)';
+                element.style.background = 'rgba(100, 100, 100, 0.2)';
+            } else {
+                element.style.borderColor = '#ffd700';
+                element.style.background = 'rgba(255, 215, 0, 0.2)';
+            }
+        }
+        
+        // 執行融合
+        function performFusion(series, rarity) {
+            const group = getFusibleCardGroups().find(g => g.series === series && g.rarity === rarity);
+            if (!group || group.cards.length < 3) {
+                addLog('融合', '無法找到足夠的卡牌！');
+                return;
+            }
+            
+            // 取前 3 張卡牌（使用 UUID）
+            const cardIds = group.cards.slice(0, 3).map(c => c.uuid);
+            
+            if (fuseCards(cardIds)) {
+                // 融合成功，重新渲染界面
+                updateCardModal();
+            }
+        }
+        
         function renderCardItem(card, cardData) {
             const rarityColor = getRarityColor(cardData.rarity);
             const levelMultiplier = getCardLevelMultiplier(card.level);
-            const isEquipped = gameState.cards.slot1 === card.id || gameState.cards.slot2 === card.id;
+            const isEquipped = gameState.cards.slot1 === card.uuid || gameState.cards.slot2 === card.uuid;
             const upgradeCost = card.level < 10 ? getUpgradeShardCost(card.level, cardData.rarity) : 0;
             const currentShards = gameState.cards.shards[cardData.rarity] || 0;
             const canUpgrade = card.level < 10 && currentShards >= upgradeCost;
@@ -15039,20 +15203,31 @@ const REGION_CONSUMABLES = {
                     <div style="font-size: 0.9rem; color: #ccc; margin-bottom: 10px;">
                         ${cardData.description}
                     </div>
+                    ${card.affixes && card.affixes.length > 0 ? `
+                        <div style="margin-bottom: 10px;">
+                            ${card.affixes.map(affix => {
+                                const affixText = affix.stat ? 
+                                    `${affix.name}: ${affix.stat} +${affix.value}${affix.type === 'percent' ? '%' : ''}` :
+                                    `${affix.name}: ${affix.stats.map(s => `${s.stat} ${s.value > 0 ? '+' : ''}${s.value}%`).join(', ')}`;
+                                return `<span style="display: inline-block; background: ${affix.color}22; color: ${affix.color}; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; margin-bottom: 5px; border: 1px solid ${affix.color};">✨ ${affixText}</span>`;
+                            }).join('')}
+                        </div>
+                    ` : ''}
                     ${card.level < 10 ? `
                         <div style="background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
                             <div style="font-size: 0.85rem; color: #888; margin-bottom: 5px;">升級所需：<span style="color: ${rarityColor}">💎 ${upgradeCost}</span> / ${currentShards}</div>
-                            <button onclick="upgradeCard('${card.id}'); updateCardModal();" ${!canUpgrade ? 'disabled' : ''} style="width: 100%; padding: 8px; background: ${canUpgrade ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(100, 100, 100, 0.3)'}; border: none; border-radius: 4px; color: ${canUpgrade ? 'white' : '#666'}; cursor: ${canUpgrade ? 'pointer' : 'not-allowed'}; font-size: 0.9rem;">⬆️ 升級到 Lv.${card.level + 1}</button>
+                            <button onclick="upgradeCard(${card.uuid}); updateCardModal();" ${!canUpgrade ? 'disabled' : ''} style="width: 100%; padding: 8px; background: ${canUpgrade ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(100, 100, 100, 0.3)'}; border: none; border-radius: 4px; color: ${canUpgrade ? 'white' : '#666'}; cursor: ${canUpgrade ? 'pointer' : 'not-allowed'}; font-size: 0.9rem;">⬆️ 升級到 Lv.${card.level + 1}</button>
                         </div>
                     ` : '<div style="text-align: center; color: #ffd700; font-size: 0.85rem; padding: 8px;">🏆 已達最高等級</div>'}
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                         ${!isEquipped ? `
-                            <button onclick="equipCard('${card.id}', 1); updateCardModal();" style="flex: 1; padding: 8px; background: rgba(138, 43, 226, 0.3); border: 1px solid rgba(138, 43, 226, 0.6); border-radius: 4px; color: #b794f4; cursor: pointer; font-size: 0.85rem;">⭐ 裝備到1</button>
-                            <button onclick="equipCard('${card.id}', 2); updateCardModal();" style="flex: 1; padding: 8px; background: rgba(138, 43, 226, 0.3); border: 1px solid rgba(138, 43, 226, 0.6); border-radius: 4px; color: #b794f4; cursor: pointer; font-size: 0.85rem;">⭐ 裝備到2</button>
+                            <button onclick="equipCard(${card.uuid}, 1); updateCardModal();" style="flex: 1; padding: 8px; background: rgba(138, 43, 226, 0.3); border: 1px solid rgba(138, 43, 226, 0.6); border-radius: 4px; color: #b794f4; cursor: pointer; font-size: 0.85rem;">⭐ 裝備到1</button>
+                            <button onclick="equipCard(${card.uuid}, 2); updateCardModal();" style="flex: 1; padding: 8px; background: rgba(138, 43, 226, 0.3); border: 1px solid rgba(138, 43, 226, 0.6); border-radius: 4px; color: #b794f4; cursor: pointer; font-size: 0.85rem;">⭐ 裝備到2</button>
                         ` : `
-                            <button onclick="unequipCard(${gameState.cards.slot1 === card.id ? 1 : 2}); updateCardModal();" style="flex: 1; padding: 8px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.5); border-radius: 4px; color: #ff6b6b; cursor: pointer; font-size: 0.85rem;">✖️ 卸下</button>
+                            <button onclick="unequipCard(${gameState.cards.slot1 === card.uuid ? 1 : 2}); updateCardModal();" style="flex: 1; padding: 8px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.5); border-radius: 4px; color: #ff6b6b; cursor: pointer; font-size: 0.85rem;">✖️ 卸下</button>
                         `}
                     </div>
+                    <button onclick="salvageCard(${card.uuid}); updateCardModal();" style="width: 100%; padding: 8px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); border-radius: 4px; color: #ff8c00; cursor: pointer; font-size: 0.85rem;">🔨 分解為碎片 (+${getShardAmount(cardData.rarity)} 💎)</button>
                 </div>
             `;
         }
@@ -15069,8 +15244,8 @@ const REGION_CONSUMABLES = {
             
             // 卡槽1
             if (slot1) {
-                const card = gameState.cards.collection.find(c => c.id === slot1);
-                const cardData = CARDS[slot1];
+                const card = gameState.cards.collection.find(c => c.uuid === slot1);
+                const cardData = card ? CARDS[card.id] : null;
                 if (card && cardData) {
                     const color = getRarityColor(cardData.rarity);
                     // 生成效果描述
@@ -15128,8 +15303,8 @@ const REGION_CONSUMABLES = {
             
             // 卡槽2
             if (slot2) {
-                const card = gameState.cards.collection.find(c => c.id === slot2);
-                const cardData = CARDS[slot2];
+                const card = gameState.cards.collection.find(c => c.uuid === slot2);
+                const cardData = card ? CARDS[card.id] : null;
                 if (card && cardData) {
                     const color = getRarityColor(cardData.rarity);
                     // 生成效果描述
@@ -15201,6 +15376,70 @@ const REGION_CONSUMABLES = {
 
         // ========== 卡牌系統函數 ==========
         
+        // 詞綴系統函數
+        
+        // 根據權重隨機選擇詞綴
+        function getRandomAffix(excludeIds = []) {
+            const availableAffixes = Object.values(CARD_AFFIXES).filter(a => !excludeIds.includes(a.id));
+            if (availableAffixes.length === 0) return null;
+            
+            const totalWeight = availableAffixes.reduce((sum, a) => sum + a.weight, 0);
+            let rand = Math.random() * totalWeight;
+            
+            for (const affix of availableAffixes) {
+                rand -= affix.weight;
+                if (rand <= 0) {
+                    return JSON.parse(JSON.stringify(affix)); // 返回副本
+                }
+            }
+            
+            return availableAffixes[0];
+        }
+        
+        // 為卡牌生成詞綴
+        function generateAffixesForCard(rarity) {
+            const chances = AFFIX_CHANCES[rarity];
+            if (!chances) return [];
+            
+            const affixes = [];
+            
+            // 第一個詞綴
+            if (Math.random() < chances.one) {
+                const affix = getRandomAffix();
+                if (affix) affixes.push(affix);
+            }
+            
+            // 第二個詞綴
+            if (Math.random() < chances.two) {
+                const excludeIds = affixes.map(a => a.id);
+                const affix = getRandomAffix(excludeIds);
+                if (affix) affixes.push(affix);
+            }
+            
+            return affixes;
+        }
+        
+        // 計算詞綴屬性加成
+        function applyAffixBonuses(affixes) {
+            if (!affixes || affixes.length === 0) return {};
+            
+            const bonuses = {};
+            
+            for (const affix of affixes) {
+                if (affix.stat) {
+                    // 單一屬性詞綴
+                    bonuses[affix.stat] = (bonuses[affix.stat] || 0) + affix.value;
+                } else if (affix.stats) {
+                    // 多屬性詞綴
+                    for (const statBonus of affix.stats) {
+                        bonuses[statBonus.stat] = (bonuses[statBonus.stat] || 0) + statBonus.value;
+                    }
+                }
+            }
+            
+            return bonuses;
+        }
+        
         // 獲取卡牌
         function getCard(cardId) {
             if (!gameState.cards) {
@@ -15213,21 +15452,12 @@ const REGION_CONSUMABLES = {
                 return false;
             }
             
-            // 檢查是否已擁有
-            const existingCard = gameState.cards.collection.find(c => c.id === cardId);
-            if (existingCard) {
-                // 轉換為碎片
-                const shardAmount = getShardAmount(card.rarity);
-                gameState.cards.shards[card.rarity] = (gameState.cards.shards[card.rarity] || 0) + shardAmount;
-                gameState.cards.stats.totalCardsObtained++;
-                const rarityColor = getRarityColor(card.rarity);
-                addLog('卡牌', `已擁有 ${card.icon} ${card.name}，轉換為 <span style="color: ${rarityColor}">${shardAmount}</span> 個碎片！`);
-                return false;
-            }
+            // 不再檢查重複，允許收藏多張相同卡牌（因為詞綴不同）
             
             // 添加到收藏
             const newCard = {
-                id: card.id,
+                uuid: Date.now() + Math.random(), // 唯一 ID
+                id: card.id, // 卡牌類型 ID
                 name: card.name,
                 type: card.type,
                 rarity: card.rarity,
@@ -15236,7 +15466,8 @@ const REGION_CONSUMABLES = {
                 effect: card.effect,
                 icon: card.icon,
                 level: 1,
-                exp: 0
+                exp: 0,
+                affixes: generateAffixesForCard(card.rarity) // 生成詞綴
             };
             
             gameState.cards.collection.push(newCard);
@@ -15253,12 +15484,12 @@ const REGION_CONSUMABLES = {
         }
         
         // 裝備卡牌
-        function equipCard(cardId, slotNum) {
+        function equipCard(cardUuid, slotNum) {
             if (!gameState.cards) {
                 gameState.cards = { slot1: null, slot2: null, collection: [], shards: {} };
             }
             
-            const card = gameState.cards.collection.find(c => c.id === cardId);
+            const card = gameState.cards.collection.find(c => c.uuid === cardUuid);
             if (!card) {
                 addLog('卡牌不存在！', 'error');
                 return false;
@@ -15268,13 +15499,13 @@ const REGION_CONSUMABLES = {
             
             // 檢查是否已裝備在其他槽位
             const otherSlotKey = slotNum === 1 ? 'slot2' : 'slot1';
-            if (gameState.cards[otherSlotKey] === cardId) {
+            if (gameState.cards[otherSlotKey] === cardUuid) {
                 addLog('此卡牌已裝備在其他槽位！', 'error');
                 return false;
             }
             
-            // 裝備卡牌
-            gameState.cards[slotKey] = cardId;
+            // 裝備卡牌（儲存 UUID）
+            gameState.cards[slotKey] = cardUuid;
             addLog(`裝備卡牌：${card.name} 到槽位${slotNum}`, 'info');
             
             // 重新計算屬性
@@ -15288,14 +15519,14 @@ const REGION_CONSUMABLES = {
             if (!gameState.cards) return false;
             
             const slotKey = `slot${slotNum}`;
-            const cardId = gameState.cards[slotKey];
+            const cardUuid = gameState.cards[slotKey];
             
-            if (!cardId) {
+            if (!cardUuid) {
                 addLog(`槽位${slotNum}沒有裝備卡牌！`, 'error');
                 return false;
             }
             
-            const card = gameState.cards.collection.find(c => c.id === cardId);
+            const card = gameState.cards.collection.find(c => c.uuid === cardUuid);
             if (card) {
                 addLog(`卸下卡牌：${card.name}`, 'info');
             }
@@ -15314,11 +15545,11 @@ const REGION_CONSUMABLES = {
             
             const equipped = [];
             if (gameState.cards.slot1) {
-                const card = gameState.cards.collection.find(c => c.id === gameState.cards.slot1);
+                const card = gameState.cards.collection.find(c => c.uuid === gameState.cards.slot1);
                 if (card) equipped.push(card);
             }
             if (gameState.cards.slot2) {
-                const card = gameState.cards.collection.find(c => c.id === gameState.cards.slot2);
+                const card = gameState.cards.collection.find(c => c.uuid === gameState.cards.slot2);
                 if (card) equipped.push(card);
             }
             return equipped;
@@ -15359,8 +15590,18 @@ const REGION_CONSUMABLES = {
                 lifeSteal: 0
             };
             
-            // 計算每張卡牌的效果
+            // 計算每張卡牌的效果（包括詞綴）
             equipped.forEach(card => {
+                // 計算詞綴加成
+                if (card.affixes && card.affixes.length > 0) {
+                    const affixBonuses = applyAffixBonuses(card.affixes);
+                    for (const stat in affixBonuses) {
+                        if (bonuses.hasOwnProperty(stat)) {
+                            bonuses[stat] += affixBonuses[stat];
+                        }
+                    }
+                }
+                
                 const effect = card.effect;
                 if (effect.type === 'passive') {
                     // 單一屬性
@@ -15404,6 +15645,7 @@ const REGION_CONSUMABLES = {
                 }
             });
             
+            
             // 加上套牌效果
             const deckEffect = getDeckEffect();
             if (deckEffect && deckEffect.bonus) {
@@ -15433,14 +15675,14 @@ const REGION_CONSUMABLES = {
         }
 
         // 卡牌升級系統
-        function upgradeCard(cardId) {
-            const card = gameState.cards.collection.find(c => c.id === cardId);
+        function upgradeCard(cardUuid) {
+            const card = gameState.cards.collection.find(c => c.uuid === cardUuid);
             if (!card) {
                 addLog('卡牌', '卡牌不存在！');
                 return false;
             }
             
-            const cardData = CARDS[cardId];
+            const cardData = CARDS[card.id];
             if (!cardData) {
                 return false;
             }
@@ -15486,6 +15728,39 @@ const REGION_CONSUMABLES = {
             return true;
         }
         
+        // 手動分解卡牌為碎片
+        function salvageCard(cardUuid) {
+            const cardIndex = gameState.cards.collection.findIndex(c => c.uuid === cardUuid);
+            if (cardIndex === -1) {
+                addLog('分解', '卡牌不存在！');
+                return false;
+            }
+            
+            const card = gameState.cards.collection[cardIndex];
+            const cardData = CARDS[card.id];
+            
+            // 檢查是否被裝備
+            if (gameState.cards.slot1 === card.uuid || gameState.cards.slot2 === card.uuid) {
+                addLog('分解', '無法分解已裝備的卡牌，請先卸下！');
+                return false;
+            }
+            
+            // 獲得碎片
+            const shardAmount = getShardAmount(cardData.rarity);
+            gameState.cards.shards[cardData.rarity] = (gameState.cards.shards[cardData.rarity] || 0) + shardAmount;
+            
+            // 移除卡牌
+            gameState.cards.collection.splice(cardIndex, 1);
+            
+            const rarityColor = getRarityColor(cardData.rarity);
+            addLog('分解', `分解 ${cardData.icon} ${card.name}，獲得 <span style="color: ${rarityColor}">${shardAmount}</span> 個碎片！`);
+            
+            recalculateStats();
+            saveGame();
+            
+            return true;
+        }
+        
         // 計算升級所需碎片
         function getUpgradeShardCost(currentLevel, rarity) {
             // 基礎成本
@@ -15505,6 +15780,193 @@ const REGION_CONSUMABLES = {
         // 獲取卡牌升級後的效果倍率
         function getCardLevelMultiplier(level) {
             return 1 + (level - 1) * 0.1; // 每級+10%
+        }
+        
+        // ========== 卡牌融合系統 ==========
+        
+        // 獲取融合成本
+        function getFusionCost(rarity) {
+            const costs = {
+                'Common': 50,
+                'Fine': 200,
+                'Rare': 1000,
+                'Epic': 5000
+            };
+            return costs[rarity] || 0;
+        }
+        
+        // 獲取下一個品階
+        function getNextRarity(currentRarity) {
+            const rarityOrder = ['Common', 'Fine', 'Rare', 'Epic', 'Legendary'];
+            const currentIndex = rarityOrder.indexOf(currentRarity);
+            if (currentIndex === -1 || currentIndex === rarityOrder.length - 1) {
+                return null; // 無法融合
+            }
+            return rarityOrder[currentIndex + 1];
+        }
+        
+        // 獲取可融合的卡牌組合
+        function getFusibleCardGroups() {
+            if (!gameState.cards || !gameState.cards.collection) return [];
+            
+            const groups = {};
+            
+            // 按系列和品階分組
+            gameState.cards.collection.forEach(card => {
+                if (card.level === 10) { // 只有滿級卡牌才能融合
+                    const key = `${card.series}_${card.rarity}`;
+                    if (!groups[key]) {
+                        groups[key] = {
+                            series: card.series,
+                            rarity: card.rarity,
+                            cards: []
+                        };
+                    }
+                    groups[key].cards.push(card);
+                }
+            });
+            
+            // 只返回有至少 3 張卡牌的組合
+            return Object.values(groups).filter(g => g.cards.length >= 3 && getNextRarity(g.rarity) !== null);
+        }
+        
+        // 融合卡牌
+        function fuseCards(cardIds) {
+            if (!gameState.cards || !gameState.cards.collection) return false;
+            
+            // 驗證卡牌數量
+            if (cardIds.length !== 3) {
+                addLog('融合', '需要正好 3 張卡牌才能融合！');
+                return false;
+            }
+            
+            // 獲取卡牌（使用 UUID）
+            const cards = cardIds.map(uuid => gameState.cards.collection.find(c => c.uuid === uuid)).filter(c => c);
+            if (cards.length !== 3) {
+                addLog('融合', '卡牌不存在！');
+                return false;
+            }
+            
+            // 驗證等級
+            if (!cards.every(c => c.level === 10)) {
+                addLog('融合', '所有卡牌必須達到 Lv.10 才能融合！');
+                return false;
+            }
+            
+            // 驗證系列和品階
+            const series = cards[0].series;
+            const rarity = cards[0].rarity;
+            if (!cards.every(c => c.series === series && c.rarity === rarity)) {
+                addLog('融合', '必須是相同系列和品階的卡牌！');
+                return false;
+            }
+            
+            // 獲取下一個品階
+            const nextRarity = getNextRarity(rarity);
+            if (!nextRarity) {
+                addLog('融合', '該品階已經是最高級，無法融合！');
+                return false;
+            }
+            
+            // 檢查金幣
+            const cost = getFusionCost(rarity);
+            if (gameState.gold < cost) {
+                addLog('融合', `金幣不足！需要 ${cost} 金幣。`);
+                return false;
+            }
+            
+            // 找到下一品階的同系列卡牌
+            const nextRarityCardId = Object.values(CARDS).find(c => c.series === series && c.rarity === nextRarity)?.id;
+            if (!nextRarityCardId) {
+                addLog('融合', '找不到下一品階的卡牌！');
+                return false;
+            }
+            
+            // 收集材料卡的詞綴
+            const materialAffixes = [];
+            cards.forEach(card => {
+                if (card.affixes && card.affixes.length > 0) {
+                    materialAffixes.push(...card.affixes);
+                }
+            });
+            
+            // 移除材料卡牌（使用 UUID）
+            cardIds.forEach(cardUuid => {
+                const index = gameState.cards.collection.findIndex(c => c.uuid === cardUuid);
+                if (index !== -1) {
+                    // 如果卡牌被裝備，先卸下
+                    if (gameState.cards.slot1 === cardUuid) gameState.cards.slot1 = null;
+                    if (gameState.cards.slot2 === cardUuid) gameState.cards.slot2 = null;
+                    gameState.cards.collection.splice(index, 1);
+                }
+            });
+            
+            // 扣除金幣
+            gameState.gold -= cost;
+            
+            // 生成新卡牌的詞綴
+            const newAffixes = [];
+            
+            // 1. 必定獲得 1 個隨機新詞綴
+            const newAffix = getRandomAffix();
+            if (newAffix) newAffixes.push(newAffix);
+            
+            // 2. 50% 機率繼承材料卡的一個詞綴
+            if (materialAffixes.length > 0 && Math.random() < 0.5) {
+                const inheritedAffix = materialAffixes[Math.floor(Math.random() * materialAffixes.length)];
+                // 確保不重複
+                if (!newAffixes.find(a => a.id === inheritedAffix.id)) {
+                    newAffixes.push(JSON.parse(JSON.stringify(inheritedAffix)));
+                }
+            }
+            
+            // 3. 30% 機率獲得第 2 個隨機詞綴
+            if (newAffixes.length < 2 && Math.random() < 0.3) {
+                const excludeIds = newAffixes.map(a => a.id);
+                const extraAffix = getRandomAffix(excludeIds);
+                if (extraAffix) newAffixes.push(extraAffix);
+            }
+            
+            // 獲取新卡牌
+            const nextCard = CARDS[nextRarityCardId];
+            
+            // 添加新卡牌（不再檢查重複，允許收藏多張）
+            const fusedCard = {
+                uuid: Date.now() + Math.random(), // 唯一 ID
+                id: nextCard.id,
+                name: nextCard.name,
+                type: nextCard.type,
+                rarity: nextCard.rarity,
+                series: nextCard.series,
+                description: nextCard.description,
+                effect: nextCard.effect,
+                icon: nextCard.icon,
+                level: 1,
+                exp: 0,
+                affixes: newAffixes
+            };
+            
+            gameState.cards.collection.push(fusedCard);
+            gameState.cards.stats.totalCardsObtained++;
+            recordCardObtained(nextCard.id);
+            
+            const rarityColor = getRarityColor(nextCard.rarity);
+            const rarityObj = RARITIES.find(r => r.name === nextCard.rarity);
+            const rarityLabel = rarityObj ? rarityObj.label : nextCard.rarity;
+            
+            let affixText = '';
+            if (newAffixes.length > 0) {
+                const affixNames = newAffixes.map(a => `<span style="color: ${a.color}">${a.name}</span>`).join('、');
+                affixText = ` 附帶詞綴：${affixNames}`;
+            }
+            
+            addLog('融合', `融合成功！獲得卡牌：${nextCard.icon} <span style="color: ${rarityColor}">${nextCard.name}</span> (${rarityLabel})${affixText}！`);
+            
+            recalculateStats();
+            updateCardModal();
+            saveGame();
+            
+            return true;
         }
         
         // 觸發卡牌效果（攻擊時）
@@ -15854,23 +16316,11 @@ const REGION_CONSUMABLES = {
             
             const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
             
-            // 檢查是否已擁有
-            const alreadyOwned = gameState.cards.collection.find(c => c.id === randomCard.id);
-            
-            if (alreadyOwned) {
-                // 已擁有，轉換為碎片
-                return {
-                    type: 'shards',
-                    rarity: rarity,
-                    amount: getShardAmount(rarity)
-                };
-            } else {
-                // 未擁有，返回卡牌
-                return {
-                    type: 'card',
-                    card: randomCard
-                };
-            }
+            // 不再檢查重複，直接返回卡牌（允許收藏多張）
+            return {
+                type: 'card',
+                card: randomCard
+            };
         }
         
         // 離線收益顯示耗品掉落

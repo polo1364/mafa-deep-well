@@ -14408,6 +14408,7 @@ const REGION_CONSUMABLES = {
                 `;
             } else {
                 activeCompanionInfo.innerHTML = '<div style="text-align: center; color: #7a8fb8;">無</div>';
+            }
             
             // 更新當前裝備的裝備顯示
             const activeEquipmentId = gameState.companions.equipment;
@@ -14456,7 +14457,6 @@ const REGION_CONSUMABLES = {
             
             // 更新裝備列表
             updateEquipmentList();
-            }
             
             // 更新隨從列表
             const companionList = document.getElementById('companion-list');
@@ -17125,8 +17125,13 @@ const REGION_CONSUMABLES = {
                     collection: [],
                     eggs: [],
                     equipped: null,
-                    discovered: []
+                    discovered: [],
+                    shards: { dragon: 0, mecha: 0, void: 0 }
                 };
+            }
+            // 確保 shards存在
+            if (!gameState.pets.shards) {
+                gameState.pets.shards = { dragon: 0, mecha: 0, void: 0 };
             }
         }
         
@@ -17728,6 +17733,7 @@ const REGION_CONSUMABLES = {
         
         // 更新寵物材料顯示
         function updatePetMaterials() {
+            initPetSystem();
             document.getElementById('evolution-stone-count').textContent = gameState.materials.evolutionStone || 0;
             document.getElementById('eternal-source-count').textContent = gameState.materials.eternalSource || 0;
             document.getElementById('dragon-shards-count').textContent = gameState.pets.shards['dragon'] || 0;

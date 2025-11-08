@@ -1472,11 +1472,159 @@
                         <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 裝備同系列的卡牌可以觸發<strong style="color: #ffd700;">套牌效果</strong>!</p>
                     </div>
                     
+                    <h5 style="color: #9c27b0; margin-top: 15px;">✨ 卡牌詞綴系統</h5>
+                    <div style="background: rgba(156, 39, 176, 0.08); padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <p style="color: #7a8fb8; font-size: 0.9rem;">卡牌掉落時會隨機附帶<strong style="color: #ffd700;">詞綴</strong>，提供額外屬性加成！</p>
+                        <p style="color: #7a8fb8; font-size: 0.9rem; margin-top: 8px;">詞綴數量取決於卡牌品質：</p>
+                        <ul style="color: #7a8fb8; margin-left: 20px; margin-top: 5px; font-size: 0.85rem;">
+                            <li><span style="color: #888;">普通/精良</span>：無詞綴</li>
+                            <li><span style="color: #4EA5FF;">稀有</span>：1個詞綴</li>
+                            <li><span style="color: #9c27b0;">史詩</span>：2個詞綴</li>
+                            <li><span style="color: #ff9800;">傳說</span>：3個詞綴</li>
+                            <li><span style="color: #ffd700;">永恆</span>：4個詞綴</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0;">
+                        <div style="background: rgba(255, 107, 107, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                            <strong style="color: #ff6b6b;">⚔️ 攻擊型</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.8rem;">狂暴、致命、精準、破甲、嗜血</span>
+                        </div>
+                        <div style="background: rgba(78, 165, 255, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 165, 255, 0.3);">
+                            <strong style="color: #4EA5FF;">🛡️ 防禦型</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.8rem;">堅韌、守護、反擊、再生、不屈</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <strong style="color: #ffd700;">✨ 特殊型</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.8rem;">幸運、神速、智慧、貪婪、經驗</span>
+                        </div>
+                    </div>
+                    
+                    <h5 style="color: #9c27b0; margin-top: 15px;">🔀 卡牌融合系統</h5>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(255, 152, 0, 0.3);">
+                        <p style="color: #7a8fb8; font-size: 0.9rem;">將<strong style="color: #00d9ff;">3張相同的滿級卡牌</strong>融合成<strong style="color: #ffd700;">1張更高品質的卡牌</strong>！</p>
+                        <p style="color: #7a8fb8; font-size: 0.9rem; margin-top: 8px;">融合規則：</p>
+                        <ul style="color: #7a8fb8; margin-left: 20px; margin-top: 5px; font-size: 0.85rem;">
+                            <li>需要3張<strong style="color: #00d9ff;">相同ID</strong>的卡牌</li>
+                            <li>所有卡牌必須達到<strong style="color: #00ff88;">最高等級</strong></li>
+                            <li>融合後品質提升一階（稀有→史詩→傳說→永恆）</li>
+                            <li>詞綴繼承：<strong style="color: #ffd700;">50%機率</strong>繼承原詞綴 + <strong style="color: #00ff88;">30%機率</strong>獲得新詞綴</li>
+                            <li>永恆階卡牌無法繼續融合</li>
+                        </ul>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">💡 提示: 在卡牌界面點擊「🔀 融合」按鈕即可進行融合！</p>
+                    </div>
+                    
+                    <h5 style="color: #9c27b0; margin-top: 15px;">♻️ 卡牌回收</h5>
+                    <div style="background: rgba(244, 67, 54, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(244, 67, 54, 0.3);">
+                        <p style="color: #7a8fb8; font-size: 0.9rem;">不需要的卡牌可以回收成<strong style="color: #9c27b0;">碎片</strong>，用於升級其他卡牌！</p>
+                        <p style="color: #7a8fb8; font-size: 0.9rem; margin-top: 8px;">回收碎片數量：</p>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.85rem;">
+                            <tr>
+                                <td style="padding: 5px; color: #888;">普通</td>
+                                <td style="padding: 5px; color: #7a8fb8;">1 碎片</td>
+                                <td style="padding: 5px; color: #888;">精良</td>
+                                <td style="padding: 5px; color: #7a8fb8;">3 碎片</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; color: #4EA5FF;">稀有</td>
+                                <td style="padding: 5px; color: #7a8fb8;">10 碎片</td>
+                                <td style="padding: 5px; color: #9c27b0;">史詩</td>
+                                <td style="padding: 5px; color: #7a8fb8;">30 碎片</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; color: #ff9800;">傳說</td>
+                                <td style="padding: 5px; color: #7a8fb8;">100 碎片</td>
+                                <td style="padding: 5px; color: #ffd700;">永恆</td>
+                                <td style="padding: 5px; color: #7a8fb8;">300 碎片</td>
+                            </tr>
+                        </table>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">💡 提示: 在卡牌界面點擊「♻️ 回收」按鈕選擇要回收的卡牌！</p>
+                    </div>
+                    
                     <h4 style="color: #00d9ff; margin-top: 25px;">🐾 隨從系統</h4>
                     <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); margin: 15px 0;">
-                        <p style="color: #7a8fb8;">在商店購買或特殊掉落<strong style="color: #ff9800;">隨從</strong>,牠們會跟著你一起戰鬥!</p>
+                        <p style="color: #7a8fb8;">在商店購買或特殊掉落<strong style="color: #ff9800;">隨從</strong>,牢們會跟著你一起戰鬥!</p>
                         <p style="color: #7a8fb8; margin-top: 10px;">隨從提供<strong style="color: #00d9ff;">被動屬性加成</strong>,並且會在戰鬥中<strong style="color: #00d9ff;">主動釋放技能</strong>。</p>
                         <p style="color: #7a8fb8; margin-top: 10px;">隨從可以透過戰鬥<strong style="color: #00ff88;">升級</strong>,變得更強大。</p>
+                    </div>
+                    
+                    <h5 style="color: #ff9800; margin-top: 15px;">🛠️ 隨從裝備系統</h5>
+                    <div style="background: rgba(78, 165, 255, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(78, 165, 255, 0.3);">
+                        <p style="color: #7a8fb8; font-size: 0.9rem;">為你的隨從裝備<strong style="color: #4EA5FF;">專屬裝備</strong>，大幅提升戰鬥力！</p>
+                        <p style="color: #7a8fb8; font-size: 0.9rem; margin-top: 8px;">裝備來源：</p>
+                        <ul style="color: #7a8fb8; margin-left: 20px; margin-top: 5px; font-size: 0.85rem;">
+                            <li>擊敗怪物有機率掉落</li>
+                            <li>品質越高，掉落機率越低</li>
+                            <li>重複裝備會自動轉換為<strong style="color: #ffd700;">裝備碎片</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0;">
+                        <div style="background: rgba(255, 107, 107, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                            <strong style="color: #ff6b6b;">⚔️ 攻擊型裝備</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.8rem;">提升攻擊、暴擊、暴傷</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">龍爪、惡魔之刃等</span>
+                        </div>
+                        <div style="background: rgba(78, 165, 255, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 165, 255, 0.3);">
+                            <strong style="color: #4EA5FF;">🛡️ 防禦型裝備</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.8rem;">提升防禦、生命、減傷</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">聖盾、防禦核心等</span>
+                        </div>
+                        <div style="background: rgba(76, 175, 80, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.3);">
+                            <strong style="color: #4caf50;">💚 回復型裝備</strong><br>
+                            <span style="color: #7a8fb8; font-size: 0.8rem;">提升生命、回復、吸血</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">生命護符、治療之心等</span>
+                        </div>
+                    </div>
+                    
+                    <h5 style="color: #ff9800; margin-top: 15px;">✨ 組合效果系統</h5>
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(0, 255, 136, 0.3);">
+                        <p style="color: #7a8fb8; font-size: 0.9rem;">隨從和裝備的<strong style="color: #ffd700;">類型組合</strong>會觸發特殊效果！</p>
+                        <p style="color: #7a8fb8; font-size: 0.9rem; margin-top: 8px;">組合類型：</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; font-size: 0.85rem;">
+                        <div style="background: rgba(255, 215, 0, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <strong style="color: #ffd700;">⚖️ 永恆組合</strong><br>
+                            <span style="color: #7a8fb8;">永恆階隨從 + 任意裝備</span><br>
+                            <span style="color: #00ff88;">攻+10% 防+10% 血+10%</span>
+                        </div>
+                        <div style="background: rgba(255, 107, 107, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                            <strong style="color: #ff6b6b;">⚔️ 極限攻勢</strong><br>
+                            <span style="color: #7a8fb8;">攻擊隨從 + 攻擊裝備</span><br>
+                            <span style="color: #00ff88;">攻+15% 暴擊+10%</span>
+                        </div>
+                        <div style="background: rgba(78, 165, 255, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 165, 255, 0.3);">
+                            <strong style="color: #4EA5FF;">🛡️ 鐵壁防禦</strong><br>
+                            <span style="color: #7a8fb8;">防禦隨從 + 防禦裝備</span><br>
+                            <span style="color: #00ff88;">防+15% 減傷+10%</span>
+                        </div>
+                        <div style="background: rgba(76, 175, 80, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.3);">
+                            <strong style="color: #4caf50;">💚 生命之源</strong><br>
+                            <span style="color: #7a8fb8;">回復隨從 + 回復裝備</span><br>
+                            <span style="color: #00ff88;">血+15% 回復+5%</span>
+                        </div>
+                        <div style="background: rgba(255, 152, 0, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.3);">
+                            <strong style="color: #ff9800;">⚔️🛡️ 攻防一體</strong><br>
+                            <span style="color: #7a8fb8;">攻擊隨從 + 防禦裝備</span><br>
+                            <span style="color: #00ff88;">攻+5% 防+5%</span>
+                        </div>
+                        <div style="background: rgba(233, 30, 99, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(233, 30, 99, 0.3);">
+                            <strong style="color: #e91e63;">⚔️💚 狂戰士</strong><br>
+                            <span style="color: #7a8fb8;">攻擊隨從 + 回復裝備</span><br>
+                            <span style="color: #00ff88;">攻+8% 吸血+3%</span>
+                        </div>
+                    </div>
+                    
+                    <h5 style="color: #ff9800; margin-top: 15px;">⬆️ 裝備升級</h5>
+                    <div style="background: rgba(156, 39, 176, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(156, 39, 176, 0.3);">
+                        <p style="color: #7a8fb8; font-size: 0.9rem;">使用<strong style="color: #ffd700;">裝備碎片</strong>升級裝備，提升效果！</p>
+                        <ul style="color: #7a8fb8; margin-left: 20px; margin-top: 5px; font-size: 0.85rem;">
+                            <li>最高等級：<strong style="color: #00d9ff;">Lv.10</strong></li>
+                            <li>每級提升：<strong style="color: #00ff88;">+10%</strong> 效果</li>
+                            <li>升級消耗：等級 × 10 + 20 碎片</li>
+                        </ul>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">💡 提示: 在隨從界面查看裝備收藏並進行升級！</p>
                     </div>
                     
                     <h4 style="color: #00d9ff; margin-top: 25px;">📋 每日任務</h4>
@@ -2334,24 +2482,28 @@
                         <span style="color: #9ca3af;">⚪ 破舊</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="salvage-uncommon" value="uncommon" onchange="updateSalvageQuality()" style="margin-right: 8px;">
+                        <span style="color: #10b981;">🟢 優質</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-fine" value="fine" onchange="updateSalvageQuality()" style="margin-right: 8px;">
                         <span style="color: #3b82f6;">🔵 精良</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-rare" value="rare" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #8b5cf6;">🟣 稀有</span>
+                        <span style="color: #a855f7;">🟣 稀有</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-epic" value="epic" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #a855f7;">🟣 史詩</span>
+                        <span style="color: #f97316;">🟠 史詩</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-legendary" value="legendary" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #f97316;">🟠 傳說</span>
+                        <span style="color: #ef4444;">🔴 傳說</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-mythic" value="mythic" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #ec4899;">🔴 神話</span>
+                        <span style="color: #fbbf24;">🟡 神話</span>
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-eternal" value="eternal" onchange="updateSalvageQuality()" style="margin-right: 8px;">
@@ -2359,7 +2511,7 @@
                     </label>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="salvage-set" value="set" onchange="updateSalvageQuality()" style="margin-right: 8px;">
-                        <span style="color: #10b981;">🟢 套裝</span>
+                        <span style="color: #06b6d4;">🔵 套裝</span>
                     </label>
                 </div>
             </div>
@@ -12670,15 +12822,15 @@ const REGION_CONSUMABLES = {
             
         const salvageQualities = gameState.autoEquipment.salvageQuality || ['common'];
         const rarityMap = {
-            'common': 'common',
-            'uncommon': 'common',  // 兼容舊版本
-            'fine': 'fine',
-            'rare': 'rare',
-            'epic': 'epic',
-            'legendary': 'legendary',
-            'mythic': 'mythic',
-            'eternal': 'eternal',
-            'set': 'set'
+            'common': 'Common',
+            'uncommon': 'Uncommon',
+            'fine': 'Fine',
+            'rare': 'Rare',
+            'epic': 'Epic',
+            'legendary': 'Legendary',
+            'mythic': 'Mythic',
+            'eternal': 'Eternal',
+            'set': 'Set'
         };
             
             let salvaged = 0;
@@ -12700,7 +12852,8 @@ const REGION_CONSUMABLES = {
                     const rarity = rarityMap[quality.toLowerCase()];
                     // 套裝特殊判斷
                     if (quality.toLowerCase() === 'set' && isSet) return true;
-                    return item.rarity === rarity;
+                    // 不區分大小寫比較（兼容舊版小寫和新版大寫）
+                    return item.rarity && item.rarity.toLowerCase() === rarity.toLowerCase();
                 });
                 
                 if (shouldSalvage) {
@@ -23479,17 +23632,18 @@ function manualSalvageSelected() {
     
     // 品質對照表（保持小寫，與遊戲中的 rarity 屬性一致）
     const rarityMap = {
-        'common': 'common',
-        'fine': 'fine',
-        'rare': 'rare',
-        'epic': 'epic',
-        'legendary': 'legendary',
-        'mythic': 'mythic',
-        'eternal': 'eternal',
-        'set': 'set'
+        'common': 'Common',
+        'uncommon': 'Uncommon',
+        'fine': 'Fine',
+        'rare': 'Rare',
+        'epic': 'Epic',
+        'legendary': 'Legendary',
+        'mythic': 'Mythic',
+        'eternal': 'Eternal',
+        'set': 'Set'
     };
     
-    const targetRarities = selectedQualities.map(q => rarityMap[q]);
+    const targetRarities = selectedQualities.map(q => rarityMap[q].toLowerCase());
     let salvaged = 0;
     let totalMaterials = 0;
     let totalFragments = 0;
@@ -23499,7 +23653,7 @@ function manualSalvageSelected() {
         
         // 套裝特殊處理：檢查 setName 屬性
         const isSet = item.setName ? true : false;
-        const itemRarity = isSet && selectedQualities.includes('set') ? 'set' : item.rarity;
+        const itemRarity = isSet && selectedQualities.includes('set') ? 'set' : (item.rarity ? item.rarity.toLowerCase() : '');
         
         if (!targetRarities.includes(itemRarity)) return true;
         if (shouldProtectEquipment(item)) return true;

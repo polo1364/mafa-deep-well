@@ -23514,6 +23514,7 @@ function toggleAutoSalvage() {
 function updateSalvageQuality() {
     const qualities = [];
     if (document.getElementById('salvage-common').checked) qualities.push('common');
+    if (document.getElementById('salvage-uncommon').checked) qualities.push('uncommon');
     if (document.getElementById('salvage-fine').checked) qualities.push('fine');
     if (document.getElementById('salvage-rare').checked) qualities.push('rare');
     if (document.getElementById('salvage-epic').checked) qualities.push('epic');

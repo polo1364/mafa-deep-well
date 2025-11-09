@@ -1104,22 +1104,40 @@
                         <div style="color: #ff8800; font-weight: bold; margin-bottom: 5px;">✨ 目前裝備特殊效果：</div>
                         <div id="special-effects-list" style="color: #7a8fb8; line-height: 1.6;">無</div>
                     </div>
-                    <div id="equipment-slots">
+                    <div id="equipment-slots" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                        <!-- 第一排 -->
                         <div class="equipment-slot" data-slot="weapon" onclick="openEquipmentModal('weapon')">
                             <div style="color: #7a8fb8; font-size: 0.8rem;">🗡️ 武器</div>
                             <div id="equip-weapon" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
                         </div>
-                        <div class="equipment-slot" data-slot="armor" onclick="openEquipmentModal('armor')">
-                            <div style="color: #7a8fb8; font-size: 0.8rem;">🛡️ 防具</div>
-                            <div id="equip-armor" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        <div class="equipment-slot" data-slot="head" onclick="openEquipmentModal('head')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">🪦 頭盔</div>
+                            <div id="equip-head" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
                         </div>
-                        <div class="equipment-slot" data-slot="accessory1" onclick="openEquipmentModal('accessory1')">
-                            <div style="color: #7a8fb8; font-size: 0.8rem;">💍 飾品1</div>
-                            <div id="equip-accessory1" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        <div class="equipment-slot" data-slot="chest" onclick="openEquipmentModal('chest')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">🛡️ 胸甲</div>
+                            <div id="equip-chest" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
                         </div>
-                        <div class="equipment-slot" data-slot="accessory2" onclick="openEquipmentModal('accessory2')">
-                            <div style="color: #7a8fb8; font-size: 0.8rem;">💍 飾品2</div>
-                            <div id="equip-accessory2" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        <div class="equipment-slot" data-slot="necklace" onclick="openEquipmentModal('necklace')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">💎 項鍊</div>
+                            <div id="equip-necklace" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        </div>
+                        <!-- 第二排 -->
+                        <div class="equipment-slot" data-slot="legs" onclick="openEquipmentModal('legs')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">🧤 腿甲</div>
+                            <div id="equip-legs" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="feet" onclick="openEquipmentModal('feet')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">🥾 靴子</div>
+                            <div id="equip-feet" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="gloves" onclick="openEquipmentModal('gloves')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">🧤 手套</div>
+                            <div id="equip-gloves" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="ring" onclick="openEquipmentModal('ring')">
+                            <div style="color: #7a8fb8; font-size: 0.8rem;">💍 戒指</div>
+                            <div id="equip-ring" style="color: #5a6b8f; font-size: 0.85rem;">空</div>
                         </div>
                     </div>
                     
@@ -1617,8 +1635,10 @@
                     <p style="color: #7a8fb8;">穿戴同名的<strong style="color: #00ffff;">套裝裝備</strong>可以觸發超強大的套裝效果!</p>
                     <div style="background: rgba(0, 255, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); margin: 15px 0;">
                         <p style="color: #7a8fb8;"><strong style="color: #00ffff;">2件套</strong>: 提供基礎屬性加成</p>
-                        <p style="color: #7a8fb8; margin-top: 8px;"><strong style="color: #00ffff;">4件套</strong>: 解鎖<strong style="color: #ffd700;">特殊效果</strong>(例如:暴擊連鎖、擊殺回血等)</p>
-                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 4件套的特殊效果非常強大,優先收集!</p>
+                        <p style="color: #7a8fb8; margin-top: 8px;"><strong style="color: #00ffff;">4件套</strong>: 進階屬性加成</p>
+                        <p style="color: #7a8fb8; margin-top: 8px;"><strong style="color: #00ffff;">6件套</strong>: 解鎖<strong style="color: #ffd700;">特殊效果</strong></p>
+                        <p style="color: #7a8fb8; margin-top: 8px;"><strong style="color: #00ffff;">8件套</strong>: 終極效果，質變提升！</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 8件套的終極效果非常強大,優先收集完整套裝!</p>
                     </div>
                     
                     <h4 style="color: #00d9ff; margin-top: 25px;">🔨 強化與分解</h4>
@@ -4654,11 +4674,11 @@ const TITLES_DATA = {
     },
     'equipment_collector_full': {
         name: '🎁 裝備大師',
-        desc: '收集全部 32 件套裝裝備',
-        howToGet: '收集並獲得所有 32 件套裝裝備（4 個區域 × 2 套 × 4 件）',
+        desc: '收集全部 64 件套裝裝備',
+        howToGet: '收集並獲得所有 64 件套裝裝備（4 個區域 × 2 套 × 8 件）',
         category: 'codex_equipment',
         rarity: 'legendary',
-        condition: { type: 'equipment_collected', value: 32 },
+        condition: { type: 'equipment_collected', value: 64 },
         bonus: { setBonus: 10, atk: 5, def: 5 }
     },
     
@@ -4666,7 +4686,7 @@ const TITLES_DATA = {
     'region_set_master_入門開發層': {
         name: '⚔️ 入門裝備專家',
         desc: '收集入門開發層的兩套套裝',
-        howToGet: '收集入門開發層的啟動者套裝和暴擊獵殺套裝',
+        howToGet: '收集入門開發層的初心工匠和破曉獵人',
         category: 'codex_equipment',
         rarity: 'rare',
         condition: { type: 'region_sets', region: '入門開發層', value: 2 },
@@ -4675,7 +4695,7 @@ const TITLES_DATA = {
     'region_set_master_研發核心層': {
         name: '🔬 研發裝備專家',
         desc: '收集研發核心層的兩套套裝',
-        howToGet: '收集研發核心層的研發者套裝和生命汲取套裝',
+        howToGet: '收集研發核心層的代碼編織者和生命脈動',
         category: 'codex_equipment',
         rarity: 'rare',
         condition: { type: 'region_sets', region: '研發核心層', value: 2 },
@@ -4684,7 +4704,7 @@ const TITLES_DATA = {
     'region_set_master_資料裂縫': {
         name: '💿 資料裝備專家',
         desc: '收集資料裂縫的兩套套裝',
-        howToGet: '收集資料裂縫的機櫃防禦套裝和鐵壁防禦套裝',
+        howToGet: '收集資料裂縫的數據守門人和鐵壁要塞',
         category: 'codex_equipment',
         rarity: 'rare',
         condition: { type: 'region_sets', region: '資料裂縫', value: 2 },
@@ -4693,7 +4713,7 @@ const TITLES_DATA = {
     'region_set_master_深井臨界層': {
         name: '🕳️ 深井裝備專家',
         desc: '收集深井臨界層的兩套套裝',
-        howToGet: '收集深井臨界層的量子同步套裝和無視穿透套裝',
+        howToGet: '收集深井臨界層的量子觀測者和虛空穿透',
         category: 'codex_equipment',
         rarity: 'rare',
         condition: { type: 'region_sets', region: '深井臨界層', value: 2 },
@@ -5447,6 +5467,115 @@ const REGION_CONSUMABLES = {
             }
         };
 
+        // 生成元素數值的函數
+        function generateElementValue(element, equipType, rarity) {
+            if (!ELEMENT_VALUE_RANGES[element]) return null;
+            
+            // 決定裝備類型分類
+            let category;
+            if (equipType === 'weapon') {
+                category = 'weapon';
+            } else if (['head', 'chest', 'gloves', 'legs', 'feet'].includes(equipType)) {
+                category = 'armor';
+            } else if (['ring', 'necklace'].includes(equipType)) {
+                category = 'accessory';
+            } else {
+                return null;
+            }
+            
+            const range = ELEMENT_VALUE_RANGES[element][category];
+            if (!range) return null;
+            
+            const min = range.min;
+            const max = range.max;
+            const totalRange = max - min;
+            
+            // 根據品質決定數值範圍
+            let valueMin, valueMax;
+            switch(rarity.toLowerCase()) {
+                case 'fine':
+                    valueMin = min;
+                    valueMax = min + totalRange * 0.2;
+                    break;
+                case 'rare':
+                    valueMin = min + totalRange * 0.1;
+                    valueMax = min + totalRange * 0.4;
+                    break;
+                case 'epic':
+                    valueMin = min + totalRange * 0.2;
+                    valueMax = min + totalRange * 0.6;
+                    break;
+                case 'legendary':
+                    valueMin = min + totalRange * 0.4;
+                    valueMax = min + totalRange * 0.8;
+                    break;
+                case 'mythic':
+                    valueMin = min + totalRange * 0.6;
+                    valueMax = max;
+                    break;
+                case 'eternal':
+                    valueMin = max;
+                    valueMax = max;
+                    break;
+                case 'set':
+                    // 套裝使用 Rare 到 Epic 的範圍
+                    valueMin = min + totalRange * 0.2;
+                    valueMax = min + totalRange * 0.6;
+                    break;
+                default:
+                    valueMin = min;
+                    valueMax = max;
+            }
+            
+            // 生成隨機數值
+            const value = valueMin + Math.random() * (valueMax - valueMin);
+            
+            // 計算品質標籤
+            const position = (value - min) / totalRange;
+            let quality;
+            if (position < 0.33) {
+                quality = 'low';
+            } else if (position < 0.67) {
+                quality = 'medium';
+            } else {
+                quality = 'high';
+            }
+            
+            return {
+                value: value,
+                quality: quality
+            };
+        }
+        
+        // 元素數值範圍定義
+        const ELEMENT_VALUE_RANGES = {
+            fire: {
+                weapon: { min: 0.03, max: 0.07 },      // 3%-7% HP/回合
+                armor: { min: 0.05, max: 0.15 },       // 5%-15% 反射
+                accessory: { min: 0.05, max: 0.12 }    // 5%-12% 攻擊力
+            },
+            ice: {
+                weapon: { min: 0.15, max: 0.30 },      // 15%-30% 降低攻擊
+                armor: { min: 0.15, max: 0.35 },       // 15%-35% 減傷
+                accessory: { min: 0.08, max: 0.18 }    // 8%-18% 暴擊傷害
+            },
+            thunder: {
+                weapon: { min: 1.5, max: 2.5 },        // 1.5x-2.5x 暴擊倍率
+                armor: { min: 0.15, max: 0.30 },       // 15%-30% 反擊
+                accessory: { min: 0.06, max: 0.12 }    // 6%-12% 暴擊率
+            },
+            poison: {
+                weapon: { min: 0.02, max: 0.05 },      // 2%-5% HP/回合
+                armor: { min: 0.015, max: 0.03 },      // 1.5%-3% HP/回合
+                accessory: { min: 0.03, max: 0.08 }    // 3%-8% 生命吸取
+            },
+            earth: {
+                weapon: { min: 0.10, max: 0.20 },      // 10%-20% 穿甲
+                armor: { min: 0.20, max: 0.40 },       // 20%-40% 減傷
+                accessory: { min: 0.10, max: 0.20 }    // 10%-20% 防禦力
+            }
+        };
+        
         // 元素附加機率（根據品質）
         const ELEMENT_CHANCE_BY_RARITY = {
             'common': 0,
@@ -5468,55 +5597,55 @@ const REGION_CONSUMABLES = {
 
         const EQUIPMENT_SETS = {
             '入門開發層': {
-                setName: '啟動者套裝',
+                setName: '初心工匠',
                 items: [
-                    // 武器：基礎數值×2.5
-                    { type: 'weapon', name: '調試短劍', atk: 45, crit: 3, armorPen: 4, bossDmg: 3 },
-                    // 防具：基礎數值×2.5
-                    { type: 'armor', name: '預編外套', def: 38, hp: 125, dmgRed: 3, lifeSteal: 1.2 },
-                    // 飾品1：基礎數值×2.5
-                    { type: 'accessory', name: '編譯者指環', atk: 20, def: 20, hp: 75, crit: 2, critDmg: 8, lifeSteal: 1.2, bossDmg: 2 },
-                    // 飾品2：基礎數值×2.5
-                    { type: 'accessory', name: '啟動者徽章', atk: 18, def: 18, hp: 88, crit: 2, critDmg: 8, dmgRed: 2, armorPen: 2 }
+                    { type: 'weapon', name: '工匠之錘', atk: 35, def: 10, hp: 80, crit: 2, critDmg: 8 },
+                    { type: 'head', name: '初心護帽', atk: 15, def: 25, hp: 100, dmgRed: 3 },
+                    { type: 'chest', name: '學徒工作服', atk: 12, def: 30, hp: 120, dmgRed: 4 },
+                    { type: 'gloves', name: '粗糙護手', atk: 18, def: 15, hp: 70, crit: 2 },
+                    { type: 'legs', name: '帆布工作褲', atk: 10, def: 28, hp: 110, dmgRed: 3 },
+                    { type: 'feet', name: '踏實工作靴', atk: 12, def: 20, hp: 90 },
+                    { type: 'ring', name: '學徒印記', atk: 20, def: 18, hp: 85, crit: 2, critDmg: 8 },
+                    { type: 'necklace', name: '工匠徽章', atk: 22, def: 18, hp: 88, lifeSteal: 2 }
                 ]
             },
             '研發核心層': {
-                setName: '研發者套裝',
+                setName: '代碼編織者',
                 items: [
-                    // 武器：基礎數值×2.5
-                    { type: 'weapon', name: '相位長槍', atk: 50, crit: 4, critDmg: 6, armorPen: 5, bossDmg: 2.67 },
-                    // 防具：基礎數值×2.5
-                    { type: 'armor', name: '實驗室胸甲', def: 40, hp: 150, dmgRed: 3.5, lifeSteal: 1 },
-                    // 飾品1：基礎數值×2.5
-                    { type: 'accessory', name: '原型護符', atk: 23, def: 23, hp: 88, crit: 3, critDmg: 10, lifeSteal: 1.2, armorPen: 2 },
-                    // 飾品2：基礎數值×2.5
-                    { type: 'accessory', name: '校準指環', atk: 20, def: 20, hp: 100, crit: 2, critDmg: 10, dmgRed: 3, bossDmg: 2 }
+                    { type: 'weapon', name: '邏輯迴路杖', atk: 48, def: 12, hp: 95, crit: 3, critDmg: 12 },
+                    { type: 'head', name: '演算思維盔', atk: 20, def: 30, hp: 115, crit: 2 },
+                    { type: 'chest', name: '函式編織甲', atk: 18, def: 35, hp: 135, dmgRed: 5 },
+                    { type: 'gloves', name: '精準輸入手套', atk: 25, def: 18, hp: 85, crit: 3 },
+                    { type: 'legs', name: '迴圈運算腿甲', atk: 15, def: 32, hp: 125, dmgRed: 4 },
+                    { type: 'feet', name: '編譯加速靴', atk: 18, def: 25, hp: 105 },
+                    { type: 'ring', name: '變數指環', atk: 28, def: 20, hp: 100, crit: 3, critDmg: 12 },
+                    { type: 'necklace', name: '核心晶片墜', atk: 30, def: 20, hp: 105, armorPen: 3 }
                 ]
             },
-            '資料裂縫': {
-                setName: '機櫃防禦套裝',
+            '資料裂隙': {
+                setName: '數據守門人',
                 items: [
-                    // 武器：基礎數值×2.5
-                    { type: 'weapon', name: '負載均衡弓', atk: 55, crit: 4, armorPen: 6, bossDmg: 2 },
-                    // 防具：基礎數值×2.5
-                    { type: 'armor', name: '機櫃錘胸', def: 45, hp: 175, dmgRed: 4, lifeSteal: 0.4 },
-                    // 飾品1：基礎數值×2.5
-                    { type: 'accessory', name: '邊界護符', atk: 25, def: 25, hp: 100, crit: 3, dmgRed: 3, bossDmg: 2.67 },
-                    // 飾品2：基礎數值×2.5
-                    { type: 'accessory', name: '隔離指環', atk: 23, def: 23, hp: 112, crit: 2, critDmg: 10, lifeSteal: 1.6, armorPen: 2 }
+                    { type: 'weapon', name: '防火牆巨錘', atk: 45, def: 20, hp: 110, dmgRed: 3 },
+                    { type: 'head', name: '封包過濾盔', atk: 18, def: 38, hp: 140, dmgRed: 5 },
+                    { type: 'chest', name: '冗餘備份甲', atk: 15, def: 42, hp: 160, dmgRed: 6 },
+                    { type: 'gloves', name: '加密握手套', atk: 22, def: 25, hp: 100, dmgRed: 3 },
+                    { type: 'legs', name: '頻寬限制腿甲', atk: 12, def: 40, hp: 150, dmgRed: 5 },
+                    { type: 'feet', name: '負載平衡靴', atk: 15, def: 32, hp: 125 },
+                    { type: 'ring', name: '存取控制環', atk: 25, def: 28, hp: 120, dmgRed: 3 },
+                    { type: 'necklace', name: '權限金鑰墜', atk: 28, def: 28, hp: 125, hpRegen: 2 }
                 ]
             },
             '深井臨界層': {
-                setName: '量子同步套裝',
+                setName: '量子觀測者',
                 items: [
-                    // 武器：基礎數值×2.5
-                    { type: 'weapon', name: '干涉之刃', atk: 60, crit: 5, critDmg: 8, armorPen: 3, bossDmg: 0.67 },
-                    // 防具：基礎數值×2.5
-                    { type: 'armor', name: '奇點胸甲', def: 50, hp: 200, dmgRed: 3 },
-                    // 飾品1：基礎數值×2.5
-                    { type: 'accessory', name: '普朗克指環', atk: 30, def: 30, hp: 112, crit: 3, lifeSteal: 2, bossDmg: 0.67 },
-                    // 飾品2：基礎數值×2.5
-                    { type: 'accessory', name: '繾纏頸環', atk: 28, def: 28, hp: 125, crit: 2, critDmg: 12, dmgRed: 2, armorPen: 1 }
+                    { type: 'weapon', name: '疊加態之刃', atk: 65, def: 25, hp: 125, crit: 4, armorPen: 5 },
+                    { type: 'head', name: '觀測者之冠', atk: 28, def: 42, hp: 160, crit: 3 },
+                    { type: 'chest', name: '糾纏態戰甲', atk: 25, def: 48, hp: 180, dmgRed: 7 },
+                    { type: 'gloves', name: '波函數手套', atk: 35, def: 28, hp: 115, crit: 4 },
+                    { type: 'legs', name: '機率雲腿甲', atk: 22, def: 45, hp: 170, dmgRed: 6 },
+                    { type: 'feet', name: '坍縮瞬步靴', atk: 25, def: 35, hp: 140 },
+                    { type: 'ring', name: '不確定性環', atk: 38, def: 32, hp: 135, crit: 4, armorPen: 4 },
+                    { type: 'necklace', name: '量子態墜飾', atk: 40, def: 32, hp: 140, bossDmg: 5 }
                 ]
             }
         };
@@ -5524,42 +5653,59 @@ const REGION_CONSUMABLES = {
         // 第二套套裝（Boss 掉落，特化型）
         const EQUIPMENT_SETS_2 = {
             '入門開發層': {
-                setName: '暴擊獵殺套裝',
+                setName: '破曉獵人',
                 items: [
-                    { type: 'weapon', name: '獵殺者利刃', atk: 40, crit: 8, critDmg: 20, bossDmg: 5 },
-                    { type: 'armor', name: '獵殺者輕甲', def: 25, hp: 80, crit: 5, dodge: 3 },
-                    { type: 'accessory', name: '獵殺者印記', atk: 18, def: 10, hp: 50, crit: 6, critDmg: 15 },
-                    { type: 'accessory', name: '獵殺者徽記', atk: 15, def: 10, hp: 60, crit: 5, critDmg: 12, bossDmg: 3 }
+                    { type: 'weapon', name: '破曉利刃', atk: 42, def: 8, hp: 70, crit: 8, critDmg: 20, bossDmg: 5 },
+                    { type: 'head', name: '獵人面罩', atk: 22, def: 20, hp: 90, crit: 5 },
+                    { type: 'chest', name: '輕盈皮甲', atk: 18, def: 25, hp: 100, crit: 4 },
+                    { type: 'gloves', name: '精準射手套', atk: 25, def: 12, hp: 65, crit: 6, critDmg: 15 },
+                    { type: 'legs', name: '追獵者腿甲', atk: 15, def: 22, hp: 95, crit: 4 },
+                    { type: 'feet', name: '疾風步靴', atk: 18, def: 18, hp: 80, crit: 3 },
+                    { type: 'ring', name: '致命標記環', atk: 28, def: 15, hp: 75, crit: 7, critDmg: 18 },
+                    { type: 'necklace', name: '狩獵者牙墜', atk: 30, def: 15, hp: 80, crit: 6, bossDmg: 4 }
                 ]
             },
             '研發核心層': {
-                setName: '生命汲取套裝',
+                setName: '生命脈動',
                 items: [
-                    { type: 'weapon', name: '汲取之刃', atk: 48, crit: 3, lifeSteal: 5, armorPen: 8 },
-                    { type: 'armor', name: '汲取護甲', def: 42, hp: 180, lifeSteal: 4, dmgRed: 5 },
-                    { type: 'accessory', name: '汲取符文', atk: 22, def: 22, hp: 100, lifeSteal: 6, crit: 2 },
-                    { type: 'accessory', name: '汲取寶石', atk: 20, def: 20, hp: 120, lifeSteal: 5, dmgRed: 4 }
+                    { type: 'weapon', name: '汲取之刃', atk: 50, def: 15, hp: 110, lifeSteal: 5, armorPen: 8 },
+                    { type: 'head', name: '脈動頭冠', atk: 25, def: 28, hp: 130, lifeSteal: 3 },
+                    { type: 'chest', name: '生命共鳴甲', atk: 20, def: 32, hp: 150, lifeSteal: 4 },
+                    { type: 'gloves', name: '吸能手套', atk: 28, def: 20, hp: 100, lifeSteal: 4 },
+                    { type: 'legs', name: '血脈流轉腿甲', atk: 18, def: 30, hp: 140, lifeSteal: 3 },
+                    { type: 'feet', name: '活力步靴', atk: 22, def: 25, hp: 120, lifeSteal: 2 },
+                    { type: 'ring', name: '汲取符文環', atk: 32, def: 22, hp: 115, lifeSteal: 6, crit: 2 },
+                    { type: 'necklace', name: '生命寶石墜', atk: 35, def: 22, hp: 125, lifeSteal: 5, hpRegen: 3 }
                 ]
             },
-            '資料裂縫': {
-                setName: '鐵壁防禦套裝',
+            '資料裂隙': {
+                setName: '鐵壁要塞',
                 items: [
-                    { type: 'weapon', name: '鐵壁重錘', atk: 45, def: 15, crit: 2, dmgRed: 3 },
-                    { type: 'armor', name: '鐵壁重甲', def: 60, hp: 250, dmgRed: 8, reflect: 5 },
-                    { type: 'accessory', name: '鐵壁護符', atk: 15, def: 35, hp: 150, dmgRed: 6, lifeSteal: 2 },
-                    { type: 'accessory', name: '鐵壁盾徽', atk: 12, def: 38, hp: 180, dmgRed: 7, reflect: 4 }
+                    { type: 'weapon', name: '鐵壁重錘', atk: 48, def: 25, hp: 130, dmgRed: 4, reflect: 3 },
+                    { type: 'head', name: '堡壘戰盔', atk: 20, def: 45, hp: 170, dmgRed: 6 },
+                    { type: 'chest', name: '不朽重甲', atk: 18, def: 50, hp: 200, dmgRed: 8 },
+                    { type: 'gloves', name: '反擊鐵拳套', atk: 25, def: 32, hp: 120, dmgRed: 4, reflect: 4 },
+                    { type: 'legs', name: '穩固支撐腿甲', atk: 15, def: 48, hp: 180, dmgRed: 7 },
+                    { type: 'feet', name: '堅守戰靴', atk: 18, def: 38, hp: 150, dmgRed: 5 },
+                    { type: 'ring', name: '鐵壁護符環', atk: 22, def: 40, hp: 160, dmgRed: 6, reflect: 3 },
+                    { type: 'necklace', name: '盾徽墜飾', atk: 25, def: 42, hp: 170, dmgRed: 7, hpRegen: 4 }
                 ]
             },
             '深井臨界層': {
-                setName: '無視穿透套裝',
+                setName: '虛空穿透',
                 items: [
-                    { type: 'weapon', name: '穿透之矛', atk: 65, crit: 4, armorPen: 15, bossDmg: 8 },
-                    { type: 'armor', name: '穿透戰甲', def: 48, hp: 200, armorPen: 8, dmgRed: 4 },
-                    { type: 'accessory', name: '穿透符印', atk: 32, def: 25, hp: 100, armorPen: 10, crit: 3 },
-                    { type: 'accessory', name: '穿透寶珠', atk: 30, def: 25, hp: 120, armorPen: 12, bossDmg: 5 }
+                    { type: 'weapon', name: '穿透之矛', atk: 70, def: 20, hp: 115, armorPen: 15, bossDmg: 10 },
+                    { type: 'head', name: '虛空視界盔', atk: 35, def: 35, hp: 145, armorPen: 8 },
+                    { type: 'chest', name: '裂隙行者甲', atk: 30, def: 40, hp: 165, armorPen: 6 },
+                    { type: 'gloves', name: '破甲手套', atk: 40, def: 25, hp: 110, armorPen: 10 },
+                    { type: 'legs', name: '穿刺者腿甲', atk: 28, def: 38, hp: 155, armorPen: 7 },
+                    { type: 'feet', name: '虛空步靴', atk: 32, def: 32, hp: 135, armorPen: 5 },
+                    { type: 'ring', name: '穿透印記環', atk: 45, def: 28, hp: 125, armorPen: 12, bossDmg: 8 },
+                    { type: 'necklace', name: '破防墜飾', atk: 48, def: 28, hp: 130, armorPen: 10, bossDmg: 6 }
                 ]
             }
         };
+
         // 迭代天賦系統
 
         // 隨從系統常量
@@ -6154,24 +6300,58 @@ const REGION_CONSUMABLES = {
         };
 
         // 套裝效果定義（強化版）
+        // 套裝效果定義（2/4/6/8 件套）
         const SET_EFFECTS = {
-            '啟動者套裝': {
-                2: { name: '啟動協議', atkPercent: 50, defPercent: 50, hpPercent: 50 },
-                4: { name: '系統加速', critBonus: 20, lifeStealBonus: 15, expBonusBonus: 30, specialEffect: 'kill_heal' }
+            '初心工匠': {
+                2: { name: '工匠基礎', atkPercent: 20, defPercent: 20, hpPercent: 20 },
+                4: { name: '穩固根基', critBonus: 10, lifeStealBonus: 8, expBonusBonus: 15 },
+                6: { name: '精益求精', atkPercent: 30, critDmgBonus: 30, specialEffect: 'kill_heal_10' },
+                8: { name: '大師之路', hpPercent: 40, dmgRedBonus: 15, hpRegenBonus: 8, allStatsBonus: 10 }
             },
-            '研發者套裝': {
-                2: { name: '研發突破', atkPercent: 60, critBonus: 20, critDmgBonus: 50 },
-                4: { name: '完美代碼', armorPenBonus: 30, critDmgBonus: 60, specialEffect: 'crit_chain' }
+            '破曉獵人': {
+                2: { name: '獵人本能', atkPercent: 30, critBonus: 12, critDmgBonus: 25 },
+                4: { name: '致命追擊', armorPenBonus: 15, bossDmgBonus: 20 },
+                6: { name: '破曉一擊', critBonus: 15, critDmgBonus: 50, specialEffect: 'crit_chain' },
+                8: { name: '完美狩獵', atkPercent: 50, armorPenBonus: 30, lifeStealBonus: 12, specialEffect: 'perfect_crit_chain' }
             },
-            '機櫃防禦套裝': {
-                2: { name: '防火牆協議', defPercent: 60, hpPercent: 60, dmgRedBonus: 20 },
-                4: { name: '完全隔離', dmgRedBonus: 25, hpRegenBonus: 8, specialEffect: 'counter_heal' }
+            '代碼編織者': {
+                2: { name: '邏輯啟動', atkPercent: 35, critBonus: 10, critDmgBonus: 20 },
+                4: { name: '函式優化', armorPenBonus: 18, critDmgBonus: 35 },
+                6: { name: '完美代碼', critBonus: 18, critDmgBonus: 55, specialEffect: 'crit_chain' },
+                8: { name: '編譯巔峰', atkPercent: 55, armorPenBonus: 35, critDmgBonus: 80, specialEffect: 'enhanced_crit_chain' }
             },
-            '量子同步套裝': {
-                2: { name: '量子纏纏', atkPercent: 50, defPercent: 50, armorPenBonus: 30, bossDmgBonus: 40 },
-                4: { name: '奇點爆發', critBonus: 25, critDmgBonus: 80, lifeStealBonus: 20, specialEffect: 'quantum_collapse' }
+            '生命脈動': {
+                2: { name: '生命汲取', atkPercent: 25, lifeStealBonus: 10, hpPercent: 30 },
+                4: { name: '脈動共鳴', lifeStealBonus: 12, hpRegenBonus: 5, armorPenBonus: 12 },
+                6: { name: '生命洪流', lifeStealBonus: 18, dmgRedBonus: 12, specialEffect: 'life_surge' },
+                8: { name: '永恆脈動', atkPercent: 45, lifeStealBonus: 25, hpRegenBonus: 10, specialEffect: 'immortal_pulse' }
+            },
+            '數據守門人': {
+                2: { name: '防火牆協議', defPercent: 35, hpPercent: 35, dmgRedBonus: 12 },
+                4: { name: '完全隔離', dmgRedBonus: 18, hpRegenBonus: 5 },
+                6: { name: '堅固堡壘', defPercent: 45, hpPercent: 45, specialEffect: 'counter_heal' },
+                8: { name: '絕對防禦', dmgRedBonus: 28, hpRegenBonus: 12, defPercent: 65, specialEffect: 'shield_barrier' }
+            },
+            '鐵壁要塞': {
+                2: { name: '鐵壁防線', defPercent: 40, hpPercent: 40, dmgRedBonus: 15 },
+                4: { name: '反擊姿態', dmgRedBonus: 20, reflectBonus: 10, hpRegenBonus: 6 },
+                6: { name: '堡壘之盾', defPercent: 50, dmgRedBonus: 25, specialEffect: 'fortress_counter' },
+                8: { name: '不朽要塞', defPercent: 75, dmgRedBonus: 35, reflectBonus: 15, hpRegenBonus: 15, specialEffect: 'ultimate_fortress' }
+            },
+            '量子觀測者': {
+                2: { name: '量子纏繞', atkPercent: 30, defPercent: 30, armorPenBonus: 18 },
+                4: { name: '時空擾動', bossDmgBonus: 25, critBonus: 15 },
+                6: { name: '奇點爆發', critDmgBonus: 55, lifeStealBonus: 12, specialEffect: 'quantum_collapse' },
+                8: { name: '量子至高', atkPercent: 45, critBonus: 22, critDmgBonus: 90, armorPenBonus: 45, specialEffect: 'quantum_supremacy' }
+            },
+            '虛空穿透': {
+                2: { name: '虛空之力', atkPercent: 35, armorPenBonus: 22, bossDmgBonus: 18 },
+                4: { name: '穿透打擊', armorPenBonus: 30, critBonus: 12, bossDmgBonus: 25 },
+                6: { name: '破甲專精', atkPercent: 40, armorPenBonus: 40, bossDmgBonus: 35, specialEffect: 'armor_shatter' },
+                8: { name: '虛空主宰', atkPercent: 60, armorPenBonus: 60, bossDmgBonus: 50, critDmgBonus: 70, specialEffect: 'true_damage' }
             }
         };
+
         // 迭代天賦系統
         // 計算套裝效果
         function calculateSetEffects() {
@@ -6179,7 +6359,7 @@ const REGION_CONSUMABLES = {
             const player = gameState.player;
             
             // 統計套裝件數
-            ['weapon', 'armor', 'accessory1', 'accessory2'].forEach(slot => {
+            Object.keys(gameState.player.equipment).forEach(slot => {
                 const item = player.equipment[slot];
                 if (item && item.setName) {
                     setCount[item.setName] = (setCount[item.setName] || 0) + 1;
@@ -6238,6 +6418,48 @@ const REGION_CONSUMABLES = {
                     if (effect.bossDmgBonus) player.setEffects.bossDmg += effect.bossDmgBonus;
                     if (effect.hpRegenBonus) player.setEffects.hpRegen += effect.hpRegenBonus;
                     if (effect.expBonusBonus) player.setEffects.expBonus += effect.expBonusBonus;
+                    if (effect.reflectBonus) player.setEffects.reflect = (player.setEffects.reflect || 0) + effect.reflectBonus;
+                    if (effect.specialEffect) player.setEffects.specialEffects.push(effect.specialEffect);
+                }
+                
+                // 6件套效果
+                if (count >= 6 && effects[6]) {
+                    const effect = effects[6];
+                    if (effect.atkPercent) player.setEffects.atkPercent += effect.atkPercent;
+                    if (effect.defPercent) player.setEffects.defPercent += effect.defPercent;
+                    if (effect.hpPercent) player.setEffects.hpPercent += effect.hpPercent;
+                    if (effect.critBonus) player.setEffects.crit += effect.critBonus;
+                    if (effect.critDmgBonus) player.setEffects.critDmg += effect.critDmgBonus;
+                    if (effect.dmgRedBonus) player.setEffects.dmgRed += effect.dmgRedBonus;
+                    if (effect.lifeStealBonus) player.setEffects.lifeSteal += effect.lifeStealBonus;
+                    if (effect.armorPenBonus) player.setEffects.armorPen += effect.armorPenBonus;
+                    if (effect.bossDmgBonus) player.setEffects.bossDmg += effect.bossDmgBonus;
+                    if (effect.hpRegenBonus) player.setEffects.hpRegen += effect.hpRegenBonus;
+                    if (effect.expBonusBonus) player.setEffects.expBonus += effect.expBonusBonus;
+                    if (effect.reflectBonus) player.setEffects.reflect = (player.setEffects.reflect || 0) + effect.reflectBonus;
+                    if (effect.specialEffect) player.setEffects.specialEffects.push(effect.specialEffect);
+                }
+                
+                // 8件套效果
+                if (count >= 8 && effects[8]) {
+                    const effect = effects[8];
+                    if (effect.atkPercent) player.setEffects.atkPercent += effect.atkPercent;
+                    if (effect.defPercent) player.setEffects.defPercent += effect.defPercent;
+                    if (effect.hpPercent) player.setEffects.hpPercent += effect.hpPercent;
+                    if (effect.critBonus) player.setEffects.crit += effect.critBonus;
+                    if (effect.critDmgBonus) player.setEffects.critDmg += effect.critDmgBonus;
+                    if (effect.dmgRedBonus) player.setEffects.dmgRed += effect.dmgRedBonus;
+                    if (effect.lifeStealBonus) player.setEffects.lifeSteal += effect.lifeStealBonus;
+                    if (effect.armorPenBonus) player.setEffects.armorPen += effect.armorPenBonus;
+                    if (effect.bossDmgBonus) player.setEffects.bossDmg += effect.bossDmgBonus;
+                    if (effect.hpRegenBonus) player.setEffects.hpRegen += effect.hpRegenBonus;
+                    if (effect.expBonusBonus) player.setEffects.expBonus += effect.expBonusBonus;
+                    if (effect.reflectBonus) player.setEffects.reflect = (player.setEffects.reflect || 0) + effect.reflectBonus;
+                    if (effect.allStatsBonus) {
+                        player.setEffects.atkPercent += effect.allStatsBonus;
+                        player.setEffects.defPercent += effect.allStatsBonus;
+                        player.setEffects.hpPercent += effect.allStatsBonus;
+                    }
                     if (effect.specialEffect) player.setEffects.specialEffects.push(effect.specialEffect);
                 }
             }
@@ -6251,194 +6473,394 @@ const REGION_CONSUMABLES = {
         const REGION_LOOT = {
     '入門開發層': {
         weapons: [
-            { name: '木劍', type: 'weapon' },
+            { name: '訓練短劍', type: 'weapon' },
+            { name: '銳利短劍', type: 'weapon' },
             { name: '木槌', type: 'weapon' },
-            { name: '短匕首', type: 'weapon' },
-            { name: '輕長杖', type: 'weapon' },
-            { name: '修理尖錐', type: 'weapon' },
-            { name: '鐵短劍', type: 'weapon' },
-            { name: '小鋸刀', type: 'weapon' },
-            { name: '訓練長棍', type: 'weapon' },
+            { name: '鐵槌', type: 'weapon' },
+            { name: '工匠短刀', type: 'weapon' },
+            { name: '工匠長刀', type: 'weapon' },
+            { name: '輕型長杖', type: 'weapon' },
+            { name: '鐵製長杖', type: 'weapon' },
             { name: '木弓', type: 'weapon' },
-            { name: '工房扳手', type: 'weapon' }
+            { name: '簡易弩', type: 'weapon' }
         ],
-        armors: [
-            { name: '新手護甲', type: 'armor' },
-            { name: '帆布護甲', type: 'armor' },
-            { name: '皮革護甲', type: 'armor' },
-            { name: '加固護甲', type: 'armor' },
-            { name: '工作護甲', type: 'armor' },
-            { name: '粗布護甲', type: 'armor' },
-            { name: '布袍', type: 'armor' },
-            { name: '輕皮甲', type: 'armor' },
-            { name: '工具背心', type: 'armor' },
-            { name: '耐磨外套', type: 'armor' }
+        head: [
+            { name: '新手頭盔', type: 'head' },
+            { name: '布質頭盔', type: 'head' },
+            { name: '皮革頭盔', type: 'head' },
+            { name: '工地頭盔', type: 'head' },
+            { name: '護目頭盔', type: 'head' },
+            { name: '輕鐵頭盔', type: 'head' },
+            { name: '工作護帽', type: 'head' },
+            { name: '鲆釘頭盔', type: 'head' },
+            { name: '工具頭盔', type: 'head' },
+            { name: '防撞頭盔', type: 'head' }
         ],
-        accessories: [
-            { name: '銅戒', type: 'accessory', subtype: 'ring' },
-            { name: '測試戒', type: 'accessory', subtype: 'ring' },
-            { name: '鋁戒', type: 'accessory', subtype: 'ring' },
-            { name: '標記戒', type: 'accessory', subtype: 'ring' },
-            { name: '簡易戒', type: 'accessory', subtype: 'ring' },
-            { name: '錫戒', type: 'accessory', subtype: 'ring' },
-            { name: '鐵戒', type: 'accessory', subtype: 'ring' },
-            { name: '刻字戒', type: 'accessory', subtype: 'ring' },
-            { name: '細繩戒', type: 'accessory', subtype: 'ring' },
-            { name: '樹脂戒', type: 'accessory', subtype: 'ring' },
-            { name: '身分牌項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '金屬小片項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '工牌項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '標籤牌項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '木牌項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '皮繩項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '銅牌項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '小齒輪項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '木珠項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '線圈墜', type: 'accessory', subtype: 'necklace' }
+        chest: [
+            { name: '工作外套', type: 'chest' },
+            { name: '布質護甲', type: 'chest' },
+            { name: '皮革護甲', type: 'chest' },
+            { name: '工匠外套', type: 'chest' },
+            { name: '加固工作服', type: 'chest' },
+            { name: '多袋工作服', type: 'chest' },
+            { name: '防塵外衣', type: 'chest' },
+            { name: '加厚作業服', type: 'chest' },
+            { name: '工具背心甲', type: 'chest' },
+            { name: '防護工裝', type: 'chest' }
+        ],
+        gloves: [
+            { name: '棉質手套', type: 'gloves' },
+            { name: '皮革手套', type: 'gloves' },
+            { name: '止滑手套', type: 'gloves' },
+            { name: '工地護手', type: 'gloves' },
+            { name: '強化護手', type: 'gloves' },
+            { name: '纖維手套', type: 'gloves' },
+            { name: '防割手套', type: 'gloves' },
+            { name: '耐磨手套', type: 'gloves' },
+            { name: '操作手套', type: 'gloves' },
+            { name: '精工手套', type: 'gloves' }
+        ],
+        legs: [
+            { name: '工作長褲', type: 'legs' },
+            { name: '布質護腿', type: 'legs' },
+            { name: '皮革護腿', type: 'legs' },
+            { name: '加固護腿', type: 'legs' },
+            { name: '工匠長褲', type: 'legs' },
+            { name: '防塵工作褲', type: 'legs' },
+            { name: '耐磨長褲', type: 'legs' },
+            { name: '多袋工褲', type: 'legs' },
+            { name: '護脂長褲', type: 'legs' },
+            { name: '支撐護腿', type: 'legs' }
+        ],
+        feet: [
+            { name: '新手長靴', type: 'feet' },
+            { name: '工作靴', type: 'feet' },
+            { name: '止滑短靴', type: 'feet' },
+            { name: '防護工靴', type: 'feet' },
+            { name: '耐磨工靴', type: 'feet' },
+            { name: '鋼頭靴', type: 'feet' },
+            { name: '防刺工作靴', type: 'feet' },
+            { name: '輕量作業靴', type: 'feet' },
+            { name: '抗油工作靴', type: 'feet' },
+            { name: '防滑長靴', type: 'feet' }
+        ],
+        ring: [
+            { name: '銅戒指', type: 'ring' },
+            { name: '鐵戒指', type: 'ring' },
+            { name: '工匠戒指', type: 'ring' },
+            { name: '刻紋戒指', type: 'ring' },
+            { name: '新手戒指', type: 'ring' },
+            { name: '布帶指環', type: 'ring' },
+            { name: '木質指環', type: 'ring' },
+            { name: '試作指環', type: 'ring' },
+            { name: '標記指環', type: 'ring' },
+            { name: '簡易指環', type: 'ring' }
+        ],
+        necklace: [
+            { name: '識別證項鏈', type: 'necklace' },
+            { name: '金屬牌項鏈', type: 'necklace' },
+            { name: '工牌項鏈', type: 'necklace' },
+            { name: '木牌項鏈', type: 'necklace' },
+            { name: '布帶項鏈', type: 'necklace' },
+            { name: '銅牌頸鏈', type: 'necklace' },
+            { name: '簡易項鏈', type: 'necklace' },
+            { name: '小齒輪項鏈', type: 'necklace' },
+            { name: '刻字吊墜', type: 'necklace' },
+            { name: '工具吊牌', type: 'necklace' }
         ]
     },
     '研發核心層': {
         weapons: [
-            { name: '長槍', type: 'weapon' },
-            { name: '短刃', type: 'weapon' },
-            { name: '切割刀', type: 'weapon' },
-            { name: '重錘', type: 'weapon' },
-            { name: '能量法杖', type: 'weapon' },
-            { name: '原型長刀', type: 'weapon' },
-            { name: '實驗長棍', type: 'weapon' },
-            { name: '能量槍', type: 'weapon' },
-            { name: '切割鋸', type: 'weapon' },
-            { name: '磁脈錘', type: 'weapon' }
+            { name: '實驗長杖', type: 'weapon' },
+            { name: '脈衝短刃', type: 'weapon' },
+            { name: '能量短刀', type: 'weapon' },
+            { name: '實驗切割刀', type: 'weapon' },
+            { name: '震盪戰錘', type: 'weapon' },
+            { name: '聚能長杖', type: 'weapon' },
+            { name: '試作能量槍', type: 'weapon' },
+            { name: '精準注射槍', type: 'weapon' },
+            { name: '實驗長槍', type: 'weapon' },
+            { name: '頻脈長刀', type: 'weapon' }
         ],
-        armors: [
-            { name: '實驗護甲', type: 'armor' },
-            { name: '防護背心', type: 'armor' },
-            { name: '冷感護甲', type: 'armor' },
-            { name: '緩衝護甲', type: 'armor' },
-            { name: '絕緣護甲', type: 'armor' },
-            { name: '防爆外套', type: 'armor' },
-            { name: '防酸外衣', type: 'armor' },
-            { name: '實驗袍', type: 'armor' },
-            { name: '絕緣外套', type: 'armor' },
-            { name: '相位外甲', type: 'armor' }
+        head: [
+            { name: '實驗頭盔', type: 'head' },
+            { name: '強化護盔', type: 'head' },
+            { name: '防護頭盔', type: 'head' },
+            { name: '校準護盔', type: 'head' },
+            { name: '感測頭盔', type: 'head' },
+            { name: '防爆頭盔', type: 'head' },
+            { name: '冷卻頭盔', type: 'head' },
+            { name: '護目實驗盔', type: 'head' },
+            { name: '精準觀測盔', type: 'head' },
+            { name: '絕緣頭盔', type: 'head' }
         ],
-        accessories: [
-            { name: '調校戒', type: 'accessory', subtype: 'ring' },
-            { name: '校準戒', type: 'accessory', subtype: 'ring' },
-            { name: '數據戒', type: 'accessory', subtype: 'ring' },
-            { name: '實驗戒', type: 'accessory', subtype: 'ring' },
-            { name: '臨界戒', type: 'accessory', subtype: 'ring' },
-            { name: '原型戒', type: 'accessory', subtype: 'ring' },
-            { name: '頻率戒', type: 'accessory', subtype: 'ring' },
-            { name: '脈衝戒', type: 'accessory', subtype: 'ring' },
-            { name: '算法戒', type: 'accessory', subtype: 'ring' },
-            { name: '測序戒', type: 'accessory', subtype: 'ring' },
-            { name: '護符', type: 'accessory', subtype: 'necklace' },
-            { name: '相位項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '冷卻盒項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '測量項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '徽章項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '研究徽章', type: 'accessory', subtype: 'necklace' },
-            { name: '實驗證章', type: 'accessory', subtype: 'necklace' },
-            { name: '頻率吊墜', type: 'accessory', subtype: 'necklace' },
-            { name: '能量核心鎖', type: 'accessory', subtype: 'necklace' },
-            { name: '參數識別牌', type: 'accessory', subtype: 'necklace' }
+        chest: [
+            { name: '實驗護甲', type: 'chest' },
+            { name: '防酸護甲', type: 'chest' },
+            { name: '冷卻護甲', type: 'chest' },
+            { name: '技師外套', type: 'chest' },
+            { name: '強化實驗衣', type: 'chest' },
+            { name: '耐壓護甲', type: 'chest' },
+            { name: '防湺外衣', type: 'chest' },
+            { name: '絕緣護甲', type: 'chest' },
+            { name: '穩定背心', type: 'chest' },
+            { name: '加固實驗服', type: 'chest' }
+        ],
+        gloves: [
+            { name: '實驗手套', type: 'gloves' },
+            { name: '防酸手套', type: 'gloves' },
+            { name: '防靜電手套', type: 'gloves' },
+            { name: '精準操作手套', type: 'gloves' },
+            { name: '強化護手', type: 'gloves' },
+            { name: '絕緣手套', type: 'gloves' },
+            { name: '冷卻手套', type: 'gloves' },
+            { name: '細工護手', type: 'gloves' },
+            { name: '感測操作手套', type: 'gloves' },
+            { name: '穩定握手套', type: 'gloves' }
+        ],
+        legs: [
+            { name: '實驗長褲', type: 'legs' },
+            { name: '防酸護腿', type: 'legs' },
+            { name: '絕緣護腿', type: 'legs' },
+            { name: '強化腿甲', type: 'legs' },
+            { name: '加固長褲', type: 'legs' },
+            { name: '實驗護腿', type: 'legs' },
+            { name: '穩定支撐腿', type: 'legs' },
+            { name: '耐壓長褲', type: 'legs' },
+            { name: '冷卻護腿', type: 'legs' },
+            { name: '防護工作褲', type: 'legs' }
+        ],
+        feet: [
+            { name: '實驗靴', type: 'feet' },
+            { name: '防酸靴', type: 'feet' },
+            { name: '絕緣靴', type: 'feet' },
+            { name: '穩定步靴', type: 'feet' },
+            { name: '緩震長靴', type: 'feet' },
+            { name: '實驗工作靴', type: 'feet' },
+            { name: '防滑實驗靴', type: 'feet' },
+            { name: '加固實驗靴', type: 'feet' },
+            { name: '冷卻短靴', type: 'feet' },
+            { name: '防護長靴', type: 'feet' }
+        ],
+        ring: [
+            { name: '研究戒指', type: 'ring' },
+            { name: '校準戒指', type: 'ring' },
+            { name: '參數戒指', type: 'ring' },
+            { name: '實驗戒指', type: 'ring' },
+            { name: '臨界戒指', type: 'ring' },
+            { name: '樣本戒指', type: 'ring' },
+            { name: '記錄戒指', type: 'ring' },
+            { name: '穩定戒指', type: 'ring' },
+            { name: '量測戒指', type: 'ring' },
+            { name: '試製戒指', type: 'ring' }
+        ],
+        necklace: [
+            { name: '研究護符', type: 'necklace' },
+            { name: '實驗徽章', type: 'necklace' },
+            { name: '冷卻盒吊墜', type: 'necklace' },
+            { name: '數據項鏈', type: 'necklace' },
+            { name: '量測徽章', type: 'necklace' },
+            { name: '樣本編號項鏈', type: 'necklace' },
+            { name: '實驗室識別鏈', type: 'necklace' },
+            { name: '記錄晶片項鏈', type: 'necklace' },
+            { name: '圖表吊墜', type: 'necklace' },
+            { name: '儀器標記項鏈', type: 'necklace' }
         ]
     },
     '資料裂縫': {
         weapons: [
-            { name: '弓', type: 'weapon' },
-            { name: '阻斷短刀', type: 'weapon' },
-            { name: '重錘', type: 'weapon' },
-            { name: '長矛', type: 'weapon' },
-            { name: '干擾槍', type: 'weapon' },
-            { name: '強弩', type: 'weapon' },
-            { name: '短弩', type: 'weapon' },
-            { name: '電擊棒', type: 'weapon' },
-            { name: '防衛短刀', type: 'weapon' },
-            { name: '巡邏長槍', type: 'weapon' }
+            { name: '保全警棍', type: 'weapon' },
+            { name: '防衛短刃', type: 'weapon' },
+            { name: '防爆錘', type: 'weapon' },
+            { name: '守衛長槍', type: 'weapon' },
+            { name: '巡邏長矛', type: 'weapon' },
+            { name: '防護盾斧', type: 'weapon' },
+            { name: '警戒長棍', type: 'weapon' },
+            { name: '封鎖短刀', type: 'weapon' },
+            { name: '警備弩', type: 'weapon' },
+            { name: '鎮守戰錘', type: 'weapon' }
         ],
-        armors: [
-            { name: '機房護甲', type: 'armor' },
-            { name: '散熱護甲', type: 'armor' },
-            { name: '隔離板甲', type: 'armor' },
-            { name: '強化護甲', type: 'armor' },
-            { name: '光纖護甲', type: 'armor' },
-            { name: '防護外殼', type: 'armor' },
-            { name: '金屬背心', type: 'armor' },
-            { name: '散熱背心', type: 'armor' },
-            { name: '光纖外套', type: 'armor' },
-            { name: '加固護衣', type: 'armor' }
+        head: [
+            { name: '機房頭盔', type: 'head' },
+            { name: '防護面罩', type: 'head' },
+            { name: '屏蔽頭盔', type: 'head' },
+            { name: '監控頭盔', type: 'head' },
+            { name: '維修頭盔', type: 'head' },
+            { name: '冷通道頭盔', type: 'head' },
+            { name: '巡檢護盔', type: 'head' },
+            { name: '光纖護盔', type: 'head' },
+            { name: '防靜電頭盔', type: 'head' },
+            { name: '加固頭盔', type: 'head' }
         ],
-        accessories: [
-            { name: '加密戒', type: 'accessory', subtype: 'ring' },
-            { name: '邊界戒', type: 'accessory', subtype: 'ring' },
-            { name: '隔離戒', type: 'accessory', subtype: 'ring' },
-            { name: '淨化戒', type: 'accessory', subtype: 'ring' },
-            { name: '路徑戒', type: 'accessory', subtype: 'ring' },
-            { name: '防火牆戒', type: 'accessory', subtype: 'ring' },
-            { name: '通道戒', type: 'accessory', subtype: 'ring' },
-            { name: '節點戒', type: 'accessory', subtype: 'ring' },
-            { name: '憑證戒', type: 'accessory', subtype: 'ring' },
-            { name: '監控戒', type: 'accessory', subtype: 'ring' },
-            { name: '核心項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '證章項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '節點項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '通行令牌', type: 'accessory', subtype: 'necklace' },
-            { name: '閘道項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '光纖項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '路由牌', type: 'accessory', subtype: 'necklace' },
-            { name: '監控徽章', type: 'accessory', subtype: 'necklace' },
-            { name: '冗餘掛牌', type: 'accessory', subtype: 'necklace' },
-            { name: '機房鑰匙牌', type: 'accessory', subtype: 'necklace' }
+        chest: [
+            { name: '機房護甲', type: 'chest' },
+            { name: '防護板甲', type: 'chest' },
+            { name: '強化護甲', type: 'chest' },
+            { name: '散熱護甲', type: 'chest' },
+            { name: '屏蔽外甲', type: 'chest' },
+            { name: '維修背心', type: 'chest' },
+            { name: '防靜電外套', type: 'chest' },
+            { name: '配線工作甲', type: 'chest' },
+            { name: '機櫃防護甲', type: 'chest' },
+            { name: '冷通道外衣', type: 'chest' }
+        ],
+        gloves: [
+            { name: '機房手套', type: 'gloves' },
+            { name: '防靜電手套', type: 'gloves' },
+            { name: '維修護手', type: 'gloves' },
+            { name: '光纖作業手套', type: 'gloves' },
+            { name: '隔離護手', type: 'gloves' },
+            { name: '配線護手', type: 'gloves' },
+            { name: '防護厚手套', type: 'gloves' },
+            { name: '操作維修手套', type: 'gloves' },
+            { name: '終端維修手套', type: 'gloves' },
+            { name: '冷通道手套', type: 'gloves' }
+        ],
+        legs: [
+            { name: '機房長褲', type: 'legs' },
+            { name: '防護護腿', type: 'legs' },
+            { name: '配線長褲', type: 'legs' },
+            { name: '冷通道長褲', type: 'legs' },
+            { name: '支撐腿甲', type: 'legs' },
+            { name: '維修工作褲', type: 'legs' },
+            { name: '耐磨護腿', type: 'legs' },
+            { name: '設備巡檢腿甲', type: 'legs' },
+            { name: '線槽護腿', type: 'legs' },
+            { name: '加固腿甲', type: 'legs' }
+        ],
+        feet: [
+            { name: '機房安全靴', type: 'feet' },
+            { name: '防靜電長靴', type: 'feet' },
+            { name: '屏蔽長靴', type: 'feet' },
+            { name: '巡檢短靴', type: 'feet' },
+            { name: '散熱步靴', type: 'feet' },
+            { name: 'UPS作業靴', type: 'feet' },
+            { name: '防滑機房靴', type: 'feet' },
+            { name: '加固工作靴', type: 'feet' },
+            { name: '冷通道靴', type: 'feet' },
+            { name: '耐磨巡檢鞋', type: 'feet' }
+        ],
+        ring: [
+            { name: '防護戒指', type: 'ring' },
+            { name: '防火牆戒指', type: 'ring' },
+            { name: '監控戒指', type: 'ring' },
+            { name: '加密戒指', type: 'ring' },
+            { name: '守衛戒指', type: 'ring' },
+            { name: '邊界戒指', type: 'ring' },
+            { name: '巡檢戒指', type: 'ring' },
+            { name: '鎖定戒指', type: 'ring' },
+            { name: '警戒戒指', type: 'ring' },
+            { name: '通道戒指', type: 'ring' }
+        ],
+        necklace: [
+            { name: '守衛項鏈', type: 'necklace' },
+            { name: '防護徽章', type: 'necklace' },
+            { name: '監控項鏈', type: 'necklace' },
+            { name: '安全憑證項鏈', type: 'necklace' },
+            { name: '核心徽章', type: 'necklace' },
+            { name: '巡檢證章', type: 'necklace' },
+            { name: '機房鑰匙項鏈', type: 'necklace' },
+            { name: '防火牆徽章', type: 'necklace' },
+            { name: '鎖門令牌', type: 'necklace' },
+            { name: '守門人吊墜', type: 'necklace' }
         ]
     },
     '深井臨界層': {
         weapons: [
-            { name: '量子之刃', type: 'weapon' },
-            { name: '時間戰錘', type: 'weapon' },
-            { name: '零點長槍', type: 'weapon' },
-            { name: '曲率法杖', type: 'weapon' },
-            { name: '相干長刃', type: 'weapon' },
-            { name: '時間短刃', type: 'weapon' },
-            { name: '相位長刀', type: 'weapon' },
-            { name: '奇點弓', type: 'weapon' },
-            { name: '量子長棍', type: 'weapon' },
-            { name: '折疊匕首', type: 'weapon' }
+            { name: '星辰長劍', type: 'weapon' },
+            { name: '幻影短刃', type: 'weapon' },
+            { name: '虛空大劍', type: 'weapon' },
+            { name: '裂隸長槍', type: 'weapon' },
+            { name: '深空戰錘', type: 'weapon' },
+            { name: '流光法杖', type: 'weapon' },
+            { name: '時空長杖', type: 'weapon' },
+            { name: '暗影雙刃', type: 'weapon' },
+            { name: '星環長弓', type: 'weapon' },
+            { name: '臨界巨刃', type: 'weapon' }
         ],
-        armors: [
-            { name: '量子護甲', type: 'armor' },
-            { name: '疊加護甲', type: 'armor' },
-            { name: '相干護甲', type: 'armor' },
-            { name: '曲率胸鎧', type: 'armor' },
-            { name: '臨界戰甲', type: 'armor' },
-            { name: '時間護甲', type: 'armor' },
-            { name: '奇點護甲', type: 'armor' },
-            { name: '空間護甲', type: 'armor' },
-            { name: '裂縫護甲', type: 'armor' },
-            { name: '干涉護甲', type: 'armor' }
+        head: [
+            { name: '星光頭盔', type: 'head' },
+            { name: '幻影頭盔', type: 'head' },
+            { name: '深空頭盔', type: 'head' },
+            { name: '虛空護盔', type: 'head' },
+            { name: '時空頭盔', type: 'head' },
+            { name: '星環頭盔', type: 'head' },
+            { name: '幽影兜帽', type: 'head' },
+            { name: '流光護盔', type: 'head' },
+            { name: '靜寂頭盔', type: 'head' },
+            { name: '裂隸頭盔', type: 'head' }
         ],
-        accessories: [
-            { name: '量子戒', type: 'accessory', subtype: 'ring' },
-            { name: '時間戒', type: 'accessory', subtype: 'ring' },
-            { name: '能量戒', type: 'accessory', subtype: 'ring' },
-            { name: '相干戒', type: 'accessory', subtype: 'ring' },
-            { name: '通量戒', type: 'accessory', subtype: 'ring' },
-            { name: '奇點戒', type: 'accessory', subtype: 'ring' },
-            { name: '時空戒', type: 'accessory', subtype: 'ring' },
-            { name: '折疊戒', type: 'accessory', subtype: 'ring' },
-            { name: '共鳴戒', type: 'accessory', subtype: 'ring' },
-            { name: '相位戒', type: 'accessory', subtype: 'ring' },
-            { name: '糾纏項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '量子墜', type: 'accessory', subtype: 'necklace' },
-            { name: '零點項圈', type: 'accessory', subtype: 'necklace' },
-            { name: '相干項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '臨界項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '時空項鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '共鳴墜', type: 'accessory', subtype: 'necklace' },
-            { name: '干涉鎖鏈', type: 'accessory', subtype: 'necklace' },
-            { name: '折疊頸環', type: 'accessory', subtype: 'necklace' },
-            { name: '奇點勳章', type: 'accessory', subtype: 'necklace' }
+        chest: [
+            { name: '星辰護甲', type: 'chest' },
+            { name: '深空戰甲', type: 'chest' },
+            { name: '幻影胸甲', type: 'chest' },
+            { name: '虛空鎧甲', type: 'chest' },
+            { name: '時空護甲', type: 'chest' },
+            { name: '星環戰鎧', type: 'chest' },
+            { name: '裂隸胸甲', type: 'chest' },
+            { name: '流光護甲', type: 'chest' },
+            { name: '暗影戰甲', type: 'chest' },
+            { name: '臨界戰甲', type: 'chest' }
+        ],
+        gloves: [
+            { name: '星光手套', type: 'gloves' },
+            { name: '幻影手套', type: 'gloves' },
+            { name: '虛空護手', type: 'gloves' },
+            { name: '裂隸手套', type: 'gloves' },
+            { name: '時序護手', type: 'gloves' },
+            { name: '流光手套', type: 'gloves' },
+            { name: '暗影握手', type: 'gloves' },
+            { name: '深空護手', type: 'gloves' },
+            { name: '星環手套', type: 'gloves' },
+            { name: '臨界手套', type: 'gloves' }
+        ],
+        legs: [
+            { name: '星辰護腿', type: 'legs' },
+            { name: '幻影護腿', type: 'legs' },
+            { name: '深空護腿', type: 'legs' },
+            { name: '裂隸腿甲', type: 'legs' },
+            { name: '虛空腿甲', type: 'legs' },
+            { name: '時空護腿', type: 'legs' },
+            { name: '暗影腿甲', type: 'legs' },
+            { name: '星環腿甲', type: 'legs' },
+            { name: '流光腿甲', type: 'legs' },
+            { name: '臨界護腿', type: 'legs' }
+        ],
+        feet: [
+            { name: '星光長靴', type: 'feet' },
+            { name: '幻影長靴', type: 'feet' },
+            { name: '深空長靴', type: 'feet' },
+            { name: '虛空長靴', type: 'feet' },
+            { name: '裂隸戰靴', type: 'feet' },
+            { name: '時序長靴', type: 'feet' },
+            { name: '暗影步靴', type: 'feet' },
+            { name: '流光步靴', type: 'feet' },
+            { name: '星環行走靴', type: 'feet' },
+            { name: '臨界快靴', type: 'feet' }
+        ],
+        ring: [
+            { name: '星光戒指', type: 'ring' },
+            { name: '幻影戒指', type: 'ring' },
+            { name: '深空戒指', type: 'ring' },
+            { name: '虛空戒指', type: 'ring' },
+            { name: '裂隸戒指', type: 'ring' },
+            { name: '時空戒指', type: 'ring' },
+            { name: '暗影戒指', type: 'ring' },
+            { name: '星環戒指', type: 'ring' },
+            { name: '流光戒指', type: 'ring' },
+            { name: '臨界戒指', type: 'ring' }
+        ],
+        necklace: [
+            { name: '星辰項鏈', type: 'necklace' },
+            { name: '幻影項鏈', type: 'necklace' },
+            { name: '深空項鏈', type: 'necklace' },
+            { name: '虛空項鏈', type: 'necklace' },
+            { name: '裂隸項鏈', type: 'necklace' },
+            { name: '時空項鏈', type: 'necklace' },
+            { name: '暗影項鏈', type: 'necklace' },
+            { name: '星環項鏈', type: 'necklace' },
+            { name: '流光項鏈', type: 'necklace' },
+            { name: '臨界項鏈', type: 'necklace' }
         ]
     }
         };
@@ -6652,10 +7074,14 @@ const REGION_CONSUMABLES = {
                 luck: 0,        // 幸運值（掉寶率加成）
                 goldBonus: 0,   // 金幣加成
                 equipment: {
-                    weapon: null,
-                    armor: null,
-                    accessory1: null,
-                    accessory2: null
+                    weapon: null,      // 武器
+                    head: null,        // 頭盔
+                    chest: null,       // 胸甲
+                    legs: null,        // 腿甲
+                    feet: null,        // 靴子
+                    gloves: null,      // 手套
+                    ring: null,        // 戒指
+                    necklace: null     // 項鍊
                 },
                 skill: null,  // 選擇的技能
                 buffs: [],    // 當前Buff效果
@@ -9205,6 +9631,25 @@ const REGION_CONSUMABLES = {
                 gameState.player.battleReviveUsed = false;
             }
             
+            // 保存敵人的原始屬性（用於debuff系統）
+            if (!enemy.baseAtk) enemy.baseAtk = enemy.atk;
+            if (!enemy.baseDef) enemy.baseDef = enemy.def;
+            if (!enemy.baseCrit) enemy.baseCrit = enemy.crit || 0;
+            
+            // 初始化debuff陣列
+            if (!enemy.debuffs) enemy.debuffs = [];
+            
+            // 恢復不朽要塞效果（每場戰鬥一次）
+            if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
+                if (!gameState.player.setEffects.specialEffects.includes('ultimate_fortress')) {
+                    // 檢查是否有鐵壁要塞8件套
+                    const hasFortress8 = gameState.player.setEffects.specialEffects.some(e => e === 'ultimate_fortress_base');
+                    if (hasFortress8) {
+                        gameState.player.setEffects.specialEffects.push('ultimate_fortress');
+                    }
+                }
+            }
+            
             // 應用戰鬥開始時的特殊效果
             applyBattleStartSpecialEffects();
             
@@ -9262,6 +9707,9 @@ const REGION_CONSUMABLES = {
                 // 獲取隨從裝備組合效果
                 const comboEffects = getCompanionEquipmentCombo();
                 
+                // 應用 debuff 到敵人屬性（每回合開始）
+                applyDebuffs(enemy);
+                
                 // 保存原始最大生命值到gameState（用於戰鬥結束後恢復）
                 gameState.originalMaxHpBeforeCombat = gameState.player.maxHp;
                 
@@ -9283,19 +9731,48 @@ const REGION_CONSUMABLES = {
                     playerCrit += gameState.player.setEffects.crit;
                 }
                 
-                // 雷元素被動：暴擊率+10%
-                let playerElement = null;
+                // ===== 元素系統：收集所有元素並取最高值 =====
+                let weaponElement = null;
+                let weaponElementValue = 0;
+                let armorElement = null;
+                let armorElementValue = 0;
+                let accessoryElement = null;
+                let accessoryElementValue = 0;
+                
+                // 檢查武器元素
                 if (gameState.player.equipment.weapon && gameState.player.equipment.weapon.element) {
-                    playerElement = gameState.player.equipment.weapon.element;
-                } else if (gameState.player.equipment.armor && gameState.player.equipment.armor.element) {
-                    playerElement = gameState.player.equipment.armor.element;
-                } else if (gameState.player.equipment.accessory1 && gameState.player.equipment.accessory1.element) {
-                    playerElement = gameState.player.equipment.accessory1.element;
-                } else if (gameState.player.equipment.accessory2 && gameState.player.equipment.accessory2.element) {
-                    playerElement = gameState.player.equipment.accessory2.element;
+                    weaponElement = gameState.player.equipment.weapon.element;
+                    weaponElementValue = gameState.player.equipment.weapon.elementValue || 0;
                 }
-                if (playerElement === 'thunder') {
-                    playerCrit += 10;
+                
+                // 檢查防具元素（5個槽位，取數值最高的）
+                const armorSlots = ['head', 'chest', 'gloves', 'legs', 'feet'];
+                for (const slot of armorSlots) {
+                    const item = gameState.player.equipment[slot];
+                    if (item && item.element && item.elementValue) {
+                        if (item.elementValue > armorElementValue) {
+                            armorElement = item.element;
+                            armorElementValue = item.elementValue;
+                        }
+                    }
+                }
+                
+                // 檢查飾品元素（2個槽位，取數值最高的）
+                const accessorySlots = ['ring', 'necklace'];
+                for (const slot of accessorySlots) {
+                    const item = gameState.player.equipment[slot];
+                    if (item && item.element && item.elementValue) {
+                        if (item.elementValue > accessoryElementValue) {
+                            accessoryElement = item.element;
+                            accessoryElementValue = item.elementValue;
+                        }
+                    }
+                }
+                
+                // 飾品元素被動效果：雷元素 +暴擊率（使用隨機數值）
+                if (accessoryElement === 'thunder' && accessoryElementValue > 0) {
+                    const critBonus = Math.floor(accessoryElementValue * 100); // 6%-12%
+                    playerCrit += critBonus;
                 }
                 
                 const isCrit = Math.random() * 100 < playerCrit;
@@ -9324,11 +9801,9 @@ const REGION_CONSUMABLES = {
                     finalDmg = Math.floor(finalDmg * (1 + bossDmgBonus / 100));
                 }
                 
-                // ========== 元素克制計算 ==========
-                // 使用之前已經宣告的playerElement變數
-                
-                if (playerElement && enemy.element) {
-                    const playerElem = ELEMENTS[playerElement];
+                // ========== 元素克制計算（使用武器元素） ==========
+                if (weaponElement && enemy.element) {
+                    const playerElem = ELEMENTS[weaponElement];
                     const enemyElem = ELEMENTS[enemy.element];
                     
                     // 克制關係
@@ -9341,33 +9816,45 @@ const REGION_CONSUMABLES = {
                     }
                 }
                 
-                // 元素特效觸發
-                if (playerElement) {
-                    const elem = ELEMENTS[playerElement];
+                // ========== 武器元素特效（進攻型，使用隨機數值） ==========
+                if (weaponElement && weaponElementValue > 0) {
+                    const elem = ELEMENTS[weaponElement];
                     if (Math.random() < elem.effectChance) {
                         if (elem.effect === 'burn') {
-                            const burnDmg = Math.floor(enemy.maxHp * elem.effectValue);
+                            // 火元素：灼燒敵人（使用隨機數值 3%-7%）
+                            const burnDmg = Math.floor(enemy.maxHp * weaponElementValue);
                             if (!enemy.burns) enemy.burns = [];
                             enemy.burns.push({ damage: burnDmg, duration: elem.effectDuration });
-                            addLog('元素', `${elem.icon} 灼燒效果！目標每回合受到${burnDmg}點傷害！`);
+                            const percent = Math.floor(weaponElementValue * 100);
+                            addLog('元素', `🔥 武器火元素[${percent}%]：灼燒敵人！每回合${burnDmg}點傷害×${elem.effectDuration}回合`);
                         } else if (elem.effect === 'freeze') {
+                            // 冰元素：冰凍敵人（使用隨機數值 15%-30%）
                             if (!enemy.iceDebuff) {
                                 enemy.iceDebuff = { duration: elem.effectDuration };
-                                enemy.atk = Math.floor(enemy.atk * (1 - elem.effectValue));
-                                addLog('元素', `${elem.icon} 冰凍效果！目標攻擊力降低20%！`);
+                                enemy.atk = Math.floor(enemy.atk * (1 - weaponElementValue));
+                                const percent = Math.floor(weaponElementValue * 100);
+                                addLog('元素', `❄️ 武器冰元素[${percent}%]：冰凍敵人！攻擊力-${percent}%×${elem.effectDuration}回合`);
                             }
                         } else if (elem.effect === 'shock' && isCrit) {
-                            finalDmg = Math.floor(finalDmg * elem.effectValue);
-                            addLog('元素', `${elem.icon} 雷鳴暴擊！造成雙倍傷害！`);
+                            // 雷元素：暴擊時額外傷害（使用隨機數值 1.5x-2.5x）
+                            finalDmg = Math.floor(finalDmg * weaponElementValue);
+                            addLog('元素', `⚡ 武器雷元素[${weaponElementValue.toFixed(1)}x]：連鏈閃電！暴擊傷害×${weaponElementValue.toFixed(1)}！`);
                         } else if (elem.effect === 'poison') {
-                            const poisonDmg = Math.floor(enemy.maxHp * elem.effectValue);
+                            // 毒元素：中毒敵人（使用隨機數值 2%-5%）
+                            const poisonDmg = Math.floor(enemy.maxHp * weaponElementValue);
                             const duration = enemy.isBoss ? 3 : elem.effectDuration;
                             if (!enemy.poisons) enemy.poisons = [];
                             enemy.poisons.push({ damage: poisonDmg, duration: duration });
-                            addLog('元素', `${elem.icon} 中毒效果！目標每回合受到${poisonDmg}點毒傷害！`);
+                            const percent = Math.floor(weaponElementValue * 100);
+                            addLog('元素', `🌿 武器毒元素[${percent}%]：中毒敵人！每回合${poisonDmg}點毒傷害×${duration}回合`);
+                        } else if (elem.effect === 'shield') {
+                            // 土元素：破甲打擊（使用隨機數值 10%-20%）
+                            const armorPenBonus = Math.floor(weaponElementValue * 100);
+                            const extraDmg = Math.floor(finalDmg * armorPenBonus / 100);
+                            finalDmg += extraDmg;
+                            addLog('元素', `🌍 武器土元素[${armorPenBonus}%]：破甲打擊！+${armorPenBonus}%穿甲傷害`);
                         }
                     }
-                    
                 }
                 
                 // 應用怪物詞綴效果（受擊時）
@@ -9434,21 +9921,66 @@ const REGION_CONSUMABLES = {
                 // 套裝特殊效果觸發
                 if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
                     gameState.player.setEffects.specialEffects.forEach(effect => {
-                        // 研發者套裝：暴擊連擊
+                        // 初心工匠 6件套：擊殺回血 10%
+                        if (effect === 'kill_heal_10') {
+                            // 這個效果在擊殺時觸發，見下方擊殺區塊
+                        }
+                        
+                        // 破曉獵人/代碼編織者 6件套：暴擊連擊 (60%機率，100%傷害)
                         if (effect === 'crit_chain' && isCrit && Math.random() < 0.60) {
                             const chainDmg = Math.floor(finalDmg * 1.0);
                             enemyHp -= chainDmg;
                             addLog('套裝', `⚔️ 完美代碼！暴擊連擊造成 ${chainDmg} 點額外傷害！`);
                         }
                         
-                        // 量子同步套裝：量子崩塉
+                        // 破曉獵人 8件套：完美暴擊連擊 (80%機率，150%傷害)
+                        if (effect === 'perfect_crit_chain' && isCrit && Math.random() < 0.80) {
+                            const chainDmg = Math.floor(finalDmg * 1.5);
+                            enemyHp -= chainDmg;
+                            addLog('套裝', `🌟 完美狩獵！連擊造成 ${chainDmg} 點暴擊傷害！`);
+                        }
+                        
+                        // 代碼編織者 8件套：強化暴擊連擊 (75%機率，200%傷害)
+                        if (effect === 'enhanced_crit_chain' && isCrit && Math.random() < 0.75) {
+                            const chainDmg = Math.floor(finalDmg * 2.0);
+                            enemyHp -= chainDmg;
+                            addLog('套裝', `💻 編譯工匠！連擊造成 ${chainDmg} 點巨額傷害！`);
+                        }
+                        
+                        // 生命脈動 6件套：生命洪流 (攻擊時回血)
+                        if (effect === 'life_surge') {
+                            const healAmount = Math.floor(finalDmg * 0.25); // 造成25%傷害的生命回復
+                            gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                            addLog('套裝', `💚 生命洪流！回復 ${healAmount} 點生命值！`);
+                        }
+                        
+                        // 虛空穿透 6件套：破甲專精 (50%機率降低敵人防禦)
+                        if (effect === 'armor_shatter' && Math.random() < 0.50) {
+                            addDebuff(enemy, 'def_down', 60, 3);
+                            addLog('套裝', `🔨 破甲打擊！敵人防禦降低60%！`);
+                        }
+                        
+                        // 量子觀測者 6件套：量子崩塉 (40%機率，500%傷害)
                         if (effect === 'quantum_collapse' && Math.random() < 0.40) {
-                            const collapseDmg = Math.floor(finalDmg * 4.0); // 500%總傷害 = 額外4.0倍
+                            const collapseDmg = Math.floor(finalDmg * 4.0);
                             enemyHp -= collapseDmg;
-                            // 添加防禦降低buff到怪物
-                            if (!enemy.debuffs) enemy.debuffs = [];
-                            enemy.debuffs.push({ type: 'def_down', value: 50, duration: 2 });
+                            addDebuff(enemy, 'def_down', 50, 2);
                             addLog('套裝', `🌌 奇點爆發！造成 ${collapseDmg} 點巨額傷害，敵人防禦降低50%！`);
+                        }
+                        
+                        // 量子觀測者 8件套：量子至高 (30%機率，800%傷害 + 全屬性降低)
+                        if (effect === 'quantum_supremacy' && Math.random() < 0.30) {
+                            const supremacyDmg = Math.floor(finalDmg * 7.0);
+                            enemyHp -= supremacyDmg;
+                            addDebuff(enemy, 'all_down', 40, 3);
+                            addLog('套裝', `✨ 量子至高！造成 ${supremacyDmg} 點毀滅性傷害，敵人全屬性降低40%！`);
+                        }
+                        
+                        // 虛空穿透 8件套：真實傷害 (25%機率，300%最大生命值傷害)
+                        if (effect === 'true_damage' && Math.random() < 0.25) {
+                            const trueDmg = Math.floor(enemy.maxHp * 3.0);
+                            enemyHp -= trueDmg;
+                            addLog('套裝', `🔮 虛空主宰！造成 ${trueDmg} 點真實傷害！`);
                         }
                     });
                 }
@@ -9471,9 +10003,16 @@ const REGION_CONSUMABLES = {
                         updateEnemyHP(enemyHp, enemyMaxHp);
                         playSound('heal');
                     } else {
-                     // 啟動者套裝：擊殺回血
+                     // 套裝擊殺回血效果
                      if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
                          gameState.player.setEffects.specialEffects.forEach(effect => {
+                             // 初心工匠 6件套：擊殺回血 10%
+                             if (effect === 'kill_heal_10') {
+                                 const healAmount = Math.floor(gameState.player.maxHp * 0.10);
+                                gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                                addLog('套裝', `💚 精益求精！擊殺回復 ${healAmount} 點生命值！`);
+                            }
+                            // 舊版本相容：啟動者套裝
                              if (effect === 'kill_heal' && Math.random() < 0.50) {
                                  const healAmount = Math.floor(gameState.player.maxHp * 0.20);
                                 gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
@@ -9593,6 +10132,49 @@ const REGION_CONSUMABLES = {
                     addLog('特殊', defenseResult.message);
                 }
                 
+                // ========== 防具元素效果（防禦型，使用隨機數值） ==========
+                // 使用之前已經檢查過的 armorElement 和 armorElementValue
+                if (armorElement && armorElementValue > 0) {
+                    const elem = ELEMENTS[armorElement];
+                    if (Math.random() < elem.effectChance) {
+                        if (elem.effect === 'burn') {
+                            // 火元素：反射火焰傷害（使用隨機數值 5%-15%）
+                            const reflectDmg = Math.floor(enemyDmg * armorElementValue);
+                            enemyHp -= reflectDmg;
+                            const percent = Math.floor(armorElementValue * 100);
+                            addLog('元素', `🔥 防具火元素[\${percent}%]：反射火焰！造成\${reflectDmg}點傷害`);
+                            updateEnemyHP(enemyHp, enemyMaxHp);
+                        } else if (elem.effect === 'freeze') {
+                            // 冰元素：冰霜護甲（使用隨機數值 15%-35%）
+                            const reduction = Math.floor(enemyDmg * armorElementValue);
+                            enemyDmg -= reduction;
+                            const percent = Math.floor(armorElementValue * 100);
+                            addLog('元素', `❄️ 防具冰元素[\${percent}%]：冰霜護甲！減少\${reduction}點傷害`);
+                        } else if (elem.effect === 'shock') {
+                            // 雷元素：雷電反擊（使用隨機數值 15%-30%）
+                            const counterDmg = Math.floor(enemyDmg * armorElementValue);
+                            enemyHp -= counterDmg;
+                            const percent = Math.floor(armorElementValue * 100);
+                            addLog('元素', `⚡ 防具雷元素[\${percent}%]：雷電反擊！造成\${counterDmg}點傷害`);
+                            updateEnemyHP(enemyHp, enemyMaxHp);
+                        } else if (elem.effect === 'poison') {
+                            // 毒元素：毒霧反擊（使用隨機數值 1.5%-3%）
+                            const poisonDmg = Math.floor(enemy.maxHp * armorElementValue);
+                            if (!enemy.poisons) enemy.poisons = [];
+                            enemy.poisons.push({ damage: poisonDmg, duration: 3 });
+                            const percent = (armorElementValue * 100).toFixed(1);
+                            addLog('元素', `🌿 防具毒元素[\${percent}%]：毒霧反擊！敵人中毒\${poisonDmg}點/回合×3回合`);
+                        } else if (elem.effect === 'shield') {
+                            // 土元素：岩石護盾（使用隨機數值 20%-40%）
+                            const reduction = Math.floor(enemyDmg * armorElementValue);
+                            enemyDmg -= reduction;
+                            const percent = Math.floor(armorElementValue * 100);
+                            addLog('元素', `🌍 防具土元素[\${percent}%]：岩石護盾！減少\${reduction}點傷害`);
+                        }
+                    }
+                }
+
+                
                 // 減傷計算
                 if (gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0) {
                     const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
@@ -9603,9 +10185,10 @@ const REGION_CONSUMABLES = {
                 playerHp -= enemyDmg;
                 gameState.player.hp = Math.max(0, playerHp);
                 
-                 // 機櫃防禦套裝：反擊回血
+                 // 套裝受擊效果
                  if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
                      gameState.player.setEffects.specialEffects.forEach(effect => {
+                         // 數據守門人 6件套：反擊回血 (50%機率)
                          if (effect === 'counter_heal' && Math.random() < 0.50) {
                              const counterDmg = Math.floor(gameState.player.atk * 1.5);
                              const healAmount = Math.floor(counterDmg * 1.0);
@@ -9613,6 +10196,39 @@ const REGION_CONSUMABLES = {
                             gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
                             addLog('套裝', `🛡️ 防火牆反擊！造成 ${counterDmg} 點傷害並回復 ${healAmount} 點生命！`);
                             updateEnemyHP(enemyHp, enemyMaxHp);
+                        }
+                        
+                         // 數據守門人 8件套：護盾屏障 (受到傷害時有機率格擋)
+                         if (effect === 'shield_barrier' && Math.random() < 0.35) {
+                            addLog('套裝', `✨ 護盾屏障！格擋了所有傷害！`);
+                            gameState.player.hp = Math.min(gameState.player.hp + enemyDmg, gameState.player.maxHp); // 回復剛才扣除的生命
+                        }
+                        
+                         // 鐵壁要塞 6件套：堡壘反擊 (60%機率，造成傷害並增加防禦)
+                         if (effect === 'fortress_counter' && Math.random() < 0.60) {
+                             const counterDmg = Math.floor(gameState.player.def * 2.0);
+                            enemyHp -= counterDmg;
+                            addLog('套裝', `🏯 堡壘之盾！反擊造成 ${counterDmg} 點傷害！`);
+                            updateEnemyHP(enemyHp, enemyMaxHp);
+                        }
+                        
+                         // 鐵壁要塞 8件套：不朽要塞 (受到致命傷害時不死)
+                         if (effect === 'ultimate_fortress' && gameState.player.hp <= 0) {
+                            gameState.player.hp = Math.floor(gameState.player.maxHp * 0.30); // 保留30%生命
+                            playerHp = gameState.player.hp;
+                            addLog('套裝', `🛡️ 不朽要塞！免疫致命傷害，保留30%生命值！`);
+                            // 這個效果每場戰鬥只能觸發一次，移除效果
+                            const index = gameState.player.setEffects.specialEffects.indexOf('ultimate_fortress');
+                            if (index > -1) {
+                                gameState.player.setEffects.specialEffects.splice(index, 1);
+                            }
+                        }
+                        
+                         // 生命脈動 8件套：永恆脈動 (每回合回血)
+                         if (effect === 'immortal_pulse') {
+                             const healAmount = Math.floor(gameState.player.maxHp * 0.05); // 每回合回復5%最大生命
+                            gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                            addLog('套裝', `💖 永恆脈動！持續回復 ${healAmount} 點生命值！`);
                         }
                     });
                 }
@@ -9675,6 +10291,13 @@ const REGION_CONSUMABLES = {
                     });
                     enemy.poisons = enemy.poisons.filter(p => p.duration > 0);
                     updateEnemyHP(enemyHp, enemyMaxHp);
+                }
+                
+                // 更新 debuff 持續時間（回合結束）
+                updateDebuffDuration(enemy);
+                if (enemy.debuffs && enemy.debuffs.length > 0) {
+                    const activeDebuffs = enemy.debuffs.map(d => `${d.type}(-${d.value}%,${d.duration}回)`).join(', ');
+                    addLog('Debuff', `🔻 敵人正受到 debuff 影響: ${activeDebuffs}`);
                 }
                 
                 // 冰凍效果減少
@@ -9970,7 +10593,17 @@ const REGION_CONSUMABLES = {
             // 詞綴圖示
             if (enemy.affixes && enemy.affixes.length > 0) {
                 enemy.affixes.forEach(affix => {
-                    displayName += affix.icon + ' ';
+                    // 判斷 affix 是字串（副本敵人）還是對象（普通敵人）
+                    if (typeof affix === 'string') {
+                        // 副本敵人：詞綴是ID字串
+                        const affixData = affixEffects[affix];
+                        if (affixData && affixData.icon) {
+                            displayName += affixData.icon + ' ';
+                        }
+                    } else if (affix && affix.icon) {
+                        // 普通敵人：詞綴是對象
+                        displayName += affix.icon + ' ';
+                    }
                 });
             }
             
@@ -10031,9 +10664,19 @@ const REGION_CONSUMABLES = {
                 statsHTML += '<div style="color: #ffd700; font-weight: bold; margin-top: 8px; margin-bottom: 6px; border-top: 1px solid rgba(255, 215, 0, 0.3); padding-top: 8px;">✨ 詞條效果</div>';
                 
                 enemy.affixes.forEach(affix => {
-                    statsHTML += `<div style="color: #c0c0c0; margin-bottom: 3px;">`;
-                    statsHTML += `${affix.icon} <span style="color: ${affix.color};">${affix.name}</span>: ${affix.description || affix.desc || ''}`;
-                    statsHTML += `</div>`;
+                    let affixData = affix;
+                    
+                    // 判斷 affix 是字串（副本敵人）還是對象（普通敵人）
+                    if (typeof affix === 'string') {
+                        // 副本敵人：詞綴是ID字串，需要從affixEffects獲取數據
+                        affixData = affixEffects[affix];
+                    }
+                    
+                    if (affixData && affixData.icon && affixData.name) {
+                        statsHTML += `<div style="color: #c0c0c0; margin-bottom: 3px;">`;
+                        statsHTML += `${affixData.icon} <span style="color: ${affixData.color || '#ffd700'};">${affixData.name}</span>: ${affixData.description || affixData.desc || ''}`;
+                        statsHTML += `</div>`;
+                    }
                 });
             }
             
@@ -10091,6 +10734,87 @@ const REGION_CONSUMABLES = {
             container.style.display = 'none';
         }
 
+        // ===== Debuff 系統函數 =====
+        
+        // 應用所有 debuff 到敵人屬性
+        function applyDebuffs(enemy) {
+            if (!enemy.debuffs || enemy.debuffs.length === 0) {
+                // 沒有 debuff，使用原始屬性
+                enemy.atk = enemy.baseAtk;
+                enemy.def = enemy.baseDef;
+                enemy.crit = enemy.baseCrit;
+                return;
+            }
+            
+            // 計算所有 debuff 的總效果
+            let atkReduction = 0;
+            let defReduction = 0;
+            let critReduction = 0;
+            
+            enemy.debuffs.forEach(debuff => {
+                const value = debuff.value / 100; // 轉換為小數（50 -> 0.5）
+                
+                switch(debuff.type) {
+                    case 'atk_down':
+                        atkReduction += value;
+                        break;
+                    case 'def_down':
+                        defReduction += value;
+                        break;
+                    case 'crit_down':
+                        critReduction += value;
+                        break;
+                    case 'all_down':
+                        atkReduction += value;
+                        defReduction += value;
+                        critReduction += value;
+                        break;
+                }
+            });
+            
+            // 限制最大降低幅度為 90%
+            atkReduction = Math.min(atkReduction, 0.90);
+            defReduction = Math.min(defReduction, 0.90);
+            critReduction = Math.min(critReduction, 0.90);
+            
+            // 應用 debuff 到當前屬性
+            enemy.atk = Math.floor(enemy.baseAtk * (1 - atkReduction));
+            enemy.def = Math.floor(enemy.baseDef * (1 - defReduction));
+            enemy.crit = Math.max(0, enemy.baseCrit * (1 - critReduction));
+        }
+        
+        // 更新 debuff 持續時間
+        function updateDebuffDuration(enemy) {
+            if (!enemy.debuffs || enemy.debuffs.length === 0) return;
+            
+            // 減少所有 debuff 的持續時間
+            enemy.debuffs = enemy.debuffs.map(debuff => {
+                return {
+                    ...debuff,
+                    duration: debuff.duration - 1
+                };
+            }).filter(debuff => debuff.duration > 0); // 移除過期的 debuff
+            
+            // 重新應用 debuff
+            applyDebuffs(enemy);
+        }
+        
+        // 添加 debuff
+        function addDebuff(enemy, type, value, duration) {
+            if (!enemy.debuffs) enemy.debuffs = [];
+            
+            enemy.debuffs.push({
+                type: type,
+                value: value,
+                duration: duration
+            });
+            
+            // 立即應用 debuff
+            applyDebuffs(enemy);
+        }
+        
+        // ===== 傷害計算函數 =====
+        
         function calculateDamage(atk, def, armorPen = 0) {
             const effectiveDef = Math.floor(def * (1 - armorPen / 100));
             const baseDmg = Math.max(1, atk - effectiveDef);
@@ -11062,7 +11786,7 @@ const REGION_CONSUMABLES = {
                     name: '守護',
                     color: '#2196f3',
                     minRarity: 'Epic',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onLethal', chance: 0.3, cooldown: 60000 },
                     description: '受到致命傷害時有30%機率只扣1點生命（冷卻60秒）'
                 },
@@ -11071,7 +11795,7 @@ const REGION_CONSUMABLES = {
                     name: '再生',
                     color: '#2196f3',
                     minRarity: 'Fine',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'passive', regenPercent: 0.02, interval: 5000 },
                     description: '每5秒回復2%最大生命'
                 },
@@ -11080,7 +11804,7 @@ const REGION_CONSUMABLES = {
                     name: '反射',
                     color: '#2196f3',
                     minRarity: 'Rare',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onHit', reflectPercent: 0.1 },
                     description: '受到傷害時反彈10%傷害給敵人'
                 },
@@ -11089,7 +11813,7 @@ const REGION_CONSUMABLES = {
                     name: '冰甲',
                     color: '#2196f3',
                     minRarity: 'Rare',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onHit', chance: 0.2, damageReduction: 0.5 },
                     description: '受到攻擊時有20%機率減少50%傷害'
                 },
@@ -11098,7 +11822,7 @@ const REGION_CONSUMABLES = {
                     name: '潮汐',
                     color: '#2196f3',
                     minRarity: 'Epic',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onLowHp', threshold: 0.3, defBonus: 0.5 },
                     description: '生命低於30%時防禦力提升50%'
                 },
@@ -11107,7 +11831,7 @@ const REGION_CONSUMABLES = {
                     name: '堅韌',
                     color: '#2196f3',
                     minRarity: 'Fine',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'passive', damageReduction: 0.05 },
                     description: '減少所有受到的傷害5%'
                 },
@@ -11116,7 +11840,7 @@ const REGION_CONSUMABLES = {
                     name: '魔盾',
                     color: '#2196f3',
                     minRarity: 'Legendary',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onBattleStart', shieldPercent: 0.2 },
                     description: '每場戰鬥開始時獲得20%最大生命的護盾'
                 },
@@ -11125,7 +11849,7 @@ const REGION_CONSUMABLES = {
                     name: '時光',
                     color: '#2196f3',
                     minRarity: 'Mythic',
-                    equipTypes: ['armor'],
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onDeath', chance: 0.15, revivePercent: 0.5, cooldown: 'perBattle' },
                     description: '死亡時有15%機率復活並回復50%生命（每場戰鬥1次）'
                 }
@@ -11138,7 +11862,7 @@ const REGION_CONSUMABLES = {
                     name: '貪婪',
                     color: '#9c27b0',
                     minRarity: 'Fine',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'passive', goldBonus: 0.5 },
                     description: '擊殺敵人獲得額外50%金幣'
                 },
@@ -11147,7 +11871,7 @@ const REGION_CONSUMABLES = {
                     name: '經驗',
                     color: '#9c27b0',
                     minRarity: 'Fine',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'passive', expBonus: 0.3 },
                     description: '獲得額外30%經驗值'
                 },
@@ -11156,7 +11880,7 @@ const REGION_CONSUMABLES = {
                     name: '幸運',
                     color: '#9c27b0',
                     minRarity: 'Rare',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'passive', dropBonus: 0.2 },
                     description: '裝備掉落機率提升20%'
                 },
@@ -11165,7 +11889,7 @@ const REGION_CONSUMABLES = {
                     name: '連擊',
                     color: '#9c27b0',
                     minRarity: 'Epic',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'onCombo', comboCount: 3, damageMultiplier: 1.0 },
                     description: '連續擊殺3個敵人後下次攻擊造成雙倍傷害'
                 },
@@ -11174,7 +11898,7 @@ const REGION_CONSUMABLES = {
                     name: '獵殺',
                     color: '#9c27b0',
                     minRarity: 'Rare',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'passive', bossDamageBonus: 0.25 },
                     description: '對Boss造成額外25%傷害'
                 },
@@ -11183,7 +11907,7 @@ const REGION_CONSUMABLES = {
                     name: '星辰',
                     color: '#9c27b0',
                     minRarity: 'Legendary',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'onKill', stackCount: 10, statBonus: 1 },
                     description: '每擊殺10個敵人獲得1點全屬性（最多10層）'
                 },
@@ -11192,7 +11916,7 @@ const REGION_CONSUMABLES = {
                     name: '煉金',
                     color: '#9c27b0',
                     minRarity: 'Fine',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'passive', potionBonus: 0.2 },
                     description: '使用藥水時額外回復20%效果'
                 },
@@ -11201,7 +11925,7 @@ const REGION_CONSUMABLES = {
                     name: '彩虹',
                     color: '#9c27b0',
                     minRarity: 'Mythic',
-                    equipTypes: ['accessory'],
+                    equipTypes: ['ring', 'necklace'],
                     effect: { type: 'onBattleStart', randomBuff: true, duration: 30000 },
                     description: '隨機獲得一個臨時Buff（持續30秒）'
                 }
@@ -11315,11 +12039,14 @@ const REGION_CONSUMABLES = {
             let mainCount = ranges.main[0] + Math.floor(Math.random() * (ranges.main[1] - ranges.main[0] + 1));
             
             // 根據裝備類型調整主屬性數量
+            const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+            const accessoryTypes = ['ring', 'necklace'];
+            
             if (type === 'weapon') {
                 mainCount = 1; // 武器只有攻擊一個主屬性
-            } else if (type === 'armor') {
+            } else if (armorTypes.includes(type)) {
                 mainCount = 2; // 防具有防禦+生命兩個主屬性
-            } else if (type === 'accessory') {
+            } else if (accessoryTypes.includes(type)) {
                 mainCount = 1; // 飾品有一個主屬性（攻擊或防禦）
             }
             
@@ -11333,14 +12060,17 @@ const REGION_CONSUMABLES = {
         function getAvailableAffixes(type) {
             const attackAffixes = ['crit', 'critDmg', 'armorPen', 'bossDmg'];
             const defenseAffixes = ['dmgRed', 'lifeSteal'];
+            const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+            const accessoryTypes = ['ring', 'necklace'];
             
             if (type === 'weapon') {
                 return attackAffixes;
-            } else if (type === 'armor') {
+            } else if (armorTypes.includes(type)) {
                 return defenseAffixes;
-            } else { // accessory
+            } else if (accessoryTypes.includes(type)) {
                 return [...attackAffixes, ...defenseAffixes];
             }
+            return [];
         }
         
         // 選擇詞條
@@ -11348,11 +12078,14 @@ const REGION_CONSUMABLES = {
             const affixes = [];
             
             // 主屬性（必定）
+            const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+            const accessoryTypes = ['ring', 'necklace'];
+            
             if (type === 'weapon') {
                 affixes.push('atk');
-            } else if (type === 'armor') {
+            } else if (armorTypes.includes(type)) {
                 affixes.push('def', 'hp');
-            } else if (type === 'accessory') {
+            } else if (accessoryTypes.includes(type)) {
                 // 飾品隨機選擇攻擊或防禦
                 affixes.push(Math.random() < 0.5 ? 'atk' : 'def');
             }
@@ -11504,7 +12237,8 @@ const REGION_CONSUMABLES = {
             const chances = affixChances[rarityName] || affixChances['common'];
             
             // 飾品優先特殊詞綴
-            if (item.type === 'accessory' && Math.random() < chances.special) {
+            const accessoryTypes = ['ring', 'necklace'];
+            if (accessoryTypes.includes(item.type) && Math.random() < chances.special) {
                 const availableAffixes = EQUIPMENT_AFFIXES.special.filter(affix => 
                     affix.equipTypes.includes(item.type) && 
                     RARITIES.findIndex(r => r.name === rarityName) >= RARITIES.findIndex(r => r.name === affix.minRarity)
@@ -11537,7 +12271,8 @@ const REGION_CONSUMABLES = {
             
             // 後綴詞綴
             let suffixAffix = null;
-            if ((item.type === 'armor') && Math.random() < chances.suffix) {
+            const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+            if (armorTypes.includes(item.type) && Math.random() < chances.suffix) {
                 const availableAffixes = EQUIPMENT_AFFIXES.suffix.filter(affix => 
                     affix.equipTypes.includes(item.type) && 
                     RARITIES.findIndex(r => r.name === rarityName) >= RARITIES.findIndex(r => r.name === affix.minRarity)
@@ -11621,6 +12356,10 @@ const REGION_CONSUMABLES = {
                 
                 if (affixCount > 0) {
                     // 根據裝備類型添加詞綴
+                    // 定義裝備類型分類
+                    const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+                    const accessoryTypes = ['ring', 'necklace'];
+                    
                     if (item.type === 'weapon') {
                         // 武器添加前綴
                         const availablePrefixes = EQUIPMENT_AFFIXES.prefix.filter(affix => 
@@ -11635,10 +12374,10 @@ const REGION_CONSUMABLES = {
                                 item.prefixAffix.push(randomAffix);
                             }
                         }
-                    } else if (item.type === 'armor') {
+                    } else if (armorTypes.includes(item.type)) {
                         // 防具添加後綴
                         const availableSuffixes = EQUIPMENT_AFFIXES.suffix.filter(affix => 
-                            affix.equipTypes.includes('armor')
+                            affix.equipTypes.includes(item.type)
                         );
                         
                         item.suffixAffix = [];
@@ -11649,27 +12388,47 @@ const REGION_CONSUMABLES = {
                                 item.suffixAffix.push(randomAffix);
                             }
                         }
-                    } else if (item.type === 'accessory') {
-                        // 飾品可以有前綴或後綴
-                        const affixType = Math.random() < 0.5 ? 'prefix' : 'suffix';
-                        const availableAffixes = EQUIPMENT_AFFIXES[affixType].filter(affix => 
-                            affix.equipTypes.includes('weapon') || affix.equipTypes.includes('armor')
-                        );
+                    } else if (accessoryTypes.includes(item.type)) {
+                        // 飾品可以有前綴或後綴（或特殊詞綴）
+                        // 優先嘗試特殊詞綴
+                        const useSpecial = Math.random() < 0.3; // 30% 機率特殊詞綴
                         
-                        if (affixType === 'prefix') {
-                            item.prefixAffix = [];
-                            for (let i = 0; i < affixCount && i < availableAffixes.length; i++) {
-                                const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
-                                if (!item.prefixAffix.find(a => a.id === randomAffix.id)) {
-                                    item.prefixAffix.push(randomAffix);
+                        if (useSpecial) {
+                            const availableSpecial = EQUIPMENT_AFFIXES.special.filter(affix => 
+                                affix.equipTypes.includes(item.type)
+                            );
+                            
+                            if (availableSpecial.length > 0) {
+                                item.specialAffix = [];
+                                for (let i = 0; i < affixCount && i < availableSpecial.length; i++) {
+                                    const randomAffix = availableSpecial[Math.floor(Math.random() * availableSpecial.length)];
+                                    if (!item.specialAffix.find(a => a.id === randomAffix.id)) {
+                                        item.specialAffix.push(randomAffix);
+                                    }
                                 }
                             }
                         } else {
-                            item.suffixAffix = [];
-                            for (let i = 0; i < affixCount && i < availableAffixes.length; i++) {
-                                const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
-                                if (!item.suffixAffix.find(a => a.id === randomAffix.id)) {
-                                    item.suffixAffix.push(randomAffix);
+                            // 使用一般詞綴
+                            const affixType = Math.random() < 0.5 ? 'prefix' : 'suffix';
+                            const availableAffixes = EQUIPMENT_AFFIXES[affixType].filter(affix => 
+                                affix.equipTypes.some(t => ['weapon', 'head', 'chest', 'gloves', 'legs', 'feet'].includes(t))
+                            );
+                            
+                            if (affixType === 'prefix') {
+                                item.prefixAffix = [];
+                                for (let i = 0; i < affixCount && i < availableAffixes.length; i++) {
+                                    const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
+                                    if (!item.prefixAffix.find(a => a.id === randomAffix.id)) {
+                                        item.prefixAffix.push(randomAffix);
+                                    }
+                                }
+                            } else {
+                                item.suffixAffix = [];
+                                for (let i = 0; i < affixCount && i < availableAffixes.length; i++) {
+                                    const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
+                                    if (!item.suffixAffix.find(a => a.id === randomAffix.id)) {
+                                        item.suffixAffix.push(randomAffix);
+                                    }
                                 }
                             }
                         }
@@ -11683,6 +12442,13 @@ const REGION_CONSUMABLES = {
                     const elementTypes = Object.keys(ELEMENTS);
                     const randomElement = elementTypes[Math.floor(Math.random() * elementTypes.length)];
                     item.element = randomElement;
+                    
+                    // 生成元素數值
+                    const elementData = generateElementValue(randomElement, item.type, 'set');
+                    if (elementData) {
+                        item.elementValue = elementData.value;
+                        item.elementQuality = elementData.quality;
+                    }
                 }
                 
                 return item;
@@ -11690,11 +12456,16 @@ const REGION_CONSUMABLES = {
                 // 掉落普通裝備（區域專屬）
                 const regionLoot = REGION_LOOT[region.name];
                 if (regionLoot) {
-                    // 從區域掉落表中隨機選擇
+                    // 從區域掉落表中隨機選擇（8種類型）
                     const lootPools = [];
                     if (regionLoot.weapons) lootPools.push(...regionLoot.weapons);
-                    if (regionLoot.armors) lootPools.push(...regionLoot.armors);
-                    if (regionLoot.accessories) lootPools.push(...regionLoot.accessories);
+                    if (regionLoot.head) lootPools.push(...regionLoot.head);
+                    if (regionLoot.chest) lootPools.push(...regionLoot.chest);
+                    if (regionLoot.gloves) lootPools.push(...regionLoot.gloves);
+                    if (regionLoot.legs) lootPools.push(...regionLoot.legs);
+                    if (regionLoot.feet) lootPools.push(...regionLoot.feet);
+                    if (regionLoot.ring) lootPools.push(...regionLoot.ring);
+                    if (regionLoot.necklace) lootPools.push(...regionLoot.necklace);
                     
                     const lootItem = lootPools[Math.floor(Math.random() * lootPools.length)];
                     // 使用權重選擇的稀有度（支持大小寫）
@@ -11716,12 +12487,18 @@ const REGION_CONSUMABLES = {
                     // 基礎屬性範圍（隨機 + 等級成長）
                     let baseAtk = 0, baseDef = 0, baseHp = 0;
                     const level = gameState.player.level;
+                    
+                    // 武器：主攻擊
                     if (lootItem.type === 'weapon') {
                         baseAtk = (5 + level * 0.7) + Math.random() * 15;
-                    } else if (lootItem.type === 'armor') {
+                    } 
+                    // 防具（頭盔、胸甲、手套、護腿、靴子）：主防禦+生命
+                    else if (['head', 'chest', 'gloves', 'legs', 'feet'].includes(lootItem.type)) {
                         baseDef = (3 + level * 0.45) + Math.random() * 12;
                         baseHp = (12 + level * 1.6) + Math.random() * 25;
-                    } else if (lootItem.type === 'accessory') {
+                    } 
+                    // 飾品（戒指、項鏈）：均衡型
+                    else if (['ring', 'necklace'].includes(lootItem.type)) {
                         baseAtk = (2 + level * 0.28) + Math.random() * 8;
                         baseDef = (2 + level * 0.28) + Math.random() * 8;
                         baseHp = (10 + level * 1.3) + Math.random() * 35;
@@ -11733,13 +12510,13 @@ const REGION_CONSUMABLES = {
                     // ========== 使用新的隨機化系統 ==========
                     
                     // 1. 計算點數預算（新的區域點數系統）
-                    let regionBaseBudget = 50;  // 預設：入門開發層
+                    let regionBaseBudget = 25;  // 預設：入門開發層（降低50%）
                     if (gameState.player.level >= 76) {
-                        regionBaseBudget = 200;  // 深井臨界層
+                        regionBaseBudget = 100;  // 深井臨界層（降低50%）
                     } else if (gameState.player.level >= 51) {
-                        regionBaseBudget = 140;  // 資料裂縫
+                        regionBaseBudget = 70;  // 資料裂縫（降低50%）
                     } else if (gameState.player.level >= 26) {
-                        regionBaseBudget = 90;   // 研發核心層
+                        regionBaseBudget = 45;   // 研發核心層（降低50%）
                     }
                     
                     const rarityMult = {
@@ -11804,25 +12581,40 @@ const REGION_CONSUMABLES = {
                         const elementTypes = Object.keys(ELEMENTS);
                         const randomElement = elementTypes[Math.floor(Math.random() * elementTypes.length)];
                         item.element = randomElement;
+                        
+                        // 生成元素數值
+                        const elementData = generateElementValue(randomElement, item.type, rarity.name);
+                        if (elementData) {
+                            item.elementValue = elementData.value;
+                            item.elementQuality = elementData.quality;
+                        }
                     }
                     
                     return item;
                 } else {
                     // 備用：無區域掉落表時使用通用裝備
-                    const types = ['weapon', 'armor', 'accessory'];
+                    const types = ['weapon', 'head', 'chest', 'gloves', 'legs', 'feet', 'ring', 'necklace'];
                     const type = types[Math.floor(Math.random() * types.length)];
                     const rarity = RARITIES[Math.floor(Math.random() * RARITIES.length)];
+                    
+                    const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+                    const accessoryTypes = ['ring', 'necklace'];
+                    
+                    let typeName = '裝備';
+                    if (type === 'weapon') typeName = '武器';
+                    else if (armorTypes.includes(type)) typeName = '防具';
+                    else if (accessoryTypes.includes(type)) typeName = '飾品';
                     
                     const item = {
                         id: Date.now() + Math.random(),
                         type: type,
-                        name: `${rarity.label}${type === 'weapon' ? '武器' : type === 'armor' ? '防具' : '飾品'}`,
+                        name: `${rarity.label}${typeName}`,
                         rarity: rarity.name,
                         rarityLabel: rarity.label,
                         color: rarity.color,
                         atk: type === 'weapon' ? Math.floor(5 + Math.random() * 10) : 0,
-                        def: type === 'armor' ? Math.floor(3 + Math.random() * 8) : 0,
-                        hp: type === 'accessory' ? Math.floor(10 + Math.random() * 20) : 0
+                        def: armorTypes.includes(type) ? Math.floor(3 + Math.random() * 8) : 0,
+                        hp: accessoryTypes.includes(type) ? Math.floor(10 + Math.random() * 20) : 0
                     };
                     
                     return item;
@@ -11940,12 +12732,22 @@ const REGION_CONSUMABLES = {
             const title = document.getElementById('equipment-modal-title');
             const list = document.getElementById('equipment-list');
             
-            let slotType = '';
-            if (slot === 'weapon') slotType = 'weapon';
-            else if (slot === 'armor') slotType = 'armor';
-            else slotType = 'accessory';
+            // 將欄位名稱映射到裝備類型
+            let slotType = slot;  // 新的 8 類型直接使用 slot 名稱
             
-            title.textContent = `選擇${slot === 'weapon' ? '武器' : slot === 'armor' ? '防具' : '飾品'}`;
+            // 欄位名稱對照表
+            const slotNames = {
+                weapon: '武器',
+                head: '頭盔',
+                chest: '胸甲',
+                gloves: '手套',
+                legs: '護腿',
+                feet: '靴子',
+                ring: '戒指',
+                necklace: '項鏈'
+            };
+            
+            title.textContent = `選擇${slotNames[slot] || '裝備'}`;
             
             const items = gameState.inventory.filter(item => item.type === slotType && item.type !== 'consumable');
             const currentEquipped = gameState.player.equipment[slot];
@@ -12088,6 +12890,39 @@ const REGION_CONSUMABLES = {
                     baseMaxHp = Math.floor(baseMaxHp * (1 + gameState.player.setEffects.hpPercent / 100));
                 }
             }
+            
+            // ===== 飾品元素被動效果（輔助型，使用隨機數值） =====
+            const accessorySlots = ['ring', 'necklace'];
+            let accessoryElement = null;
+            let accessoryElementValue = 0;
+            for (const slot of accessorySlots) {
+                const item = gameState.player.equipment[slot];
+                if (item && item.element && item.elementValue) {
+                    if (item.elementValue > accessoryElementValue) {
+                        accessoryElement = item.element;
+                        accessoryElementValue = item.elementValue;
+                    }
+                }
+            }
+            
+            if (accessoryElement && accessoryElementValue > 0) {
+                if (accessoryElement === 'fire') {
+                    // 火元素：攻擊力加成（使用隨機數值 5%-12%）
+                    const bonus = 1 + accessoryElementValue;
+                    baseAtk = Math.floor(baseAtk * bonus);
+                } else if (accessoryElement === 'ice') {
+                    // 冰元素：暴擊傷害加成（使用隨機數值 8%-18%）
+                    const bonus = Math.floor(accessoryElementValue * 100);
+                    baseCritDmg += bonus;
+                } else if (accessoryElement === 'earth') {
+                    // 土元素：防禦力加成（使用隨機數值 10%-20%）
+                    const bonus = 1 + accessoryElementValue;
+                    baseDef = Math.floor(baseDef * bonus);
+                }
+                // 雷元素的暴擊率加成在戰鬥中處理
+                // 毒元素的生命吸取加成在下面處理
+            }
+
             
             // 加上職業被動加成
             if (gameState.player.classBonus) {
@@ -12262,6 +13097,12 @@ const REGION_CONSUMABLES = {
                 if (cardBonuses.lifeSteal) {
                     totalLifeSteal += cardBonuses.lifeSteal;
                 }
+            }
+            
+            // 飾品元素：毒元素生命吸取（使用隨機數值 3%-8%）
+            if (accessoryElement === 'poison' && accessoryElementValue > 0) {
+                const lifeStealBonus = Math.floor(accessoryElementValue * 100); // 3%-8%
+                totalLifeSteal += lifeStealBonus;
             }
             
             // 應用屬性上限（避免破壞平衡）
@@ -12714,7 +13555,7 @@ const REGION_CONSUMABLES = {
         function updateEquipmentSlots() {
             // 計算套裝件數
             const setCount = {};
-            ['weapon', 'armor', 'accessory1', 'accessory2'].forEach(slot => {
+            Object.keys(gameState.player.equipment).forEach(slot => {
                 const item = gameState.player.equipment[slot];
                 if (item && item.setName) {
                     setCount[item.setName] = (setCount[item.setName] || 0) + 1;
@@ -12722,9 +13563,16 @@ const REGION_CONSUMABLES = {
             });
             const hasSetBonus = Object.values(setCount).some(count => count >= 2);
             
-            ['weapon', 'armor', 'accessory1', 'accessory2'].forEach(slot => {
+            Object.keys(gameState.player.equipment).forEach(slot => {
                 const item = gameState.player.equipment[slot];
                 const element = document.getElementById(`equip-${slot}`);
+                
+                // 如果找不到對應的HTML元素，跳過
+                if (!element) {
+                    console.warn(`[updateEquipmentSlots] 找不到欄位: ${slot}`);
+                    return;
+                }
+                
                 const slotElement = element.closest('.equipment-slot');
                 
                 // 移除舊的class
@@ -13136,17 +13984,21 @@ const REGION_CONSUMABLES = {
             if (!gameState.autoEquipment.enabled) return false;
             if (!item || item.type === 'consumable') return false;
             
-            const slot = item.type;  // weapon, armor, accessory
+            const itemType = item.type;
             let targetSlot = null;
             
-            // 確定目標槽位
-            if (slot === 'weapon' || slot === 'armor') {
-                targetSlot = slot;
-            } else if (slot === 'accessory') {
-                // 對於飾品，選擇評分較低的槽位
-                const acc1Score = calculateEquipmentScore(gameState.player.equipment.accessory1);
-                const acc2Score = calculateEquipmentScore(gameState.player.equipment.accessory2);
-                targetSlot = acc1Score <= acc2Score ? 'accessory1' : 'accessory2';
+            // 確定目標槽位：直接使用裝備類型作為槽位名稱
+            // 支援的類型：weapon, head, chest, gloves, legs, feet, ring, necklace
+            const validSlots = ['weapon', 'head', 'chest', 'gloves', 'legs', 'feet', 'ring', 'necklace'];
+            
+            if (validSlots.includes(itemType)) {
+                targetSlot = itemType;
+            } 
+            // 相容舊版本：armor -> chest, accessory -> ring
+            else if (itemType === 'armor') {
+                targetSlot = 'chest';
+            } else if (itemType === 'accessory') {
+                targetSlot = 'ring';
             } else {
                 return false;
             }
@@ -13200,16 +14052,9 @@ const REGION_CONSUMABLES = {
             }
             
             // 保護每個部位評分最高的裝備（只保護一件）
-            // 對於 accessory 類型，需要進一步檢查 subtype（ring 或 necklace）
+            // 獲取相同類型的裝備（8種類型都是獨立的）
             const sameTypeEquips = gameState.inventory.filter(item => {
-                if (!item || item.type !== equipment.type) return false;
-                
-                // 如果是 accessory，還要檢查 subtype 是否相同
-                if (equipment.type === 'accessory') {
-                    return item.subtype === equipment.subtype;
-                }
-                
-                return true;
+                return item && item.type === equipment.type;
             });
             
             if (sameTypeEquips.length > 1) {
@@ -13691,7 +14536,7 @@ const REGION_CONSUMABLES = {
             }
             
             // 3. 隨機選擇1個Common隨從
-            const commonCompanions = Object.keys(COMPANIONS).filter(id => COMPANIONS[id].rarity === 'common');
+            const commonCompanions = Object.keys(COMPANIONS).filter(id => COMPANIONS[id].rarity === 'Common');
             if (commonCompanions.length > 0) {
                 const randomCompanionId = commonCompanions[Math.floor(Math.random() * commonCompanions.length)];
                 obtainCompanion(randomCompanionId);
@@ -13700,7 +14545,7 @@ const REGION_CONSUMABLES = {
             }
             
             // 4. 隨機選擇1個Common卡牌
-            const commonCards = Object.keys(CARDS).filter(id => CARDS[id].rarity === 'common');
+            const commonCards = Object.keys(CARDS).filter(id => CARDS[id].rarity === 'Common');
             if (commonCards.length > 0) {
                 const randomCardId = commonCards[Math.floor(Math.random() * commonCards.length)];
                 getCard(randomCardId);
@@ -13721,19 +14566,6 @@ const REGION_CONSUMABLES = {
             if (addToInventory(hpPotion, false)) {
                 rewards.push(`🧪 小型生命藥水 × 30`);
             }
-            
-            // 6. 添加10個經驗藥水
-            const expScroll = {
-                id: Date.now() + Math.random() + 1,
-                type: 'consumable',
-                subtype: 'exp_scroll',
-                name: '小型經驗卷軸',
-                description: '[立即] 獲得500點經驗值',
-                exp: 500,
-                quantity: 10
-            };
-            addToInventory(expScroll, false);
-            rewards.push(`📚 小型經驗卷軸 × 10`);
             
             // 顯示獎勵視窗
             showStarterPackRewards(rewards);
@@ -14137,7 +14969,14 @@ const REGION_CONSUMABLES = {
                             region: regionName,
                             setName: setData.setName,
                             setNumber: 1, // 第一套
-                            icon: item.type === 'weapon' ? '🗡️' : item.type === 'armor' ? '🛡️' : '💍',
+                            icon: item.type === 'weapon' ? '🗡️' : 
+                                  item.type === 'head' ? '🪦' : 
+                                  item.type === 'chest' ? '🛡️' : 
+                                  item.type === 'gloves' ? '🧤' : 
+                                  item.type === 'legs' ? '🧤' : 
+                                  item.type === 'feet' ? '🥾' : 
+                                  item.type === 'ring' ? '💍' : 
+                                  item.type === 'necklace' ? '💎' : '❓',
                             obtained: false,
                             firstObtainTime: null,
                             obtainCount: 0
@@ -14162,7 +15001,14 @@ const REGION_CONSUMABLES = {
                             region: regionName,
                             setName: setData.setName,
                             setNumber: 2, // 第二套
-                            icon: item.type === 'weapon' ? '🗡️' : item.type === 'armor' ? '🛡️' : '💍',
+                            icon: item.type === 'weapon' ? '🗡️' : 
+                                  item.type === 'head' ? '🪦' : 
+                                  item.type === 'chest' ? '🛡️' : 
+                                  item.type === 'gloves' ? '🧤' : 
+                                  item.type === 'legs' ? '🧤' : 
+                                  item.type === 'feet' ? '🥾' : 
+                                  item.type === 'ring' ? '💍' : 
+                                  item.type === 'necklace' ? '💎' : '❓',
                             obtained: false,
                             firstObtainTime: null,
                             obtainCount: 0
@@ -14481,9 +15327,9 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            // 檢查是否有套裝已完成（4件）
+            // 檢查是否有套裝已完成（8件）
             for (const setName in setCompletion) {
-                if (setCompletion[setName] >= 4) {
+                if (setCompletion[setName] >= 8) {
                     const titleId = `equipment_set_${setName}`;
                     if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
                         gameState.titles.unlocked.push(titleId);
@@ -14505,7 +15351,7 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            if (totalObtained >= 32) {
+            if (totalObtained >= 64) {
                 const titleId = 'equipment_collector_full';
                 if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
                     gameState.titles.unlocked.push(titleId);
@@ -16957,7 +17803,7 @@ const REGION_CONSUMABLES = {
             }
             
             // 隨機選擇裝備類型
-            const types = ['weapon', 'armor', 'ring', 'necklace'];
+            const types = ['weapon', 'head', 'chest', 'gloves', 'legs', 'feet', 'ring', 'necklace'];
             const type = types[Math.floor(Math.random() * types.length)];
             
             // 生成裝備
@@ -17711,12 +18557,15 @@ const REGION_CONSUMABLES = {
             // 基礎屬性範圍（隨機 + 等級成長）
             let baseAtk = 0, baseDef = 0, baseHp = 0;
             const level = gameState.player.level;
+            const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+            const accessoryTypes = ['ring', 'necklace'];
+            
             if (item.type === 'weapon') {
                 baseAtk = (5 + level * 0.7) + Math.random() * 15;
-            } else if (item.type === 'armor') {
+            } else if (armorTypes.includes(item.type)) {
                 baseDef = (3 + level * 0.45) + Math.random() * 12;
                 baseHp = (12 + level * 1.6) + Math.random() * 25;
-            } else if (item.type === 'accessory') {
+            } else if (accessoryTypes.includes(item.type)) {
                 baseAtk = (2 + level * 0.28) + Math.random() * 8;
                 baseDef = (2 + level * 0.28) + Math.random() * 8;
                 baseHp = (10 + level * 1.3) + Math.random() * 35;
@@ -19708,10 +20557,14 @@ const REGION_CONSUMABLES = {
             gameState.player.armorPen = 0;
             gameState.player.bossDmg = 0;
             gameState.player.equipment = {
-                weapon: null,
-                armor: null,
-                accessory1: null,
-                accessory2: null
+                weapon: null,      // 武器
+                head: null,        // 頭盔
+                chest: null,       // 胸甲
+                legs: null,        // 腿甲
+                feet: null,        // 靴子
+                gloves: null,      // 手套
+                ring: null,        // 戒指
+                necklace: null     // 項鍊
             };
             gameState.player.buffs = [];
             gameState.player.classBonus = {};
@@ -21340,10 +22193,42 @@ const REGION_CONSUMABLES = {
                 loadedState.player.expBonus = 0;
             }
             
+            // 裝備結構遷移：4欄位 -> 8欄位
+            if (loadedState.player.equipment && loadedState.player.equipment.armor !== undefined) {
+                console.log('[Migration] 遷移舊裝備結構 (4欄位 -> 8欄位)');
+                const oldEquip = loadedState.player.equipment;
+                loadedState.player.equipment = {
+                    weapon: oldEquip.weapon || null,
+                    head: null,
+                    chest: oldEquip.armor || null,  // armor -> chest
+                    legs: null,
+                    feet: null,
+                    gloves: null,
+                    ring: oldEquip.accessory1 || oldEquip.accessory2 || null,  // 取其一
+                    necklace: null
+                };
+            }
+            // 遷移 ring1/ring2 到 gloves/ring
+            if (loadedState.player.equipment && (loadedState.player.equipment.ring1 !== undefined || loadedState.player.equipment.ring2 !== undefined)) {
+                console.log('[Migration] 遷移 ring1/ring2 到 gloves/ring');
+                const oldEquip = loadedState.player.equipment;
+                loadedState.player.equipment = {
+                    weapon: oldEquip.weapon || null,
+                    head: oldEquip.head || null,
+                    chest: oldEquip.chest || null,
+                    legs: oldEquip.legs || null,
+                    feet: oldEquip.feet || null,
+                    gloves: null,
+                    ring: oldEquip.ring1 || oldEquip.ring2 || null,  // 取其一
+                    necklace: oldEquip.necklace || null
+                };
+            }
+            
             // 修復所有裝備的hpRegen和expBonus字段
             if (loadedState.inventory) {
+                const equipmentTypes = ['weapon', 'head', 'chest', 'gloves', 'legs', 'feet', 'ring', 'necklace', 'armor', 'accessory'];
                 loadedState.inventory.forEach(item => {
-                    if (item.type === 'weapon' || item.type === 'armor' || item.type === 'accessory') {
+                    if (equipmentTypes.includes(item.type)) {
                         if (item.hpRegen === undefined) item.hpRegen = 0;
                         if (item.expBonus === undefined) item.expBonus = 0;
                     }
@@ -21842,9 +22727,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 5,
                 enemy: {
                     name: '進階傀儡',
-                    hp: 900,
-                    atk: 40,
-                    def: 30,
+                    hp: 700,
+                    atk: 35,
+                    def: 25,
                     crit: 0,
                     critDmg: 150
                 },
@@ -21865,9 +22750,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 4,
                 enemy: {
                     name: '高級傀儡',
-                    hp: 2500,
-                    atk: 80,
-                    def: 60,
+                    hp: 2000,
+                    atk: 70,
+                    def: 50,
                     crit: 0,
                     critDmg: 150
                 },
@@ -21888,9 +22773,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 3,
                 enemy: {
                     name: '精英傀儡',
-                    hp: 7000,
-                    atk: 150,
-                    def: 110,
+                    hp: 5500,
+                    atk: 130,
+                    def: 95,
                     crit: 0,
                     critDmg: 150
                 },
@@ -21908,12 +22793,12 @@ const DUNGEONS_DATA = {
                 name: '深淵',
                 level: 70,
                 ap: 25,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '終極傀儡',
-                    hp: 18000,
-                    atk: 280,
-                    def: 200,
+                    hp: 14000,
+                    atk: 240,
+                    def: 170,
                     crit: 0,
                     critDmg: 150
                 },
@@ -21966,9 +22851,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 5,
                 enemy: {
                     name: '黃金寶箱怪',
-                    hp: 750,
-                    atk: 35,
-                    def: 25,
+                    hp: 600,
+                    atk: 30,
+                    def: 20,
                     crit: 0,
                     critDmg: 150
                 },
@@ -21989,9 +22874,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 4,
                 enemy: {
                     name: '白金寶箱怪',
-                    hp: 2200,
-                    atk: 70,
-                    def: 50,
+                    hp: 1800,
+                    atk: 60,
+                    def: 42,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22012,9 +22897,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 3,
                 enemy: {
                     name: '鑽石寶箱怪',
-                    hp: 6500,
-                    atk: 140,
-                    def: 100,
+                    hp: 5200,
+                    atk: 120,
+                    def: 85,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22032,12 +22917,12 @@ const DUNGEONS_DATA = {
                 name: '深淵',
                 level: 75,
                 ap: 25,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '神話寶箱怪',
-                    hp: 17000,
-                    atk: 260,
-                    def: 190,
+                    hp: 13500,
+                    atk: 230,
+                    def: 160,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22097,9 +22982,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 4,
                 enemy: {
                     name: '精英守衛',
-                    hp: 1200,
-                    atk: 60,
-                    def: 45,
+                    hp: 950,
+                    atk: 52,
+                    def: 38,
                     crit: 10,
                     critDmg: 160
                 },
@@ -22127,9 +23012,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 3,
                 enemy: {
                     name: '遺跡領主',
-                    hp: 3500,
-                    atk: 120,
-                    def: 90,
+                    hp: 2800,
+                    atk: 105,
+                    def: 75,
                     crit: 15,
                     critDmg: 170
                 },
@@ -22154,12 +23039,12 @@ const DUNGEONS_DATA = {
                 name: '地獄',
                 level: 60,
                 ap: 25,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '遺跡霸主',
-                    hp: 9000,
-                    atk: 220,
-                    def: 160,
+                    hp: 7200,
+                    atk: 190,
+                    def: 135,
                     crit: 20,
                     critDmg: 180
                 },
@@ -22184,12 +23069,12 @@ const DUNGEONS_DATA = {
                 name: '深淵',
                 level: 80,
                 ap: 30,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '遺跡神祇',
-                    hp: 22000,
-                    atk: 400,
-                    def: 300,
+                    hp: 17500,
+                    atk: 340,
+                    def: 250,
                     crit: 25,
                     critDmg: 200
                 },
@@ -22255,9 +23140,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 5,
                 enemy: {
                     name: '高級元素',
-                    hp: 1000,
-                    atk: 55,
-                    def: 40,
+                    hp: 800,
+                    atk: 48,
+                    def: 34,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22285,9 +23170,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 4,
                 enemy: {
                     name: '精英元素',
-                    hp: 3000,
-                    atk: 110,
-                    def: 80,
+                    hp: 2400,
+                    atk: 95,
+                    def: 68,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22315,9 +23200,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 3,
                 enemy: {
                     name: '元素領主',
-                    hp: 8000,
-                    atk: 200,
-                    def: 150,
+                    hp: 6400,
+                    atk: 170,
+                    def: 127,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22342,12 +23227,12 @@ const DUNGEONS_DATA = {
                 name: '深淵',
                 level: 85,
                 ap: 28,
-                dailyLimit: 2,
+                dailyLimit: 3,
                 enemy: {
                     name: '元素君主',
-                    hp: 20000,
-                    atk: 370,
-                    def: 280,
+                    hp: 16000,
+                    atk: 315,
+                    def: 235,
                     crit: 0,
                     critDmg: 150
                 },
@@ -22418,9 +23303,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 2,
                 enemy: {
                     name: '魔王將軍',
-                    hp: 4500,
-                    atk: 100,
-                    def: 70,
+                    hp: 3600,
+                    atk: 87,
+                    def: 60,
                     crit: 15,
                     critDmg: 170,
                     isBoss: true
@@ -22453,9 +23338,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 2,
                 enemy: {
                     name: '副魔王',
-                    hp: 10000,
-                    atk: 180,
-                    def: 130,
+                    hp: 8000,
+                    atk: 155,
+                    def: 110,
                     crit: 20,
                     critDmg: 180,
                     isBoss: true
@@ -22488,9 +23373,9 @@ const DUNGEONS_DATA = {
                 dailyLimit: 2,
                 enemy: {
                     name: '魔王',
-                    hp: 25000,
-                    atk: 320,
-                    def: 230,
+                    hp: 20000,
+                    atk: 275,
+                    def: 195,
                     crit: 25,
                     critDmg: 200,
                     isBoss: true,
@@ -22521,12 +23406,12 @@ const DUNGEONS_DATA = {
                 name: '深淵',
                 level: 90,
                 ap: 40,
-                dailyLimit: 1,
+                dailyLimit: 2,
                 enemy: {
                     name: '魔神',
-                    hp: 60000,
-                    atk: 550,
-                    def: 400,
+                    hp: 48000,
+                    atk: 470,
+                    def: 340,
                     crit: 30,
                     critDmg: 220,
                     isBoss: true,
@@ -22564,6 +23449,177 @@ const DIFFICULTY_COLORS = {
     hard: '#c084fc',
     hell: '#f87171'
 };
+
+// ========== 副本敵人每日隨機系統 ==========
+
+// 副本敵人詞綴效果定義
+const affixEffects = {
+    berserk: {
+        id: 'berserk',
+        name: '狂暴',
+        icon: '🔥',
+        color: '#ff6b6b',
+        effect: { atkMultiplier: 1.3 },
+        description: '攻擊力+30%'
+    },
+    tough: {
+        id: 'tough',
+        name: '堅韌',
+        icon: '🛡️',
+        color: '#2196f3',
+        effect: { defMultiplier: 1.4, hpMultiplier: 1.2 },
+        description: '防禦力+40%，生命+20%'
+    },
+    swift: {
+        id: 'swift',
+        name: '迅捷',
+        icon: '⚡',
+        color: '#ffd700',
+        effect: { critRate: 0.15 },
+        description: '暴擊率+15%'
+    },
+    regenerative: {
+        id: 'regenerative',
+        name: '再生',
+        icon: '💚',
+        color: '#4caf50',
+        effect: { regen: 0.05 },
+        description: '每回合回復5%生命'
+    },
+    reflective: {
+        id: 'reflective',
+        name: '反射',
+        icon: '🔮',
+        color: '#9c27b0',
+        effect: { reflect: 0.15 },
+        description: '反彈15%傷害'
+    },
+    vampiric: {
+        id: 'vampiric',
+        name: '吸血',
+        icon: '🩸',
+        color: '#e91e63',
+        effect: { lifeSteal: 0.2 },
+        description: '吸血20%'
+    },
+    shielded: {
+        id: 'shielded',
+        name: '護盾',
+        icon: '🛡️',
+        color: '#00bcd4',
+        effect: { damageReduction: 0.2 },
+        description: '減傷20%'
+    },
+    cursed: {
+        id: 'cursed',
+        name: '詛咒',
+        icon: '💀',
+        color: '#9e9e9e',
+        effect: { allStatsMultiplier: 1.15 },
+        description: '全屬性+15%'
+    }
+};
+
+// 獲取每日種子
+function getDailySeed() {
+    const today = new Date();
+    return today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+}
+
+// 基於種子的偽隨機數生成器
+function seededRandom(seed) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
+
+// 根據難度獲取詞綴機率
+function getAffixChanceByDifficulty(difficulty) {
+    const chances = {
+        easy: 0.2,
+        normal: 0.4,
+        hard: 0.6,
+        hell: 0.8,
+        abyss: 1.0
+    };
+    return chances[difficulty] || 0;
+}
+
+// 根據難度獲取詞綴數量
+function getAffixCountByDifficulty(difficulty, seed) {
+    const rand = seededRandom(seed);
+    if (difficulty === 'easy' || difficulty === 'normal') {
+        return rand < 0.7 ? 1 : 0;
+    } else if (difficulty === 'hard' || difficulty === 'hell') {
+        return rand < 0.3 ? 1 : 2;
+    } else { // abyss
+        return rand < 0.3 ? 2 : 3;
+    }
+}
+
+// 根據難度獲取元素機率
+function getElementChanceByDifficulty(difficulty) {
+    const chances = {
+        easy: 0.15,
+        normal: 0.3,
+        hard: 0.5,
+        hell: 0.7,
+        abyss: 0.9
+    };
+    return chances[difficulty] || 0;
+}
+
+// 生成每日副本敵人配置
+function generateDailyDungeonEnemyConfig(dungeonId, difficulty) {
+    const seed = getDailySeed();
+    // 使用副本ID和難度作為種子偏移
+    const offset = (dungeonId.charCodeAt(0) * 1000 + difficulty.charCodeAt(0) * 100);
+    let currentSeed = seed + offset;
+    
+    const config = {
+        affixes: [],
+        element: null
+    };
+    
+    // 生成詞綴
+    const affixChance = getAffixChanceByDifficulty(difficulty);
+    if (seededRandom(currentSeed++) < affixChance) {
+        const affixCount = getAffixCountByDifficulty(difficulty, currentSeed++);
+        const availableAffixes = Object.keys(affixEffects);
+        
+        for (let i = 0; i < affixCount; i++) {
+            const index = Math.floor(seededRandom(currentSeed++) * availableAffixes.length);
+            const affix = availableAffixes[index];
+            if (!config.affixes.includes(affix)) {
+                config.affixes.push(affix);
+            }
+        }
+    }
+    
+    // 生成元素
+    const elementChance = getElementChanceByDifficulty(difficulty);
+    if (seededRandom(currentSeed++) < elementChance) {
+        const elements = ['fire', 'ice', 'thunder', 'poison', 'earth'];
+        const index = Math.floor(seededRandom(currentSeed++) * elements.length);
+        config.element = elements[index];
+    }
+    
+    return config;
+}
+
+// 計算詞綴和元素的獎勵加成
+function calculateDungeonRewardBonus(affixCount, hasElement) {
+    let bonus = 1.0;
+    
+    // 詞綴加成
+    if (affixCount === 1) bonus += 0.15;
+    else if (affixCount === 2) bonus += 0.3;
+    else if (affixCount >= 3) bonus += 0.5;
+    
+    // 元素加成
+    if (hasElement) bonus += 0.2;
+    
+    return bonus;
+}
 
 // ========== 副本系統核心函數 ==========
 
@@ -22707,6 +23763,55 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     };
     const battleStartTime = Date.now();
     
+    // 獲取每日敵人配置
+    const dailyConfig = generateDailyDungeonEnemyConfig(dungeonId, difficulty);
+    
+    // 應用詞綴
+    if (dailyConfig.affixes && dailyConfig.affixes.length > 0) {
+        enemy.affixes = dailyConfig.affixes;
+        enemy.affixEffects = {};
+        
+        // 應用每個詞綴的效果到敵人屬性
+        dailyConfig.affixes.forEach(affixId => {
+            const affix = affixEffects[affixId];
+            if (!affix || !affix.effect) return;
+            
+            const effect = affix.effect;
+            
+            // 應用屬性倍率
+            if (effect.atkMultiplier) {
+                enemy.atk = Math.floor(enemy.atk * effect.atkMultiplier);
+            }
+            if (effect.defMultiplier) {
+                enemy.def = Math.floor(enemy.def * effect.defMultiplier);
+            }
+            if (effect.hpMultiplier) {
+                enemy.maxHp = Math.floor(enemy.maxHp * effect.hpMultiplier);
+                enemy.hp = enemy.maxHp;
+            }
+            if (effect.allStatsMultiplier) {
+                enemy.atk = Math.floor(enemy.atk * effect.allStatsMultiplier);
+                enemy.def = Math.floor(enemy.def * effect.allStatsMultiplier);
+                enemy.maxHp = Math.floor(enemy.maxHp * effect.allStatsMultiplier);
+                enemy.hp = enemy.maxHp;
+            }
+            if (effect.critRate) {
+                enemy.crit = (enemy.crit || 0) + effect.critRate * 100;
+            }
+            
+            // 儲存特殊效果供戰鬥中使用
+            if (effect.lifeSteal) enemy.affixEffects.lifeSteal = effect.lifeSteal;
+            if (effect.damageReduction) enemy.affixEffects.damageReduction = effect.damageReduction;
+            if (effect.reflect) enemy.affixEffects.reflect = effect.reflect;
+            if (effect.regen) enemy.affixEffects.regen = effect.regen;
+        });
+    }
+    
+    // 應用元素
+    if (dailyConfig.element) {
+        enemy.element = dailyConfig.element;
+    }
+    
     // 獲取隨從裝備組合效果
     const comboEffects = getCompanionEquipmentCombo();
     
@@ -22717,6 +23822,18 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     // 顯示戰鬥日誌
     addLog('副本', `🏰 進入副本：${DUNGEONS_DATA[dungeonId].name} - ${difficultyData.name}`);
     addLog('副本', `⚔️ 遭遇敵人：${enemy.name}`);
+    
+    // 顯示敵人詞綴
+    if (dailyConfig.affixes && dailyConfig.affixes.length > 0) {
+        const affixNames = dailyConfig.affixes.map(a => affixEffects[a].name).join('、');
+        addLog('副本', `⚠️ 敵人擁有詞綴：${affixNames}`);
+    }
+    
+    // 顯示敵人元素
+    if (dailyConfig.element) {
+        const elementData = ELEMENTS[dailyConfig.element];
+        addLog('副本', `${elementData.icon} 敵人擁有元素：${elementData.name}`);
+    }
     
     // 使用現有戰鬥系統
     showEnemyHP(enemy);
@@ -22735,6 +23852,14 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
         let finalDmg = isCrit ? Math.floor(playerDmg * gameState.player.critDmg / 100) : playerDmg;
         
         enemyHp -= finalDmg;
+        
+        // 敵人反射詞綴
+        if (enemy.affixEffects && enemy.affixEffects.reflect) {
+            const reflectDmg = Math.floor(finalDmg * enemy.affixEffects.reflect);
+            playerHp -= reflectDmg;
+            gameState.player.hp = Math.max(0, playerHp);
+            addLog('詞綴', `🔮 敵人反射了 ${reflectDmg} 點傷害！`);
+        }
         
         if (isCrit) {
             addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害 💥暴擊！`);
@@ -22785,6 +23910,21 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
             
             // 計算並發放獎勵
             const rewards = calculateDungeonRewards(difficultyData, isFirstClear);
+            
+            // 應用詞綴和元素加成
+            const affixCount = dailyConfig.affixes ? dailyConfig.affixes.length : 0;
+            const hasElement = dailyConfig.element ? true : false;
+            const rewardBonus = calculateDungeonRewardBonus(affixCount, hasElement);
+            
+            if (rewardBonus > 1.0) {
+                rewards.exp = Math.floor(rewards.exp * rewardBonus);
+                rewards.gold = Math.floor(rewards.gold * rewardBonus);
+                rewards.shards = Math.floor(rewards.shards * rewardBonus);
+                
+                const bonusPercent = Math.round((rewardBonus - 1.0) * 100);
+                addLog('獎勵', `🎉 敵人詞綴/元素加成：+${bonusPercent}%`);
+            }
+            
             applyDungeonRewards(rewards);
             
             // 顯示結算
@@ -22796,17 +23936,39 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
             return;
         }
         
+        // 敵人回合開始：再生效果
+        if (enemy.affixEffects && enemy.affixEffects.regen) {
+            const regenAmount = Math.floor(enemyMaxHp * enemy.affixEffects.regen);
+            enemyHp = Math.min(enemyHp + regenAmount, enemyMaxHp);
+            addLog('詞綴', `💚 敵人再生了 ${regenAmount} 點生命！`);
+            updateEnemyHP(enemyHp, enemyMaxHp);
+        }
+        
         // 敵人攻擊
         let enemyDmg = calculateDamage(enemy.atk, gameState.player.def);
         
+        // 敵人減傷詞綴
+        if (enemy.affixEffects && enemy.affixEffects.damageReduction) {
+            // 這是敵人的減傷，不應用到敵人攻擊
+        }
+        
+        // 玩家減傷
         if (gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0) {
-                    const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
-                    const dmgRedCap = Math.min(totalDmgRed, 75);
-                    enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
-                }
+            const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
+            const dmgRedCap = Math.min(totalDmgRed, 75);
+            enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
+        }
         
         playerHp -= enemyDmg;
         gameState.player.hp = Math.max(0, playerHp);
+        
+        // 敵人吸血詞綴
+        if (enemy.affixEffects && enemy.affixEffects.lifeSteal) {
+            const lifeStealAmount = Math.floor(enemyDmg * enemy.affixEffects.lifeSteal);
+            enemyHp = Math.min(enemyHp + lifeStealAmount, enemyMaxHp);
+            addLog('詞綴', `🩸 敵人吸血回復了 ${lifeStealAmount} 點生命！`);
+            updateEnemyHP(enemyHp, enemyMaxHp);
+        }
         
         addLog('戰鬥', `${enemy.name} 造成了 ${enemyDmg} 點傷害`);
         playSound('hit');
@@ -24493,13 +25655,9 @@ function generateGamblerEquipment(type, quality, hasAffix) {
         console.log(`[Gambler] 超過最大嘗試次數，使用: ${equipment.name} (${equipment.type})`);
     }
     
-    // 如果有詞綴，添加隨機詞綴
-    if (hasAffix && (!equipment.affixes || equipment.affixes.length === 0)) {
-        const affixList = Object.keys(affixEffects);
-        const randomAffix = affixList[Math.floor(Math.random() * affixList.length)];
-        equipment.affixes = [randomAffix];
-        console.log(`[Gambler] 添加詞綴: ${randomAffix}`);
-    }
+    // 詞綴已由 generateItem() 中的 generateEquipmentAffix() 自動生成
+    // hasAffix 參數已經透過 forceRarity 影響品質，高品質有較高詞綴機率
+    console.log(`[Gambler] 裝備生成完成: ${equipment.name} (${equipment.type}), 品質: ${equipment.rarity}`);
     
     return equipment;
 }
@@ -24508,12 +25666,15 @@ function generateGamblerEquipment(type, quality, hasAffix) {
 function isMatchingType(equipment, type) {
     if (!equipment || !equipment.type) return false;
     
+    const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+    const accessoryTypes = ['ring', 'necklace'];
+    
     if (type === 'weapon') {
         return equipment.type === 'weapon';
     } else if (type === 'armor') {
-        return ['head', 'body'].includes(equipment.type);
+        return armorTypes.includes(equipment.type);
     } else if (type === 'accessory') {
-        return ['accessory1', 'accessory2', 'ring', 'necklace'].includes(equipment.type);
+        return accessoryTypes.includes(equipment.type);
     }
     
     return true;

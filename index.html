@@ -1157,6 +1157,7 @@
                             <button onclick="openBagModal()" class="quick-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎒 背包</button>
                             <button onclick="openShopModal()" class="quick-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🏪 商店</button>
                             <button onclick="openShardShopModal()" class="quick-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🔷 碎片商店</button>
+                            <button onclick="openGamblerModal()" class="quick-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">🎰 賭博商人</button>
                             <button onclick="openSalvageModal()" class="quick-btn" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">⚙️ 分解</button>
                         </div>
                         
@@ -18813,24 +18814,36 @@ const REGION_CONSUMABLES = {
                 
                 // 如果是每日重置的物品，檢查是否需要重置
                 if (item.resetDaily) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const todayTimestamp = today.getTime();
+                    
                     if (!gameState.player.shopPurchases[purchaseKey]) {
-                        gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: Date.now() };
+                        gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: todayTimestamp };
                     }
                     
                     const purchaseData = gameState.player.shopPurchases[purchaseKey];
+                    const now = new Date();
                     const lastResetDate = new Date(purchaseData.lastReset);
-                    const nowDate = new Date();
                     
                     // 檢查是否跨天
-                    if (lastResetDate.getDate() !== nowDate.getDate() || 
-                        lastResetDate.getMonth() !== nowDate.getMonth() || 
-                        lastResetDate.getFullYear() !== nowDate.getFullYear()) {
+                    if (now.getFullYear() !== lastResetDate.getFullYear() ||
+                        now.getMonth() !== lastResetDate.getMonth() ||
+                        now.getDate() !== lastResetDate.getDate()) {
                         purchaseData.count = 0;
-                        purchaseData.lastReset = Date.now();
+                        purchaseData.lastReset = todayTimestamp;
                     }
                     
                     if (purchaseData.count >= item.maxPurchase) {
-                        addLog('商店', `${item.name} 今日已達到購買上限！`);
+                        // 計算下次重置時間
+                        const tomorrow = new Date(now);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow.setHours(0, 0, 0, 0);
+                        const timeLeft = tomorrow.getTime() - now.getTime();
+                        const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                        const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                        
+                        addLog('商店', `${item.name} 今日已達到購買上限！${hoursLeft}小時${minutesLeft}分鐘後重置`);
                         return;
                     }
                 } else {
@@ -18915,9 +18928,9 @@ const REGION_CONSUMABLES = {
                         id: Date.now() + Math.random(),
                         name: item.name,
                         type: 'consumable',
-                        subtype: 'ap_potion',
+                        subtype: 'ap_fixed',
                         recovery: item.value,
-                        description: item.desc,
+                        desc: item.desc,
                         color: '#2196F3'
                     };
                     addConsumableToInventory(apFixedPotion);
@@ -19067,8 +19080,10 @@ const REGION_CONSUMABLES = {
                             
                             if (item.resetDaily) {
                                 // 每日重置的物品
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
                                 if (!gameState.player.shopPurchases[purchaseKey]) {
-                                    gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: Date.now() };
+                                    gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: today.getTime() };
                                 }
                                 gameState.player.shopPurchases[purchaseKey].count += 1;
                             } else {
@@ -22565,32 +22580,49 @@ function initDungeons() {
 function checkDungeonDailyReset() {
     if (!gameState.dungeons) return;
     
-    const now = Date.now();
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTimestamp = today.getTime();
     
     // 檢查無盡模式每日重置
-    if (gameState.endlessMode && gameState.endlessMode.lastEntryDate !== today) {
-        gameState.endlessMode.dailyEntered = false;
+    if (gameState.endlessMode) {
+        // 兼容舊存檔：將 lastEntryDate 轉換為 lastReset
+        if (gameState.endlessMode.lastEntryDate && !gameState.endlessMode.lastReset) {
+            gameState.endlessMode.lastReset = todayTimestamp;
+            delete gameState.endlessMode.lastEntryDate;
+        }
+        
+        if (!gameState.endlessMode.lastReset) {
+            gameState.endlessMode.lastReset = todayTimestamp;
+        }
+        
+        const lastResetDate = new Date(gameState.endlessMode.lastReset);
+        if (now.getFullYear() !== lastResetDate.getFullYear() ||
+            now.getMonth() !== lastResetDate.getMonth() ||
+            now.getDate() !== lastResetDate.getDate()) {
+            gameState.endlessMode.dailyEntered = false;
+            gameState.endlessMode.lastReset = todayTimestamp;
+        }
     }
     
     for (const recordId in gameState.dungeons.records) {
         const record = gameState.dungeons.records[recordId];
         
         if (!record.lastReset) {
-            record.lastReset = now;
+            record.lastReset = todayTimestamp;
             continue;
         }
         
         const lastResetDate = new Date(record.lastReset);
-        const nowDate = new Date(now);
         
         // 檢查是否跨天
-        if (lastResetDate.getDate() !== nowDate.getDate() || 
-            lastResetDate.getMonth() !== nowDate.getMonth() || 
-            lastResetDate.getFullYear() !== nowDate.getFullYear()) {
+        if (now.getFullYear() !== lastResetDate.getFullYear() ||
+            now.getMonth() !== lastResetDate.getMonth() ||
+            now.getDate() !== lastResetDate.getDate()) {
             
             record.dailyCount = 0;
-            record.lastReset = now;
+            record.lastReset = todayTimestamp;
         }
     }
 }
@@ -23272,10 +23304,27 @@ function generateEquipmentByRarity(rarity) {
             }
             
             // 檢查每日進入限制
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-            if (gameState.endlessMode.lastEntryDate === today && gameState.endlessMode.dailyEntered) {
-                addLog('系統', '⚠️ 無盡模式每天只能進入一次！明天再來吧！');
-                return;
+            const now = new Date();
+            if (gameState.endlessMode.lastReset) {
+                const lastResetDate = new Date(gameState.endlessMode.lastReset);
+                
+                // 如果是同一天且已進入
+                if (now.getFullYear() === lastResetDate.getFullYear() &&
+                    now.getMonth() === lastResetDate.getMonth() &&
+                    now.getDate() === lastResetDate.getDate() &&
+                    gameState.endlessMode.dailyEntered) {
+                    
+                    // 計算下次重置時間（明天00:00）
+                    const tomorrow = new Date(now);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(0, 0, 0, 0);
+                    const timeLeft = tomorrow.getTime() - now.getTime();
+                    const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                    
+                    addLog('系統', `⚠️ 無盡模式每天只能進入一次！${hoursLeft}小時${minutesLeft}分鐘後重置`);
+                    return;
+                }
             }
             
             // 檢查是否有足夠的體力
@@ -23287,9 +23336,16 @@ function generateEquipmentByRarity(rarity) {
             gameState.player.ap -= 10;
             gameState.endlessMode.active = true;
             
-            // 記錄今日已進入
-            gameState.endlessMode.lastEntryDate = today;
+            // 記錄今日已進入（使用今天00:00的時間戳）
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            gameState.endlessMode.lastReset = today.getTime();
             gameState.endlessMode.dailyEntered = true;
+            
+            // 移除舊的 lastEntryDate（不再需要）
+            if (gameState.endlessMode.lastEntryDate) {
+                delete gameState.endlessMode.lastEntryDate;
+            }
             
             if (fromCheckpoint && gameState.endlessMode.checkpoint > 1) {
                 gameState.endlessMode.currentFloor = gameState.endlessMode.checkpoint;
@@ -24256,9 +24312,516 @@ function manualSalvageSelected() {
         addLog('批量分解', '沒有符合條件的裝備可分解');
     }
 }
+
+// ==================== 賭博商人系統 ====================
+
+// 全局變數
+let selectedGamblerType = 'weapon'; // 預設選擇武器
+
+// 打開賭博商人界面
+function openGamblerModal() {
+    console.log('[Gambler] 打開賭博商人界面');
+    
+    // 初始化賭博系統狀態
+    if (!gameState.gambler) {
+        console.log('[Gambler] 初始化賭博系統狀態');
+        gameState.gambler = {
+            totalRolls: 0,
+            totalFragmentsSpent: 0,
+            freeRollAvailable: true,
+            lastFreeRollTime: 0,
+            qualityCount: {
+                Fine: 0,
+                Rare: 0,
+                Epic: 0,
+                Legendary: 0,
+                Mythic: 0
+            },
+            affixCount: 0,
+            bestRoll: null,
+            lastRoll: null
+        };
+    }
+    
+    // 檢查免費機會
+    checkFreeRollAvailability();
+    
+    // 更新顯示
+    updateGamblerUI();
+    
+    // 顯示模態框
+    document.getElementById('gambler-modal').style.display = 'flex';
+    console.log('[Gambler] 模態框已顯示');
+}
+
+// 關閉賭博商人界面
+function closeGamblerModal() {
+    console.log('[Gambler] 關閉賭博商人界面');
+    document.getElementById('gambler-modal').style.display = 'none';
+}
+
+// 選擇裝備類型
+function selectGamblerType(type) {
+    console.log(`[Gambler] 選擇類型: ${type}`);
+    selectedGamblerType = type;
+    
+    // 更新按鈕樣式
+    document.querySelectorAll('.gambler-type-btn').forEach(btn => {
+        btn.style.borderColor = '#6b7280';
+        btn.style.background = 'rgba(107, 114, 128, 0.2)';
+    });
+    
+    const selectedBtn = document.getElementById(`gambler-type-${type}`);
+    selectedBtn.style.borderColor = '#3b82f6';
+    selectedBtn.style.background = 'rgba(59, 130, 246, 0.2)';
+}
+
+// 檢查免費機會
+function checkFreeRollAvailability() {
+    const now = Date.now();
+    const threeDays = 3 * 24 * 60 * 60 * 1000; // 3天的毫秒數
+    
+    if (!gameState.gambler.freeRollAvailable) {
+        const timeSinceLastFree = now - gameState.gambler.lastFreeRollTime;
+        if (timeSinceLastFree >= threeDays) {
+            console.log('[Gambler] 免費機會已恢復');
+            gameState.gambler.freeRollAvailable = true;
+        }
+    }
+    
+    // 更新顯示
+    const freeInfo = document.getElementById('free-roll-info');
+    const cooldownInfo = document.getElementById('free-roll-cooldown');
+    const gambleBtn = document.getElementById('gamble-btn');
+    
+    if (gameState.gambler.freeRollAvailable) {
+        freeInfo.style.display = 'block';
+        cooldownInfo.style.display = 'none';
+        gambleBtn.innerHTML = '🎰 賭博 (免費!)';
+        console.log('[Gambler] 免費機會可用');
+    } else {
+        freeInfo.style.display = 'none';
+        cooldownInfo.style.display = 'block';
+        gambleBtn.innerHTML = '🎰 賭博 (200💎)';
+        
+        // 計算剩餘時間
+        const timeLeft = threeDays - (now - gameState.gambler.lastFreeRollTime);
+        const daysLeft = Math.floor(timeLeft / (24 * 60 * 60 * 1000));
+        const hoursLeft = Math.floor((timeLeft % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+        document.getElementById('free-roll-timer').textContent = `${daysLeft}天 ${hoursLeft}小時`;
+        console.log(`[Gambler] 免費冷卻中: ${daysLeft}天 ${hoursLeft}小時`);
+    }
+}
+
+// 更新UI
+function updateGamblerUI() {
+    console.log('[Gambler] 更新UI');
+    document.getElementById('gambler-fragments').textContent = gameState.materials.fragment || 0;
+    document.getElementById('gambler-total-rolls').textContent = gameState.gambler.totalRolls;
+    document.getElementById('gambler-total-fragments').textContent = gameState.gambler.totalFragmentsSpent;
+    document.getElementById('gambler-fine-count').textContent = gameState.gambler.qualityCount.Fine;
+    document.getElementById('gambler-rare-count').textContent = gameState.gambler.qualityCount.Rare;
+    document.getElementById('gambler-epic-count').textContent = gameState.gambler.qualityCount.Epic;
+    document.getElementById('gambler-legendary-count').textContent = gameState.gambler.qualityCount.Legendary;
+    document.getElementById('gambler-mythic-count').textContent = gameState.gambler.qualityCount.Mythic;
+    document.getElementById('gambler-affix-count').textContent = gameState.gambler.affixCount;
+}
+
+// 品質機率權重
+const qualityWeights = {
+    'Fine': 50,
+    'Rare': 30,
+    'Epic': 15,
+    'Legendary': 4,
+    'Mythic': 1
+};
+
+// 詞綴機率
+const affixChance = {
+    'Fine': 0.05,
+    'Rare': 0.10,
+    'Epic': 0.20,
+    'Legendary': 0.40,
+    'Mythic': 0.70
+};
+
+// 隨機品質
+function rollQuality() {
+    const rand = Math.random() * 100;
+    let cumulative = 0;
+    
+    for (const [quality, weight] of Object.entries(qualityWeights)) {
+        cumulative += weight;
+        if (rand < cumulative) {
+            console.log(`[Gambler] 擲出品質: ${quality} (隨機值: ${rand.toFixed(2)})`);
+            return quality;
+        }
+    }
+    
+    return 'Fine'; // 保底
+}
+
+// 隨機詞綴
+function rollAffix(quality) {
+    const hasAffix = Math.random() < affixChance[quality];
+    console.log(`[Gambler] 詞綴判定: ${hasAffix} (機率: ${(affixChance[quality] * 100).toFixed(1)}%)`);
+    return hasAffix;
+}
+
+// 生成賭博裝備
+function generateGamblerEquipment(type, quality, hasAffix) {
+    console.log(`[Gambler] 生成裝備: 類型=${type}, 品質=${quality}, 詞綴=${hasAffix}`);
+    
+    let equipment;
+    let attempts = 0;
+    const maxAttempts = 20;
+    
+    // 嘗試生成符合類型的裝備
+    do {
+        equipment = generateItem('normal', quality);
+        attempts++;
+        
+        // 檢查是否符合類型
+        if (isMatchingType(equipment, type)) {
+            console.log(`[Gambler] 生成成功 (嘗試 ${attempts} 次): ${equipment.name} (${equipment.type})`);
+            break;
+        }
+    } while (attempts < maxAttempts);
+    
+    // 如果超過最大嘗試次數，使用最後一次生成的裝備
+    if (attempts >= maxAttempts) {
+        console.log(`[Gambler] 超過最大嘗試次數，使用: ${equipment.name} (${equipment.type})`);
+    }
+    
+    // 如果有詞綴，添加隨機詞綴
+    if (hasAffix && (!equipment.affixes || equipment.affixes.length === 0)) {
+        const affixList = Object.keys(affixEffects);
+        const randomAffix = affixList[Math.floor(Math.random() * affixList.length)];
+        equipment.affixes = [randomAffix];
+        console.log(`[Gambler] 添加詞綴: ${randomAffix}`);
+    }
+    
+    return equipment;
+}
+
+// 檢查裝備是否符合類型
+function isMatchingType(equipment, type) {
+    if (!equipment || !equipment.type) return false;
+    
+    if (type === 'weapon') {
+        return equipment.type === 'weapon';
+    } else if (type === 'armor') {
+        return ['head', 'body'].includes(equipment.type);
+    } else if (type === 'accessory') {
+        return ['accessory1', 'accessory2', 'ring', 'necklace'].includes(equipment.type);
+    }
+    
+    return true;
+}
+
+// 執行賭博
+function performGamble() {
+    console.log('[Gambler] ========== 開始賭博 ==========');
+    
+    // 檢查背包空間
+    if (gameState.inventory.length >= gameState.maxInventory) {
+        alert('背包已滿！請先清理背包。');
+        console.log('[Gambler] 背包已滿，賭博取消');
+        return;
+    }
+    
+    // 檢查是否有免費機會
+    const isFree = gameState.gambler.freeRollAvailable;
+    console.log(`[Gambler] 是否免費: ${isFree}`);
+    
+    if (!isFree) {
+        // 檢查碎片是否足夠
+        if ((gameState.materials.fragment || 0) < 200) {
+            alert('碎片不足！需要 200 碎片。');
+            console.log('[Gambler] 碎片不足，賭博取消');
+            return;
+        }
+        
+        // 扣除碎片
+        gameState.materials.fragment -= 200;
+        gameState.gambler.totalFragmentsSpent += 200;
+        console.log(`[Gambler] 扣除 200 碎片，剩餘: ${gameState.materials.fragment}`);
+    } else {
+        // 使用免費機會
+        gameState.gambler.freeRollAvailable = false;
+        gameState.gambler.lastFreeRollTime = Date.now();
+        console.log('[Gambler] 使用免費機會');
+    }
+    
+    // 計算結果
+    const quality = rollQuality();
+    const hasAffix = rollAffix(quality);
+    
+    // 播放拉霸機動畫
+    playSlotMachineAnimation(selectedGamblerType, quality, hasAffix, () => {
+        // 動畫完成後生成裝備
+        const equipment = generateGamblerEquipment(selectedGamblerType, quality, hasAffix);
+        
+        // 加入背包
+        gameState.inventory.push(equipment);
+        console.log('[Gambler] 裝備已加入背包');
+        
+        // 更新統計
+        gameState.gambler.totalRolls++;
+        gameState.gambler.qualityCount[quality]++;
+        if (hasAffix) gameState.gambler.affixCount++;
+        if (quality === 'Mythic') gameState.gambler.bestRoll = equipment;
+        gameState.gambler.lastRoll = equipment;
+        
+        console.log(`[Gambler] 統計更新: 總次數=${gameState.gambler.totalRolls}, ${quality}=${gameState.gambler.qualityCount[quality]}`);
+        
+        // 顯示結果
+        showGambleResult(equipment, quality, hasAffix, isFree);
+        
+        // 更新UI
+        updateGamblerUI();
+        checkFreeRollAvailability();
+        updateUI();
+        saveGame();
+        
+        // 記錄日誌
+        const qualityEmoji = {
+            'Fine': '🔵',
+            'Rare': '🟣',
+            'Epic': '🟠',
+            'Legendary': '🔴',
+            'Mythic': '🌟'
+        };
+        
+        let logMessage = `${qualityEmoji[quality]} 獲得 ${quality} ${equipment.name}`;
+        if (hasAffix) logMessage += ' ✨(附帶詞綴)';
+        if (isFree) logMessage += ' (免費)';
+        
+        addLog('賭博商人', logMessage);
+        console.log(`[Gambler] 日誌: ${logMessage}`);
+        console.log('[Gambler] ========== 賭博完成 ==========');
+    });
+    
+    return; // 提前返回，剩餘邏輯在回調中執行
+}
+
+// 顯示賭博結果
+function showGambleResult(equipment, quality, hasAffix, isFree) {
+    const resultDiv = document.getElementById('result-content');
+    
+    const qualityColors = {
+        'Fine': '#3b82f6',
+        'Rare': '#a855f7',
+        'Epic': '#f97316',
+        'Legendary': '#ef4444',
+        'Mythic': '#fbbf24'
+    };
+    
+    const qualityEmoji = {
+        'Fine': '🔵',
+        'Rare': '🟪',
+        'Epic': '🟠',
+        'Legendary': '🔴',
+        'Mythic': '🌟'
+    };
+    
+    let html = `
+        <div style="animation: fadeIn 0.5s;">
+            <div style="font-size: 48px; margin-bottom: 10px;">${qualityEmoji[quality]}</div>
+            <div style="font-size: 24px; font-weight: bold; color: ${qualityColors[quality]}; margin-bottom: 10px;">
+                ${quality}
+            </div>
+            <div style="font-size: 18px; margin-bottom: 5px;">
+                ${equipment.name}
+            </div>
+            ${hasAffix ? '<div style="color: #fbbf24; margin-top: 5px;">✨ 附帶詞綴</div>' : ''}
+            ${isFree ? '<div style="color: #22c55e; margin-top: 5px;">🎁 免費獲得</div>' : ''}
+        </div>
+    `;
+    
+    resultDiv.innerHTML = html;
+    
+    // 品質特效
+    if (quality === 'Mythic') {
+        // 神話特效：閃爍動畫
+        resultDiv.style.animation = 'pulse 1s infinite';
+        setTimeout(() => {
+            resultDiv.style.animation = '';
+        }, 3000);
+        console.log('[Gambler] 🎉 神話裝備！');
+    } else if (quality === 'Legendary') {
+        // 傳說特效：抖動
+        resultDiv.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+            resultDiv.style.animation = '';
+        }, 500);
+        console.log('[Gambler] 🔴 傳說裝備！');
+    } else if (quality === 'Epic') {
+        // 史詩特效：縮放
+        resultDiv.style.animation = 'bounce 0.5s';
+        setTimeout(() => {
+            resultDiv.style.animation = '';
+        }, 500);
+    }
+}
+
+// 拉霸機動畫
+function playSlotMachineAnimation(type, quality, hasAffix, callback) {
+    console.log('[Gambler] 播放拉霸機動畫');
+    
+    // 轉輪圖示對照
+    const typeSymbols = {
+        'weapon': '⚔️',
+        'armor': '🛡️',
+        'accessory': '💍'
+    };
+    
+    const qualitySymbols = {
+        'Fine': '🔵',
+        'Rare': '🟣',
+        'Epic': '🟠',
+        'Legendary': '🔴',
+        'Mythic': '🌟'
+    };
+    
+    const affixSymbol = hasAffix ? '✨' : '⚪';
+    
+    // 獲取轉輪元素
+    const reel1 = document.getElementById('reel-1');
+    const reel2 = document.getElementById('reel-2');
+    const reel3 = document.getElementById('reel-3');
+    
+    // 清空結果文字
+    const resultContent = document.getElementById('result-content');
+    resultContent.textContent = '轉輪旋轉中...';
+    resultContent.style.color = '#9ca3af';
+    
+    // 生成隨機轉輪內容（每個轉輪 10 個圖示）
+    const allTypeSymbols = ['⚔️', '🛡️', '💍'];
+    const allQualitySymbols = ['🔵', '🟣', '🟠', '🔴', '🌟'];
+    const allAffixSymbols = ['⚪', '✨'];
+    
+    // 生成轉輪 1 內容
+    let reel1Content = '';
+    for (let i = 0; i < 10; i++) {
+        const symbol = allTypeSymbols[Math.floor(Math.random() * allTypeSymbols.length)];
+        reel1Content += `<div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">${symbol}</div>`;
+    }
+    reel1Content += `<div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">${typeSymbols[type]}</div>`;
+    reel1.innerHTML = reel1Content;
+    
+    // 生成轉輪 2 內容
+    let reel2Content = '';
+    for (let i = 0; i < 10; i++) {
+        const symbol = allQualitySymbols[Math.floor(Math.random() * allQualitySymbols.length)];
+        reel2Content += `<div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">${symbol}</div>`;
+    }
+    reel2Content += `<div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">${qualitySymbols[quality]}</div>`;
+    reel2.innerHTML = reel2Content;
+    
+    // 生成轉輪 3 內容
+    let reel3Content = '';
+    for (let i = 0; i < 10; i++) {
+        const symbol = allAffixSymbols[Math.floor(Math.random() * allAffixSymbols.length)];
+        reel3Content += `<div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">${symbol}</div>`;
+    }
+    reel3Content += `<div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">${affixSymbol}</div>`;
+    reel3.innerHTML = reel3Content;
+    
+    // 重置轉輪位置（關鍵！）
+    reel1.style.transition = 'none';
+    reel2.style.transition = 'none';
+    reel3.style.transition = 'none';
+    
+    reel1.style.top = '0px';
+    reel2.style.top = '0px';
+    reel3.style.top = '0px';
+    
+    console.log('[Gambler] 轉輪位置已重置');
+    
+    // 強制重繪
+    reel1.offsetHeight;
+    reel2.offsetHeight;
+    reel3.offsetHeight;
+    
+    // 重新啟用動畫
+    reel1.style.transition = 'top 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    reel2.style.transition = 'top 2.0s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    reel3.style.transition = 'top 2.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    
+    // 播u653eu958bu59cbu97f3u6548
+    if (typeof playSound === 'function') {
+        playSound('hit'); // 使用現u6709的音效
+    }
+    
+    // 延遲一下再開始動畫，確保innerHTML已更新
+    setTimeout(() => {
+        // 計算最終位置（停在最後一個圖示）
+        reel1.style.top = '-1200px'; // 10 * 120px
+        reel2.style.top = '-1200px';
+        reel3.style.top = '-1200px';
+        
+        console.log('[Gambler] 轉輪開始旋轉');
+    }, 50);
+    
+    // 轉輪u505cu6b62u97f3u6548
+    setTimeout(() => {
+        if (typeof playSound === 'function') {
+            playSound('hit'); // 第u4e00u500bu8f49u8f2au505cu6b62
+        }
+    }, 1500);
+    
+    setTimeout(() => {
+        if (typeof playSound === 'function') {
+            playSound('hit'); // 第u4e8cu500bu8f49u8f2au505cu6b62
+        }
+    }, 2000);
+    
+    setTimeout(() => {
+        if (typeof playSound === 'function') {
+            // 最u5f8cu4e00u500bu8f49u8f2au505cu6b62uff0cu6839u64dau54c1u8cefu64adu653eu4e0du540cu97f3u6548
+            if (quality === 'Mythic') {
+                playSound('levelup'); // 神u8a71u7279u6b8au97f3u6548
+            } else if (quality === 'Legendary') {
+                playSound('boss'); // 傳u8aaa
+            } else {
+                playSound('hit'); // 一u822c
+            }
+        }
+    }, 2500);
+    
+    // 等待所有轉輪停止（2.5s + 0.5s 緩衝）
+    setTimeout(() => {
+        console.log('[Gambler] 轉輪停止，執行回u8abf');
+        callback();
+    }, 3000);
+}
+
 </script>
 
 <style>
+/* 賭博商人特效動畫 */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Toggle Switch 樣式 */
 .switch {
     position: relative;
@@ -24494,6 +25057,105 @@ input:checked + .slider:before {
             <h2>🐉 寵物</h2>
             <div id="pet-display-modal-content">
                 <!-- 由JavaScript動態填充 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 賭博商人模態框 -->
+    <div id="gambler-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close" onclick="closeGamblerModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 20px;">🎰 賭博商人</h2>
+            
+            <!-- 碎片顯示 -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+                <div>
+                    <span style="font-size: 14px; color: #9ca3af;">擁有碎片：</span>
+                    <span id="gambler-fragments" style="font-size: 18px; font-weight: bold; color: #3b82f6;">0</span> 💎
+                </div>
+                <div>
+                    <span style="font-size: 14px; color: #9ca3af;">消耗：</span>
+                    <span style="font-size: 18px; font-weight: bold; color: #ef4444;">200</span> 💎
+                </div>
+            </div>
+            
+            <!-- 免費機會顯示 -->
+            <div id="free-roll-info" style="text-align: center; margin-bottom: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; display: none;">
+                <span style="color: #22c55e; font-weight: bold;">✨ 免費機會可用！</span>
+                </div>
+            
+            <div id="free-roll-cooldown" style="text-align: center; margin-bottom: 15px; padding: 10px; background: rgba(156, 163, 175, 0.1); border-radius: 8px; display: none;">
+                <span style="color: #9ca3af;">下次免費：<span id="free-roll-timer">--</span></span>
+            </div>
+            
+            <!-- 拉霸機顯示區 -->
+            <div id="slot-machine" style="margin-bottom: 20px; padding: 20px; background: rgba(17, 24, 39, 0.5); border-radius: 12px;">
+                <!-- 轉輪區域 -->
+                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                    <!-- 轉輪1: 類型 -->
+                    <div class="slot-reel" style="width: 80px; height: 120px; background: rgba(0,0,0,0.5); border: 2px solid #3b82f6; border-radius: 8px; overflow: hidden; position: relative;">
+                        <div id="reel-1" class="reel-content" style="position: absolute; top: 0; left: 0; width: 100%; text-align: center; transition: top 0.5s ease-out;">
+                            <div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">⚔️</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 轉輪2: 品質 -->
+                    <div class="slot-reel" style="width: 80px; height: 120px; background: rgba(0,0,0,0.5); border: 2px solid #a855f7; border-radius: 8px; overflow: hidden; position: relative;">
+                        <div id="reel-2" class="reel-content" style="position: absolute; top: 0; left: 0; width: 100%; text-align: center; transition: top 0.5s ease-out;">
+                            <div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🔵</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 轉輪3: 詞綴 -->
+                    <div class="slot-reel" style="width: 80px; height: 120px; background: rgba(0,0,0,0.5); border: 2px solid #fbbf24; border-radius: 8px; overflow: hidden; position: relative;">
+                        <div id="reel-3" class="reel-content" style="position: absolute; top: 0; left: 0; width: 100%; text-align: center; transition: top 0.5s ease-out;">
+                            <div style="height: 120px; display: flex; align-items: center; justify-content: center; font-size: 32px;">⚪</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 結果文字 -->
+                <div id="result-text" style="text-align: center; min-height: 60px; display: flex; align-items: center; justify-content: center;">
+                    <div id="result-content" style="font-size: 16px; color: #9ca3af;">
+                        選擇裝備類型並點擊賭博
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 類型選擇 -->
+            <div style="margin-bottom: 20px;">
+                <div style="margin-bottom: 10px; font-weight: bold; text-align: center;">選擇裝備類型：</div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="selectGamblerType('weapon')" id="gambler-type-weapon" class="gambler-type-btn" style="flex: 1; padding: 12px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                        ⚔️ 武器
+                    </button>
+                    <button onclick="selectGamblerType('armor')" id="gambler-type-armor" class="gambler-type-btn" style="flex: 1; padding: 12px; border: 2px solid #6b7280; background: rgba(107, 114, 128, 0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                        🛡️ 防具
+                    </button>
+                    <button onclick="selectGamblerType('accessory')" id="gambler-type-accessory" class="gambler-type-btn" style="flex: 1; padding: 12px; border: 2px solid #6b7280; background: rgba(107, 114, 128, 0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                        💍 飾品
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 賭博按鈕 -->
+            <button onclick="performGamble()" id="gamble-btn" style="width: 100%; padding: 15px; font-size: 18px; font-weight: bold; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                🎰 賭博 (200💎)
+            </button>
+            
+            <!-- 統計 -->
+            <div style="margin-top: 20px; padding: 15px; background: rgba(17, 24, 39, 0.3); border-radius: 8px;">
+                <h3 style="margin-top: 0; margin-bottom: 10px;">📊 統計</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px;">
+                    <div>總次數：<span id="gambler-total-rolls">0</span></div>
+                    <div>總消耗：<span id="gambler-total-fragments">0</span>💎</div>
+                    <div>🔵 精良：<span id="gambler-fine-count">0</span></div>
+                    <div>🟪 稀有：<span id="gambler-rare-count">0</span></div>
+                    <div>🟠 史詩：<span id="gambler-epic-count">0</span></div>
+                    <div>🔴 傳說：<span id="gambler-legendary-count">0</span></div>
+                    <div>🌟 神話：<span id="gambler-mythic-count">0</span></div>
+                    <div>✨ 詞綴：<span id="gambler-affix-count">0</span></div>
+                </div>
             </div>
         </div>
     </div>

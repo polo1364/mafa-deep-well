@@ -24536,16 +24536,16 @@ function performGamble() {
     
     if (!isFree) {
         // 檢查碎片是否足夠
-        if ((gameState.materials.fragment || 0) < 200) {
+        if ((gameState.player.shards || 0) < 200) {
             alert('碎片不足！需要 200 碎片。');
             console.log('[Gambler] 碎片不足，賭博取消');
             return;
         }
         
         // 扣除碎片
-        gameState.materials.fragment -= 200;
+        gameState.player.shards -= 200;
         gameState.gambler.totalFragmentsSpent += 200;
-        console.log(`[Gambler] 扣除 200 碎片，剩餘: ${gameState.materials.fragment}`);
+        console.log(`[Gambler] 扣除 200 碎片，剩餘: ${gameState.player.shards}`);
     } else {
         // 使用免費機會
         gameState.gambler.freeRollAvailable = false;

@@ -24416,7 +24416,7 @@ function checkFreeRollAvailability() {
 // 更新UI
 function updateGamblerUI() {
     console.log('[Gambler] 更新UI');
-    document.getElementById('gambler-fragments').textContent = gameState.materials.fragment || 0;
+    document.getElementById('gambler-fragments').textContent = gameState.player.shards || 0;
     document.getElementById('gambler-total-rolls').textContent = gameState.gambler.totalRolls;
     document.getElementById('gambler-total-fragments').textContent = gameState.gambler.totalFragmentsSpent;
     document.getElementById('gambler-fine-count').textContent = gameState.gambler.qualityCount.Fine;

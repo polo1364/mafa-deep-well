@@ -975,13 +975,13 @@
                             <div style="font-size: 0.75rem; color: #7a8fb8; margin-bottom: 6px;">🧪 自動喝藥</div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                                 <span style="font-size: 0.75rem; color: #7a8fb8;">藥水:</span>
-                                <select id="potion-selector" onchange="selectPotionType()" style="flex: 1; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                                <select id="potion-selector" onchange="setAutoPotion(this.value)" style="flex: 1; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
                                     <option value="">選擇藥水...</option>
                                 </select>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="font-size: 0.75rem; color: #7a8fb8;">觸發HP:</span>
-                                <select id="auto-potion-threshold" onchange="updateAutoPotionThreshold(this.value)" style="flex: 1; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                                <select id="auto-potion-threshold" onchange="setAutoPotionThreshold(this.value)" style="flex: 1; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
                                     <option value="30">30%</option>
                                     <option value="40">40%</option>
                                     <option value="50" selected>50%</option>
@@ -7100,9 +7100,16 @@ const REGION_CONSUMABLES = {
             potionCooldown: 0, // 藥水冷卻時間戳
             autoExplore: false, // 自動戰鬥狀態
             autoExploreInterval: null, // 自動戰鬥計時器
-            autoPotion: false, // 自動喝藥狀態
-            autoPotionThreshold: 50, // 自動喝藥門檻（百分比）
-            autoPotionType: 'medium', // 自動喝藥類型 (small/medium/large/full)
+            autoPotion: false, // 自動喝藥狀態（舊）
+            autoPotionThreshold: 50, // 自動喝藥門檢（百分比）（舊）
+            autoPotionType: 'medium', // 自動喝藥類型 (small/medium/large/full)（舊）
+            selectedPotionId: null, // 選擇的藥水ID（舊）
+            selectedPotionName: null, // 選擇的藥水名稱（用於自動匹配）（舊）
+            autoPotionConfig: { // 新的自動喝藥配置
+                enabled: true,
+                potionName: null,
+                threshold: 50
+            },
             apRegenTime: Date.now(), // 體力回復時間戳
             hpRegenTime: Date.now(), // 生命回復時間戳
             stats: {
@@ -7721,101 +7728,191 @@ const REGION_CONSUMABLES = {
             }
         }
         
-        // 更新自動喝藥閾值
-        function updateAutoPotionThreshold(value) {
-            gameState.autoPotionThreshold = parseInt(value);
-            saveGame();
-            addLog('系統', `自動喝藥觸發閾值已調整為 ${gameState.autoPotionThreshold}%`);
-            // 立即檢查是否需要喝藥
-            if (tryAutoPotion()) {
-                updateUI();
+        // ==================== 新的自動喝藥系統 ====================
+        
+        // 初始化自動喝藥配置
+        function initAutoPotionConfig() {
+            if (!gameState.autoPotionConfig) {
+                gameState.autoPotionConfig = {
+                    enabled: true,
+                    potionName: null,
+                    threshold: 50
+                };
             }
         }
         
-
-        
-        function selectPotionType() {
-            const select = document.getElementById('potion-selector');
-            gameState.selectedPotionId = select.value;
-            saveGame();
-            
-            if (gameState.selectedPotionId) {
-                const item = gameState.inventory.find(i => i.id == gameState.selectedPotionId);
-                if (item) {
-                    addLog('系統', `已選擇藥水：${item.name}`);
-                }
-            }
-        }
-        
-        // 更新藥水選擇器（根據背包中的藥水）
-        function updatePotionSelector() {
-            const select = document.getElementById('potion-selector');
-            if (!select) return;
-            
-            // 獲取所有HP藥水（支持所有類型）
+        // 獲取背包中所有可用的HP藥水（去重）
+        function getAvailableHPPotions() {
             const hpPotions = gameState.inventory.filter(item => 
                 item.type === 'consumable' && 
-                (item.subtype === 'hp' || item.subtype === 'hp_percent' || item.subtype === 'hp_fixed' || 
-                 item.subtype === 'hp_potion' || item.subtype === 'both_percent' || item.subtype === 'both_fixed') &&
-                (item.quantity || 1) > 0
+                item.subtype && 
+                (item.subtype.includes('hp_percent') || item.subtype.includes('hp_fixed') || item.subtype === 'hp' || item.subtype === 'hp_potion')
             );
             
-            // 去重（按名稱）
+            // 按名稱去重
             const uniquePotions = [];
             const seenNames = new Set();
+            
             hpPotions.forEach(potion => {
                 if (!seenNames.has(potion.name)) {
                     seenNames.add(potion.name);
-                    uniquePotions.push(potion);
+                    uniquePotions.push({
+                        name: potion.name,
+                        subtype: potion.subtype,
+                        recovery: potion.recovery,
+                        hpPercent: potion.hpPercent
+                    });
                 }
             });
             
-            // 按回復量排序（從高到低）
-            uniquePotions.sort((a, b) => {
-                const aRecovery = a.recovery || a.hpPercent || 0;
-                const bRecovery = b.recovery || b.hpPercent || 0;
-                return bRecovery - aRecovery;
-            });
+            return uniquePotions;
+        }
+        
+        // 設定自動喝藥的藥水
+        function setAutoPotion(potionName) {
+            if (!potionName || potionName === '') {
+                gameState.autoPotionConfig.potionName = null;
+                addLog('系統', '已清空自動喝藥設定');
+            } else {
+                gameState.autoPotionConfig.potionName = potionName;
+                addLog('系統', `已設定自動喝藥：${potionName}`);
+            }
             
-            // 保存當前選擇
-            const currentValue = gameState.selectedPotionId || '';
+            // 自動存檔
+            saveGame();
+        }
+        
+        // 設定自動喝藥的觸發HP百分比
+        function setAutoPotionThreshold(threshold) {
+            gameState.autoPotionConfig.threshold = threshold;
+            addLog('系統', `自動喝藥觸發閾值已調整為 ${threshold}%`);
+            saveGame();
+        }
+        
+        // 刷新藥水選擇器UI
+        let isRefreshingUI = false; // 防止無限循環
+        
+        function refreshPotionSelectorUI() {
+            if (isRefreshingUI) {
+                return;
+            }
             
-            // 清空選項
+            isRefreshingUI = true;
+            
+            const select = document.getElementById('potion-selector');
+            if (!select) {
+                isRefreshingUI = false;
+                return;
+            }
+            
+            // 獲取可用藥水
+            const availablePotions = getAvailableHPPotions();
+            
+            // 暫時移除 onchange 事件，防止觸發 setAutoPotion
+            const originalOnChange = select.onchange;
+            select.onchange = null;
+            
+            // 清空並重建選項
             select.innerHTML = '<option value="">選擇藥水...</option>';
             
-            // 添加藥水選項
-            uniquePotions.forEach(potion => {
+            availablePotions.forEach(potion => {
                 const option = document.createElement('option');
-                option.value = potion.id;
-                let percent;
+                option.value = potion.name;  // 使用名稱作為value
                 
-                // 優先檢查 hpPercent 屬性（新手包藥水使用）
+                // 計算恢復百分比用於顯示
+                let percent = '?';
                 if (potion.hpPercent !== undefined) {
                     percent = Math.round(potion.hpPercent * 100);
                 } else if (potion.recovery !== undefined) {
-                    // 檢查是否為百分比類型
-                    if (potion.subtype === 'hp' || potion.subtype === 'hp_percent' || potion.subtype === 'hp_potion') {
-                        percent = Math.round(potion.recovery * 100);
-                    } else if (potion.subtype === 'hp_fixed') {
+                    if (potion.subtype && potion.subtype.includes('fixed')) {
                         percent = potion.recovery;
+                    } else {
+                        percent = Math.round(potion.recovery * 100);
                     }
-                } else if (potion.subtype === 'both_percent') {
-                    percent = Math.round(potion.hpPercent * 100);
-                } else if (potion.subtype === 'both_fixed') {
-                    percent = potion.hpRecovery;
-                } else {
-                    // 預設值，防止 NaN
-                    percent = 0;
                 }
                 
                 option.textContent = `${potion.name} (${percent}${potion.subtype && potion.subtype.includes('fixed') ? '' : '%'})`;
                 select.appendChild(option);
             });
             
-            // 恢復選擇
-            if (currentValue && uniquePotions.some(p => p.id == currentValue)) {
-                select.value = currentValue;
+            // 設定當前選擇
+            if (gameState.autoPotionConfig && gameState.autoPotionConfig.potionName) {
+                select.value = gameState.autoPotionConfig.potionName;
+            } else {
+                select.value = '';
             }
+            
+            // 恢復 onchange 事件
+            select.onchange = originalOnChange;
+            
+            isRefreshingUI = false;
+        }
+        
+        // 自動使用藥水（在戰鬥中調用）
+        function autoUsePotion() {
+            if (!gameState.autoPotionConfig || !gameState.autoPotionConfig.enabled) {
+                return false;
+            }
+            
+            if (!gameState.autoPotionConfig.potionName) {
+                return false;
+            }
+            
+            // 檢查HP是否低於閾值
+            const hpPercent = (gameState.hp / gameState.maxHp) * 100;
+            if (hpPercent >= gameState.autoPotionConfig.threshold) {
+                return false;
+            }
+            
+            // 查找背包中的藥水
+            const potionIndex = gameState.inventory.findIndex(item => 
+                item.name === gameState.autoPotionConfig.potionName &&
+                item.type === 'consumable'
+            );
+            
+            if (potionIndex === -1) {
+                return false;
+            }
+            
+            const potion = gameState.inventory[potionIndex];
+            
+            // 使用藥水
+            let healAmount = 0;
+            if (potion.hpPercent !== undefined) {
+                healAmount = Math.floor(gameState.maxHp * potion.hpPercent);
+            } else if (potion.recovery !== undefined) {
+                if (potion.subtype && potion.subtype.includes('fixed')) {
+                    healAmount = potion.recovery;
+                } else {
+                    healAmount = Math.floor(gameState.maxHp * potion.recovery);
+                }
+            }
+            
+            gameState.hp = Math.min(gameState.hp + healAmount, gameState.maxHp);
+            addLog('自動喝藥', `自動使用了 ${potion.name}，恢復了 ${healAmount} HP`);
+            
+            // 從背包中移除藥水
+            gameState.inventory.splice(potionIndex, 1);
+            
+            // 刷新UI
+            updateUI();
+            // 不再調用 refreshPotionSelectorUI，防止無限循環
+            
+            return true;
+        }
+        
+        // 更新自動喝藥閾值（兼容舊的函數名）
+        function updateAutoPotionThreshold(value) {
+            setAutoPotionThreshold(value);
+        }
+        
+
+        
+        // 舊的函數已刪除，使用新的系統
+        
+        // 兼容舊的函數名，調用新的系統
+        function updatePotionSelector() {
+            refreshPotionSelectorUI();
         }
         
         // 從選擇器使用藥水
@@ -7875,7 +7972,13 @@ const REGION_CONSUMABLES = {
             saveGame();
         }
         
+        // 兼容舊的函數名，調用新的系統
         function tryAutoPotion() {
+            return autoUsePotion();
+        }
+        
+        // 舊的 tryAutoPotion 函數已被新系統取代
+        function _oldTryAutoPotion() {
             // 自動喝藥永久啟用，不需要檢查 autoPotion 狀態
             
             // 防止NaN：檢查maxHp是否有效
@@ -7904,10 +8007,8 @@ const REGION_CONSUMABLES = {
             );
             
             if (!potion) {
-                addLog('系統', '選定的藥水已用完！請重新選擇。');
-                gameState.selectedPotionId = null;
-                gameState.autoPotion = false;
-                document.getElementById('auto-potion-toggle').checked = false;
+                // 藥水不存在，但保留名稱以便自動匹配
+                // 不顯示錯誤，静默嘗試恢復
                 updatePotionSelector();
                 return false;
             }
@@ -7952,8 +8053,9 @@ const REGION_CONSUMABLES = {
                 potion.quantity--;
             } else {
                 gameState.inventory = gameState.inventory.filter(i => i.id !== potion.id);
-                // 藥水用完了，清除選擇
+                // 藥水用完了，清除ID但保留名稱
                 gameState.selectedPotionId = null;
+                // 不清除 selectedPotionName，以便下次自動匹配
                 updatePotionSelector();
             }
             
@@ -22371,6 +22473,23 @@ const REGION_CONSUMABLES = {
                 loadedState.potionCooldown = 0;
             }
             
+            // 修復空字符串問題：將 "" 轉為 null
+            if (loadedState.selectedPotionId === '') {
+                console.log('[migrateGameData] 修復 selectedPotionId 空字符串');
+                loadedState.selectedPotionId = null;
+            }
+            if (loadedState.selectedPotionName === '') {
+                console.log('[migrateGameData] 修復 selectedPotionName 空字符串');
+                loadedState.selectedPotionName = null;
+            }
+            // 確保存在
+            if (loadedState.selectedPotionId === undefined) {
+                loadedState.selectedPotionId = null;
+            }
+            if (loadedState.selectedPotionName === undefined) {
+                loadedState.selectedPotionName = null;
+            }
+            
             // 確保背包存在
             if (!loadedState.inventory) {
                 console.warn('背包數據遺失，初始化為空陣列');
@@ -22498,6 +22617,26 @@ const REGION_CONSUMABLES = {
                 
                 // 載入資料
                 gameState = loadedState;
+                
+                console.log('[loadGame] 讀檔後藥水選擇:', {
+                    selectedPotionId: gameState.selectedPotionId,
+                    selectedPotionName: gameState.selectedPotionName
+                });
+                
+                // 初始化新的自動喝藥配置
+                initAutoPotionConfig();
+                
+                // 如果舊存檔中有 selectedPotionName，遷移到新系統
+                if (gameState.selectedPotionName && !gameState.autoPotionConfig.potionName) {
+                    gameState.autoPotionConfig.potionName = gameState.selectedPotionName;
+                    console.log('[loadGame] 已遷移舊的藥水選擇到新系統:', gameState.selectedPotionName);
+                }
+                
+                // 如果舊存檔中有 autoPotionThreshold，遷移到新系統
+                if (gameState.autoPotionThreshold && !gameState.autoPotionConfig.threshold) {
+                    gameState.autoPotionConfig.threshold = gameState.autoPotionThreshold;
+                    console.log('[loadGame] 已遷移舊的觸發HP閾值到新系統:', gameState.autoPotionThreshold);
+                }
                 
                 // 修復舊存檔中沒有quantity的藥水
                 fixLegacyConsumables();

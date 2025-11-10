@@ -39,20 +39,28 @@
             font-family: inherit; 
             color: #00d9ff; 
             text-align: center;
-            font-size: clamp(1.8rem, 6vw, 3rem); 
-            margin: 25px 0;
-            text-shadow: 0 0 25px rgba(0, 217, 255, 1), 0 0 50px rgba(0, 217, 255, 0.6), 0 0 75px rgba(0, 217, 255, 0.3);
-            letter-spacing: 6px; 
+            font-size: clamp(2rem, 6vw, 3.5rem); 
+            margin: 30px 0 20px;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 1), 0 0 40px rgba(0, 217, 255, 0.8), 0 0 60px rgba(0, 217, 255, 0.4), 0 4px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: 8px; 
             font-weight: 900;
+            position: relative;
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(0, 217, 255, 1), 0 0 40px rgba(0, 217, 255, 0.8), 0 0 60px rgba(0, 217, 255, 0.4); }
+            50% { text-shadow: 0 0 25px rgba(0, 217, 255, 1), 0 0 50px rgba(0, 217, 255, 0.9), 0 0 75px rgba(0, 217, 255, 0.5); }
         }
         
         .subtitle { 
             text-align: center; 
-            color: #7a8fb8; 
-            font-size: clamp(0.9rem, 2.2vw, 1.1rem); 
-            margin-bottom: 25px; 
+            color: #8a9fc8; 
+            font-size: clamp(1rem, 2.2vw, 1.2rem); 
+            margin-bottom: 30px; 
             font-style: italic;
-            font-weight: 500; 
+            font-weight: 400; 
+            letter-spacing: 2px;
         }
         
         .game-layout { 
@@ -108,36 +116,69 @@
         }
         
         .panel { 
-            background: linear-gradient(135deg, rgba(26, 31, 53, 0.98) 0%, rgba(15, 20, 40, 0.98) 100%);
-            border: 3px solid #00d9ff; 
-            border-radius: 15px; 
-            padding: 25px;
-            box-shadow: 0 0 30px rgba(0, 217, 255, 0.4), inset 0 0 40px rgba(0, 217, 255, 0.08), 0 5px 20px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, rgba(26, 31, 53, 0.95) 0%, rgba(15, 20, 40, 0.95) 100%);
+            border: 2px solid transparent;
+            border-radius: 16px; 
+            padding: 28px;
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.3), inset 0 0 60px rgba(0, 217, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.6);
             position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            background-clip: padding-box;
         }
         
         .panel::before {
+            content: ''; 
+            position: absolute; 
+            top: -2px; 
+            left: -2px; 
+            right: -2px; 
+            bottom: -2px;
+            border-radius: 16px; 
+            background: linear-gradient(135deg, #00d9ff 0%, #0088ff 50%, #00d9ff 100%);
+            z-index: -1;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        
+        .panel::after {
             content: ''; 
             position: absolute; 
             top: 0; 
             left: 0; 
             right: 0; 
             bottom: 0;
-            border-radius: 10px; 
-            background: radial-gradient(circle at top left, rgba(0, 217, 255, 0.1), transparent 50%);
+            border-radius: 14px; 
+            background: radial-gradient(circle at top left, rgba(0, 217, 255, 0.12), transparent 60%);
             pointer-events: none;
+        }
+        
+        .panel:hover::before {
+            opacity: 0.8;
         }
         
         h2 {
             font-family: inherit; 
             color: #00d9ff; 
-            font-size: clamp(1.2rem, 2.8vw, 1.5rem);
-            margin-bottom: 18px; 
-            padding-bottom: 12px; 
-            border-bottom: 3px solid #00d9ff;
-            text-shadow: 0 0 15px rgba(0, 217, 255, 0.7), 0 0 30px rgba(0, 217, 255, 0.3); 
+            font-size: clamp(1.3rem, 2.8vw, 1.6rem);
+            margin-bottom: 20px; 
+            padding-bottom: 14px; 
+            border-bottom: 2px solid rgba(0, 217, 255, 0.4);
+            text-shadow: 0 0 15px rgba(0, 217, 255, 0.6), 0 2px 4px rgba(0, 0, 0, 0.5); 
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #00d9ff, transparent);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
         }
         
         .stats-grid { 
@@ -241,18 +282,18 @@
         .log-entry { 
             margin-bottom: 12px; 
             padding: 14px; 
-            background: rgba(0, 217, 255, 0.08);
+            background: rgba(0, 217, 255, 0.12);
             border-left: 4px solid #00d9ff; 
             border-radius: 6px; 
             animation: fadeIn 0.3s;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             transition: all 0.2s;
         }
         
         .log-entry:hover {
-            background: rgba(0, 217, 255, 0.12);
+            background: rgba(0, 217, 255, 0.18);
             border-left-color: #00ffff;
-            box-shadow: 0 3px 10px rgba(0, 217, 255, 0.2);
+            box-shadow: 0 3px 12px rgba(0, 217, 255, 0.3);
         }
         
         @keyframes fadeIn { 
@@ -267,15 +308,19 @@
         }
         
         .log-time { 
-            color: #7a8fb8; 
-            font-size: 0.7rem; 
-            font-family: monospace; 
+            color: #9aafdb; 
+            font-size: 0.75rem; 
+            font-family: monospace;
+            font-weight: 600;
         }
         
         .log-text { 
             margin-top: 6px; 
-            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
-            line-height: 1.5; 
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            line-height: 1.7;
+            color: #ffffff;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
         
         .controls { 
@@ -297,54 +342,69 @@
         }
         
         button { 
-            background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
-            color: #0a0e1a; 
-            border: none; 
-            padding: 12px 20px; 
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.35) 0%, rgba(0, 136, 255, 0.35) 100%);
+            color: #ffffff;
+            border: 2px solid rgba(0, 217, 255, 0.8);
             border-radius: 10px;
-            cursor: pointer; 
-            font-weight: bold; 
-            font-family: inherit;
-            font-size: clamp(0.9rem, 2.2vw, 1.05rem); 
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.5); 
-            position: relative; 
+            padding: 12px 24px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
             overflow: hidden;
-            border: 2px solid rgba(0, 217, 255, 0.3);
+            text-shadow: 0 0 15px rgba(0, 217, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+            font-family: inherit;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         
         button::before {
-            content: ''; 
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
-            width: 0; 
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
             height: 0;
-            border-radius: 50%; 
-            background: rgba(255,255,255,0.4);
-            transform: translate(-50%, -50%); 
+            border-radius: 50%;
+            background: rgba(0, 217, 255, 0.3);
+            transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
         
-        button:hover::before { 
-            width: 300px; 
-            height: 300px; 
+        button:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
-        button:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 0 25px rgba(0, 217, 255, 0.8); 
+        button:hover {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.5) 0%, rgba(0, 136, 255, 0.5) 100%);
+            border-color: #00ffff;
+            box-shadow: 
+                0 0 30px rgba(0, 217, 255, 0.8),
+                0 0 50px rgba(0, 217, 255, 0.4),
+                inset 0 0 30px rgba(0, 217, 255, 0.15),
+                0 6px 12px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
         }
         
         button:active { 
             transform: translateY(0); 
         }
         
-        button:disabled { 
-            background: linear-gradient(135deg, #2a3550 0%, #1a2035 100%);
-            cursor: not-allowed; 
-            color: #5a6b8f; 
+        button:active {
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
+        }
+        
+        button:disabled {
+            background: rgba(40, 45, 60, 0.5);
+            color: #6a7590;
+            border-color: rgba(74, 85, 104, 0.6);
+            cursor: not-allowed;
             box-shadow: none;
+            transform: none;
+            text-shadow: none;
+            opacity: 0.6;
         }
         
         .modal { 
@@ -7878,14 +7938,35 @@ const REGION_CONSUMABLES = {
             
             // 使用藥水
             let healAmount = 0;
-            if (potion.hpPercent !== undefined) {
+            
+            // 檢查 subtype 來決定如何計算恢復量
+            if (potion.subtype === 'hp_percent' && potion.recovery !== undefined) {
+                // HP百分比恢復
+                healAmount = Math.floor(gameState.maxHp * potion.recovery);
+            } else if (potion.subtype === 'hp_fixed' && potion.recovery !== undefined) {
+                // 固定HP恢復
+                healAmount = potion.recovery;
+            } else if (potion.hpPercent !== undefined && !isNaN(potion.hpPercent)) {
+                // 舊版本相容：hpPercent 屬性
                 healAmount = Math.floor(gameState.maxHp * potion.hpPercent);
-            } else if (potion.recovery !== undefined) {
+            } else if (potion.recovery !== undefined && !isNaN(potion.recovery)) {
+                // 通用 recovery 屬性
                 if (potion.subtype && potion.subtype.includes('fixed')) {
                     healAmount = potion.recovery;
                 } else {
                     healAmount = Math.floor(gameState.maxHp * potion.recovery);
                 }
+            } else if (potion.effect) {
+                // 嘗試從 effect 中解析恢復量
+                const match = potion.effect.match(/(\d+)%/);
+                if (match) {
+                    healAmount = Math.floor(gameState.maxHp * (parseInt(match[1]) / 100));
+                }
+            }
+            
+            // 確保 healAmount 是有效數字
+            if (isNaN(healAmount) || healAmount <= 0) {
+                healAmount = Math.floor(gameState.maxHp * 0.2); // 預設恢復20%
             }
             
             gameState.hp = Math.min(gameState.hp + healAmount, gameState.maxHp);
@@ -13949,71 +14030,71 @@ const REGION_CONSUMABLES = {
             const entry = document.createElement('div');
             entry.className = 'log-entry';
             
-            // 根據類型和內容設定顏色和圖示
-            let color = '#7a8fb8';
+            // 根據類型和內容設定顏色和圖示（增強版 - 更高對比度）
+            let color = '#a0b5e0';
             let icon = 'ℹ️';
             let fontWeight = 'normal';
             
             // 優先判斷特殊內容
             if (message.includes('暴擊') || message.includes('💥')) {
-                color = '#ff4444';
+                color = '#ff6666';  // 更亮的紅色
                 fontWeight = 'bold';
                 icon = '💥';
             } else if (message.includes('吸血') || message.includes('🩸')) {
-                color = '#ff69b4';
+                color = '#ff88cc';  // 更亮的粉紅
                 icon = '🩸';
             } else if (type === '遭遇' || type === '怪物' || type === '遇敵') {
-                color = '#ffd700';
+                color = '#ffee44';  // 更亮的金色
                 icon = '👾';
             } else if (type === '戰鬥' || type === '攻擊') {
-                color = '#e0e0e0';
+                color = '#ffffff';  // 純白色
                 icon = '⚔️';
             } else if (type === '技能') {
-                color = '#00d9ff';
+                color = '#00eeff';  // 更亮的青色
                 icon = '⚡';
             } else if (type === '勝利') {
-                color = '#00ff88';
+                color = '#44ffaa';  // 更亮的綠色
                 icon = '✅';
             } else if (message.includes('獲得了') && (message.includes('(') || message.includes('）'))) {
                 // 裝備掉落
-                color = '#d946ef';
+                color = '#ff66ff';  // 更亮的紫色
                 icon = '🎁';
             } else if (type === '掉落') {
-                color = '#d946ef';
+                color = '#ff66ff';  // 更亮的紫色
                 icon = '🎁';
             } else if (type === '升級') {
-                color = '#ffa500';
+                color = '#ffbb44';  // 更亮的橙色
                 fontWeight = 'bold';
                 icon = '⭐';
             } else if (type === '失敗' || type === '死亡') {
-                color = '#ff4444';
+                color = '#ff6666';  // 更亮的紅色
                 icon = '❌';
             } else if (type === '裝備' || message.includes('裝備') || message.includes('卸下')) {
-                color = '#d946ef';
+                color = '#ff66ff';  // 更亮的紫色
                 icon = '🎽';
             } else if (type === '消耗品' || message.includes('藥水') || message.includes('卷軸')) {
-                color = '#00ff88';
+                color = '#44ffaa';  // 更亮的綠色
                 icon = '🧪';
             } else if (type === '系統') {
-                color = '#999999';
+                color = '#cccccc';  // 更亮的灰色
                 icon = '💻';
             } else if (type === '使用') {
-                color = '#00ff88';
+                color = '#44ffaa';  // 更亮的綠色
                 icon = '✨';
             } else if (type === '休息') {
-                color = '#4EA5FF';
+                color = '#66bbff';  // 更亮的藍色
                 icon = '💤';
             } else if (type === '分解') {
-                color = '#9E9E9E';
+                color = '#bbbbbb';  // 更亮的灰色
                 icon = '♻️';
             } else if (type === '商店') {
-                color = '#FFD700';
+                color = '#ffee44';  // 更亮的金色
                 icon = '🏪';
             } else if (type === '金幣' || message.includes('金幣') || message.includes('💰')) {
-                color = '#ffd700';
+                color = '#ffee44';  // 更亮的金色
                 icon = '💰';
             } else if (type === '經驗' || message.includes('經驗') || message.includes('EXP')) {
-                color = '#00d9ff';
+                color = '#00eeff';  // 更亮的青色
                 icon = '⬆️';
             }
             
@@ -14022,8 +14103,8 @@ const REGION_CONSUMABLES = {
             if (isSpecialBoss) fontWeight = 'bold';
             
             entry.innerHTML = `
-                <div class="log-time" style="color: ${color};">${icon} [${type}]</div>
-                <div class="log-text" style="color: ${color}; font-size: ${fontSize}; font-weight: ${fontWeight};">${message}</div>
+                <div class="log-time" style="color: ${color}; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);">${icon} [${type}]</div>
+                <div class="log-text" style="color: ${color}; font-size: ${fontSize}; font-weight: ${fontWeight}; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);">${message}</div>
             `;
             log.appendChild(entry);
             log.scrollTop = log.scrollHeight;
@@ -22620,22 +22701,27 @@ const REGION_CONSUMABLES = {
                 
                 console.log('[loadGame] 讀檔後藥水選擇:', {
                     selectedPotionId: gameState.selectedPotionId,
-                    selectedPotionName: gameState.selectedPotionName
+                    selectedPotionName: gameState.selectedPotionName,
+                    autoPotionConfig: gameState.autoPotionConfig
                 });
                 
-                // 初始化新的自動喝藥配置
+                // 先保存舊的藥水選擇（如果存在）
+                const oldPotionName = gameState.selectedPotionName || (gameState.autoPotionConfig && gameState.autoPotionConfig.potionName);
+                const oldThreshold = gameState.autoPotionThreshold || (gameState.autoPotionConfig && gameState.autoPotionConfig.threshold);
+                
+                // 初始化新的自動喝藥配置（如果不存在）
                 initAutoPotionConfig();
                 
-                // 如果舊存檔中有 selectedPotionName，遷移到新系統
-                if (gameState.selectedPotionName && !gameState.autoPotionConfig.potionName) {
-                    gameState.autoPotionConfig.potionName = gameState.selectedPotionName;
-                    console.log('[loadGame] 已遷移舊的藥水選擇到新系統:', gameState.selectedPotionName);
+                // 恢復藥水選擇
+                if (oldPotionName) {
+                    gameState.autoPotionConfig.potionName = oldPotionName;
+                    console.log('[loadGame] 已恢復藥水選擇:', oldPotionName);
                 }
                 
-                // 如果舊存檔中有 autoPotionThreshold，遷移到新系統
-                if (gameState.autoPotionThreshold && !gameState.autoPotionConfig.threshold) {
-                    gameState.autoPotionConfig.threshold = gameState.autoPotionThreshold;
-                    console.log('[loadGame] 已遷移舊的觸發HP閾值到新系統:', gameState.autoPotionThreshold);
+                // 恢復觸發閾值
+                if (oldThreshold) {
+                    gameState.autoPotionConfig.threshold = oldThreshold;
+                    console.log('[loadGame] 已恢復觸發HP閾值:', oldThreshold);
                 }
                 
                 // 修復舊存檔中沒有quantity的藥水

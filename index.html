@@ -1033,12 +1033,7 @@
                         <!-- 自動喝藥設定 -->
                         <div style="margin-top: 8px; padding: 8px; background: rgba(0, 0, 0, 0.2); border-radius: 6px; border: 1px solid rgba(0, 217, 255, 0.2);">
                             <div style="font-size: 0.75rem; color: #7a8fb8; margin-bottom: 6px;">🧪 自動喝藥</div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                <span style="font-size: 0.75rem; color: #7a8fb8;">藥水:</span>
-                                <select id="potion-selector" onchange="setAutoPotion(this.value)" style="flex: 1; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                                    <option value="">選擇藥水...</option>
-                                </select>
-                            </div>
+                            <div style="font-size: 0.7rem; color: #5a9fb8; margin-bottom: 8px;">智能模式：自動選擇回復最多的藥水</div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="font-size: 0.75rem; color: #7a8fb8;">觸發HP:</span>
                                 <select id="auto-potion-threshold" onchange="setAutoPotionThreshold(this.value)" style="flex: 1; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); color: #00d9ff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
@@ -6443,7 +6438,7 @@ const REGION_CONSUMABLES = {
                 lifeSteal: 0,       // 吸血
                 armorPen: 0,        // 無視防禦
                 bossDmg: 0,         // 對首領傷害
-                hpRegen: 0,         // 生命回復
+                hpRegen: 1,  // 基礎每秒回復1%最大生命
                 expBonus: 0,        // 經驗加成
                 specialEffects: [], // 特殊效果
                 setCount: setCount
@@ -7127,15 +7122,15 @@ const REGION_CONSUMABLES = {
                 maxAp: 100,
                 gold: 200,
                 shards: 0,
-                atk: 10,
-                def: 5,
+                atk: 13,
+                    def: 6,
                 crit: 5,
                 critDmg: 150,
                 dmgRed: 0,
                 lifeSteal: 0,
                 armorPen: 0,
                 bossDmg: 0,
-                hpRegen: 0,
+                hpRegen: 1,  // 基礎每秒回復1%最大生命
                 expBonus: 0,
                 luck: 0,        // 幸運值（掉寶率加成）
                 goldBonus: 0,   // 金幣加成
@@ -7754,12 +7749,17 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            // 生命恢復：5秒回復2%最大生命
-            if (gameState.player.hp < gameState.player.maxHp) {
+            // 生命恢復：每秒恢復 hpRegen% 最大生命
+            if (gameState.player.hp < gameState.player.maxHp && gameState.player.hpRegen > 0) {
+                // 初始化 hpRegenTime
+                if (!gameState.hpRegenTime) {
+                    gameState.hpRegenTime = now;
+                }
                 const hpOfflineTime = now - gameState.hpRegenTime;
-                const HP_REGEN_INTERVAL = 5000; // 5秒 = 5000毫秒
+                const HP_REGEN_INTERVAL = 1000; // 1秒 = 1000毫秒
                 const regenCount = Math.floor(hpOfflineTime / HP_REGEN_INTERVAL);
-                const hpToRecover = Math.floor(gameState.player.maxHp * 0.02 * regenCount); // 每次回復2%最大生命
+                const regenPerSecond = gameState.player.maxHp * (gameState.player.hpRegen / 100); // 每秒回復量
+                const hpToRecover = Math.floor(regenPerSecond * regenCount);
                 
                 if (hpToRecover > 0) {
                     const actualHpRecovery = Math.min(hpToRecover, gameState.player.maxHp - gameState.player.hp);
@@ -7767,6 +7767,11 @@ const REGION_CONSUMABLES = {
                     // 更新時間戳，保留餘數
                     gameState.hpRegenTime = now - (hpOfflineTime % HP_REGEN_INTERVAL);
                 }
+            }
+            
+            // 戰鬥外自動喝藥檢查
+            if (gameState.player.hp < gameState.player.maxHp) {
+                tryAutoPotion();
             }
         }
         
@@ -7795,7 +7800,6 @@ const REGION_CONSUMABLES = {
             if (!gameState.autoPotionConfig) {
                 gameState.autoPotionConfig = {
                     enabled: true,
-                    potionName: null,
                     threshold: 50
                 };
             }
@@ -7828,18 +7832,10 @@ const REGION_CONSUMABLES = {
             return uniquePotions;
         }
         
-        // 設定自動喝藥的藥水
+        // 設定自動喝藥的藥水（已廢棄，但保留以免錯誤）
         function setAutoPotion(potionName) {
-            if (!potionName || potionName === '') {
-                gameState.autoPotionConfig.potionName = null;
-                addLog('系統', '已清空自動喝藥設定');
-            } else {
-                gameState.autoPotionConfig.potionName = potionName;
-                addLog('系統', `已設定自動喝藥：${potionName}`);
-            }
-            
-            // 自動存檔
-            saveGame();
+            // 智能模式不需要手動選擇藥水
+            return;
         }
         
         // 設定自動喝藥的觸發HP百分比
@@ -7849,131 +7845,108 @@ const REGION_CONSUMABLES = {
             saveGame();
         }
         
-        // 刷新藥水選擇器UI
-        let isRefreshingUI = false; // 防止無限循環
+        // 刷新藥水選擇器UI（已廢棄，但保留以免錯誤）
+        let isRefreshingUI = false;
         
         function refreshPotionSelectorUI() {
-            if (isRefreshingUI) {
-                return;
-            }
-            
-            isRefreshingUI = true;
-            
-            const select = document.getElementById('potion-selector');
-            if (!select) {
-                isRefreshingUI = false;
-                return;
-            }
-            
-            // 獲取可用藥水
-            const availablePotions = getAvailableHPPotions();
-            
-            // 暫時移除 onchange 事件，防止觸發 setAutoPotion
-            const originalOnChange = select.onchange;
-            select.onchange = null;
-            
-            // 清空並重建選項
-            select.innerHTML = '<option value="">選擇藥水...</option>';
-            
-            availablePotions.forEach(potion => {
-                const option = document.createElement('option');
-                option.value = potion.name;  // 使用名稱作為value
-                
-                // 計算恢復百分比用於顯示
-                let percent = '?';
-                if (potion.hpPercent !== undefined) {
-                    percent = Math.round(potion.hpPercent * 100);
-                } else if (potion.recovery !== undefined) {
-                    if (potion.subtype && potion.subtype.includes('fixed')) {
-                        percent = potion.recovery;
-                    } else {
-                        percent = Math.round(potion.recovery * 100);
-                    }
-                }
-                
-                option.textContent = `${potion.name} (${percent}${potion.subtype && potion.subtype.includes('fixed') ? '' : '%'})`;
-                select.appendChild(option);
-            });
-            
-            // 設定當前選擇
-            if (gameState.autoPotionConfig && gameState.autoPotionConfig.potionName) {
-                select.value = gameState.autoPotionConfig.potionName;
-            } else {
-                select.value = '';
-            }
-            
-            // 恢復 onchange 事件
-            select.onchange = originalOnChange;
-            
-            isRefreshingUI = false;
+            // 智能模式不需要藥水選擇器
+            return;
         }
         
-        // 自動使用藥水（在戰鬥中調用）
+        // 自動使用藥水（在戰鬥中調用）- 智能模式
         function autoUsePotion() {
             if (!gameState.autoPotionConfig || !gameState.autoPotionConfig.enabled) {
                 return false;
             }
             
-            if (!gameState.autoPotionConfig.potionName) {
-                return false;
+            // 檢查冷卻時間
+            const now = Date.now();
+            if (!gameState.potionCooldown) {
+                gameState.potionCooldown = 0; // 初始化冷卻時間
             }
+            if (now < gameState.potionCooldown) {
+                console.log(`[自動喝藥] 冷卻中，還需 ${Math.ceil((gameState.potionCooldown - now) / 1000)} 秒`);
+                return false; // 冷卻中，不使用藥水
+            }
+            console.log(`[自動喝藥] 檢查觸發，HP: ${gameState.player.hp}/${gameState.player.maxHp} (${Math.floor((gameState.player.hp / gameState.player.maxHp) * 100)}%)`);
             
-            // 檢查HP是否低於閾值
-            const hpPercent = (gameState.hp / gameState.maxHp) * 100;
+            // 檢查HP是否低於閉值
+            const hpPercent = (gameState.player.hp / gameState.player.maxHp) * 100;
             if (hpPercent >= gameState.autoPotionConfig.threshold) {
                 return false;
             }
             
-            // 查找背包中的藥水
-            const potionIndex = gameState.inventory.findIndex(item => 
-                item.name === gameState.autoPotionConfig.potionName &&
-                item.type === 'consumable'
+            // 查找背包中所有HP藥水
+            const hpPotions = gameState.inventory.filter(item => 
+                item.type === 'consumable' && 
+                item.subtype && 
+                (item.subtype.includes('hp_percent') || item.subtype.includes('hp_fixed') || item.subtype === 'hp' || item.subtype === 'hp_potion')
             );
             
-            if (potionIndex === -1) {
+            if (hpPotions.length === 0) {
                 return false;
             }
             
-            const potion = gameState.inventory[potionIndex];
+            // 計算每個藥水的回復量，選擇最大的
+            let bestPotion = null;
+            let bestHealAmount = 0;
+            let bestPotionIndex = -1;
             
-            // 使用藥水
-            let healAmount = 0;
-            
-            // 檢查 subtype 來決定如何計算恢復量
-            if (potion.subtype === 'hp_percent' && potion.recovery !== undefined) {
-                // HP百分比恢復
-                healAmount = Math.floor(gameState.maxHp * potion.recovery);
-            } else if (potion.subtype === 'hp_fixed' && potion.recovery !== undefined) {
-                // 固定HP恢復
-                healAmount = potion.recovery;
-            } else if (potion.hpPercent !== undefined && !isNaN(potion.hpPercent)) {
-                // 舊版本相容：hpPercent 屬性
-                healAmount = Math.floor(gameState.maxHp * potion.hpPercent);
-            } else if (potion.recovery !== undefined && !isNaN(potion.recovery)) {
-                // 通用 recovery 屬性
-                if (potion.subtype && potion.subtype.includes('fixed')) {
+            hpPotions.forEach((potion, idx) => {
+                let healAmount = 0;
+                
+                if (potion.subtype === 'hp_percent' && potion.recovery !== undefined) {
+                    healAmount = Math.floor(gameState.player.maxHp * potion.recovery);
+                } else if (potion.subtype === 'hp_fixed' && potion.recovery !== undefined) {
                     healAmount = potion.recovery;
-                } else {
-                    healAmount = Math.floor(gameState.maxHp * potion.recovery);
+                } else if (potion.hpPercent !== undefined && !isNaN(potion.hpPercent)) {
+                    healAmount = Math.floor(gameState.player.maxHp * potion.hpPercent);
+                } else if (potion.recovery !== undefined && !isNaN(potion.recovery)) {
+                    if (potion.subtype && potion.subtype.includes('fixed')) {
+                        healAmount = potion.recovery;
+                    } else {
+                        healAmount = Math.floor(gameState.player.maxHp * potion.recovery);
+                    }
+                } else if (potion.effect) {
+                    const match = potion.effect.match(/(\d+)%/);
+                    if (match) {
+                        healAmount = Math.floor(gameState.player.maxHp * (parseInt(match[1]) / 100));
+                    }
                 }
-            } else if (potion.effect) {
-                // 嘗試從 effect 中解析恢復量
-                const match = potion.effect.match(/(\d+)%/);
-                if (match) {
-                    healAmount = Math.floor(gameState.maxHp * (parseInt(match[1]) / 100));
+                
+                if (healAmount > bestHealAmount) {
+                    bestHealAmount = healAmount;
+                    bestPotion = potion;
+                    bestPotionIndex = gameState.inventory.indexOf(potion);
                 }
+            });
+            
+            if (!bestPotion || bestPotionIndex === -1) {
+                return false;
             }
             
-            // 確保 healAmount 是有效數字
-            if (isNaN(healAmount) || healAmount <= 0) {
-                healAmount = Math.floor(gameState.maxHp * 0.2); // 預設恢復20%
+            const potionIndex = bestPotionIndex;
+            const potion = bestPotion;
+            const healAmount = bestHealAmount;
+            
+            if (potionIndex === -1 || !potion || healAmount <= 0) {
+                return false;
             }
             
-            gameState.hp = Math.min(gameState.hp + healAmount, gameState.maxHp);
+            gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+            
+            // 設定冷卻時間
+            gameState.potionCooldown = Date.now() + 2000; // 2秒冷卻
+            
+            console.log(`[自動喝藥] 使用了 ${potion.name}，下次可使用時間: ${gameState.potionCooldown}`);
             addLog('自動喝藥', `自動使用了 ${potion.name}，恢復了 ${healAmount} HP`);
             
-            // 從背包中移除藥水
-            gameState.inventory.splice(potionIndex, 1);
+            // 從背包中移除藥水（正確處理數量）
+            if (potion.quantity && potion.quantity > 1) {
+                potion.quantity -= 1; // 減少1個
+            } else {
+                gameState.inventory.splice(potionIndex, 1); // 移除整個物品
+            }
             
             // 刷新UI
             updateUI();
@@ -10231,6 +10204,9 @@ const REGION_CONSUMABLES = {
                 }
                 
                 // 敵人攻擊（菁英怪物可能暴擊）
+                // 同步 playerHp 與 gameState.player.hp（防止自動喝藥導致不同步）
+                playerHp = gameState.player.hp;
+                
                 // 應用精準詞綴（無視防禦）
                 let enemyArmorPen = 0;
                 if (enemy.affixEffects && enemy.affixEffects.armorPen) {
@@ -12363,7 +12339,7 @@ const REGION_CONSUMABLES = {
         function convertPointsToStats(pointsDistribution) {
             const stats = {
                 atk: 0,
-                def: 0,
+                    def: 0,
                 hp: 0,
                 crit: 0,
                 critDmg: 0,
@@ -13358,9 +13334,6 @@ const REGION_CONSUMABLES = {
 
         // ========== UI更新 ==========
         function updateUI() {
-            // 每次UI更新時都檢查並恢復資源
-            checkAndRecoverResources();
-            
             // 角色資訊
             document.getElementById('player-name').textContent = gameState.player.name;
             document.getElementById('player-class').textContent = gameState.player.class;
@@ -13390,6 +13363,29 @@ const REGION_CONSUMABLES = {
             document.getElementById('player-hp').textContent = `${gameState.player.hp}/${gameState.player.maxHp}`;
             document.getElementById('player-hp-bar').style.width = `${(gameState.player.hp / gameState.player.maxHp) * 100}%`;
             document.getElementById('player-ap').textContent = `${gameState.player.ap}/${gameState.player.maxAp}`;
+            
+            // 同時更新模態視窗中的血條（如果模態視窗是打開的）
+            const characterModal = document.getElementById('character-modal');
+            if (characterModal && characterModal.style.display === 'block') {
+                const modalContent = document.getElementById('character-modal-content');
+                if (modalContent) {
+                    // 更新模態視窗中的HP顯示
+                    const modalHpText = modalContent.querySelector('#player-hp');
+                    if (modalHpText) {
+                        modalHpText.textContent = `${gameState.player.hp}/${gameState.player.maxHp}`;
+                    }
+                    // 更新模態視窗中的HP血條
+                    const modalHpBar = modalContent.querySelector('#player-hp-bar');
+                    if (modalHpBar) {
+                        modalHpBar.style.width = `${(gameState.player.hp / gameState.player.maxHp) * 100}%`;
+                    }
+                    // 更新模態視窗中的AP顯示
+                    const modalApText = modalContent.querySelector('#player-ap');
+                    if (modalApText) {
+                        modalApText.textContent = `${gameState.player.ap}/${gameState.player.maxAp}`;
+                    }
+                }
+            }
             
             // 更新體力條和經驗條寬度
             const apBar = document.getElementById('player-ap-bar');
@@ -14810,15 +14806,29 @@ const REGION_CONSUMABLES = {
                 return;
                 
             } else if (item.subtype === 'hp') {
-                // HP藥水（百分比） - 無冷卻
+                // HP藥水（百分比） - 1秒冷卻
+                const now = Date.now();
+                if (now < gameState.potionCooldown) {
+                    const remaining = Math.ceil((gameState.potionCooldown - now) / 1000);
+                    addLog('系統', `藥水冷卻中！還需等待 ${remaining} 秒`);
+                    return;
+                }
                 const healAmount = Math.floor(gameState.player.maxHp * item.recovery);
                 gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                gameState.potionCooldown = now + 2000; // 2秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
                 
             } else if (item.subtype === 'hp_fixed') {
-                // HP藥水（固定數值） - 無冷卻
+                // HP藥水（固定數值） - 1秒冷卻
+                const now = Date.now();
+                if (now < gameState.potionCooldown) {
+                    const remaining = Math.ceil((gameState.potionCooldown - now) / 1000);
+                    addLog('系統', `藥水冷卻中！還需等待 ${remaining} 秒`);
+                    return;
+                }
                 const healAmount = item.recovery;
                 gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                gameState.potionCooldown = now + 2000; // 2秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
                 
             } else if (item.subtype === 'ap') {
@@ -14846,13 +14856,20 @@ const REGION_CONSUMABLES = {
                 const restoreAmount = item.apRecovery;
                 gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
                 gameState.player.ap = Math.min(gameState.player.maxAp, gameState.player.ap + restoreAmount);
-                gameState.potionCooldown = now + 5000; // 5秒冷卻
+                gameState.potionCooldown = now + 2000; // 2秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} HP 和 ${restoreAmount} AP！`);
                 
             } else if (item.subtype === 'hp_percent') {
-                // HP藥水（百分比） - 無冷卻
+                // HP藥水（百分比） - 1秒冷卻
+                const now = Date.now();
+                if (now < gameState.potionCooldown) {
+                    const remaining = Math.ceil((gameState.potionCooldown - now) / 1000);
+                    addLog('系統', `藥水冷卻中！還需等待 ${remaining} 秒`);
+                    return;
+                }
                 const healAmount = Math.floor(gameState.player.maxHp * item.recovery);
                 gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + healAmount);
+                gameState.potionCooldown = now + 2000; // 2秒冷卻
                 addLog('使用', `使用了 ${item.name}，恢復了 ${healAmount} 點生命！`);
                 
             } else if (item.subtype === 'both_percent') {
@@ -17283,7 +17300,7 @@ const REGION_CONSUMABLES = {
             
             const bonuses = {
                 atk: 0,
-                def: 0,
+                    def: 0,
                 hp: 0,
                 crit: 0,
                 critDmg: 0,
@@ -18547,6 +18564,8 @@ const REGION_CONSUMABLES = {
                 return enhanceLevel * 2; // 每級+2%
             } else if (statType === 'dmgRed' || statType === 'lifeSteal' || statType === 'armorPen' || statType === 'bossDmg') {
                 return enhanceLevel * 0.3; // 每級+0.3%
+            } else if (statType === 'hpRegen' || statType === 'expBonus' || statType === 'luck' || statType === 'goldBonus') {
+                return enhanceLevel * 0.2; // 每級+0.2%（回復、經驗、幸運、金幣屬性）
             }
             
             // 數值屬性（攻擊、防禦、生命）使用百分比增加
@@ -22380,7 +22399,7 @@ const REGION_CONSUMABLES = {
 	            
 	            // 添加新屬性的默認值（版本 2.7+）
             if (!loadedState.player.hpRegen) {
-                loadedState.player.hpRegen = 0;
+                loadedState.player.hpRegen = 1;  // 基礎每秒回復1%最大生命
             }
             if (!loadedState.player.expBonus) {
                 loadedState.player.expBonus = 0;
@@ -22699,29 +22718,13 @@ const REGION_CONSUMABLES = {
                 // 載入資料
                 gameState = loadedState;
                 
-                console.log('[loadGame] 讀檔後藥水選擇:', {
-                    selectedPotionId: gameState.selectedPotionId,
-                    selectedPotionName: gameState.selectedPotionName,
-                    autoPotionConfig: gameState.autoPotionConfig
-                });
-                
-                // 先保存舊的藥水選擇（如果存在）
-                const oldPotionName = gameState.selectedPotionName || (gameState.autoPotionConfig && gameState.autoPotionConfig.potionName);
-                const oldThreshold = gameState.autoPotionThreshold || (gameState.autoPotionConfig && gameState.autoPotionConfig.threshold);
-                
-                // 初始化新的自動喝藥配置（如果不存在）
+                // 初始化自動喝藥配置（如果不存在）
                 initAutoPotionConfig();
                 
-                // 恢復藥水選擇
-                if (oldPotionName) {
-                    gameState.autoPotionConfig.potionName = oldPotionName;
-                    console.log('[loadGame] 已恢復藥水選擇:', oldPotionName);
-                }
-                
-                // 恢復觸發閾值
+                // 恢復觸發閉值（兼容舊存檔）
+                const oldThreshold = gameState.autoPotionThreshold || (gameState.autoPotionConfig && gameState.autoPotionConfig.threshold);
                 if (oldThreshold) {
                     gameState.autoPotionConfig.threshold = oldThreshold;
-                    console.log('[loadGame] 已恢復觸發HP閾值:', oldThreshold);
                 }
                 
                 // 修復舊存檔中沒有quantity的藥水
@@ -22752,26 +22755,28 @@ const REGION_CONSUMABLES = {
                     }
                 }
                 
-                // 離線生命恢復計算
-                const hpOfflineTime = now - (gameState.hpRegenTime || now);
-                // 5秒回復2%最大生命 (5000 毫秒)
-                const HP_REGEN_INTERVAL = 5000; // 5秒回復2%最大生命
-                const regenCount = Math.floor(hpOfflineTime / HP_REGEN_INTERVAL);
-                const hpToRecover = Math.floor(gameState.player.maxHp * 0.02 * regenCount); // 每次回復2%最大生命
-                
-                if (hpToRecover > 0 && gameState.player.hp < gameState.player.maxHp) {
-                    const actualHpRecovery = Math.min(hpToRecover, gameState.player.maxHp - gameState.player.hp);
-                    gameState.player.hp += actualHpRecovery;
+                // 離線生命恢復計算（每秒恢復 hpRegen%）
+                if (gameState.player.hpRegen > 0) {
+                    const hpOfflineTime = now - (gameState.hpRegenTime || now);
+                    const HP_REGEN_INTERVAL = 1000; // 1秒 = 1000毫秒
+                    const regenCount = Math.floor(hpOfflineTime / HP_REGEN_INTERVAL);
+                    const regenPerSecond = gameState.player.maxHp * (gameState.player.hpRegen / 100);
+                    const hpToRecover = Math.floor(regenPerSecond * regenCount);
                     
-                    // 更新生命回復時間戳
-                    gameState.hpRegenTime = now - (hpOfflineTime % HP_REGEN_INTERVAL);
-                    
-                    addLog('系統', `離線期間恢復了 ${actualHpRecovery} 點生命值！`);
-                } else {
-                    // 即使沒有恢復，也要確保時間戳存在
-                    if (!gameState.hpRegenTime) {
-                        gameState.hpRegenTime = now;
+                    if (hpToRecover > 0 && gameState.player.hp < gameState.player.maxHp) {
+                        const actualHpRecovery = Math.min(hpToRecover, gameState.player.maxHp - gameState.player.hp);
+                        gameState.player.hp += actualHpRecovery;
+                        
+                        // 更新生命回復時間戳
+                        gameState.hpRegenTime = now - (hpOfflineTime % HP_REGEN_INTERVAL);
+                        
+                        addLog('系統', `離線期間恢復了 ${actualHpRecovery} 點生命值！`);
                     }
+                }
+                
+                // 確保時間戳存在
+                if (!gameState.hpRegenTime) {
+                    gameState.hpRegenTime = now;
                 }
                 
                 // 隱藏所有畫面
@@ -22951,16 +22956,17 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'exp_easy',
                 name: '簡單',
-                level: 5,
+                level: 10,
                 ap: 5,
                 dailyLimit: 5,
                 enemy: {
-                    name: '修煉傀儡',
-                    hp: 300,
-                    atk: 20,
-                    def: 15,
-                    crit: 0,
-                    critDmg: 150
+                    name: '修煉僀儀',
+                    level: 15,
+                    hp: 800,
+                    atk: 50,
+                    def: 35,
+                    crit: 5,
+                    critDmg: 175
                 },
                 rewards: {
                     exp: 800,
@@ -22974,16 +22980,17 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'exp_normal',
                 name: '普通',
-                level: 15,
+                level: 25,
                 ap: 8,
                 dailyLimit: 5,
                 enemy: {
-                    name: '進階傀儡',
-                    hp: 700,
-                    atk: 35,
-                    def: 25,
-                    crit: 0,
-                    critDmg: 150
+                    name: '進階僀儀',
+                    level: 35,
+                    hp: 2500,
+                    atk: 120,
+                    def: 80,
+                    crit: 10,
+                    critDmg: 185
                 },
                 rewards: {
                     exp: 2500,
@@ -22997,16 +23004,17 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'exp_hard',
                 name: '困難',
-                level: 30,
+                level: 45,
                 ap: 12,
                 dailyLimit: 4,
                 enemy: {
-                    name: '高級傀儡',
-                    hp: 2000,
-                    atk: 70,
-                    def: 50,
-                    crit: 0,
-                    critDmg: 150
+                    name: '高級僀儀',
+                    level: 60,
+                    hp: 6500,
+                    atk: 250,
+                    def: 170,
+                    crit: 15,
+                    critDmg: 200
                 },
                 rewards: {
                     exp: 7000,
@@ -23020,16 +23028,17 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'exp_hell',
                 name: '地獄',
-                level: 50,
+                level: 70,
                 ap: 18,
                 dailyLimit: 3,
                 enemy: {
-                    name: '精英傀儡',
-                    hp: 5500,
-                    atk: 130,
-                    def: 95,
-                    crit: 0,
-                    critDmg: 150
+                    name: '精英僀儀',
+                    level: 90,
+                    hp: 15000,
+                    atk: 480,
+                    def: 320,
+                    crit: 25,
+                    critDmg: 250
                 },
                 rewards: {
                     exp: 18000,
@@ -23043,16 +23052,17 @@ const DUNGEONS_DATA = {
             abyss: {
                 id: 'exp_abyss',
                 name: '深淵',
-                level: 70,
+                level: 90,
                 ap: 25,
                 dailyLimit: 3,
                 enemy: {
-                    name: '終極傀儡',
-                    hp: 14000,
-                    atk: 240,
-                    def: 170,
-                    crit: 0,
-                    critDmg: 150
+                    name: '終極僀儀',
+                    level: 120,
+                    hp: 35000,
+                    atk: 850,
+                    def: 600,
+                    crit: 35,
+                    critDmg: 300
                 },
                 rewards: {
                     exp: 45000,
@@ -23075,16 +23085,17 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'gold_easy',
                 name: '簡單',
-                level: 8,
+                level: 15,
                 ap: 5,
                 dailyLimit: 5,
                 enemy: {
                     name: '寶箱怪',
-                    hp: 250,
-                    atk: 15,
-                    def: 10,
-                    crit: 0,
-                    critDmg: 150
+                    level: 20,
+                    hp: 1000,
+                    atk: 60,
+                    def: 40,
+                    crit: 5,
+                    critDmg: 175
                 },
                 rewards: {
                     exp: 300,
@@ -23098,16 +23109,17 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'gold_normal',
                 name: '普通',
-                level: 18,
+                level: 30,
                 ap: 8,
                 dailyLimit: 5,
                 enemy: {
                     name: '黃金寶箱怪',
-                    hp: 600,
-                    atk: 30,
-                    def: 20,
-                    crit: 0,
-                    critDmg: 150
+                    level: 40,
+                    hp: 3000,
+                    atk: 140,
+                    def: 95,
+                    crit: 10,
+                    critDmg: 185
                 },
                 rewards: {
                     exp: 900,
@@ -23121,16 +23133,17 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'gold_hard',
                 name: '困難',
-                level: 35,
+                level: 50,
                 ap: 12,
                 dailyLimit: 4,
                 enemy: {
                     name: '白金寶箱怪',
-                    hp: 1800,
-                    atk: 60,
-                    def: 42,
-                    crit: 0,
-                    critDmg: 150
+                    level: 70,
+                    hp: 7500,
+                    atk: 280,
+                    def: 190,
+                    crit: 15,
+                    critDmg: 200
                 },
                 rewards: {
                     exp: 2500,
@@ -23144,16 +23157,17 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'gold_hell',
                 name: '地獄',
-                level: 55,
+                level: 75,
                 ap: 18,
                 dailyLimit: 3,
                 enemy: {
                     name: '鑽石寶箱怪',
-                    hp: 5200,
-                    atk: 120,
-                    def: 85,
-                    crit: 0,
-                    critDmg: 150
+                    level: 100,
+                    hp: 17000,
+                    atk: 520,
+                    def: 350,
+                    crit: 25,
+                    critDmg: 250
                 },
                 rewards: {
                     exp: 6500,
@@ -23167,16 +23181,17 @@ const DUNGEONS_DATA = {
             abyss: {
                 id: 'gold_abyss',
                 name: '深淵',
-                level: 75,
+                level: 92,
                 ap: 25,
                 dailyLimit: 3,
                 enemy: {
                     name: '神話寶箱怪',
-                    hp: 13500,
-                    atk: 230,
-                    def: 160,
-                    crit: 0,
-                    critDmg: 150
+                    level: 130,
+                    hp: 40000,
+                    atk: 920,
+                    def: 650,
+                    crit: 35,
+                    critDmg: 300
                 },
                 rewards: {
                     exp: 16000,
@@ -23199,16 +23214,17 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'equipment_easy',
                 name: '簡單',
-                level: 10,
+                level: 20,
                 ap: 8,
                 dailyLimit: 4,
                 enemy: {
                     name: '遺跡守衛',
-                    hp: 400,
-                    atk: 30,
-                    def: 20,
-                    crit: 5,
-                    critDmg: 150
+                    level: 25,
+                    hp: 1500,
+                    atk: 80,
+                    def: 55,
+                    crit: 8,
+                    critDmg: 175
                 },
                 rewards: {
                     exp: 500,
@@ -23229,16 +23245,17 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'equipment_normal',
                 name: '普通',
-                level: 22,
+                level: 35,
                 ap: 12,
                 dailyLimit: 4,
                 enemy: {
                     name: '精英守衛',
-                    hp: 950,
-                    atk: 52,
-                    def: 38,
-                    crit: 10,
-                    critDmg: 160
+                    level: 45,
+                    hp: 4000,
+                    atk: 170,
+                    def: 115,
+                    crit: 15,
+                    critDmg: 185
                 },
                 rewards: {
                     exp: 1500,
@@ -23259,16 +23276,17 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'equipment_hard',
                 name: '困難',
-                level: 40,
+                level: 55,
                 ap: 18,
                 dailyLimit: 3,
                 enemy: {
                     name: '遺跡領主',
-                    hp: 2800,
-                    atk: 105,
-                    def: 75,
-                    crit: 15,
-                    critDmg: 170
+                    level: 75,
+                    hp: 9000,
+                    atk: 330,
+                    def: 225,
+                    crit: 20,
+                    critDmg: 200
                 },
                 rewards: {
                     exp: 4000,
@@ -23289,16 +23307,17 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'equipment_hell',
                 name: '地獄',
-                level: 60,
+                level: 80,
                 ap: 25,
                 dailyLimit: 3,
                 enemy: {
                     name: '遺跡霸主',
-                    hp: 7200,
-                    atk: 190,
-                    def: 135,
-                    crit: 20,
-                    critDmg: 180
+                    level: 105,
+                    hp: 20000,
+                    atk: 600,
+                    def: 410,
+                    crit: 30,
+                    critDmg: 250
                 },
                 rewards: {
                     exp: 10000,
@@ -23319,16 +23338,17 @@ const DUNGEONS_DATA = {
             abyss: {
                 id: 'equipment_abyss',
                 name: '深淵',
-                level: 80,
+                level: 95,
                 ap: 30,
                 dailyLimit: 3,
                 enemy: {
                     name: '遺跡神祇',
-                    hp: 17500,
-                    atk: 340,
-                    def: 250,
-                    crit: 25,
-                    critDmg: 200
+                    level: 140,
+                    hp: 50000,
+                    atk: 1100,
+                    def: 750,
+                    crit: 40,
+                    critDmg: 300
                 },
                 rewards: {
                     exp: 25000,
@@ -23359,16 +23379,17 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'material_easy',
                 name: '簡單',
-                level: 12,
+                level: 18,
                 ap: 6,
                 dailyLimit: 5,
                 enemy: {
                     name: '元素生物',
-                    hp: 350,
-                    atk: 25,
-                    def: 18,
-                    crit: 0,
-                    critDmg: 150
+                    level: 22,
+                    hp: 1200,
+                    atk: 70,
+                    def: 50,
+                    crit: 5,
+                    critDmg: 175
                 },
                 rewards: {
                     exp: 450,
@@ -23387,16 +23408,17 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'material_normal',
                 name: '普通',
-                level: 25,
+                level: 32,
                 ap: 10,
                 dailyLimit: 5,
                 enemy: {
                     name: '高級元素',
-                    hp: 800,
-                    atk: 48,
-                    def: 34,
-                    crit: 0,
-                    critDmg: 150
+                    level: 42,
+                    hp: 3500,
+                    atk: 150,
+                    def: 100,
+                    crit: 10,
+                    critDmg: 185
                 },
                 rewards: {
                     exp: 1300,
@@ -23417,16 +23439,17 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'material_hard',
                 name: '困難',
-                level: 45,
+                level: 52,
                 ap: 15,
                 dailyLimit: 4,
                 enemy: {
                     name: '精英元素',
-                    hp: 2400,
-                    atk: 95,
-                    def: 68,
-                    crit: 0,
-                    critDmg: 150
+                    level: 72,
+                    hp: 8000,
+                    atk: 300,
+                    def: 200,
+                    crit: 15,
+                    critDmg: 200
                 },
                 rewards: {
                     exp: 3500,
@@ -23447,16 +23470,17 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'material_hell',
                 name: '地獄',
-                level: 65,
+                level: 77,
                 ap: 22,
                 dailyLimit: 3,
                 enemy: {
                     name: '元素領主',
-                    hp: 6400,
-                    atk: 170,
-                    def: 127,
-                    crit: 0,
-                    critDmg: 150
+                    level: 102,
+                    hp: 18000,
+                    atk: 550,
+                    def: 370,
+                    crit: 25,
+                    critDmg: 250
                 },
                 rewards: {
                     exp: 9000,
@@ -23477,16 +23501,17 @@ const DUNGEONS_DATA = {
             abyss: {
                 id: 'material_abyss',
                 name: '深淵',
-                level: 85,
+                level: 93,
                 ap: 28,
                 dailyLimit: 3,
                 enemy: {
                     name: '元素君主',
-                    hp: 16000,
-                    atk: 315,
-                    def: 235,
-                    crit: 0,
-                    critDmg: 150
+                    level: 135,
+                    hp: 42000,
+                    atk: 950,
+                    def: 670,
+                    crit: 35,
+                    critDmg: 300
                 },
                 rewards: {
                     exp: 22000,
@@ -23516,16 +23541,17 @@ const DUNGEONS_DATA = {
             easy: {
                 id: 'boss_easy',
                 name: '簡單',
-                level: 20,
+                level: 25,
                 ap: 12,
                 dailyLimit: 3,
                 enemy: {
                     name: '魔王侍衛',
-                    hp: 1500,
-                    atk: 50,
-                    def: 35,
-                    crit: 10,
-                    critDmg: 160,
+                    level: 30,
+                    hp: 2000,
+                    atk: 100,
+                    def: 70,
+                    crit: 12,
+                    critDmg: 180,
                     isBoss: true
                 },
                 rewards: {
@@ -23550,16 +23576,17 @@ const DUNGEONS_DATA = {
             normal: {
                 id: 'boss_normal',
                 name: '普通',
-                level: 35,
+                level: 40,
                 ap: 18,
                 dailyLimit: 2,
                 enemy: {
                     name: '魔王將軍',
-                    hp: 3600,
-                    atk: 87,
-                    def: 60,
-                    crit: 15,
-                    critDmg: 170,
+                    level: 50,
+                    hp: 5500,
+                    atk: 200,
+                    def: 135,
+                    crit: 18,
+                    critDmg: 200,
                     isBoss: true
                 },
                 rewards: {
@@ -23585,16 +23612,17 @@ const DUNGEONS_DATA = {
             hard: {
                 id: 'boss_hard',
                 name: '困難',
-                level: 50,
+                level: 60,
                 ap: 25,
                 dailyLimit: 2,
                 enemy: {
                     name: '副魔王',
-                    hp: 8000,
-                    atk: 155,
-                    def: 110,
-                    crit: 20,
-                    critDmg: 180,
+                    level: 80,
+                    hp: 12000,
+                    atk: 380,
+                    def: 260,
+                    crit: 25,
+                    critDmg: 220,
                     isBoss: true
                 },
                 rewards: {
@@ -23620,16 +23648,17 @@ const DUNGEONS_DATA = {
             hell: {
                 id: 'boss_hell',
                 name: '地獄',
-                level: 70,
+                level: 85,
                 ap: 35,
                 dailyLimit: 2,
                 enemy: {
                     name: '魔王',
-                    hp: 20000,
-                    atk: 275,
-                    def: 195,
-                    crit: 25,
-                    critDmg: 200,
+                    level: 110,
+                    hp: 28000,
+                    atk: 680,
+                    def: 470,
+                    crit: 32,
+                    critDmg: 260,
                     isBoss: true,
                     isSpecialBoss: true
                 },
@@ -23656,16 +23685,17 @@ const DUNGEONS_DATA = {
             abyss: {
                 id: 'boss_abyss',
                 name: '深淵',
-                level: 90,
+                level: 100,
                 ap: 40,
                 dailyLimit: 2,
                 enemy: {
                     name: '魔神',
-                    hp: 48000,
-                    atk: 470,
-                    def: 340,
-                    crit: 30,
-                    critDmg: 220,
+                    level: 150,
+                    hp: 60000,
+                    atk: 1200,
+                    def: 820,
+                    crit: 45,
+                    critDmg: 320,
                     isBoss: true,
                     isSpecialBoss: true
                 },
@@ -23787,10 +23817,10 @@ function seededRandom(seed) {
 // 根據難度獲取詞綴機率
 function getAffixChanceByDifficulty(difficulty) {
     const chances = {
-        easy: 0.2,
-        normal: 0.4,
-        hard: 0.6,
-        hell: 0.8,
+        easy: 0.4,
+        normal: 0.6,
+        hard: 0.85,
+        hell: 0.95,
         abyss: 1.0
     };
     return chances[difficulty] || 0;
@@ -23799,23 +23829,27 @@ function getAffixChanceByDifficulty(difficulty) {
 // 根據難度獲取詞綴數量
 function getAffixCountByDifficulty(difficulty, seed) {
     const rand = seededRandom(seed);
-    if (difficulty === 'easy' || difficulty === 'normal') {
-        return rand < 0.7 ? 1 : 0;
-    } else if (difficulty === 'hard' || difficulty === 'hell') {
-        return rand < 0.3 ? 1 : 2;
-    } else { // abyss
+    if (difficulty === 'easy') {
+        return rand < 0.6 ? 1 : 0;
+    } else if (difficulty === 'normal') {
+        return rand < 0.4 ? 1 : 2;
+    } else if (difficulty === 'hard') {
         return rand < 0.3 ? 2 : 3;
+    } else if (difficulty === 'hell') {
+        return rand < 0.2 ? 3 : 4;
+    } else { // abyss
+        return rand < 0.2 ? 4 : 5;
     }
 }
 
 // 根據難度獲取元素機率
 function getElementChanceByDifficulty(difficulty) {
     const chances = {
-        easy: 0.15,
-        normal: 0.3,
-        hard: 0.5,
-        hell: 0.7,
-        abyss: 0.9
+        easy: 0.2,
+        normal: 0.4,
+        hard: 0.65,
+        hell: 0.85,
+        abyss: 1.0
     };
     return chances[difficulty] || 0;
 }
@@ -23862,13 +23896,15 @@ function generateDailyDungeonEnemyConfig(dungeonId, difficulty) {
 function calculateDungeonRewardBonus(affixCount, hasElement) {
     let bonus = 1.0;
     
-    // 詞綴加成
-    if (affixCount === 1) bonus += 0.15;
-    else if (affixCount === 2) bonus += 0.3;
-    else if (affixCount >= 3) bonus += 0.5;
+    // 詞綴加成（難度增加，獎勵也增加）
+    if (affixCount === 1) bonus += 0.2;
+    else if (affixCount === 2) bonus += 0.4;
+    else if (affixCount === 3) bonus += 0.6;
+    else if (affixCount === 4) bonus += 0.8;
+    else if (affixCount >= 5) bonus += 1.0;
     
     // 元素加成
-    if (hasElement) bonus += 0.2;
+    if (hasElement) bonus += 0.25;
     
     return bonus;
 }
@@ -24010,9 +24046,12 @@ function challengeDungeon(dungeonId, difficulty) {
 // 開始副本戰鬥
 function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     const enemy = { 
-        ...difficultyData.enemy,
-        level: gameState.player.level  // 添加怪物等級
+        ...difficultyData.enemy
     };
+    // 如果敵人沒有等級，使用副本推薦等級
+    if (!enemy.level) {
+        enemy.level = difficultyData.level;
+    }
     
     // 初始化 maxHp（如果不存在）
     if (!enemy.maxHp && enemy.hp) {
@@ -24103,6 +24142,9 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     
     const battleInterval = setInterval(() => {
         round++;
+        
+        // 回合開始：同步 playerHp 與 gameState.player.hp（防止自動喝藥或反射傷害導致不同步）
+        playerHp = gameState.player.hp;
         
         // 玩家攻擊
         let playerDmg = calculateDamage(gameState.player.atk, enemy.def, gameState.player.armorPen);

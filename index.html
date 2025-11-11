@@ -24013,6 +24013,12 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
         ...difficultyData.enemy,
         level: gameState.player.level  // 添加怪物等級
     };
+    
+    // 初始化 maxHp（如果不存在）
+    if (!enemy.maxHp && enemy.hp) {
+        enemy.maxHp = enemy.hp;
+    }
+    
     const battleStartTime = Date.now();
     
     // 獲取每日敵人配置

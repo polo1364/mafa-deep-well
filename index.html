@@ -8448,6 +8448,77 @@ const REGION_CONSUMABLES = {
                             extraDamage += bonusDmg;
                         }
                     }
+                    
+                    // 5. passive 類型：破甲效果
+                    if (effect.type === 'passive' && effect.armorPen) {
+                        // 破甲效果在計算傷害時處理，這裡記錄到玩家狀態
+                        if (!player.tempStats) player.tempStats = {};
+                        player.tempStats.armorPen = (player.tempStats.armorPen || 0) + effect.armorPen;
+                    }
+                    
+                    // 6. passive 類型：對Boss額外傷害
+                    if (effect.type === 'passive' && effect.bossDamageBonus) {
+                        if (enemy.isBoss || enemy.isSpecialBoss) {
+                            const bonusDmg = Math.floor(damage * effect.bossDamageBonus);
+                            extraDamage += bonusDmg;
+                            message += `⚖️ 審判之力！對Boss額外 ${bonusDmg} 傷害 `;
+                        }
+                    }
+                    
+                    // 7. onFullHpEnemy 類型：對滿血敵人額外傷害
+                    if (effect.type === 'onFullHpEnemy' && effect.damageBonus) {
+                        if (enemy.hp === enemy.maxHp) {
+                            const bonusDmg = Math.floor(damage * effect.damageBonus);
+                            extraDamage += bonusDmg;
+                            message += `🗡️ 穿刺！對滿血敵人額外 ${bonusDmg} 傷害 `;
+                        }
+                    }
+                    
+                    // 8. onHit 類型：毒性效果
+                    if (effect.type === 'onHit' && effect.poisonDamage && effect.chance) {
+                        if (Math.random() < effect.chance) {
+                            if (!enemy.debuffs) enemy.debuffs = {};
+                            enemy.debuffs.poison = {
+                                damage: Math.floor(player.atk * effect.poisonDamage),
+                                duration: effect.poisonDuration || 3
+                            };
+                            message += `☠️ 中毒！每回合受到傷害 `;
+                        }
+                    }
+                    
+                    // 9. onHit 類型：額外攻擊（狂風）
+                    if (effect.type === 'onHit' && effect.extraAttack && effect.chance) {
+                        if (Math.random() < effect.chance) {
+                            const extraDmg = Math.floor(damage * (effect.extraDamage || 0.5));
+                            extraDamage += extraDmg;
+                            message += `🌪️ 狂風連擊！額外 ${extraDmg} 傷害 `;
+                        }
+                    }
+                    
+                    // 10. onCrit 類型：暴擊重置冷卻（暗影）
+                    if (effect.type === 'onCrit' && effect.resetCooldown && effect.chance && isCrit) {
+                        if (Math.random() < effect.chance) {
+                            // 這裡可以重置技能冷卻，暫時只顯示訊息
+                            message += `🌑 暗影之力！獲得額外行動機會 `;
+                        }
+                    }
+                    
+                    // 11. onHit 類型：降低敵人防禦（虛空）
+                    if (effect.type === 'onHit' && effect.defReduce && effect.chance) {
+                        if (Math.random() < effect.chance) {
+                            if (!enemy.debuffs) enemy.debuffs = {};
+                            enemy.debuffs.defReduce = {
+                                amount: effect.defReduce,
+                                duration: effect.defReduceDuration || 2
+                            };
+                            message += `🌀 虛空破甲！敵人防禦大幅降低 `;
+                        }
+                    }
+                    
+                    // 12. onKill 類型：擊殺後下次攻擊加成（末日）
+                    if (effect.type === 'onKill' && effect.nextAttackBonus) {
+                        // 這個效果在擊殺時處理
+                    }
                 }
                 
                 // 檢查特殊詞綴（飾品）的被動效果
@@ -8533,6 +8604,78 @@ const REGION_CONSUMABLES = {
                     if (effect.type === 'passive' && effect.damageReduction) {
                         const reduction = Math.floor(incomingDamage * effect.damageReduction);
                         damageReduction += reduction;
+                    }
+                    
+                    // 5. onHit 類型：反射近戰傷害（荊棘）
+                    if (effect.type === 'onHit' && effect.reflectMelee) {
+                        const reflect = Math.floor(incomingDamage * effect.reflectMelee);
+                        reflectDamage += reflect;
+                        message += `🌹 荊棘反擊！反射 ${reflect} 點傷害 `;
+                    }
+                    
+                    // 6. onHit 類型：閃避下次攻擊（迅捷）
+                    if (effect.type === 'onHit' && effect.dodgeNext && effect.chance) {
+                        if (Math.random() < effect.chance) {
+                            if (!player.tempBuffs) player.tempBuffs = {};
+                            player.tempBuffs.dodgeNext = true;
+                            message += `💨 迅捷觸發！下次攻擊將被閃避 `;
+                        }
+                    }
+                    
+                    // 7. onHighHp 類型：高血時額外減傷（堡壘）
+                    if (effect.type === 'onHighHp' && effect.threshold && effect.damageReduction) {
+                        const hpPercent = player.hp / player.maxHp;
+                        if (hpPercent > effect.threshold) {
+                            const reduction = Math.floor(incomingDamage * effect.damageReduction);
+                            damageReduction += reduction;
+                            message += `🏰 堡壘之力！減少 ${reduction} 點傷害 `;
+                        }
+                    }
+                    
+                    // 8. onLethal 類型：致命傷害大幅減傷（不屈）
+                    if (effect.type === 'onLethal' && effect.damageReduction && effect.chance) {
+                        if (player.hp - incomingDamage <= 0) {
+                            if (Math.random() < effect.chance) {
+                                const reduction = Math.floor(incomingDamage * effect.damageReduction);
+                                damageReduction += reduction;
+                                message += `⚔️ 不屈意志！大幅減傷 `;
+                            }
+                        }
+                    }
+                    
+                    // 9. onLowHp 類型：瀕死自動回復（聖光）
+                    if (effect.type === 'onLowHp' && effect.autoHeal && effect.threshold) {
+                        const hpPercent = player.hp / player.maxHp;
+                        if (hpPercent < effect.threshold) {
+                            const cooldownKey = `autoHeal_${slot}`;
+                            if (!player.cooldowns) player.cooldowns = {};
+                            if (!player.cooldowns[cooldownKey]) {
+                                const healAmount = Math.floor(player.maxHp * effect.autoHeal);
+                                player.hp = Math.min(player.hp + healAmount, player.maxHp);
+                                player.cooldowns[cooldownKey] = true; // 每場戰鬥1次
+                                message += `✨ 聖光庇佑！回復 ${healAmount} 生命 `;
+                            }
+                        }
+                    }
+                    
+                    // 10. passive 類型：持續回復（永恆）
+                    if (effect.type === 'passive' && effect.regenPercent) {
+                        // 持續回復效果在回合結束時處理
+                    }
+                    
+                    // 11. passive 類型：減少暴擊傷害（鋼鐵）
+                    if (effect.type === 'passive' && effect.critDamageReduction) {
+                        // 暴擊減傷效果需要在敵人攻擊計算時處理
+                    }
+                    
+                    // 12. onHit 類型：獲得護盾（祝福）
+                    if (effect.type === 'onHit' && effect.shield && effect.chance) {
+                        if (Math.random() < effect.chance) {
+                            const shieldAmount = Math.floor(player.maxHp * effect.shield);
+                            if (!player.tempBuffs) player.tempBuffs = {};
+                            player.tempBuffs.shield = (player.tempBuffs.shield || 0) + shieldAmount;
+                            message += `🛡️ 祝福護盾！獲得 ${shieldAmount} 點護盾 `;
+                        }
                     }
                 }
             }
@@ -9095,7 +9238,7 @@ const REGION_CONSUMABLES = {
                 tier: 'boss',
                 effect: { armorPen: 0.5, lifeSteal: 0.25 },
                 reward: { goldMultiplier: 1.45, expMultiplier: 1.45 },
-                description: '無視防禦50%+吸蠀25%'
+                description: '無視防禦50%+吸血25%'
             },
             {
                 id: 'temporal',
@@ -11945,6 +12088,78 @@ const REGION_CONSUMABLES = {
                     equipTypes: ['weapon'],
                     effect: { type: 'onHit', chance: 0.10, damageMultiplier: 1.0 },
                     description: '攻擊時有10%機率造成200%傷害'
+                },
+                {
+                    id: 'armorbreak',
+                    name: '破甲的',
+                    color: '#ff9800',
+                    minRarity: 'Fine',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'passive', armorPen: 0.15 },
+                    description: '攻擊時無視敵人15%防禦'
+                },
+                {
+                    id: 'piercing',
+                    name: '穿刺的',
+                    color: '#ff9800',
+                    minRarity: 'Rare',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'onFullHpEnemy', damageBonus: 0.4 },
+                    description: '對生命滿血的敵人造成額外40%傷害'
+                },
+                {
+                    id: 'venomous',
+                    name: '毒性的',
+                    color: '#ff9800',
+                    minRarity: 'Fine',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'onHit', chance: 0.20, poisonDamage: 0.1, poisonDuration: 3 },
+                    description: '攻擊時有20%機率使敵人中毒（持續3回合）'
+                },
+                {
+                    id: 'gale',
+                    name: '狂風的',
+                    color: '#ff9800',
+                    minRarity: 'Rare',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'onHit', chance: 0.15, extraAttack: true, extraDamage: 0.5 },
+                    description: '攻擊時有15%機率觸發額外攻擊（傷害50%）'
+                },
+                {
+                    id: 'shadow',
+                    name: '暗影的',
+                    color: '#ff9800',
+                    minRarity: 'Epic',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'onCrit', chance: 0.30, resetCooldown: true },
+                    description: '暴擊時有30%機率立即進行下一次攻擊'
+                },
+                {
+                    id: 'judgment',
+                    name: '審判的',
+                    color: '#ff9800',
+                    minRarity: 'Legendary',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'passive', bossDamageBonus: 0.30 },
+                    description: '對Boss造成額外30%傷害'
+                },
+                {
+                    id: 'void',
+                    name: '虛空的',
+                    color: '#ff9800',
+                    minRarity: 'Epic',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'onHit', chance: 0.10, defReduce: 0.5, defReduceDuration: 2 },
+                    description: '攻擊時有10%機率破壞敵人護甲（降低50%防禦）'
+                },
+                {
+                    id: 'doomsday',
+                    name: '末日的',
+                    color: '#ff9800',
+                    minRarity: 'Mythic',
+                    equipTypes: ['weapon'],
+                    effect: { type: 'onKill', nextAttackBonus: 1.5 },
+                    description: '擊殺敵人後下一次攻擊造成150%傷害'
                 }
             ],
             
@@ -12021,6 +12236,78 @@ const REGION_CONSUMABLES = {
                     equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
                     effect: { type: 'onDeath', chance: 0.15, revivePercent: 0.5, cooldown: 'perBattle' },
                     description: '死亡時有15%機率復活並回復50%生命（每場戰鬥1次）'
+                },
+                {
+                    id: 'thorns',
+                    name: '荊棘',
+                    color: '#2196f3',
+                    minRarity: 'Fine',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'onHit', reflectMelee: 0.15 },
+                    description: '受到近戰攻擊時反彈15%傷害'
+                },
+                {
+                    id: 'swift',
+                    name: '迅捷',
+                    color: '#2196f3',
+                    minRarity: 'Rare',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'onHit', chance: 0.20, dodgeNext: true },
+                    description: '受到攻擊後有20%機率閃避下次攻擊'
+                },
+                {
+                    id: 'fortress',
+                    name: '堡壘',
+                    color: '#2196f3',
+                    minRarity: 'Epic',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'onHighHp', threshold: 0.8, damageReduction: 0.1 },
+                    description: '生命高於80%時額外減傷10%'
+                },
+                {
+                    id: 'unyielding',
+                    name: '不屈',
+                    color: '#2196f3',
+                    minRarity: 'Rare',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'onLethal', chance: 0.20, damageReduction: 0.5, cooldown: 30000 },
+                    description: '受到致命傷害時有20%機率大幅減傷'
+                },
+                {
+                    id: 'holylight',
+                    name: '聖光',
+                    color: '#2196f3',
+                    minRarity: 'Legendary',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'onLowHp', threshold: 0.25, autoHeal: 0.3, cooldown: 'perBattle' },
+                    description: '瀕死時自動回復30%生命（每場戰鬥1次）'
+                },
+                {
+                    id: 'eternal_suffix',
+                    name: '永恆',
+                    color: '#2196f3',
+                    minRarity: 'Mythic',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'passive', regenPercent: 0.03, regenMana: 0.01, interval: 5000 },
+                    description: '每5秒回復3%生命和1%法力'
+                },
+                {
+                    id: 'ironwill',
+                    name: '鋼鐵',
+                    color: '#2196f3',
+                    minRarity: 'Fine',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'passive', critDamageReduction: 0.3 },
+                    description: '減少暴擊傷害30%'
+                },
+                {
+                    id: 'blessed',
+                    name: '祝福',
+                    color: '#2196f3',
+                    minRarity: 'Epic',
+                    equipTypes: ['head', 'chest', 'gloves', 'legs', 'feet'],
+                    effect: { type: 'onHit', chance: 0.15, shield: 0.1 },
+                    description: '受到傷害時有15%機率獲得護盾'
                 }
             ],
             

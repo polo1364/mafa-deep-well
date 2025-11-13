@@ -16096,8 +16096,14 @@ const REGION_CONSUMABLES = {
         }
         
         function updateCompanionModal() {
+            // 調試日誌
+            console.log('[CompanionModal] 更新隨從管理界面');
+            console.log('[CompanionModal] gameState.companions.active:', gameState.companions.active);
+            console.log('[CompanionModal] gameState.companions.equipment:', gameState.companions.equipment);
+            
             // 更新當前裝備的隨從顯示
             const activeCompanion = getActiveCompanion();
+            console.log('[CompanionModal] activeCompanion:', activeCompanion);
             const activeCompanionInfo = document.getElementById('active-companion-info');
             
             if (activeCompanion) {
@@ -16140,10 +16146,12 @@ const REGION_CONSUMABLES = {
             
             // 更新當前裝備的裝備顯示
             const activeEquipmentId = gameState.companions.equipment;
+            console.log('[CompanionModal] activeEquipmentId:', activeEquipmentId);
             const activeEquipmentInfo = document.getElementById('active-equipment-info');
             
             if (activeEquipmentId) {
                 const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
+                console.log('[CompanionModal] equipment:', equipment);
                 const ownedEquipment = gameState.companions.ownedEquipment.find(e => e.id === activeEquipmentId);
                 if (equipment && ownedEquipment) {
                     const rarityColor = getRarityColor(equipment.rarity);
@@ -18972,8 +18980,13 @@ const REGION_CONSUMABLES = {
         
         // 孵化寵物蛋
         function hatchPetEgg(eggIndex) {
+            console.log('[PetEgg] 孵化寵物蛋, eggIndex:', eggIndex);
+            console.log('[PetEgg] gameState.pets.eggs:', gameState.pets.eggs);
+            console.log('[PetEgg] gameState.pets.eggs.length:', gameState.pets.eggs ? gameState.pets.eggs.length : 'undefined');
+            
             initPetSystem();
             if (!gameState.pets.eggs[eggIndex]) {
+                console.error('[PetEgg] 寵物蛋不存在！eggIndex:', eggIndex, 'eggs:', gameState.pets.eggs);
                 alert('❓ 寵物蛋不存在，請重新整理寵物蛋列表！');
                 updatePetEggsList(); // 重新渲染列表
                 return false;

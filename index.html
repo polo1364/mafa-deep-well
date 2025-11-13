@@ -5797,7 +5797,7 @@ const REGION_CONSUMABLES = {
             repair_bot: { id: 'repair_bot', name: '🤖 修復機器人', type: 'recovery', rarity: 'Common', description: '持續為你修復損傷', price: 500, skills: [{ type: 'heal_over_time', name: '持續修復', description: '每回合回復2%生命', value: 2, trigger: 'turn_start' }], maxLevel: 50 },
             medical_drone: { id: 'medical_drone', name: '🧪 醫療無人機', type: 'recovery', rarity: 'Fine', description: '回復和吸血', price: 1500, skills: [{ type: 'heal_over_time', name: '持續治療', description: '每回合回復3%生命', value: 3, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +3%', value: 3, trigger: 'passive' }], maxLevel: 50 },
             nano_healer: { id: 'nano_healer', name: '💊 奈米治療師', type: 'recovery', rarity: 'Rare', description: '全面回復能力', price: 3000, skills: [{ type: 'heal_over_time', name: '快速治療', description: '每回合回復4%生命', value: 4, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '強力吸血', description: '吸血 +5%', value: 5, trigger: 'passive' }, { type: 'battle_heal', name: '戰後治療', description: '戰鬥結束回復20%生命', value: 20, trigger: 'battle_end' }], maxLevel: 50 },
-            life_source: { id: 'life_source', name: '✨ 生命之源', type: 'recovery', rarity: 'Epic', description: '極致回復力量', price: 5000, skills: [{ type: 'heal_over_time', name: '生命源泉', description: '每回合回復5%生命', value: 5, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +8%', value: 8, trigger: 'passive' }, { type: 'battle_heal', name: '完全恢復', description: '戰鬥結束回復30%生命', value: 30, trigger: 'battle_end' }, { type: 'emergency_heal', name: '緊急治療', description: '生命低於30%時回復20%生命', value: 20, threshold: 30, cooldown: 5, trigger: 'low_hp' }], maxLevel: 50 },
+            life_source: { id: 'life_source', name: '✨ 生命之源', type: 'recovery', rarity: 'Epic', description: '極致回復力量', price: 5000, skills: [{ type: 'heal_over_time', name: '生命系統', description: '每回合回復5%生命', value: 5, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +8%', value: 8, trigger: 'passive' }, { type: 'battle_heal', name: '完全恢復', description: '戰鬥結束回復30%生命', value: 30, trigger: 'battle_end' }, { type: 'emergency_heal', name: '緊急治療', description: '生命低於30%時回復20%生命', value: 20, threshold: 30, cooldown: 5, trigger: 'low_hp' }], maxLevel: 50 },
             
             // 平衡型 (Balance)
             multi_core: { id: 'multi_core', name: '⚙️ 多功能核心', type: 'balance', rarity: 'Fine', description: '攻防平衡', price: 1500, skills: [{ type: 'buff_atk', name: '攻擊提升', description: '攻擊力 +8%', value: 8, trigger: 'passive' }, { type: 'buff_def', name: '防禦提升', description: '防禦力 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
@@ -5806,7 +5806,7 @@ const REGION_CONSUMABLES = {
             perfect_wargod: { id: 'perfect_wargod', name: '👑 完美戰神', type: 'balance', rarity: 'Legendary', description: '終極平衡', price: 10000, skills: [{ type: 'buff_atk', name: '戰神之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_def', name: '戰神之盾', description: '防禦力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_hp', name: '戰神之體', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '戰神之眼', description: '暴擊率 +6%', value: 6, trigger: 'passive' }, { type: 'buff_lifesteal', name: '戰神之魂', description: '吸血 +6%', value: 6, trigger: 'passive' }], maxLevel: 50 },
             
             // 永恆階級 (Eternal)
-            eternal_guardian: { id: 'eternal_guardian', name: '🌌 時空守護者', type: 'balance', rarity: 'Eternal', description: '永恆之力，時空之主', price: 50000, skills: [{ type: 'buff_atk', name: '時空之力', description: '攻擊力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_def', name: '時空護盾', description: '防禦力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_hp', name: '永恆生命', description: '最大生命 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '時空暴擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +30%', value: 30, statType: 'critDmg', trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +10%', value: 10, trigger: 'passive' }, { type: 'heal_over_time', name: '時空回溯', description: '每回合回復6%生命', value: 6, trigger: 'turn_start' }, { type: 'battle_heal', name: '永恆祝福', description: '戰鬥結束回復50%生命', value: 50, trigger: 'battle_end' }], maxLevel: 50 }
+            eternal_guardian: { id: 'eternal_guardian', name: '🌌 時空守護神', type: 'balance', rarity: 'Eternal', description: '永恆之力，時空之主', price: 50000, skills: [{ type: 'buff_atk', name: '時空之力', description: '攻擊力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_def', name: '時空護盾', description: '防禦力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_hp', name: '永恆生命', description: '最大生命 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '時空暴擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +30%', value: 30, statType: 'critDmg', trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +10%', value: 10, trigger: 'passive' }, { type: 'heal_over_time', name: '時空回溯', description: '每回合回復6%生命', value: 6, trigger: 'turn_start' }, { type: 'battle_heal', name: '永恆祝福', description: '戰鬥結束回復50%生命', value: 50, trigger: 'battle_end' }], maxLevel: 50 }
         };
 
         // 卡牌系統定義
@@ -5885,7 +5885,7 @@ const REGION_CONSUMABLES = {
             // 攻擊型
             attack_chip: {
                 id: 'attack_chip',
-                name: '戰鬥芋片',
+                name: '戰鬥芯片',
                 icon: '⚔️',
                 type: 'attack',
                 rarity: 'common',
@@ -5894,7 +5894,7 @@ const REGION_CONSUMABLES = {
             },
             attack_core: {
                 id: 'attack_core',
-                name: '破壞核心',
+                name: '破壞模組',
                 icon: '💥',
                 type: 'attack',
                 rarity: 'rare',
@@ -5903,7 +5903,7 @@ const REGION_CONSUMABLES = {
             },
             attack_engine: {
                 id: 'attack_engine',
-                name: '毀滅引擎',
+                name: '毀滅系統',
                 icon: '🔥',
                 type: 'attack',
                 rarity: 'epic',
@@ -5914,7 +5914,7 @@ const REGION_CONSUMABLES = {
             // 防禦型
             defense_chip: {
                 id: 'defense_chip',
-                name: '防護芋片',
+                name: '防護芯片',
                 icon: '🛡️',
                 type: 'defense',
                 rarity: 'common',
@@ -5923,7 +5923,7 @@ const REGION_CONSUMABLES = {
             },
             defense_core: {
                 id: 'defense_core',
-                name: '堡壘核心',
+                name: '堡壘模組',
                 icon: '💎',
                 type: 'defense',
                 rarity: 'rare',
@@ -5932,7 +5932,7 @@ const REGION_CONSUMABLES = {
             },
             defense_wall: {
                 id: 'defense_wall',
-                name: '不滅壁壘',
+                name: '不滅系統',
                 icon: '🔱',
                 type: 'defense',
                 rarity: 'epic',
@@ -5943,7 +5943,7 @@ const REGION_CONSUMABLES = {
             // 恢復型
             heal_chip: {
                 id: 'heal_chip',
-                name: '修復芋片',
+                name: '修復芯片',
                 icon: '💚',
                 type: 'heal',
                 rarity: 'common',
@@ -5952,7 +5952,7 @@ const REGION_CONSUMABLES = {
             },
             heal_core: {
                 id: 'heal_core',
-                name: '再生核心',
+                name: '再生模組',
                 icon: '💊',
                 type: 'heal',
                 rarity: 'rare',
@@ -5961,7 +5961,7 @@ const REGION_CONSUMABLES = {
             },
             heal_fountain: {
                 id: 'heal_fountain',
-                name: '生命源泉',
+                name: '生命系統',
                 icon: '🌈',
                 type: 'heal',
                 rarity: 'epic',
@@ -11518,7 +11518,7 @@ const REGION_CONSUMABLES = {
                 const eternalCompanionChance = 0.001 + (enemyLevel * 0.0001);
                 if (Math.random() < eternalCompanionChance) {
                     obtainCompanion('eternal_guardian');
-                    addLog('永恆', `🌌 永恆降臨！獲得<span style="color: #E040FB">永恆</span>隨從：🌌 時空守護者！`, true);
+                    addLog('永恆', `🌌 永恆降臨！獲得<span style="color: #E040FB">永恆</span>隨從：🌌 時空守護神！`, true);
                     playSound('levelup');
                 }
                 
@@ -23255,6 +23255,71 @@ const REGION_CONSUMABLES = {
                 loadedState.pets.owned.forEach(pet => {
                     if (!pet.skills) {
                         pet.skills = [];
+                    }
+                });
+            }
+            
+            // ========== 隨從名稱遷移 (v3.5) ==========
+            // 將舊名稱轉換為新名稱
+            const companionNameMap = {
+                '攻擊核心': '戰鬥機器人',
+                '戰鬥AI': '戰術機器人',
+                '毀滅者': '毀滅機器人',
+                '終結者': '終結機器人',
+                '防護核心': '守護機器人',
+                '堡壘守衛': '堡壘機器人',
+                '泰坦護盾': '泰坦機器人',
+                '不滅守護': '不滅機器人',
+                '修復機器人': '醫療機器人',
+                '醫療無人機': '治療無人機',
+                '奈米治療師': '奈米醫師',
+                '生命之源': '生命泉源',
+                '多功能核心': '多功能機器人',
+                '戰術AI': '量子機器人',
+                '量子核心': '完美機器人',
+                '完美戰神': '戰神機器人',
+                '時空守護神': '時空守護神'
+            };
+            
+            const equipmentNameMap = {
+                '戰鬥芋片': '戰鬥芯片',
+                '破壞核心': '破壞模組',
+                '毀滅引擎': '毀滅系統',
+                '防護芋片': '防護芯片',
+                '堡壘核心': '堡壘模組',
+                '不滅壁壘': '不滅系統',
+                '修復芋片': '修復芯片',
+                '再生核心': '再生模組',
+                '生命源泉': '生命系統'
+            };
+            
+            // 轉換已裝備的隨從
+            if (loadedState.companions && loadedState.companions.active) {
+                const oldName = loadedState.companions.active;
+                if (companionNameMap[oldName]) {
+                    loadedState.companions.active = companionNameMap[oldName];
+                    console.log(`✅ 隨從名稱遷移: ${oldName} → ${companionNameMap[oldName]}`);
+                }
+            }
+            
+            // 轉換已裝備的隨從裝備
+            if (loadedState.companions && loadedState.companions.equipment) {
+                const oldName = loadedState.companions.equipment;
+                if (equipmentNameMap[oldName]) {
+                    loadedState.companions.equipment = equipmentNameMap[oldName];
+                    console.log(`✅ 隨從裝備名稱遷移: ${oldName} → ${equipmentNameMap[oldName]}`);
+                }
+            }
+            
+            // 轉換背包中的隨從和隨從裝備
+            if (loadedState.inventory && Array.isArray(loadedState.inventory)) {
+                loadedState.inventory.forEach(item => {
+                    if (item && item.name) {
+                        if (companionNameMap[item.name]) {
+                            item.name = companionNameMap[item.name];
+                        } else if (equipmentNameMap[item.name]) {
+                            item.name = equipmentNameMap[item.name];
+                        }
                     }
                 });
             }

@@ -1311,6 +1311,7 @@
                         
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             <button onclick="openEndlessModal()" style="flex: 1; min-width: 90px; background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);">🗼 無盡挑戰</button>
+                            <button onclick="openZodiacTempleModal()" style="flex: 1; min-width: 90px; background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);">⭐ 星座神殿</button>
                         </div>
                         
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -2551,7 +2552,86 @@
         </div>
     </div>
 
-    <!-- 寵物管理模態視窗 -->
+
+    <!-- 星座神殿模態視窗 -->
+    <div class="modal" id="zodiac-temple-modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <h2>⭐ 星座神殿</h2>
+            
+            <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 15px; text-align: center;">
+                <p style="color: #ffd700; margin: 0; font-size: 0.95rem;">探索黃道十二宮，收集元素碎片，兌換強大的套裝裝備！</p>
+            </div>
+            
+            <div id="zodiac-realms-list">
+                <!-- 動態生成 -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeZodiacTempleModal()" style="flex: 1;">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 元素區域詳情模態視窗 -->
+    <div class="modal" id="zodiac-realm-modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <h2 id="zodiac-realm-title">元素區域</h2>
+            
+            <div id="zodiac-realm-content">
+                <!-- 動態生成 -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeZodiacRealmModal()" style="flex: 1;">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 星座商人模態視窗 -->
+    <div class="modal" id="zodiac-merchant-modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <h2>🛒 星座商人</h2>
+            
+            <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 15px; text-align: center;">
+                <p style="color: #ffd700; margin: 0; font-size: 0.95rem;">使用元素碎片兌換黃道十二宮套裝！每件裝備需要 100 個對應碎片。</p>
+            </div>
+            
+            <div id="zodiac-merchant-content">
+                <!-- 動態生成 -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeZodiacMerchantModal()" style="flex: 1;">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 黃道怪物圖鑑模態視窗 -->
+<div id="zodiac-codex-modal" class="modal">
+    <div class="modal-content" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
+        <span class="close" onclick="closeZodiacCodexModal()">&times;</span>
+        <h2 style="text-align: center; color: #FFD700; margin-bottom: 20px;">
+            ⭐ 黃道怪物圖鑑 ⭐
+        </h2>
+        
+        <!-- 統計信息 -->
+        <div id="zodiac-codex-stats"></div>
+        
+        <!-- 怪物列表 -->
+        <div id="zodiac-codex-list"></div>
+    </div>
+</div>
+
+<!-- 怪物詳情模態視窗 -->
+<div id="zodiac-monster-detail-modal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close" onclick="closeZodiacMonsterDetail()">&times;</span>
+        <div id="zodiac-monster-detail-content"></div>
+    </div>
+</div>
+
+
+<!-- 寵物管理模態視窗 -->
     <div class="modal" id="pet-modal">
         <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
             <h2>🐲 寵物系統</h2>
@@ -5461,7 +5541,8 @@ const REGION_CONSUMABLES = {
             { name: 'legendary', label: '傳說', color: '#FFD700', shards: 12, multiplier: 6.0 },
             { name: 'mythic', label: '神話', color: '#F44336', shards: 20, multiplier: 8.5 },
             { name: 'eternal', label: '永恆', color: '#E040FB', shards: 35, multiplier: 12.0 },
-            { name: 'set', label: '套裝', color: '#00BCD4', shards: 15, multiplier: 25.0 }
+            { name: 'set', label: '套裝', color: '#00BCD4', shards: 15, multiplier: 25.0 },
+            { name: 'zodiac', label: '黃道', color: '#FFD700', shards: 0, multiplier: 20.0 }
         ];
 
         // 元素系統
@@ -6410,6 +6491,31 @@ const REGION_CONSUMABLES = {
                 4: { name: '穿透打擊', armorPenBonus: 30, critBonus: 12, bossDmgBonus: 25 },
                 6: { name: '破甲專精', atkPercent: 40, armorPenBonus: 40, bossDmgBonus: 35, specialEffect: 'armor_shatter' },
                 8: { name: '虛空主宰', atkPercent: 60, armorPenBonus: 60, bossDmgBonus: 50, critDmgBonus: 70, specialEffect: 'true_damage' }
+            },
+            // 黃道十二宮套裝
+            'inferno': {
+                2: { name: '烈焰之力', atkPercent: 15, critDmgBonus: 25 },
+                4: { name: '烈焰爆發', specialEffect: 'flame_burst' },
+                6: { name: '火焰連鎖', specialEffect: 'flame_chain' },
+                8: { name: '烈焰主宰', critBonus: 10, specialEffect: 'flame_master' }
+            },
+            'terra': {
+                2: { name: '大地守護', defPercent: 20, hpPercent: 15 },
+                4: { name: '大地之盾', specialEffect: 'earth_shield' },
+                6: { name: '大地庸護', specialEffect: 'earth_protection' },
+                8: { name: '大地主宰', defPercent: 15, specialEffect: 'earth_master' }
+            },
+            'tempest': {
+                2: { name: '疾風之速', critBonus: 10 },
+                4: { name: '風之反擊', specialEffect: 'wind_counter' },
+                6: { name: '疾風連斬', specialEffect: 'wind_combo' },
+                8: { name: '疾風主宰', critBonus: 8, critDmgBonus: 30 }
+            },
+            'crystal': {
+                2: { name: '水晶恢復', hpRegenBonus: 5, lifeStealBonus: 8 },
+                4: { name: '水晶護盾', specialEffect: 'crystal_shield' },
+                6: { name: '生命汲取', specialEffect: 'crystal_drain' },
+                8: { name: '水晶主宰', specialEffect: 'crystal_master' }
             }
         };
 
@@ -6424,6 +6530,10 @@ const REGION_CONSUMABLES = {
                 const item = player.equipment[slot];
                 if (item && item.setName) {
                     setCount[item.setName] = (setCount[item.setName] || 0) + 1;
+                }
+                // 黃道套裝特殊處理（使用set字段）
+                if (item && item.set && item.rarity === 'zodiac') {
+                    setCount[item.set] = (setCount[item.set] || 0) + 1;
                 }
             });
             
@@ -7293,6 +7403,17 @@ const REGION_CONSUMABLES = {
                 equipped: null,    // 當前裝備的寵物 (instanceId)
                 eggs: [],          // 寵物蛋 [{family, hatchTime}]
                 shards: {}         // 寵物碎片 {family: count}
+            },
+            zodiac: {
+                shards: {          // 元素碎片
+                    flameShard: 0,  // 火焰碎片
+                    earthShard: 0,  // 大地碎片
+                    windShard: 0,   // 疾風碎片
+                    waterShard: 0   // 水晶碎片
+                },
+                unlocked: false,   // 是否解鎖黃道系統 (Lv.30)
+                progress: {},      // 副本進度 {realmId_constellationId_floor: {cleared, bestTime}}
+                obtainedSets: {}   // 已獲得的套裝 {setId_slot: true}
             }
         };
         // 迭代天賦系統
@@ -11887,6 +12008,9 @@ const REGION_CONSUMABLES = {
             
             updateUI();
             
+            // 黃道副本獎勵處理
+            handleZodiacVictory();
+            
             // 戰鬥勝利後立即存檔
             saveGame();
             
@@ -11942,6 +12066,9 @@ const REGION_CONSUMABLES = {
             }
             
             updateUI();
+            
+            // 黃道副本獎勵處理
+            handleZodiacVictory();
             
             // 戰鬥勝利後立即存檔
             saveGame();
@@ -24399,6 +24526,745 @@ const DUNGEONS_DATA = {
     }
 };
 
+
+// ========== 黃道十二宮系統 ==========
+
+// 黃道十二宮副本數據
+const ZODIAC_DUNGEONS = {
+    fire: {
+        id: 'fire',
+        name: '🔥 火之領域',
+        element: 'fire',
+        icon: '🔥',
+        description: '烈焰燃燒的星座領域，掉落火焰碎片',
+        shardType: 'flameShard',
+        shardName: '火焰碎片',
+        shardIcon: '🔥',
+        constellations: {
+            aries: {
+                id: 'aries',
+                name: '白羊座',
+                icon: '♈',
+                unlockLevel: 30,
+                floors: [
+                    {
+                        floor: 1,
+                        name: '白羊座 - 第1層',
+                        level: 35,
+                        ap: 10,
+                        enemy: { name: '烈焰白羊', level: 38, hp: 3500, atk: 150, def: 90, crit: 12, critDmg: 185 },
+                        rewards: { exp: 1200, gold: [400, 700], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 2,
+                        name: '白羊座 - 第2層',
+                        level: 37,
+                        ap: 10,
+                        enemy: { name: '烈焰白羊', level: 42, hp: 4200, atk: 170, def: 100, crit: 14, critDmg: 190 },
+                        rewards: { exp: 1400, gold: [450, 800], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 3,
+                        name: '白羊座 - 第3層',
+                        level: 39,
+                        ap: 10,
+                        enemy: { name: '烈焰白羊', level: 46, hp: 5000, atk: 190, def: 110, crit: 16, critDmg: 195 },
+                        rewards: { exp: 1600, gold: [500, 900], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 4,
+                        name: '白羊座 - 第4層',
+                        level: 41,
+                        ap: 10,
+                        enemy: { name: '烈焰白羊', level: 50, hp: 6000, atk: 210, def: 120, crit: 18, critDmg: 200 },
+                        rewards: { exp: 1800, gold: [550, 1000], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 5,
+                        name: '白羊座 - 第5層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '白羊座守護者', level: 54, hp: 7500, atk: 240, def: 135, crit: 20, critDmg: 210, isBoss: true },
+                        rewards: { exp: 2200, gold: [700, 1300], shardChance: 0.3, shardAmount: [1, 2] }
+                    }
+                ]
+            },
+            leo: {
+                id: 'leo',
+                name: '獅子座',
+                icon: '♌',
+                unlockLevel: 35,
+                floors: [
+                    {
+                        floor: 6,
+                        name: '獅子座 - 第1層',
+                        level: 40,
+                        ap: 12,
+                        enemy: { name: '烈焰獅王', level: 48, hp: 5500, atk: 200, def: 125, crit: 15, critDmg: 200 },
+                        rewards: { exp: 1800, gold: [600, 1100], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 7,
+                        name: '獅子座 - 第2層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '烈焰獅王', level: 53, hp: 6500, atk: 230, def: 140, crit: 17, critDmg: 205 },
+                        rewards: { exp: 2100, gold: [700, 1300], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 8,
+                        name: '獅子座 - 第3層',
+                        level: 46,
+                        ap: 12,
+                        enemy: { name: '烈焰獅王', level: 58, hp: 7800, atk: 260, def: 155, crit: 19, critDmg: 210 },
+                        rewards: { exp: 2500, gold: [800, 1500], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 9,
+                        name: '獅子座 - 第4層',
+                        level: 49,
+                        ap: 12,
+                        enemy: { name: '烈焰獅王', level: 63, hp: 9200, atk: 290, def: 170, crit: 21, critDmg: 215 },
+                        rewards: { exp: 2900, gold: [900, 1700], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 10,
+                        name: '獅子座 - 第5層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '獅子座守護者', level: 68, hp: 11500, atk: 330, def: 190, crit: 24, critDmg: 225, isBoss: true },
+                        rewards: { exp: 3500, gold: [1200, 2200], shardChance: 0.5, shardAmount: [2, 3] }
+                    }
+                ]
+            },
+            sagittarius: {
+                id: 'sagittarius',
+                name: '射手座',
+                icon: '♐',
+                unlockLevel: 40,
+                floors: [
+                    {
+                        floor: 11,
+                        name: '射手座 - 第1層',
+                        level: 48,
+                        ap: 15,
+                        enemy: { name: '烈焰射手', level: 58, hp: 8000, atk: 280, def: 160, crit: 20, critDmg: 215 },
+                        rewards: { exp: 2800, gold: [1000, 1800], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 12,
+                        name: '射手座 - 第2層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '烈焰射手', level: 64, hp: 9500, atk: 320, def: 180, crit: 22, critDmg: 220 },
+                        rewards: { exp: 3300, gold: [1200, 2100], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 13,
+                        name: '射手座 - 第3層',
+                        level: 56,
+                        ap: 15,
+                        enemy: { name: '烈焰射手', level: 70, hp: 11200, atk: 360, def: 200, crit: 24, critDmg: 225 },
+                        rewards: { exp: 3900, gold: [1400, 2500], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 14,
+                        name: '射手座 - 第4層',
+                        level: 60,
+                        ap: 15,
+                        enemy: { name: '烈焰射手', level: 76, hp: 13200, atk: 400, def: 220, crit: 26, critDmg: 230 },
+                        rewards: { exp: 4600, gold: [1600, 2900], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 15,
+                        name: '射手座 - 第5層',
+                        level: 64,
+                        ap: 18,
+                        enemy: { name: '射手座守護者', level: 82, hp: 16500, atk: 460, def: 250, crit: 30, critDmg: 245, isBoss: true },
+                        rewards: { exp: 5500, gold: [2000, 3500], shardChance: 0.7, shardAmount: [2, 4] }
+                    }
+                ]
+            }
+        }
+    },
+    earth: {
+        id: 'earth',
+        name: '🌍 土之領域',
+        element: 'earth',
+        icon: '🌍',
+        description: '厚重堅實的星座領域，掉落大地碎片',
+        shardType: 'earthShard',
+        shardName: '大地碎片',
+        shardIcon: '🌍',
+        constellations: {
+            taurus: {
+                id: 'taurus',
+                name: '金牛座',
+                icon: '♉',
+                unlockLevel: 30,
+                floors: [
+                    {
+                        floor: 1,
+                        name: '金牛座 - 第1層',
+                        level: 35,
+                        ap: 10,
+                        enemy: { name: '大地金牛', level: 38, hp: 4500, atk: 130, def: 110, crit: 8, critDmg: 170 },
+                        rewards: { exp: 1200, gold: [400, 700], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 2,
+                        name: '金牛座 - 第2層',
+                        level: 37,
+                        ap: 10,
+                        enemy: { name: '大地金牛', level: 42, hp: 5400, atk: 150, def: 125, crit: 9, critDmg: 175 },
+                        rewards: { exp: 1400, gold: [450, 800], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 3,
+                        name: '金牛座 - 第3層',
+                        level: 39,
+                        ap: 10,
+                        enemy: { name: '大地金牛', level: 46, hp: 6500, atk: 170, def: 140, crit: 10, critDmg: 180 },
+                        rewards: { exp: 1600, gold: [500, 900], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 4,
+                        name: '金牛座 - 第4層',
+                        level: 41,
+                        ap: 10,
+                        enemy: { name: '大地金牛', level: 50, hp: 7800, atk: 190, def: 155, crit: 11, critDmg: 185 },
+                        rewards: { exp: 1800, gold: [550, 1000], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 5,
+                        name: '金牛座 - 第5層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '金牛座守護者', level: 54, hp: 9800, atk: 220, def: 175, crit: 13, critDmg: 195, isBoss: true },
+                        rewards: { exp: 2200, gold: [700, 1300], shardChance: 0.3, shardAmount: [1, 2] }
+                    }
+                ]
+            },
+            virgo: {
+                id: 'virgo',
+                name: '處女座',
+                icon: '♍',
+                unlockLevel: 35,
+                floors: [
+                    {
+                        floor: 6,
+                        name: '處女座 - 第1層',
+                        level: 40,
+                        ap: 12,
+                        enemy: { name: '大地聖女', level: 48, hp: 7200, atk: 180, def: 150, crit: 10, critDmg: 185 },
+                        rewards: { exp: 1800, gold: [600, 1100], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 7,
+                        name: '處女座 - 第2層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '大地聖女', level: 53, hp: 8500, atk: 210, def: 170, crit: 11, critDmg: 190 },
+                        rewards: { exp: 2100, gold: [700, 1300], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 8,
+                        name: '處女座 - 第3層',
+                        level: 46,
+                        ap: 12,
+                        enemy: { name: '大地聖女', level: 58, hp: 10200, atk: 240, def: 190, crit: 12, critDmg: 195 },
+                        rewards: { exp: 2500, gold: [800, 1500], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 9,
+                        name: '處女座 - 第4層',
+                        level: 49,
+                        ap: 12,
+                        enemy: { name: '大地聖女', level: 63, hp: 12000, atk: 270, def: 210, crit: 13, critDmg: 200 },
+                        rewards: { exp: 2900, gold: [900, 1700], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 10,
+                        name: '處女座 - 第5層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '處女座守護者', level: 68, hp: 15000, atk: 310, def: 240, crit: 15, critDmg: 210, isBoss: true },
+                        rewards: { exp: 3500, gold: [1200, 2200], shardChance: 0.5, shardAmount: [2, 3] }
+                    }
+                ]
+            },
+            capricorn: {
+                id: 'capricorn',
+                name: '摩羯座',
+                icon: '♑',
+                unlockLevel: 40,
+                floors: [
+                    {
+                        floor: 11,
+                        name: '摩羯座 - 第1層',
+                        level: 48,
+                        ap: 15,
+                        enemy: { name: '大地摩羯', level: 58, hp: 10500, atk: 260, def: 200, crit: 12, critDmg: 200 },
+                        rewards: { exp: 2800, gold: [1000, 1800], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 12,
+                        name: '摩羯座 - 第2層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '大地摩羯', level: 64, hp: 12500, atk: 300, def: 230, crit: 13, critDmg: 205 },
+                        rewards: { exp: 3300, gold: [1200, 2100], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 13,
+                        name: '摩羯座 - 第3層',
+                        level: 56,
+                        ap: 15,
+                        enemy: { name: '大地摩羯', level: 70, hp: 14800, atk: 340, def: 260, crit: 14, critDmg: 210 },
+                        rewards: { exp: 3900, gold: [1400, 2500], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 14,
+                        name: '摩羯座 - 第4層',
+                        level: 60,
+                        ap: 15,
+                        enemy: { name: '大地摩羯', level: 76, hp: 17500, atk: 380, def: 290, crit: 15, critDmg: 215 },
+                        rewards: { exp: 4600, gold: [1600, 2900], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 15,
+                        name: '摩羯座 - 第5層',
+                        level: 64,
+                        ap: 18,
+                        enemy: { name: '摩羯座守護者', level: 82, hp: 21800, atk: 440, def: 330, crit: 18, critDmg: 225, isBoss: true },
+                        rewards: { exp: 5500, gold: [2000, 3500], shardChance: 0.7, shardAmount: [2, 4] }
+                    }
+                ]
+            }
+        }
+    },
+    wind: {
+        id: 'wind',
+        name: '💨 風之領域',
+        element: 'wind',
+        icon: '💨',
+        description: '疾風呼嘯的星座領域，掉落疾風碎片',
+        shardType: 'windShard',
+        shardName: '疾風碎片',
+        shardIcon: '💨',
+        constellations: {
+            gemini: {
+                id: 'gemini',
+                name: '雙子座',
+                icon: '♊',
+                unlockLevel: 30,
+                floors: [
+                    {
+                        floor: 1,
+                        name: '雙子座 - 第1層',
+                        level: 35,
+                        ap: 10,
+                        enemy: { name: '疾風雙子', level: 38, hp: 3200, atk: 160, def: 85, crit: 18, critDmg: 200 },
+                        rewards: { exp: 1200, gold: [400, 700], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 2,
+                        name: '雙子座 - 第2層',
+                        level: 37,
+                        ap: 10,
+                        enemy: { name: '疾風雙子', level: 42, hp: 3800, atk: 180, def: 95, crit: 20, critDmg: 205 },
+                        rewards: { exp: 1400, gold: [450, 800], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 3,
+                        name: '雙子座 - 第3層',
+                        level: 39,
+                        ap: 10,
+                        enemy: { name: '疾風雙子', level: 46, hp: 4500, atk: 200, def: 105, crit: 22, critDmg: 210 },
+                        rewards: { exp: 1600, gold: [500, 900], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 4,
+                        name: '雙子座 - 第4層',
+                        level: 41,
+                        ap: 10,
+                        enemy: { name: '疾風雙子', level: 50, hp: 5400, atk: 220, def: 115, crit: 24, critDmg: 215 },
+                        rewards: { exp: 1800, gold: [550, 1000], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 5,
+                        name: '雙子座 - 第5層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '雙子座守護者', level: 54, hp: 6800, atk: 250, def: 130, crit: 27, critDmg: 225, isBoss: true },
+                        rewards: { exp: 2200, gold: [700, 1300], shardChance: 0.3, shardAmount: [1, 2] }
+                    }
+                ]
+            },
+            libra: {
+                id: 'libra',
+                name: '天秤座',
+                icon: '♎',
+                unlockLevel: 35,
+                floors: [
+                    {
+                        floor: 6,
+                        name: '天秤座 - 第1層',
+                        level: 40,
+                        ap: 12,
+                        enemy: { name: '疾風天秤', level: 48, hp: 5000, atk: 210, def: 120, crit: 22, critDmg: 215 },
+                        rewards: { exp: 1800, gold: [600, 1100], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 7,
+                        name: '天秤座 - 第2層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '疾風天秤', level: 53, hp: 5900, atk: 240, def: 135, crit: 24, critDmg: 220 },
+                        rewards: { exp: 2100, gold: [700, 1300], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 8,
+                        name: '天秤座 - 第3層',
+                        level: 46,
+                        ap: 12,
+                        enemy: { name: '疾風天秤', level: 58, hp: 7100, atk: 270, def: 150, crit: 26, critDmg: 225 },
+                        rewards: { exp: 2500, gold: [800, 1500], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 9,
+                        name: '天秤座 - 第4層',
+                        level: 49,
+                        ap: 12,
+                        enemy: { name: '疾風天秤', level: 63, hp: 8400, atk: 300, def: 165, crit: 28, critDmg: 230 },
+                        rewards: { exp: 2900, gold: [900, 1700], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 10,
+                        name: '天秤座 - 第5層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '天秤座守護者', level: 68, hp: 10500, atk: 340, def: 185, crit: 31, critDmg: 240, isBoss: true },
+                        rewards: { exp: 3500, gold: [1200, 2200], shardChance: 0.5, shardAmount: [2, 3] }
+                    }
+                ]
+            },
+            aquarius: {
+                id: 'aquarius',
+                name: '水瓶座',
+                icon: '♒',
+                unlockLevel: 40,
+                floors: [
+                    {
+                        floor: 11,
+                        name: '水瓶座 - 第1層',
+                        level: 48,
+                        ap: 15,
+                        enemy: { name: '疾風水瓶', level: 58, hp: 7300, atk: 290, def: 155, crit: 26, critDmg: 230 },
+                        rewards: { exp: 2800, gold: [1000, 1800], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 12,
+                        name: '水瓶座 - 第2層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '疾風水瓶', level: 64, hp: 8700, atk: 330, def: 175, crit: 28, critDmg: 235 },
+                        rewards: { exp: 3300, gold: [1200, 2100], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 13,
+                        name: '水瓶座 - 第3層',
+                        level: 56,
+                        ap: 15,
+                        enemy: { name: '疾風水瓶', level: 70, hp: 10200, atk: 370, def: 195, crit: 30, critDmg: 240 },
+                        rewards: { exp: 3900, gold: [1400, 2500], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 14,
+                        name: '水瓶座 - 第4層',
+                        level: 60,
+                        ap: 15,
+                        enemy: { name: '疾風水瓶', level: 76, hp: 12000, atk: 410, def: 215, crit: 32, critDmg: 245 },
+                        rewards: { exp: 4600, gold: [1600, 2900], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 15,
+                        name: '水瓶座 - 第5層',
+                        level: 64,
+                        ap: 18,
+                        enemy: { name: '水瓶座守護者', level: 82, hp: 15000, atk: 470, def: 245, crit: 36, critDmg: 260, isBoss: true },
+                        rewards: { exp: 5500, gold: [2000, 3500], shardChance: 0.7, shardAmount: [2, 4] }
+                    }
+                ]
+            }
+        }
+    },
+    water: {
+        id: 'water',
+        name: '💧 水之領域',
+        element: 'water',
+        icon: '💧',
+        description: '水晶澄澈的星座領域，掉落水晶碎片',
+        shardType: 'waterShard',
+        shardName: '水晶碎片',
+        shardIcon: '💧',
+        constellations: {
+            cancer: {
+                id: 'cancer',
+                name: '巨蟹座',
+                icon: '♋',
+                unlockLevel: 30,
+                floors: [
+                    {
+                        floor: 1,
+                        name: '巨蟹座 - 第1層',
+                        level: 35,
+                        ap: 10,
+                        enemy: { name: '水晶巨蟹', level: 38, hp: 4000, atk: 140, def: 100, crit: 10, critDmg: 180 },
+                        rewards: { exp: 1200, gold: [400, 700], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 2,
+                        name: '巨蟹座 - 第2層',
+                        level: 37,
+                        ap: 10,
+                        enemy: { name: '水晶巨蟹', level: 42, hp: 4800, atk: 160, def: 115, crit: 11, critDmg: 185 },
+                        rewards: { exp: 1400, gold: [450, 800], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 3,
+                        name: '巨蟹座 - 第3層',
+                        level: 39,
+                        ap: 10,
+                        enemy: { name: '水晶巨蟹', level: 46, hp: 5800, atk: 180, def: 130, crit: 12, critDmg: 190 },
+                        rewards: { exp: 1600, gold: [500, 900], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 4,
+                        name: '巨蟹座 - 第4層',
+                        level: 41,
+                        ap: 10,
+                        enemy: { name: '水晶巨蟹', level: 50, hp: 6900, atk: 200, def: 145, crit: 13, critDmg: 195 },
+                        rewards: { exp: 1800, gold: [550, 1000], shardChance: 0.2, shardAmount: [1, 1] }
+                    },
+                    {
+                        floor: 5,
+                        name: '巨蟹座 - 第5層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '巨蟹座守護者', level: 54, hp: 8700, atk: 230, def: 165, crit: 15, critDmg: 205, isBoss: true },
+                        rewards: { exp: 2200, gold: [700, 1300], shardChance: 0.3, shardAmount: [1, 2] }
+                    }
+                ]
+            },
+            scorpio: {
+                id: 'scorpio',
+                name: '天蠍座',
+                icon: '♏',
+                unlockLevel: 35,
+                floors: [
+                    {
+                        floor: 6,
+                        name: '天蠍座 - 第1層',
+                        level: 40,
+                        ap: 12,
+                        enemy: { name: '水晶天蠍', level: 48, hp: 6400, atk: 190, def: 140, crit: 14, critDmg: 200 },
+                        rewards: { exp: 1800, gold: [600, 1100], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 7,
+                        name: '天蠍座 - 第2層',
+                        level: 43,
+                        ap: 12,
+                        enemy: { name: '水晶天蠍', level: 53, hp: 7600, atk: 220, def: 160, crit: 15, critDmg: 205 },
+                        rewards: { exp: 2100, gold: [700, 1300], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 8,
+                        name: '天蠍座 - 第3層',
+                        level: 46,
+                        ap: 12,
+                        enemy: { name: '水晶天蠍', level: 58, hp: 9100, atk: 250, def: 180, crit: 16, critDmg: 210 },
+                        rewards: { exp: 2500, gold: [800, 1500], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 9,
+                        name: '天蠍座 - 第4層',
+                        level: 49,
+                        ap: 12,
+                        enemy: { name: '水晶天蠍', level: 63, hp: 10700, atk: 280, def: 200, crit: 17, critDmg: 215 },
+                        rewards: { exp: 2900, gold: [900, 1700], shardChance: 0.4, shardAmount: [1, 2] }
+                    },
+                    {
+                        floor: 10,
+                        name: '天蠍座 - 第5層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '天蠍座守護者', level: 68, hp: 13400, atk: 320, def: 230, crit: 19, critDmg: 225, isBoss: true },
+                        rewards: { exp: 3500, gold: [1200, 2200], shardChance: 0.5, shardAmount: [2, 3] }
+                    }
+                ]
+            },
+            pisces: {
+                id: 'pisces',
+                name: '雙魚座',
+                icon: '♓',
+                unlockLevel: 40,
+                floors: [
+                    {
+                        floor: 11,
+                        name: '雙魚座 - 第1層',
+                        level: 48,
+                        ap: 15,
+                        enemy: { name: '水晶雙魚', level: 58, hp: 9300, atk: 270, def: 190, crit: 16, critDmg: 215 },
+                        rewards: { exp: 2800, gold: [1000, 1800], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 12,
+                        name: '雙魚座 - 第2層',
+                        level: 52,
+                        ap: 15,
+                        enemy: { name: '水晶雙魚', level: 64, hp: 11100, atk: 310, def: 220, crit: 17, critDmg: 220 },
+                        rewards: { exp: 3300, gold: [1200, 2100], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 13,
+                        name: '雙魚座 - 第3層',
+                        level: 56,
+                        ap: 15,
+                        enemy: { name: '水晶雙魚', level: 70, hp: 13200, atk: 350, def: 250, crit: 18, critDmg: 225 },
+                        rewards: { exp: 3900, gold: [1400, 2500], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 14,
+                        name: '雙魚座 - 第4層',
+                        level: 60,
+                        ap: 15,
+                        enemy: { name: '水晶雙魚', level: 76, hp: 15600, atk: 390, def: 280, crit: 19, critDmg: 230 },
+                        rewards: { exp: 4600, gold: [1600, 2900], shardChance: 0.6, shardAmount: [2, 3] }
+                    },
+                    {
+                        floor: 15,
+                        name: '雙魚座 - 第5層',
+                        level: 64,
+                        ap: 18,
+                        enemy: { name: '雙魚座守護者', level: 82, hp: 19500, atk: 450, def: 320, crit: 22, critDmg: 240, isBoss: true },
+                        rewards: { exp: 5500, gold: [2000, 3500], shardChance: 0.7, shardAmount: [2, 4] }
+                    }
+                ]
+            }
+        }
+    }
+};
+
+// 黃道十二宮套裝數據（8件套）
+const ZODIAC_SETS = {
+    inferno: {
+        id: 'inferno',
+        name: '烈焰',
+        fullName: '烈焰套裝',
+        icon: '🔥',
+        element: 'fire',
+        description: '爆發型攻擊套裝',
+        shardType: 'flameShard',
+        shardCost: 100,
+        bonuses: {
+            2: { desc: '攻擊力 +15%，暴擊傷害 +25%', atk: 0.15, critDmg: 25 },
+            4: { desc: '攻擊時20%機率引發「烈焰爆發」，造成150%額外火焰傷害', effect: 'flame_burst' },
+            6: { desc: '暴擊時引發「火焰連鎖」，對敵人造成持續3回合的灼燒效果（每回合5%最大生命傷害）', effect: 'flame_chain' },
+            8: { desc: '所有火焰效果傷害提升50%，暴擊率 +10%', effect: 'flame_master', crit: 10 }
+        },
+        pieces: {
+            weapon: { slot: 'weapon', name: '烈焰之刃', stats: { atk: 80, crit: 8, critDmg: 30 } },
+            helmet: { slot: 'helmet', name: '烈焰頭盔', stats: { def: 40, hp: 300, atk: 30 } },
+            chest: { slot: 'chest', name: '烈焰胸甲', stats: { def: 60, hp: 500, atk: 40 } },
+            legs: { slot: 'legs', name: '烈焰腿甲', stats: { def: 50, hp: 400, atk: 35 } },
+            boots: { slot: 'boots', name: '烈焰戰靴', stats: { def: 35, hp: 250, atk: 25 } },
+            gloves: { slot: 'gloves', name: '烈焰手套', stats: { atk: 50, crit: 6, critDmg: 20 } },
+            necklace: { slot: 'necklace', name: '烈焰項鍊', stats: { atk: 45, hp: 350, crit: 5 } },
+            ring: { slot: 'ring', name: '烈焰戒指', stats: { atk: 40, critDmg: 25, crit: 4 } }
+        }
+    },
+    terra: {
+        id: 'terra',
+        name: '大地',
+        fullName: '大地套裝',
+        icon: '🌍',
+        element: 'earth',
+        description: '坦克型防禦套裝',
+        shardType: 'earthShard',
+        shardCost: 100,
+        bonuses: {
+            2: { desc: '防禦力 +20%，最大生命 +15%', def: 0.20, hp: 0.15 },
+            4: { desc: '受到傷害時15%機率觸發「大地之盾」，吸收30%最大生命的傷害', effect: 'earth_shield' },
+            6: { desc: '生命低於40%時，自動觸發「大地庇護」，減傷50%並每回合回復8%最大生命（持續3回合，每場戰鬥1次）', effect: 'earth_protection' },
+            8: { desc: '防禦力額外 +15%，受到傷害時10%機率完全格擋', effect: 'earth_master', def: 0.15 }
+        },
+        pieces: {
+            weapon: { slot: 'weapon', name: '大地之錘', stats: { atk: 50, def: 40, hp: 400 } },
+            helmet: { slot: 'helmet', name: '大地頭盔', stats: { def: 70, hp: 600, hpRegen: 3 } },
+            chest: { slot: 'chest', name: '大地胸甲', stats: { def: 100, hp: 800 } },
+            legs: { slot: 'legs', name: '大地腿甲', stats: { def: 80, hp: 700, hpRegen: 2 } },
+            boots: { slot: 'boots', name: '大地戰靴', stats: { def: 60, hp: 500 } },
+            gloves: { slot: 'gloves', name: '大地手套', stats: { def: 50, hp: 400 } },
+            necklace: { slot: 'necklace', name: '大地項鍊', stats: { def: 55, hp: 550, hpRegen: 2 } },
+            ring: { slot: 'ring', name: '大地戒指', stats: { def: 45, hp: 450 } }
+        }
+    },
+    tempest: {
+        id: 'tempest',
+        name: '疾風',
+        fullName: '疾風套裝',
+        icon: '💨',
+        element: 'wind',
+        description: '敏捷型暴擊套裝',
+        shardType: 'windShard',
+        shardCost: 100,
+        bonuses: {
+            2: { desc: '暴擊率 +10%，閃避率 +8%', crit: 10, dodge: 8 },
+            4: { desc: '閃避成功時25%機率觸發「風之反擊」，立即進行一次反擊攻擊（造成80%傷害）', effect: 'wind_counter' },
+            6: { desc: '暴擊時30%機率觸發「疾風連斬」，立即進行額外攻擊（造成100%傷害且必定暴擊）', effect: 'wind_combo' },
+            8: { desc: '暴擊率額外 +8%，暴擊傷害 +30%，閃避率額外 +5%', effect: 'wind_master', crit: 8, critDmg: 30, dodge: 5 }
+        },
+        pieces: {
+            weapon: { slot: 'weapon', name: '疾風之刃', stats: { atk: 75, crit: 10, dodge: 5 } },
+            helmet: { slot: 'helmet', name: '疾風頭盔', stats: { def: 45, hp: 350, crit: 4 } },
+            chest: { slot: 'chest', name: '疾風胸甲', stats: { def: 65, hp: 550, dodge: 6 } },
+            legs: { slot: 'legs', name: '疾風腿甲', stats: { def: 55, hp: 450, crit: 3 } },
+            boots: { slot: 'boots', name: '疾風戰靴', stats: { def: 40, hp: 300, dodge: 8 } },
+            gloves: { slot: 'gloves', name: '疾風手套', stats: { atk: 45, crit: 8, critDmg: 25 } },
+            necklace: { slot: 'necklace', name: '疾風項鍊', stats: { atk: 40, crit: 6, dodge: 4 } },
+            ring: { slot: 'ring', name: '疾風戒指', stats: { atk: 38, crit: 7, critDmg: 20 } }
+        }
+    },
+    crystal: {
+        id: 'crystal',
+        name: '水晶',
+        fullName: '水晶套裝',
+        icon: '💧',
+        element: 'water',
+        description: '續戰型恢復套裝',
+        shardType: 'waterShard',
+        shardCost: 100,
+        bonuses: {
+            2: { desc: '生命回復 +5%（每回合），吸血 +8%', hpRegen: 5, lifesteal: 8 },
+            4: { desc: '戰鬥開始時獲得「水晶護盾」，吸收20%最大生命的傷害，護盾破碎時回復15%最大生命', effect: 'crystal_shield' },
+            6: { desc: '每回合回復10%最大生命，且攻擊時15%機率觸發「生命汲取」，額外吸取傷害的30%作為生命值', effect: 'crystal_drain' },
+            8: { desc: '所有恢復效果提升50%，生命低於30%時恢復效果翻倍', effect: 'crystal_master' }
+        },
+        pieces: {
+            weapon: { slot: 'weapon', name: '水晶之杖', stats: { atk: 65, lifesteal: 10, hpRegen: 3 } },
+            helmet: { slot: 'helmet', name: '水晶頭盔', stats: { def: 55, hp: 500, hpRegen: 4 } },
+            chest: { slot: 'chest', name: '水晶胸甲', stats: { def: 75, hp: 700, hpRegen: 5 } },
+            legs: { slot: 'legs', name: '水晶腿甲', stats: { def: 65, hp: 600, lifesteal: 6 } },
+            boots: { slot: 'boots', name: '水晶戰靴', stats: { def: 45, hp: 400, hpRegen: 3 } },
+            gloves: { slot: 'gloves', name: '水晶手套', stats: { atk: 40, lifesteal: 8, hpRegen: 2 } },
+            necklace: { slot: 'necklace', name: '水晶項鍊', stats: { hp: 550, hpRegen: 4, lifesteal: 5 } },
+            ring: { slot: 'ring', name: '水晶戒指', stats: { hp: 450, lifesteal: 7, hpRegen: 3 } }
+        }
+    }
+};
+
 // 難度顏色
 const DIFFICULTY_COLORS = {
     easy: '#4ade80',
@@ -25340,6 +26206,673 @@ function generateEquipmentByRarity(rarity) {
             openDungeonsModal();
         }
         
+
+        // ========== 黃道十二宮系統函數 ==========
+        
+        // ========== 黃道十二宮系統函數 ==========
+        
+        // 打開星座神殿主界面
+        function openZodiacTempleModal() {
+            // 初始化黃道數據（兼容舊存檔）
+            if (!gameState.zodiac) {
+                gameState.zodiac = {
+                    shards: {
+                        flameShard: 0,
+                        earthShard: 0,
+                        windShard: 0,
+                        waterShard: 0
+                    },
+                    unlocked: false,
+                    progress: {},
+                    obtainedSets: {}
+                };
+            }
+            
+            // 檢查解鎖條件
+            if (gameState.player.level < 30) {
+                addLog('系統', '⭐ 星座神殿需要達到 Lv.30 才能解鎖！');
+                return;
+            }
+            
+            if (!gameState.zodiac.unlocked) {
+                gameState.zodiac.unlocked = true;
+                addLog('系統', '⭐ 星座神殿已解鎖！探索黃道十二宮，收集元素碎片，兌換強大的套裝！');
+            }
+            
+            document.getElementById('zodiac-temple-modal').style.display = 'flex';
+            updateZodiacTempleUI();
+        }
+        
+        function closeZodiacTempleModal() {
+            document.getElementById('zodiac-temple-modal').style.display = 'none';
+        }
+        
+        // 更新星座神殿UI
+        function updateZodiacTempleUI() {
+            const container = document.getElementById('zodiac-realms-list');
+            if (!container) return;
+            
+            let html = '';
+            
+            // 顯示碎片數量
+            html += '<div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 20px;">';
+            html += '<h3 style="color: #ffd700; margin: 0 0 10px 0;">💎 元素碎片</h3>';
+            html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">';
+            html += `<div style="text-align: center;"><div style="font-size: 1.5rem;">🔥</div><div style="color: #ff6b6b; font-weight: bold;">${gameState.zodiac.shards.flameShard}</div><div style="color: #888; font-size: 0.85rem;">火焰碎片</div></div>`;
+            html += `<div style="text-align: center;"><div style="font-size: 1.5rem;">🌍</div><div style="color: #8b4513; font-weight: bold;">${gameState.zodiac.shards.earthShard}</div><div style="color: #888; font-size: 0.85rem;">大地碎片</div></div>`;
+            html += `<div style="text-align: center;"><div style="font-size: 1.5rem;">💨</div><div style="color: #87ceeb; font-weight: bold;">${gameState.zodiac.shards.windShard}</div><div style="color: #888; font-size: 0.85rem;">疾風碎片</div></div>`;
+            html += `<div style="text-align: center;"><div style="font-size: 1.5rem;">💧</div><div style="color: #4682b4; font-weight: bold;">${gameState.zodiac.shards.waterShard}</div><div style="color: #888; font-size: 0.85rem;">水晶碎片</div></div>`;
+            html += '</div>';
+            html += '</div>';
+            
+            // 四大元素區域
+            html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">';
+            
+            for (const realmId in ZODIAC_DUNGEONS) {
+                const realm = ZODIAC_DUNGEONS[realmId];
+                const unlocked = gameState.player.level >= 30;
+                
+                html += `<div style="background: linear-gradient(135deg, rgba(255, 100, 100, 0.1) 0%, rgba(100, 100, 255, 0.1) 100%); padding: 15px; border-radius: 8px; border: 2px solid rgba(255, 215, 0, 0.3); cursor: ${unlocked ? 'pointer' : 'not-allowed'}; opacity: ${unlocked ? '1' : '0.5'};" onclick="${unlocked ? `openZodiacRealmModal('${realmId}')` : ''}">`;
+                html += `<div style="font-size: 2rem; text-align: center; margin-bottom: 8px;">${realm.icon}</div>`;
+                html += `<div style="font-size: 1.2rem; font-weight: bold; text-align: center; color: #ffd700; margin-bottom: 5px;">${realm.name}</div>`;
+                html += `<div style="color: #c0c0c0; font-size: 0.85rem; text-align: center; margin-bottom: 10px;">${realm.description}</div>`;
+                html += `<div style="text-align: center; color: #888; font-size: 0.8rem;">掉落：${realm.shardIcon} ${realm.shardName}</div>`;
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            
+            // 星座商人按鈕
+            html += '<button onclick="openZodiacMerchantModal()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); font-size: 1.1rem; font-weight: bold; margin-top: 15px;">🛒 星座商人（套裝兌換）</button>';
+            
+            // 怪物圖鑑按鈕
+            html += '<button onclick="openZodiacCodexModal()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); font-size: 1.1rem; font-weight: bold; margin-top: 10px;">📖 怪物圖鑑</button>';
+            
+            container.innerHTML = html;
+        }
+        
+        // 打開元素區域詳情
+        function openZodiacRealmModal(realmId) {
+            const realm = ZODIAC_DUNGEONS[realmId];
+            if (!realm) return;
+            
+            document.getElementById('zodiac-realm-modal').style.display = 'flex';
+            document.getElementById('zodiac-realm-title').textContent = realm.name;
+            
+            let html = '';
+            
+            // 區域信息
+            html += `<div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 15px; text-align: center;">`;
+            html += `<div style="color: #ffd700; font-size: 1.1rem; margin-bottom: 5px;">${realm.description}</div>`;
+            html += `<div style="color: #c0c0c0; font-size: 0.9rem;">掉落：${realm.shardIcon} ${realm.shardName}</div>`;
+            html += `<div style="color: #888; font-size: 0.85rem; margin-top: 5px;">當前持有：<span style="color: #ffd700; font-weight: bold;">${gameState.zodiac.shards[realm.shardType]}</span> 個</div>`;
+            html += '</div>';
+            
+            // 星座列表
+            for (const constId in realm.constellations) {
+                const constellation = realm.constellations[constId];
+                const unlocked = gameState.player.level >= constellation.unlockLevel;
+                
+                html += `<div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px; opacity: ${unlocked ? '1' : '0.5'};">`;
+                html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">`;
+                html += `<div><span style="font-size: 1.5rem;">${constellation.icon}</span> <span style="color: #ffd700; font-size: 1.1rem; font-weight: bold;">${constellation.name}</span></div>`;
+                html += `<div style="color: #888; font-size: 0.85rem;">需求等級：Lv.${constellation.unlockLevel}</div>`;
+                html += '</div>';
+                
+                // 樓層列表
+                html += '<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">';
+                constellation.floors.forEach((floor, idx) => {
+                    const floorKey = `${realmId}_${constId}_${floor.floor}`;
+                    const cleared = gameState.zodiac.progress[floorKey]?.cleared || false;
+                    const canChallenge = unlocked && gameState.player.level >= floor.level;
+                    
+                    html += `<button onclick="${canChallenge ? `challengeZodiacFloor('${realmId}', '${constId}', ${idx})` : ''}" style="padding: 8px; background: ${cleared ? 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)' : 'rgba(255, 255, 255, 0.1)'}; border: 1px solid ${cleared ? '#00ff88' : 'rgba(255, 255, 255, 0.2)'}; border-radius: 6px; cursor: ${canChallenge ? 'pointer' : 'not-allowed'}; opacity: ${canChallenge ? '1' : '0.5'};">`;
+                    html += `<div style="font-size: 0.85rem; color: ${cleared ? '#0a1628' : '#ffd700'}; font-weight: bold;">第${floor.floor}層</div>`;
+                    html += `<div style="font-size: 0.75rem; color: ${cleared ? '#0a1628' : '#888'};">Lv.${floor.level}</div>`;
+                    if (cleared) html += `<div style="font-size: 0.7rem; color: #0a1628;">✓</div>`;
+                    html += '</button>';
+                });
+                html += '</div>';
+                
+                html += '</div>';
+            }
+            
+            document.getElementById('zodiac-realm-content').innerHTML = html;
+        }
+        
+        function closeZodiacRealmModal() {
+            document.getElementById('zodiac-realm-modal').style.display = 'none';
+        }
+        
+        // 挑戰黃道副本
+        function challengeZodiacFloor(realmId, constellationId, floorIndex) {
+            const realm = ZODIAC_DUNGEONS[realmId];
+            const constellation = realm.constellations[constellationId];
+            const floor = constellation.floors[floorIndex];
+            
+            // 檢查等級
+            if (gameState.player.level < floor.level) {
+                addLog('系統', `需要達到 Lv.${floor.level} 才能挑戰此層！`);
+                return;
+            }
+            
+            // 檢查AP
+            if (gameState.player.ap < floor.ap) {
+                addLog('系統', `體力不足！需要 ${floor.ap} AP`);
+                return;
+            }
+            
+            // 扣除AP
+            gameState.player.ap -= floor.ap;
+            
+            // 生成敵人（帶詞綴）
+            const enemy = createZodiacEnemy(floor.enemy, realm.element);
+            
+            // 關閉區域界面
+            closeZodiacRealmModal();
+            closeZodiacTempleModal();
+            
+            // 暫存副本信息供戰鬥結束後使用
+            gameState.currentZodiacFloor = {
+                realmId: realmId,
+                constellationId: constellationId,
+                floor: floor,
+                realm: realm
+            };
+            
+            // 開始戰鬥
+            battle(enemy);
+        }
+        
+        // 創建黃道敵人（帶詞綴）
+        function createZodiacEnemy(baseEnemy, element) {
+            const enemy = { ...baseEnemy };
+            
+            // 根據怪物類型決定詞綴機率
+            let affixChance = 0.3; // 普通怪物30%
+            if (enemy.isBoss) {
+                affixChance = 0.8; // Boss 80%
+            }
+            
+            // 隨機生成詞綴
+            if (Math.random() < affixChance) {
+                const affixCount = enemy.isBoss ? (Math.random() < 0.5 ? 2 : 1) : 1;
+                enemy.affixes = [];
+                
+                const availableAffixes = Object.keys(affixEffects);
+                for (let i = 0; i < affixCount; i++) {
+                    const randomAffix = availableAffixes[Math.floor(Math.random() * availableAffixes.length)];
+                    if (!enemy.affixes.includes(randomAffix)) {
+                        enemy.affixes.push(randomAffix);
+                    }
+                }
+                
+                // 應用詞綴效果
+                enemy.affixes.forEach(affixId => {
+                    const affix = affixEffects[affixId];
+                    if (affix.effect.atkMultiplier) enemy.atk = Math.floor(enemy.atk * affix.effect.atkMultiplier);
+                    if (affix.effect.defMultiplier) enemy.def = Math.floor(enemy.def * affix.effect.defMultiplier);
+                    if (affix.effect.hpMultiplier) enemy.hp = Math.floor(enemy.hp * affix.effect.hpMultiplier);
+                    if (affix.effect.critBonus) enemy.crit = (enemy.crit || 0) + affix.effect.critBonus;
+                });
+                
+                // 更新名稱顯示詞綴
+                const affixNames = enemy.affixes.map(id => affixEffects[id].name).join('·');
+                enemy.displayName = `${affixNames} ${enemy.name}`;
+            } else {
+                enemy.displayName = enemy.name;
+            }
+            
+            enemy.maxHp = enemy.hp;
+            return enemy;
+        }
+        
+        // 打開星座商人
+        function openZodiacMerchantModal() {
+            document.getElementById('zodiac-merchant-modal').style.display = 'flex';
+            updateZodiacMerchantUI();
+        }
+        
+        function closeZodiacMerchantModal() {
+            document.getElementById('zodiac-merchant-modal').style.display = 'none';
+        }
+        
+        // 更新星座商人UI
+        function updateZodiacMerchantUI() {
+            const container = document.getElementById('zodiac-merchant-content');
+            if (!container) return;
+            
+            let html = '';
+            
+            // 顯示碎片數量
+            html += '<div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 15px;">';
+            html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center;">';
+            html += `<div><div style="font-size: 1.2rem;">🔥</div><div style="color: #ff6b6b; font-weight: bold;">${gameState.zodiac.shards.flameShard}</div></div>`;
+            html += `<div><div style="font-size: 1.2rem;">🌍</div><div style="color: #8b4513; font-weight: bold;">${gameState.zodiac.shards.earthShard}</div></div>`;
+            html += `<div><div style="font-size: 1.2rem;">💨</div><div style="color: #87ceeb; font-weight: bold;">${gameState.zodiac.shards.windShard}</div></div>`;
+            html += `<div><div style="font-size: 1.2rem;">💧</div><div style="color: #4682b4; font-weight: bold;">${gameState.zodiac.shards.waterShard}</div></div>`;
+            html += '</div>';
+            html += '</div>';
+            
+            // 套裝選擇標籤
+            html += '<div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">';
+            for (const setId in ZODIAC_SETS) {
+                const set = ZODIAC_SETS[setId];
+                html += `<button onclick="switchZodiacSetTab('${setId}')" id="zodiac-set-tab-${setId}" style="flex: 1; min-width: 100px; padding: 10px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; cursor: pointer;">${set.icon} ${set.name}</button>`;
+            }
+            html += '</div>';
+            
+            // 套裝內容區域
+            html += '<div id="zodiac-set-content"></div>';
+            
+            container.innerHTML = html;
+            
+            // 默認顯示第一個套裝
+            switchZodiacSetTab('inferno');
+        }
+        
+        // 切換套裝標籤
+        function switchZodiacSetTab(setId) {
+            // 更新標籤樣式
+            for (const sid in ZODIAC_SETS) {
+                const tab = document.getElementById(`zodiac-set-tab-${sid}`);
+                if (tab) {
+                    if (sid === setId) {
+                        tab.style.background = 'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)';
+                        tab.style.borderColor = '#ffd700';
+                    } else {
+                        tab.style.background = 'rgba(255, 255, 255, 0.1)';
+                        tab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    }
+                }
+            }
+            
+            // 顯示套裝內容
+            const set = ZODIAC_SETS[setId];
+            const container = document.getElementById('zodiac-set-content');
+            if (!container || !set) return;
+            
+            let html = '';
+            
+            // 套裝信息
+            html += '<div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 15px;">';
+            html += `<h3 style="color: #ffd700; margin: 0 0 10px 0;">${set.icon} ${set.fullName}</h3>`;
+            html += `<div style="color: #c0c0c0; margin-bottom: 10px;">${set.description}</div>`;
+            html += '<div style="color: #888; font-size: 0.9rem;"><strong>套裝效果：</strong></div>';
+            for (const count in set.bonuses) {
+                const bonus = set.bonuses[count];
+                html += `<div style="color: #87ceeb; font-size: 0.85rem; margin-left: 10px;">• ${count}件套：${bonus.desc}</div>`;
+            }
+            html += '</div>';
+            
+            // 套裝部件列表
+            html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
+            
+            for (const slotKey in set.pieces) {
+                const piece = set.pieces[slotKey];
+                const obtained = gameState.zodiac.obtainedSets[`${setId}_${slotKey}`] || false;
+                const canExchange = gameState.zodiac.shards[set.shardType] >= set.shardCost;
+                
+                html += `<div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; border: 1px solid ${obtained ? '#00ff88' : 'rgba(255, 255, 255, 0.1)'};">`;
+                html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">`;
+                html += `<div style="color: ${obtained ? '#00ff88' : '#ffd700'}; font-weight: bold;">${piece.name}</div>`;
+                if (obtained) html += `<div style="color: #00ff88; font-size: 0.85rem;">✓ 已獲得</div>`;
+                html += '</div>';
+                
+                // 屬性
+                html += '<div style="color: #c0c0c0; font-size: 0.85rem; margin-bottom: 8px;">';
+                for (const stat in piece.stats) {
+                    const value = piece.stats[stat];
+                    let statName = stat;
+                    if (stat === 'atk') statName = '攻擊';
+                    else if (stat === 'def') statName = '防禦';
+                    else if (stat === 'hp') statName = '生命';
+                    else if (stat === 'crit') statName = '暴擊率';
+                    else if (stat === 'critDmg') statName = '暴擊傷害';
+                    else if (stat === 'dodge') statName = '閃避';
+                    else if (stat === 'hpRegen') statName = '生命回復';
+                    else if (stat === 'lifesteal') statName = '吸血';
+                    
+                    html += `<div>• ${statName}: +${value}${stat === 'crit' || stat === 'critDmg' || stat === 'dodge' || stat === 'hpRegen' || stat === 'lifesteal' ? '%' : ''}</div>`;
+                }
+                html += '</div>';
+                
+                // 兌換按鈕
+                if (!obtained) {
+                    html += `<button onclick="exchangeZodiacSet('${setId}', '${slotKey}')" style="width: 100%; padding: 8px; background: ${canExchange ? 'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)' : 'rgba(100, 100, 100, 0.5)'}; border: none; border-radius: 6px; cursor: ${canExchange ? 'pointer' : 'not-allowed'}; font-weight: bold; color: ${canExchange ? '#0a1628' : '#666'};">`;
+                    html += `兌換 (${set.shardCost} ${ZODIAC_DUNGEONS[set.element].shardIcon})`;
+                    html += '</button>';
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        // 兌換套裝
+        function exchangeZodiacSet(setId, slotKey) {
+            const set = ZODIAC_SETS[setId];
+            const piece = set.pieces[slotKey];
+            
+            // 檢查碎片
+            if (gameState.zodiac.shards[set.shardType] < set.shardCost) {
+                addLog('商人', `碎片不足！需要 ${set.shardCost} 個 ${ZODIAC_DUNGEONS[set.element].shardName}`);
+                return;
+            }
+            
+            // 檢查是否已獲得
+            const obtainKey = `${setId}_${slotKey}`;
+            if (gameState.zodiac.obtainedSets[obtainKey]) {
+                addLog('商人', '你已經獲得過這件裝備了！');
+                return;
+            }
+            
+            // 扣除碎片
+            gameState.zodiac.shards[set.shardType] -= set.shardCost;
+            
+            // 標記已獲得
+            gameState.zodiac.obtainedSets[obtainKey] = true;
+            
+            // 生成裝備
+            const equipment = {
+                id: `zodiac_${setId}_${slotKey}_${Date.now()}`,
+                name: piece.name,
+                type: piece.slot,
+                rarity: 'zodiac',
+                set: setId,
+                setName: set.name,
+                icon: set.icon,
+                ...piece.stats,
+                enhance: 0
+            };
+            
+            // 添加到背包
+            if (addToInventory(equipment)) {
+                addLog('兌換', `成功兌換 ${set.icon} ${piece.name}！`, true);
+                playSound('reward');
+                
+                // 更新任務進度
+                updateQuestProgress('collect_equipment', 1);
+                updateQuestProgress('shop_purchase', 1);
+                
+                // 更新UI
+                updateZodiacMerchantUI();
+                updateUI();
+                saveGame();
+            }
+        }
+
+
+        // 黃道副本戰鬥勝利處理
+        function handleZodiacVictory() {
+            if (!gameState.currentZodiacFloor) return;
+            
+            const { realmId, constellationId, floor, realm } = gameState.currentZodiacFloor;
+            const floorKey = `${realmId}_${constellationId}_${floor.floor}`;
+            
+            // 記錄怪物到圖鑑
+            const monsterId = `${realmId}_${constellationId}_${floor.floor}`;
+            addZodiacMonsterToCodex(monsterId);
+            
+            // 記錄通關
+            if (!gameState.zodiac.progress[floorKey]) {
+                gameState.zodiac.progress[floorKey] = { cleared: true, bestTime: Date.now() };
+            }
+            
+            // 碎片掉落
+            if (Math.random() < floor.rewards.shardChance) {
+                const shardAmount = Math.floor(Math.random() * (floor.rewards.shardAmount[1] - floor.rewards.shardAmount[0] + 1)) + floor.rewards.shardAmount[0];
+                gameState.zodiac.shards[realm.shardType] += shardAmount;
+                addLog('獎勵', `獲得 ${shardAmount} ${realm.shardIcon} ${realm.shardName}！`, true);
+            }
+            
+            // 清除暫存數據
+            gameState.currentZodiacFloor = null;
+            
+            updateUI();
+            saveGame();
+        }
+
+        // ========== 黃道怪物圖鑑系統 ==========
+        
+        // 黃道怪物圖鑑數據（從ZODIAC_DUNGEONS提取）
+        const ZODIAC_MONSTER_CODEX = {};
+        
+        // 初始化黃道怪物圖鑑
+        function initZodiacMonsterCodex() {
+            Object.keys(ZODIAC_DUNGEONS).forEach(realmId => {
+                const realm = ZODIAC_DUNGEONS[realmId];
+                Object.keys(realm.constellations).forEach(constId => {
+                    const constellation = realm.constellations[constId];
+                    constellation.floors.forEach(floor => {
+                        const enemy = floor.enemy;
+                        const monsterId = `${realmId}_${constId}_${floor.floor}`;
+                        
+                        ZODIAC_MONSTER_CODEX[monsterId] = {
+                            id: monsterId,
+                            name: enemy.name,
+                            realm: realm.name,
+                            realmId: realmId,
+                            constellation: constellation.name,
+                            constellationId: constId,
+                            floor: floor.floor,
+                            level: enemy.level,
+                            hp: enemy.hp,
+                            atk: enemy.atk,
+                            def: enemy.def,
+                            isBoss: enemy.isBoss || false,
+                            element: realm.element,
+                            icon: realm.icon,
+                            description: `${constellation.name}第${floor.floor}層的守護者`
+                        };
+                    });
+                });
+            });
+        }
+        
+        // 添加黃道怪物到玩家圖鑑
+        function addZodiacMonsterToCodex(monsterId) {
+            // 防禦性檢查
+            if (!ZODIAC_MONSTER_CODEX[monsterId]) {
+                console.warn('圖鑑中找不到怪物ID:', monsterId);
+                return;
+            }
+            
+            if (!gameState.zodiacCodex) {
+                gameState.zodiacCodex = {
+                    discovered: {},  // {monsterId: {firstSeen: timestamp, kills: count}}
+                    totalDiscovered: 0,
+                    totalKills: 0
+                };
+            }
+            
+            if (!gameState.zodiacCodex.discovered[monsterId]) {
+                gameState.zodiacCodex.discovered[monsterId] = {
+                    firstSeen: Date.now(),
+                    kills: 1
+                };
+                gameState.zodiacCodex.totalDiscovered++;
+                addLog('圖鑑', `✨ 發現新的星座守護者：${ZODIAC_MONSTER_CODEX[monsterId].name}！`, true);
+            } else {
+                gameState.zodiacCodex.discovered[monsterId].kills++;
+            }
+            
+            gameState.zodiacCodex.totalKills++;
+        }
+        
+        // 打開黃道圖鑑界面
+        function openZodiacCodexModal() {
+            // 初始化圖鑑數據結構（如果需要）
+            if (Object.keys(ZODIAC_MONSTER_CODEX).length === 0) {
+                console.log('初始化黃道怪物圖鑑...');
+                initZodiacMonsterCodex();
+            }
+            
+            // 初始化玩家圖鑑數據
+            if (!gameState.zodiacCodex) {
+                gameState.zodiacCodex = {
+                    discovered: {},
+                    totalDiscovered: 0,
+                    totalKills: 0
+                };
+            }
+            
+            document.getElementById('zodiac-codex-modal').style.display = 'flex';
+            renderZodiacCodex();
+        }
+        
+        function closeZodiacCodexModal() {
+            document.getElementById('zodiac-codex-modal').style.display = 'none';
+        }
+        
+        // 渲染黃道圖鑑
+        function renderZodiacCodex() {
+            console.log('=== 渲染黃道圖鑑 ===');
+            console.log('ZODIAC_MONSTER_CODEX keys:', Object.keys(ZODIAC_MONSTER_CODEX).length);
+            console.log('ZODIAC_DUNGEONS:', ZODIAC_DUNGEONS);
+            const totalMonsters = Object.keys(ZODIAC_MONSTER_CODEX).length;
+            console.log('總怪物數:', totalMonsters);
+            const discovered = gameState.zodiacCodex.totalDiscovered;
+            const completion = totalMonsters > 0 ? ((discovered / totalMonsters) * 100).toFixed(1) : 0;
+            
+            // 更新統計
+            document.getElementById('zodiac-codex-stats').innerHTML = `
+                <div style="display: flex; justify-content: space-around; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #FFD700;">${discovered}/${totalMonsters}</div>
+                        <div style="font-size: 12px; color: #AAA;">已發現</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #4CAF50;">${completion}%</div>
+                        <div style="font-size: 12px; color: #AAA;">完成度</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2196F3;">${gameState.zodiacCodex.totalKills}</div>
+                        <div style="font-size: 12px; color: #AAA;">總擊殺</div>
+                    </div>
+                </div>
+            `;
+            
+            // 按區域分組顯示
+            const realms = ['fire', 'earth', 'wind', 'water'];
+            let html = '';
+            
+            realms.forEach(realmId => {
+                const realm = ZODIAC_DUNGEONS[realmId];
+                const realmMonsters = Object.values(ZODIAC_MONSTER_CODEX).filter(m => m.realmId === realmId);
+                const realmDiscovered = realmMonsters.filter(m => gameState.zodiacCodex.discovered[m.id]).length;
+                
+                html += `
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #FFD700; border-bottom: 2px solid #FFD700; padding-bottom: 8px; margin-bottom: 15px;">
+                            ${realm.icon} ${realm.name} (${realmDiscovered}/${realmMonsters.length})
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                `;
+                
+                // 按星座分組
+                Object.keys(realm.constellations).forEach(constId => {
+                    const constellation = realm.constellations[constId];
+                    const constMonsters = realmMonsters.filter(m => m.constellationId === constId);
+                    
+                    constMonsters.forEach(monster => {
+                        const isDiscovered = gameState.zodiacCodex.discovered[monster.id];
+                        const kills = isDiscovered ? isDiscovered.kills : 0;
+                        
+                        if (isDiscovered) {
+                            html += `
+                                <div style="background: rgba(255,215,0,0.1); border: 2px solid #FFD700; border-radius: 8px; padding: 12px; cursor: pointer;" onclick="showZodiacMonsterDetail('${monster.id}')">
+                                    <div style="font-weight: bold; color: #FFD700; margin-bottom: 5px;">
+                                        ${monster.icon} ${monster.name}
+                                    </div>
+                                    <div style="font-size: 11px; color: #AAA; margin-bottom: 3px;">
+                                        ${monster.constellation} - 第${monster.floor}層
+                                    </div>
+                                    <div style="font-size: 11px; color: #4CAF50;">
+                                        Lv.${monster.level} ${monster.isBoss ? '👑 Boss' : ''}
+                                    </div>
+                                    <div style="font-size: 10px; color: #2196F3; margin-top: 5px;">
+                                        擊殺: ${kills}次
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div style="background: rgba(0,0,0,0.3); border: 2px solid #555; border-radius: 8px; padding: 12px;">
+                                    <div style="font-weight: bold; color: #666;">
+                                        ??? 未發現
+                                    </div>
+                                    <div style="font-size: 11px; color: #666; margin-bottom: 3px;">
+                                        ${monster.constellation} - 第${monster.floor}層
+                                    </div>
+                                    <div style="font-size: 11px; color: #666;">
+                                        Lv.${monster.level}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('zodiac-codex-list').innerHTML = html;
+        }
+        
+        // 顯示怪物詳情
+        function showZodiacMonsterDetail(monsterId) {
+            const monster = ZODIAC_MONSTER_CODEX[monsterId];
+            const record = gameState.zodiacCodex.discovered[monsterId];
+            
+            if (!record) return;
+            
+            const firstSeenDate = new Date(record.firstSeen).toLocaleString('zh-TW');
+            
+            const detailHtml = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">${monster.icon}</div>
+                    <h2 style="color: #FFD700; margin-bottom: 5px;">${monster.name}</h2>
+                    <div style="color: #AAA; margin-bottom: 20px;">${monster.description}</div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left;">
+                            <div><span style="color: #AAA;">區域：</span><span style="color: #FFF;">${monster.realm}</span></div>
+                            <div><span style="color: #AAA;">星座：</span><span style="color: #FFF;">${monster.constellation}</span></div>
+                            <div><span style="color: #AAA;">層數：</span><span style="color: #FFF;">第${monster.floor}層</span></div>
+                            <div><span style="color: #AAA;">等級：</span><span style="color: #FFF;">Lv.${monster.level}</span></div>
+                            <div><span style="color: #AAA;">生命：</span><span style="color: #F44336;">${monster.hp}</span></div>
+                            <div><span style="color: #AAA;">攻擊：</span><span style="color: #FF9800;">${monster.atk}</span></div>
+                            <div><span style="color: #AAA;">防禦：</span><span style="color: #2196F3;">${monster.def}</span></div>
+                            <div><span style="color: #AAA;">類型：</span><span style="color: #FFF;">${monster.isBoss ? '👑 Boss' : '普通'}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px;">
+                        <div style="color: #AAA; margin-bottom: 8px;">收集記錄</div>
+                        <div style="color: #4CAF50; font-size: 18px; margin-bottom: 5px;">擊殺次數: ${record.kills}</div>
+                        <div style="color: #888; font-size: 12px;">首次發現: ${firstSeenDate}</div>
+                    </div>
+                    
+                    <button onclick="closeZodiacMonsterDetail()" style="margin-top: 20px; padding: 10px 30px; background: #FFD700; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">關閉</button>
+                </div>
+            `;
+            
+            document.getElementById('zodiac-monster-detail-content').innerHTML = detailHtml;
+            document.getElementById('zodiac-monster-detail-modal').style.display = 'flex';
+        }
+        
+        function closeZodiacMonsterDetail() {
+            document.getElementById('zodiac-monster-detail-modal').style.display = 'none';
+        }
+        
+
         // ========== 無盡模式系統 ==========
         
         function openEndlessModal() {

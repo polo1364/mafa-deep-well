@@ -14042,13 +14042,21 @@ const REGION_CONSUMABLES = {
             });
             const hasSetBonus = Object.values(setCount).some(count => count >= 2);
             
+            // 欄位映射：將舊欄位名稱轉換為新欄位名稱
+            const slotMapping = {
+                'accessory1': 'ring',
+                'accessory2': 'necklace'
+            };
+            
             Object.keys(gameState.player.equipment).forEach(slot => {
                 const item = gameState.player.equipment[slot];
-                const element = document.getElementById(`equip-${slot}`);
+                // 使用映射後的欄位名稱
+                const mappedSlot = slotMapping[slot] || slot;
+                const element = document.getElementById(`equip-${mappedSlot}`);
                 
                 // 如果找不到對應的HTML元素，跳過
                 if (!element) {
-                    console.warn(`[updateEquipmentSlots] 找不到欄位: ${slot}`);
+                    console.warn(`[updateEquipmentSlots] 找不到欄位: ${slot} (mapped: ${mappedSlot})`);
                     return;
                 }
                 

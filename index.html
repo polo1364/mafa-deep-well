@@ -2498,18 +2498,18 @@
             <!-- 當前裝備的隨從和裝備 -->
             <div id="active-companion-display" style="background: rgba(0, 255, 136, 0.08); padding: 15px; border-radius: 8px; border: 2px solid rgba(0, 255, 136, 0.3); margin-bottom: 20px;">
                 <h3 style="color: #00ff88; margin: 0 0 10px 0;">✅ 當前裝備</h3>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; flex-direction: column;">
                     <!-- 隨從槽 -->
-                    <div style="flex: 1; min-width: 300px;">
-                        <div style="color: #4ade80; font-size: 0.9rem; margin-bottom: 5px;">🤖 隨從</div>
-                        <div id="active-companion-info" style="color: #c0c0c0;">
+                    <div id="companion-slot-wrapper" style="flex: 1; min-width: 250px; padding: 15px; background: rgba(255, 105, 180, 0.15); border: 3px solid rgba(255, 105, 180, 0.5); border-radius: 10px; order: 1;">
+                        <div style="color: #ff69b4; font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; text-align: center; background: rgba(255, 105, 180, 0.2); padding: 5px; border-radius: 5px;">🤖 當前隨從</div>
+                        <div id="active-companion-info" style="color: #fff;">
                             無
                         </div>
                     </div>
                     <!-- 裝備槽 -->
-                    <div style="flex: 1; min-width: 300px;">
-                        <div style="color: #4ade80; font-size: 0.9rem; margin-bottom: 5px;">🛠️ 裝備</div>
-                        <div id="active-equipment-info" style="color: #c0c0c0;">
+                    <div id="equipment-slot-wrapper" style="flex: 1; min-width: 250px; padding: 15px; background: rgba(0, 191, 255, 0.15); border: 3px solid rgba(0, 191, 255, 0.5); border-radius: 10px; order: 2;">
+                        <div style="color: #00bfff; font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; text-align: center; background: rgba(0, 191, 255, 0.2); padding: 5px; border-radius: 5px;">🛠️ 隨從裝備</div>
+                        <div id="active-equipment-info" style="color: #fff;">
                             無
                         </div>
                     </div>
@@ -14587,8 +14587,9 @@ const REGION_CONSUMABLES = {
                         } else if (item.subtype === 'buff') {
                             const effectLabel = item.effect?.label || '屬性加成';
                             desc = `[持續10戰] ${effectLabel}`;
-                            } else if (item.subtype === 'exp') {
-                                desc = `[立即] +${item.exp} EXP`;
+                            } else if (item.subtype === 'exp' || item.subtype === 'exp_scroll') {
+                                const expValue = item.exp || item.value || 0;
+                                desc = `[立即] +${expValue} EXP`;
                             }
                         }
                         
@@ -18973,7 +18974,8 @@ const REGION_CONSUMABLES = {
         function hatchPetEgg(eggIndex) {
             initPetSystem();
             if (!gameState.pets.eggs[eggIndex]) {
-                addLog('寵物', '❓ 寵物蛋不存在');
+                alert('❓ 寵物蛋不存在，請重新整理寵物蛋列表！');
+                updatePetEggsList(); // 重新渲染列表
                 return false;
             }
             
@@ -19463,7 +19465,7 @@ const REGION_CONSUMABLES = {
                     'void': '👁️ 虛空族'
                 };
                 const familyName = familyNames[egg.family] || '未知';
-                const obtainedDate = new Date(egg.obtainedAt).toLocaleString('zh-TW');
+                const obtainedDate = egg.obtainedAt ? new Date(egg.obtainedAt).toLocaleString('zh-TW') : '未知';
                 
                 return `
                     <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 2px solid rgba(255, 215, 0, 0.3);">
@@ -23945,6 +23947,30 @@ const affixEffects = {
         color: '#9e9e9e',
         effect: { allStatsMultiplier: 1.15 },
         description: '全屬性+15%'
+    },
+    tidal: {
+        id: 'tidal',
+        name: '潮汐',
+        icon: '🌊',
+        color: '#00bcd4',
+        effect: { lowHpDefMultiplier: 2.0, lowHpThreshold: 0.3 },
+        description: '生命低於30%時防禦力翻倍'
+    },
+    thorny: {
+        id: 'thorny',
+        name: '冰甲',
+        icon: '🧊',
+        color: '#00e5ff',
+        effect: { reflect: 0.15 },
+        description: '反彈15%傷害'
+    },
+    resilient: {
+        id: 'resilient',
+        name: '堅韌',
+        icon: '🛡️',
+        color: '#2196f3',
+        effect: { defMultiplier: 1.4, hpMultiplier: 1.3 },
+        description: '防禦力+40%，生命+30%'
     }
 };
 
@@ -25925,6 +25951,7 @@ function manualSalvageSelected() {
 
 // 全局變數
 let selectedGamblerType = 'weapon'; // 預設選擇武器
+let gamblerTimerInterval = null; // 倒數計時器
 
 // 打開賭博商人界面
 function openGamblerModal() {
@@ -25960,12 +25987,26 @@ function openGamblerModal() {
     // 顯示模態框
     document.getElementById('gambler-modal').style.display = 'flex';
     console.log('[Gambler] 模態框已顯示');
+    
+    // 啟動定時器，每秒更新倒數計時
+    if (gamblerTimerInterval) {
+        clearInterval(gamblerTimerInterval);
+    }
+    gamblerTimerInterval = setInterval(() => {
+        checkFreeRollAvailability();
+    }, 1000);
 }
 
 // 關閉賭博商人界面
 function closeGamblerModal() {
     console.log('[Gambler] 關閉賭博商人界面');
     document.getElementById('gambler-modal').style.display = 'none';
+    
+    // 清除定時器
+    if (gamblerTimerInterval) {
+        clearInterval(gamblerTimerInterval);
+        gamblerTimerInterval = null;
+    }
 }
 
 // 選擇裝備類型

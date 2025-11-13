@@ -13577,6 +13577,9 @@ const REGION_CONSUMABLES = {
             // 更新卡牌顯示
             updateCardSlotsDisplay();
             
+            // 更新寵物顯示
+            updatePetDisplay();
+            
             // 按鈕狀態
 
         }
@@ -16096,14 +16099,8 @@ const REGION_CONSUMABLES = {
         }
         
         function updateCompanionModal() {
-            // 調試日誌
-            console.log('[CompanionModal] 更新隨從管理界面');
-            console.log('[CompanionModal] gameState.companions.active:', gameState.companions.active);
-            console.log('[CompanionModal] gameState.companions.equipment:', gameState.companions.equipment);
-            
-            // 更新當前裝備的隨從顯示
+            window.dbg={a:gameState.companions.active,e:gameState.companions.equipment};
             const activeCompanion = getActiveCompanion();
-            console.log('[CompanionModal] activeCompanion:', activeCompanion);
             const activeCompanionInfo = document.getElementById('active-companion-info');
             
             if (activeCompanion) {
@@ -16146,12 +16143,10 @@ const REGION_CONSUMABLES = {
             
             // 更新當前裝備的裝備顯示
             const activeEquipmentId = gameState.companions.equipment;
-            console.log('[CompanionModal] activeEquipmentId:', activeEquipmentId);
             const activeEquipmentInfo = document.getElementById('active-equipment-info');
             
             if (activeEquipmentId) {
                 const equipment = COMPANION_EQUIPMENT[activeEquipmentId];
-                console.log('[CompanionModal] equipment:', equipment);
                 const ownedEquipment = gameState.companions.ownedEquipment.find(e => e.id === activeEquipmentId);
                 if (equipment && ownedEquipment) {
                     const rarityColor = getRarityColor(equipment.rarity);
@@ -16460,7 +16455,35 @@ const REGION_CONSUMABLES = {
             `;
         }
         
-
+        // 更新寵物顯示
+        function updatePetDisplay() {
+            const petInfo = document.getElementById('active-pet-info');
+            if (!petInfo) return;
+            
+            const equippedPet = getEquippedPet();
+            if (!equippedPet) {
+                petInfo.innerHTML = '無';
+                return;
+            }
+            
+            const rarityColor = getRarityColor(equippedPet.rarity);
+            const skillsHtml = (equippedPet.skills || []).map(skill => {
+                const chancePercent = Math.round(skill.chance * 100);
+                return `<div style="font-size: 0.65rem; color: #c0c0c0; margin-top: 2px;">• ${skill.name} (${chancePercent}%)</div>`;
+            }).join('');
+            
+            petInfo.innerHTML = `
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="font-size: 2rem;">${equippedPet.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 0.9rem; font-weight: bold; color: ${rarityColor}; margin-bottom: 3px;">${equippedPet.name}</div>
+                        <div style="color: #c0c0c0; font-size: 0.75rem;">Lv.${equippedPet.level} | ${equippedPet.rarity}</div>
+                        <div style="font-size: 0.7rem; color: #00ff88; margin-top: 3px;">⚔️ ${equippedPet.stats.atk} | 🛡️ ${equippedPet.stats.def} | ❤️ ${equippedPet.stats.hp}/${equippedPet.stats.maxHp}</div>
+                        ${skillsHtml}
+                    </div>
+                </div>
+            `;
+        }
         
         // 更新組合效果顯示
         function updateComboEffectDisplay() {
@@ -18978,15 +19001,10 @@ const REGION_CONSUMABLES = {
             }
         }
         
-        // 孵化寵物蛋
         function hatchPetEgg(eggIndex) {
-            console.log('[PetEgg] 孵化寵物蛋, eggIndex:', eggIndex);
-            console.log('[PetEgg] gameState.pets.eggs:', gameState.pets.eggs);
-            console.log('[PetEgg] gameState.pets.eggs.length:', gameState.pets.eggs ? gameState.pets.eggs.length : 'undefined');
-            
             initPetSystem();
+            window.petDbg={idx:eggIndex,eggs:gameState.pets.eggs};
             if (!gameState.pets.eggs[eggIndex]) {
-                console.error('[PetEgg] 寵物蛋不存在！eggIndex:', eggIndex, 'eggs:', gameState.pets.eggs);
                 alert('❓ 寵物蛋不存在，請重新整理寵物蛋列表！');
                 updatePetEggsList(); // 重新渲染列表
                 return false;
@@ -19063,13 +19081,14 @@ const REGION_CONSUMABLES = {
         // 裝備寵物
         function equipPet(instanceId) {
             initPetSystem();
-            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            const numId = typeof instanceId === 'string' ? parseFloat(instanceId) : instanceId;
+            const pet = gameState.pets.collection.find(p => p.instanceId === numId);
             if (!pet) {
                 addLog('寵物', '❓ 寵物不存在');
                 return false;
             }
             
-            gameState.pets.equipped = instanceId;
+            gameState.pets.equipped = numId;
             addLog('寵物', `✅ 裝備了 ${pet.icon} ${pet.name}`);
             
             saveGame();
@@ -19087,6 +19106,44 @@ const REGION_CONSUMABLES = {
             
             gameState.pets.equipped = null;
             addLog('寵物', '✅ 已卸下寵物');
+            
+            saveGame();
+            updateUI();
+            return true;
+        }
+        
+        // 分解寵物
+        function salvagePet(instanceId) {
+            initPetSystem();
+            const numId = typeof instanceId === 'string' ? parseFloat(instanceId) : instanceId;
+            const petIndex = gameState.pets.collection.findIndex(p => p.instanceId === numId);
+            
+            if (petIndex === -1) {
+                addLog('寵物', '❓ 寵物不存在');
+                return false;
+            }
+            
+            const pet = gameState.pets.collection[petIndex];
+            
+            // 如果已裝備，先卸下
+            if (gameState.pets.equipped === numId) {
+                gameState.pets.equipped = null;
+            }
+            
+            // 獲得碎片：基礎 + 等級獎勵
+            const baseShards = 10; // 基礎碎片
+            const levelBonus = Math.floor((pet.level - 1) * 2); // 每級+2碎片
+            const totalShards = baseShards + levelBonus;
+            
+            if (!gameState.pets.shards[pet.family]) {
+                gameState.pets.shards[pet.family] = 0;
+            }
+            gameState.pets.shards[pet.family] += totalShards;
+            
+            // 移除寵物
+            gameState.pets.collection.splice(petIndex, 1);
+            
+            addLog('寵物', `🔨 分解了 ${pet.icon} ${pet.name}，獲得 ${totalShards} 個 ${pet.family} 碎片`);
             
             saveGame();
             updateUI();
@@ -19134,7 +19191,8 @@ const REGION_CONSUMABLES = {
         // 進化寵物
         function evolvePet(instanceId) {
             initPetSystem();
-            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            const numId = typeof instanceId === 'string' ? parseFloat(instanceId) : instanceId;
+            const pet = gameState.pets.collection.find(p => p.instanceId === numId);
             if (!pet) {
                 addLog('寵物', '❓ 寵物不存在');
                 return false;
@@ -19223,7 +19281,8 @@ const REGION_CONSUMABLES = {
         // 覺醒寵物
         function awakenPet(instanceId) {
             initPetSystem();
-            const pet = gameState.pets.collection.find(p => p.instanceId === instanceId);
+            const numId = typeof instanceId === 'string' ? parseFloat(instanceId) : instanceId;
+            const pet = gameState.pets.collection.find(p => p.instanceId === numId);
             if (!pet) {
                 addLog('寵物', '❓ 寵物不存在');
                 return false;
@@ -19457,7 +19516,7 @@ const REGION_CONSUMABLES = {
                         </div>
                         ${skillsHtml}
                     </div>
-                    <button onclick="unequipPet()" style="padding: 8px 15px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">卸下</button>
+                    <button onclick="unequipPet(); updateEquippedPetDisplay(); updatePetCollectionList();" style="padding: 8px 15px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">卸下</button>
                 </div>
             `;
         }
@@ -19485,7 +19544,7 @@ const REGION_CONSUMABLES = {
                         <div style="text-align: center; font-size: 3rem; margin-bottom: 10px;">🥚</div>
                         <div style="font-size: 1.1rem; font-weight: bold; color: #ffd700; text-align: center; margin-bottom: 8px;">${familyName}寵物蛋</div>
                         <div style="color: #c0c0c0; font-size: 0.85rem; text-align: center; margin-bottom: 10px;">獲得時間：${obtainedDate}</div>
-                        <button onclick="hatchPetEgg(${index})" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🐣 孵化</button>
+                        <button onclick="hatchPetEgg(${index}); updatePetEggsList(); updatePetCollectionList();" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🐣 孵化</button>
                     </div>
                 `;
             }).join('');
@@ -19521,7 +19580,7 @@ const REGION_CONSUMABLES = {
                     const canAfford = hasStone && hasShards;
                     
                     if (canEvolve && canAfford) {
-                        evolutionButton = `<button onclick="evolvePet('${pet.instanceId}')" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #8a2be2 0%, #da70d6 100%);">🔄 進化</button>`;
+                        evolutionButton = `<button onclick="evolvePet('${pet.instanceId}'); updateEquippedPetDisplay(); updatePetCollectionList();" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #8a2be2 0%, #da70d6 100%);">🔄 進化</button>`;
                     } else {
                         const reason = !canEvolve ? `Lv.${pet.evolution.requiredLevel}` : '材料不足';
                         evolutionButton = `<button disabled style="flex: 1; padding: 8px; opacity: 0.5;">🔄 進化 (${reason})</button>`;
@@ -19538,7 +19597,7 @@ const REGION_CONSUMABLES = {
                     const canAfford = hasSource && hasShards;
                     
                     if (canEvolve && canAfford) {
-                        awakeningButton = `<button onclick="awakenPet('${pet.instanceId}')" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #e040fb 0%, #ffd700 100%);">⭐ 覺醒</button>`;
+                        awakeningButton = `<button onclick="awakenPet('${pet.instanceId}'); updateEquippedPetDisplay(); updatePetCollectionList();" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #e040fb 0%, #ffd700 100%);">⭐ 覺醒</button>`;
                     } else {
                         const reason = !canAwaken ? `Lv.${pet.awakening.requiredLevel}` : '材料不足';
                         awakeningButton = `<button disabled style="flex: 1; padding: 8px; opacity: 0.5;">⭐ 覺醒 (${reason})</button>`;
@@ -19576,14 +19635,15 @@ const REGION_CONSUMABLES = {
                         </div>
                         
                         <!-- 按鈕區 -->
-                        <div style="display: flex; gap: 8px;">
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             ${isEquipped ? 
-                                '<button onclick="unequipPet()" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">📤 卸下</button>' :
-                                `<button onclick="equipPet('${pet.instanceId}')" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✅ 裝備</button>`
+                                '<button onclick="unequipPet(); updateEquippedPetDisplay(); updatePetCollectionList();" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">📤 卸下</button>' :
+                                `<button onclick="equipPet('${pet.instanceId}'); updateEquippedPetDisplay(); updatePetCollectionList();" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✅ 裝備</button>`
                             }
                             ${evolutionButton}
                             ${awakeningButton}
                         </div>
+                        <button onclick="if(confirm('確定要分解 ${pet.name} (Lv.${pet.level}) 嗎？')) { salvagePet('${pet.instanceId}'); updateEquippedPetDisplay(); updatePetCollectionList(); }" style="width: 100%; padding: 8px; margin-top: 8px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #ff8c00; font-weight: bold;">🔨 分解</button>
                     </div>
                 `;
             }).join('');
@@ -20452,13 +20512,13 @@ const REGION_CONSUMABLES = {
             let items = [];
             if (currentConsumableTab === 'recovery') {
                 items = [
-                    { name: '小型藥水', desc: '回復15% HP', price: 2, type: 'hp', value: 0.15 },
-                    { name: '中型藥水', desc: '回復25% HP', price: 4, type: 'hp', value: 0.25 },
-                    { name: '大型藥水', desc: '回復35% HP', price: 6, type: 'hp', value: 0.35 },
-                    { name: '超級藥水', desc: '回復50% HP', price: 10, type: 'hp', value: 0.5 },
-                    { name: '完全回復藥水', desc: '回復100% HP', price: 18, type: 'hp', value: 1.0 },
-                    { name: '能量飲料', desc: '恢復5 AP', price: 12, type: 'ap', value: 5 },
-                    { name: '萬能藥水', desc: '回復100% HP + 5 AP', price: 25, type: 'both', hp: 1.0, ap: 5 }
+                    { name: '小型生命藥水', desc: '回復15% HP', price: 2, type: 'hp', value: 0.15 },
+                    { name: '中型生命藥水', desc: '回復25% HP', price: 4, type: 'hp', value: 0.25 },
+                    { name: '大型生命藥水', desc: '回復35% HP', price: 6, type: 'hp', value: 0.35 },
+                    { name: '超級生命藥水', desc: '回復50% HP', price: 10, type: 'hp', value: 0.5 },
+                    { name: '完全生命藥水', desc: '回復100% HP', price: 18, type: 'hp', value: 1.0 },
+                    { name: '小型能量藥水', desc: '恢復5 AP', price: 12, type: 'ap', value: 5 },
+                    { name: '戰鬥補給包', desc: '回復100% HP + 5 AP', price: 25, type: 'both', hp: 1.0, ap: 5 }
                 ];
             } else if (currentConsumableTab === 'buff') {
                 items = [
@@ -20502,7 +20562,7 @@ const REGION_CONSUMABLES = {
                         <div style="font-size: 0.75rem; color: #ff9800; margin-top: 3px;">每日1次</div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="color: #4EA5FF; font-weight: bold; margin-bottom: 5px;">🔷 200</div>
+                        <div style="color: #4EA5FF; font-weight: bold; margin-bottom: 5px;">🔷 280</div>
                         <button onclick="buySpecialItem('set_box')" style="padding: 6px 12px;">購買</button>
                     </div>
                 </div>
@@ -20663,6 +20723,56 @@ const REGION_CONSUMABLES = {
         
         // 購買特殊物品
         function buySpecialItem(itemType) {
+            // 初始化購買記錄
+            if (!gameState.player.shopPurchases) gameState.player.shopPurchases = {};
+            
+            // 定義每日限制
+            const dailyLimits = {
+                'set_box': 1,
+                'legendary_box': 3
+            };
+            
+            // 檢查每日限制
+            if (dailyLimits[itemType]) {
+                const purchaseKey = 'special_' + itemType;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayTimestamp = today.getTime();
+                
+                if (!gameState.player.shopPurchases[purchaseKey]) {
+                    gameState.player.shopPurchases[purchaseKey] = { count: 0, lastReset: todayTimestamp };
+                }
+                
+                const purchaseData = gameState.player.shopPurchases[purchaseKey];
+                const now = new Date();
+                const lastResetDate = new Date(purchaseData.lastReset);
+                
+                // 檢查是否跨天
+                if (now.getFullYear() !== lastResetDate.getFullYear() ||
+                    now.getMonth() !== lastResetDate.getMonth() ||
+                    now.getDate() !== lastResetDate.getDate()) {
+                    purchaseData.count = 0;
+                    purchaseData.lastReset = todayTimestamp;
+                }
+                
+                // 檢查是否達到限制
+                if (purchaseData.count >= dailyLimits[itemType]) {
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const timeLeft = tomorrow.getTime() - now.getTime();
+                    const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                    const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    const itemNames = {
+                        'set_box': '套裝寶箱',
+                        'legendary_box': '傳說寶箱'
+                    };
+                    
+                    addLog('商店', `${itemNames[itemType]} 今日已達到購買上限！${hoursLeft}小時${minutesLeft}分鐘後重置`);
+                    return;
+                }
+            }
+            
             let price = 0;
             let itemName = '';
             
@@ -20759,6 +20869,12 @@ const REGION_CONSUMABLES = {
                     addLog('商店', `花費 ${price} 🔷 碎片購買了背包擴充卷！已添加到背包。`);
                     updateQuestProgress('shop_purchase', 1);
                     break;
+            }
+            
+            // 增加購買計數（如果有每日限制）
+            if (dailyLimits[itemType]) {
+                const purchaseKey = 'special_' + itemType;
+                gameState.player.shopPurchases[purchaseKey].count += 1;
             }
             
             // 更新顯示
@@ -25964,7 +26080,6 @@ function manualSalvageSelected() {
 
 // 全局變數
 let selectedGamblerType = 'weapon'; // 預設選擇武器
-let gamblerTimerInterval = null; // 倒數計時器
 
 // 打開賭博商人界面
 function openGamblerModal() {
@@ -26000,26 +26115,12 @@ function openGamblerModal() {
     // 顯示模態框
     document.getElementById('gambler-modal').style.display = 'flex';
     console.log('[Gambler] 模態框已顯示');
-    
-    // 啟動定時器，每秒更新倒數計時
-    if (gamblerTimerInterval) {
-        clearInterval(gamblerTimerInterval);
-    }
-    gamblerTimerInterval = setInterval(() => {
-        checkFreeRollAvailability();
-    }, 1000);
 }
 
 // 關閉賭博商人界面
 function closeGamblerModal() {
     console.log('[Gambler] 關閉賭博商人界面');
     document.getElementById('gambler-modal').style.display = 'none';
-    
-    // 清除定時器
-    if (gamblerTimerInterval) {
-        clearInterval(gamblerTimerInterval);
-        gamblerTimerInterval = null;
-    }
 }
 
 // 選擇裝備類型
@@ -27032,9 +27133,36 @@ input:checked + .slider:before {
         const modal = document.getElementById('pet-display-modal');
         const content = document.getElementById('pet-display-modal-content');
         
-        // 直接顯示提示，因為左側欄沒有寵物顯示區
-        content.innerHTML = '<p style="color: #c0c0c0; text-align: center; padding: 20px;">寵物資訊請通過「🐲 寵物」按鈕查看完整模態框</p>';
+        const equippedPet = getEquippedPet();
         
+        let html = '<h2 style="color: #fa709a; margin-bottom: 15px;">🐾 當前寵物</h2>';
+        
+        if (!equippedPet) {
+            html += '<p style="color: #c0c0c0; text-align: center; padding: 20px;">無裝備寵物</p>';
+        } else {
+            const rarityColor = getRarityColor(equippedPet.rarity);
+            const skillsHtml = (equippedPet.skills || []).map(skill => {
+                const chancePercent = Math.round(skill.chance * 100);
+                return `<div style="font-size: 0.85rem; color: #c0c0c0; margin-top: 5px;">${skill.name} (${chancePercent}%): ${skill.description}</div>`;
+            }).join('');
+            
+            html += `<div style="background: rgba(250, 112, 154, 0.1); padding: 20px; border-radius: 8px; border: 2px solid rgba(250, 112, 154, 0.3);">`;
+            html += `<div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">`;
+            html += `<div style="font-size: 4rem;">${equippedPet.icon}</div>`;
+            html += `<div style="flex: 1;">`;
+            html += `<div style="font-size: 1.5rem; font-weight: bold; color: ${rarityColor}; margin-bottom: 8px;">${equippedPet.name}</div>`;
+            html += `<div style="color: #c0c0c0; font-size: 1rem; margin-bottom: 8px;">Lv.${equippedPet.level} | <span style="color: ${rarityColor};">${equippedPet.rarity}</span></div>`;
+            html += `<div style="font-size: 1rem; color: #00ff88;">ATK: ${equippedPet.stats.atk} | DEF: ${equippedPet.stats.def} | HP: ${equippedPet.stats.hp}/${equippedPet.stats.maxHp}</div>`;
+            html += `</div></div>`;
+            html += `<div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px;">`;
+            html += `<div style="color: #ffd700; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px;">技能</div>`;
+            html += skillsHtml;
+            html += `</div></div>`;
+        }
+        
+        html += '<p style="color: #888; text-align: center; margin-top: 20px; font-size: 0.9rem;">更多寵物資訊請通過寵物按鈕查看</p>';
+        
+        content.innerHTML = html;
         modal.style.display = 'block';
     }
     

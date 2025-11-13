@@ -1859,7 +1859,7 @@
                             <span style="color: #00ff88;">防+15% 減傷+10%</span>
                         </div>
                         <div style="background: rgba(76, 175, 80, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.3);">
-                            <strong style="color: #4caf50;">💚 生命之源</strong><br>
+                            <strong style="color: #4caf50;">💚 生命泉源</strong><br>
                             <span style="color: #c0c0c0;">回復隨從 + 回復裝備</span><br>
                             <span style="color: #00ff88;">血+15% 回復+5%</span>
                         </div>
@@ -3519,7 +3519,7 @@ const TITLES_DATA = {
         bonus: { bossDmg: 5 }
     },
     'boss_terminator': {
-        name: '💀 Boss終結者',
+        name: '💀 Boss終結機器人',
         desc: '擊敗20個Boss',
         howToGet: '挑戰並擊敗各區域的 Boss，累計達到 20 次即可解鎖',
         category: 'combat',
@@ -5782,28 +5782,28 @@ const REGION_CONSUMABLES = {
         // 隨從定義（新版4大戰鬥類型）
         const COMPANIONS = {
             // 攻擊型 (Attack)
-            attack_core: { id: 'attack_core', name: '🗡️ 攻擊核心', type: 'attack', rarity: 'Common', description: '提升基礎攻擊力', price: 500, skills: [{ type: 'buff_atk', name: '攻擊增幅', description: '攻擊力 +10%', value: 10, trigger: 'passive' }], maxLevel: 50 },
-            combat_ai: { id: 'combat_ai', name: '⚔️ 戰鬥AI', type: 'attack', rarity: 'Fine', description: '提升攻擊和暴擊', price: 1500, skills: [{ type: 'buff_atk', name: '戰術分析', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '精準打擊', description: '暴擊率 +5%', value: 5, trigger: 'passive' }], maxLevel: 50 },
-            destroyer: { id: 'destroyer', name: '💥 毀滅者', type: 'attack', rarity: 'Rare', description: '全面提升攻擊能力', price: 3000, skills: [{ type: 'buff_atk', name: '毀滅之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_crit', name: '致命打擊', description: '暴擊率 +8%', value: 8, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +15%', value: 15, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
-            terminator: { id: 'terminator', name: '⚡ 終結者', type: 'attack', rarity: 'Epic', description: '極致攻擊力量', price: 5000, skills: [{ type: 'buff_atk', name: '終結之力', description: '攻擊力 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '必殺一擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '毀滅暴擊', description: '暴擊傷害 +25%', value: 25, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
+            attack_core: { id: 'attack_core', name: '🗡️ 戰鬥機器人', type: 'attack', rarity: 'Common', description: '提升基礎攻擊力', price: 500, skills: [{ type: 'buff_atk', name: '攻擊增幅', description: '攻擊力 +10%', value: 10, trigger: 'passive' }], maxLevel: 50 },
+            combat_ai: { id: 'combat_ai', name: '⚔️ 戰術機器人', type: 'attack', rarity: 'Fine', description: '提升攻擊和暴擊', price: 1500, skills: [{ type: 'buff_atk', name: '戰術分析', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '精準打擊', description: '暴擊率 +5%', value: 5, trigger: 'passive' }], maxLevel: 50 },
+            destroyer: { id: 'destroyer', name: '💥 毀滅機器人', type: 'attack', rarity: 'Rare', description: '全面提升攻擊能力', price: 3000, skills: [{ type: 'buff_atk', name: '毀滅之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_crit', name: '致命打擊', description: '暴擊率 +8%', value: 8, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +15%', value: 15, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
+            terminator: { id: 'terminator', name: '⚡ 終結機器人', type: 'attack', rarity: 'Epic', description: '極致攻擊力量', price: 5000, skills: [{ type: 'buff_atk', name: '終結之力', description: '攻擊力 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '必殺一擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '毀滅暴擊', description: '暴擊傷害 +25%', value: 25, statType: 'critDmg', trigger: 'passive' }], maxLevel: 50 },
             
             // 防禦型 (Defense)
-            defense_core: { id: 'defense_core', name: '🛡️ 防護核心', type: 'defense', rarity: 'Common', description: '提升基礎防禦力', price: 500, skills: [{ type: 'buff_def', name: '防禦增幅', description: '防禦力 +12%', value: 12, trigger: 'passive' }], maxLevel: 50 },
-            fortress_guard: { id: 'fortress_guard', name: '🏰 堡壘守衛', type: 'defense', rarity: 'Fine', description: '提升防禦和生命', price: 1500, skills: [{ type: 'buff_def', name: '堅固防禦', description: '防禦力 +18%', value: 18, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +10%', value: 10, trigger: 'passive' }], maxLevel: 50 },
-            titan_shield: { id: 'titan_shield', name: '💎 泰坦護盾', type: 'defense', rarity: 'Rare', description: '全面提升防禦能力', price: 3000, skills: [{ type: 'buff_def', name: '泰坦之盾', description: '防禦力 +25%', value: 25, trigger: 'passive' }, { type: 'buff_hp', name: '泰坦血統', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_dmgred', name: '傷害減免', description: '減傷 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
-            immortal_guard: { id: 'immortal_guard', name: '🌟 不滅守護', type: 'defense', rarity: 'Epic', description: '極致防禦力量', price: 5000, skills: [{ type: 'buff_def', name: '不滅之盾', description: '防禦力 +30%', value: 30, trigger: 'passive' }, { type: 'buff_hp', name: '不滅之身', description: '最大生命 +20%', value: 20, trigger: 'passive' }, { type: 'buff_dmgred', name: '絕對防禦', description: '減傷 +12%', value: 12, trigger: 'passive' }], maxLevel: 50 },
+            defense_core: { id: 'defense_core', name: '🛡️ 守護機器人', type: 'defense', rarity: 'Common', description: '提升基礎防禦力', price: 500, skills: [{ type: 'buff_def', name: '防禦增幅', description: '防禦力 +12%', value: 12, trigger: 'passive' }], maxLevel: 50 },
+            fortress_guard: { id: 'fortress_guard', name: '🏰 堡壘機器人', type: 'defense', rarity: 'Fine', description: '提升防禦和生命', price: 1500, skills: [{ type: 'buff_def', name: '堅固防禦', description: '防禦力 +18%', value: 18, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +10%', value: 10, trigger: 'passive' }], maxLevel: 50 },
+            titan_shield: { id: 'titan_shield', name: '💎 泰坦機器人', type: 'defense', rarity: 'Rare', description: '全面提升防禦能力', price: 3000, skills: [{ type: 'buff_def', name: '泰坦之盾', description: '防禦力 +25%', value: 25, trigger: 'passive' }, { type: 'buff_hp', name: '泰坦血統', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_dmgred', name: '傷害減免', description: '減傷 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            immortal_guard: { id: 'immortal_guard', name: '🌟 不滅機器人', type: 'defense', rarity: 'Epic', description: '極致防禦力量', price: 5000, skills: [{ type: 'buff_def', name: '不滅之盾', description: '防禦力 +30%', value: 30, trigger: 'passive' }, { type: 'buff_hp', name: '不滅之身', description: '最大生命 +20%', value: 20, trigger: 'passive' }, { type: 'buff_dmgred', name: '絕對防禦', description: '減傷 +12%', value: 12, trigger: 'passive' }], maxLevel: 50 },
             
             // 恢復型 (Recovery)
-            repair_bot: { id: 'repair_bot', name: '🤖 修復機器人', type: 'recovery', rarity: 'Common', description: '持續為你修復損傷', price: 500, skills: [{ type: 'heal_over_time', name: '持續修復', description: '每回合回復2%生命', value: 2, trigger: 'turn_start' }], maxLevel: 50 },
-            medical_drone: { id: 'medical_drone', name: '🧪 醫療無人機', type: 'recovery', rarity: 'Fine', description: '回復和吸血', price: 1500, skills: [{ type: 'heal_over_time', name: '持續治療', description: '每回合回復3%生命', value: 3, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +3%', value: 3, trigger: 'passive' }], maxLevel: 50 },
-            nano_healer: { id: 'nano_healer', name: '💊 奈米治療師', type: 'recovery', rarity: 'Rare', description: '全面回復能力', price: 3000, skills: [{ type: 'heal_over_time', name: '快速治療', description: '每回合回復4%生命', value: 4, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '強力吸血', description: '吸血 +5%', value: 5, trigger: 'passive' }, { type: 'battle_heal', name: '戰後治療', description: '戰鬥結束回復20%生命', value: 20, trigger: 'battle_end' }], maxLevel: 50 },
-            life_source: { id: 'life_source', name: '✨ 生命之源', type: 'recovery', rarity: 'Epic', description: '極致回復力量', price: 5000, skills: [{ type: 'heal_over_time', name: '生命系統', description: '每回合回復5%生命', value: 5, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +8%', value: 8, trigger: 'passive' }, { type: 'battle_heal', name: '完全恢復', description: '戰鬥結束回復30%生命', value: 30, trigger: 'battle_end' }, { type: 'emergency_heal', name: '緊急治療', description: '生命低於30%時回復20%生命', value: 20, threshold: 30, cooldown: 5, trigger: 'low_hp' }], maxLevel: 50 },
+            repair_bot: { id: 'repair_bot', name: '🤖 醫療機器人', type: 'recovery', rarity: 'Common', description: '持續為你修復損傷', price: 500, skills: [{ type: 'heal_over_time', name: '持續修復', description: '每回合回復2%生命', value: 2, trigger: 'turn_start' }], maxLevel: 50 },
+            medical_drone: { id: 'medical_drone', name: '🧪 治療無人機', type: 'recovery', rarity: 'Fine', description: '回復和吸血', price: 1500, skills: [{ type: 'heal_over_time', name: '持續治療', description: '每回合回復3%生命', value: 3, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +3%', value: 3, trigger: 'passive' }], maxLevel: 50 },
+            nano_healer: { id: 'nano_healer', name: '💊 奈米醫師', type: 'recovery', rarity: 'Rare', description: '全面回復能力', price: 3000, skills: [{ type: 'heal_over_time', name: '快速治療', description: '每回合回復4%生命', value: 4, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '強力吸血', description: '吸血 +5%', value: 5, trigger: 'passive' }, { type: 'battle_heal', name: '戰後治療', description: '戰鬥結束回復20%生命', value: 20, trigger: 'battle_end' }], maxLevel: 50 },
+            life_source: { id: 'life_source', name: '✨ 生命泉源', type: 'recovery', rarity: 'Epic', description: '極致回復力量', price: 5000, skills: [{ type: 'heal_over_time', name: '生命系統', description: '每回合回復5%生命', value: 5, trigger: 'turn_start' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +8%', value: 8, trigger: 'passive' }, { type: 'battle_heal', name: '完全恢復', description: '戰鬥結束回復30%生命', value: 30, trigger: 'battle_end' }, { type: 'emergency_heal', name: '緊急治療', description: '生命低於30%時回復20%生命', value: 20, threshold: 30, cooldown: 5, trigger: 'low_hp' }], maxLevel: 50 },
             
             // 平衡型 (Balance)
-            multi_core: { id: 'multi_core', name: '⚙️ 多功能核心', type: 'balance', rarity: 'Fine', description: '攻防平衡', price: 1500, skills: [{ type: 'buff_atk', name: '攻擊提升', description: '攻擊力 +8%', value: 8, trigger: 'passive' }, { type: 'buff_def', name: '防禦提升', description: '防禦力 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
-            tactical_ai: { id: 'tactical_ai', name: '🎯 戰術AI', type: 'balance', rarity: 'Rare', description: '全面平衡', price: 3000, skills: [{ type: 'buff_atk', name: '戰術攻擊', description: '攻擊力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_def', name: '戰術防禦', description: '防禦力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
-            quantum_core: { id: 'quantum_core', name: '🌀 量子核心', type: 'balance', rarity: 'Epic', description: '超強平衡', price: 5000, skills: [{ type: 'buff_atk', name: '量子攻擊', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_def', name: '量子防禦', description: '防禦力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_hp', name: '量子生命', description: '最大生命 +12%', value: 12, trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +4%', value: 4, trigger: 'passive' }], maxLevel: 50 },
-            perfect_wargod: { id: 'perfect_wargod', name: '👑 完美戰神', type: 'balance', rarity: 'Legendary', description: '終極平衡', price: 10000, skills: [{ type: 'buff_atk', name: '戰神之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_def', name: '戰神之盾', description: '防禦力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_hp', name: '戰神之體', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '戰神之眼', description: '暴擊率 +6%', value: 6, trigger: 'passive' }, { type: 'buff_lifesteal', name: '戰神之魂', description: '吸血 +6%', value: 6, trigger: 'passive' }], maxLevel: 50 },
+            multi_core: { id: 'multi_core', name: '⚙️ 多功能機器人', type: 'balance', rarity: 'Fine', description: '攻防平衡', price: 1500, skills: [{ type: 'buff_atk', name: '攻擊提升', description: '攻擊力 +8%', value: 8, trigger: 'passive' }, { type: 'buff_def', name: '防禦提升', description: '防禦力 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            tactical_ai: { id: 'tactical_ai', name: '🎯 量子機器人', type: 'balance', rarity: 'Rare', description: '全面平衡', price: 3000, skills: [{ type: 'buff_atk', name: '戰術攻擊', description: '攻擊力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_def', name: '戰術防禦', description: '防禦力 +12%', value: 12, trigger: 'passive' }, { type: 'buff_hp', name: '生命強化', description: '最大生命 +8%', value: 8, trigger: 'passive' }], maxLevel: 50 },
+            quantum_core: { id: 'quantum_core', name: '🌀 完美機器人', type: 'balance', rarity: 'Epic', description: '超強平衡', price: 5000, skills: [{ type: 'buff_atk', name: '量子攻擊', description: '攻擊力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_def', name: '量子防禦', description: '防禦力 +15%', value: 15, trigger: 'passive' }, { type: 'buff_hp', name: '量子生命', description: '最大生命 +12%', value: 12, trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +4%', value: 4, trigger: 'passive' }], maxLevel: 50 },
+            perfect_wargod: { id: 'perfect_wargod', name: '👑 戰神機器人', type: 'balance', rarity: 'Legendary', description: '終極平衡', price: 10000, skills: [{ type: 'buff_atk', name: '戰神之力', description: '攻擊力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_def', name: '戰神之盾', description: '防禦力 +20%', value: 20, trigger: 'passive' }, { type: 'buff_hp', name: '戰神之體', description: '最大生命 +15%', value: 15, trigger: 'passive' }, { type: 'buff_crit', name: '戰神之眼', description: '暴擊率 +6%', value: 6, trigger: 'passive' }, { type: 'buff_lifesteal', name: '戰神之魂', description: '吸血 +6%', value: 6, trigger: 'passive' }], maxLevel: 50 },
             
             // 永恆階級 (Eternal)
             eternal_guardian: { id: 'eternal_guardian', name: '🌌 時空守護神', type: 'balance', rarity: 'Eternal', description: '永恆之力，時空之主', price: 50000, skills: [{ type: 'buff_atk', name: '時空之力', description: '攻擊力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_def', name: '時空護盾', description: '防禦力 +35%', value: 35, trigger: 'passive' }, { type: 'buff_hp', name: '永恆生命', description: '最大生命 +25%', value: 25, trigger: 'passive' }, { type: 'buff_crit', name: '時空暴擊', description: '暴擊率 +10%', value: 10, trigger: 'passive' }, { type: 'buff_crit', name: '暴擊強化', description: '暴擊傷害 +30%', value: 30, statType: 'critDmg', trigger: 'passive' }, { type: 'buff_lifesteal', name: '生命汲取', description: '吸血 +10%', value: 10, trigger: 'passive' }, { type: 'heal_over_time', name: '時空回溯', description: '每回合回復6%生命', value: 6, trigger: 'turn_start' }, { type: 'battle_heal', name: '永恆祝福', description: '戰鬥結束回復50%生命', value: 50, trigger: 'battle_end' }], maxLevel: 50 }
@@ -5829,7 +5829,7 @@ const REGION_CONSUMABLES = {
             shield_rare: { id: 'shield_rare', name: '🛡️ 不朽護盾', type: 'defense', rarity: 'Rare', series: 'shield', description: '防禦力 +22%，減傷 +6%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'def', value: 22 }, { stat: 'dmgRed', value: 6 }] }, icon: '🛡️' },
             
             // 防禦型 - 生命系列 (Vitality)
-            vitality_common: { id: 'vitality_common', name: '💚 生命之源', type: 'defense', rarity: 'Common', series: 'vitality', description: '最大生命 +8%', price: 500, effect: { type: 'passive', stat: 'hp', value: 8 }, icon: '💚' },
+            vitality_common: { id: 'vitality_common', name: '💚 生命泉源', type: 'defense', rarity: 'Common', series: 'vitality', description: '最大生命 +8%', price: 500, effect: { type: 'passive', stat: 'hp', value: 8 }, icon: '💚' },
             vitality_fine: { id: 'vitality_fine', name: '💚 生命祝福', type: 'defense', rarity: 'Fine', series: 'vitality', description: '最大生命 +12%，吸血 +2%', price: 2000, effect: { type: 'passive', stats: [{ stat: 'hp', value: 12 }, { stat: 'lifeSteal', value: 2 }] }, icon: '💚' },
             vitality_rare: { id: 'vitality_rare', name: '💚 泰坦血統', type: 'defense', rarity: 'Rare', series: 'vitality', description: '最大生命 +18%，吸血 +4%', price: 8000, effect: { type: 'passive', stats: [{ stat: 'hp', value: 18 }, { stat: 'lifeSteal', value: 4 }] }, icon: '💚' },
             
@@ -23262,35 +23262,35 @@ const REGION_CONSUMABLES = {
             // ========== 隨從名稱遷移 (v3.5) ==========
             // 將舊名稱轉換為新名稱
             const companionNameMap = {
-                '攻擊核心': '戰鬥機器人',
-                '戰鬥AI': '戰術機器人',
-                '毀滅者': '毀滅機器人',
-                '終結者': '終結機器人',
-                '防護核心': '守護機器人',
-                '堡壘守衛': '堡壘機器人',
-                '泰坦護盾': '泰坦機器人',
-                '不滅守護': '不滅機器人',
-                '修復機器人': '醫療機器人',
-                '醫療無人機': '治療無人機',
-                '奈米治療師': '奈米醫師',
-                '生命之源': '生命泉源',
-                '多功能核心': '多功能機器人',
-                '戰術AI': '量子機器人',
-                '量子核心': '完美機器人',
-                '完美戰神': '戰神機器人',
+                '戰鬥機器人': '戰鬥機器人',
+                '戰術機器人': '戰術機器人',
+                '毀滅機器人': '毀滅機器人',
+                '終結機器人': '終結機器人',
+                '守護機器人': '守護機器人',
+                '堡壘機器人': '堡壘機器人',
+                '泰坦機器人': '泰坦機器人',
+                '不滅機器人': '不滅機器人',
+                '醫療機器人': '醫療機器人',
+                '治療無人機': '治療無人機',
+                '奈米醫師': '奈米醫師',
+                '生命泉源': '生命泉源',
+                '多功能機器人': '多功能機器人',
+                '量子機器人': '量子機器人',
+                '完美機器人': '完美機器人',
+                '戰神機器人': '戰神機器人',
                 '時空守護神': '時空守護神'
             };
             
             const equipmentNameMap = {
-                '戰鬥芋片': '戰鬥芯片',
-                '破壞核心': '破壞模組',
-                '毀滅引擎': '毀滅系統',
-                '防護芋片': '防護芯片',
-                '堡壘核心': '堡壘模組',
-                '不滅壁壘': '不滅系統',
-                '修復芋片': '修復芯片',
-                '再生核心': '再生模組',
-                '生命源泉': '生命系統'
+                '戰鬥芯片': '戰鬥芯片',
+                '破壞模組': '破壞模組',
+                '毀滅系統': '毀滅系統',
+                '防護芯片': '防護芯片',
+                '堡壘模組': '堡壘模組',
+                '不滅系統': '不滅系統',
+                '修復芯片': '修復芯片',
+                '再生模組': '再生模組',
+                '生命系統': '生命系統'
             };
             
             // 轉換已裝備的隨從

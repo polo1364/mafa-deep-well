@@ -14831,6 +14831,27 @@ const REGION_CONSUMABLES = {
          }
          */
 
+        
+        // 獲取裝備部位標籤
+        function getEquipmentSlotLabel(type) {
+            const labels = {
+                'weapon': '武器',
+                'head': '頭盔',
+                'chest': '胸甲',
+                'legs': '腿甲',
+                'feet': '鞋子',
+                'gloves': '手套',
+                'ring': '戒指',
+                'necklace': '項鍊',
+                'armor': '防具',
+                'accessory': '飾品',
+                'companion_equipment': '隨從裝備',
+                'card': '卡牌',
+                'pet': '寵物'
+            };
+            return labels[type] || type;
+        }
+
         function openBagModal() {
             const modal = document.getElementById('bag-modal');
             const items = document.getElementById('bag-items');
@@ -14847,7 +14868,20 @@ const REGION_CONSUMABLES = {
                         return '';
                     }
                     // 更嚴格的消耗品檢查：有subtype或者type是consumable
-                    const isConsumable = item.type === 'consumable' || item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || item.subtype === 'starter_pack' || item.subtype === 'hp_potion' || item.subtype === 'exp_scroll' || item.subtype === 'hp_percent' || item.subtype === 'both_percent' || item.subtype === 'hp_regen' || item.subtype === 'both_regen' || item.subtype === 'ap_potion';
+                    const isConsumable = (
+                        item.type === 'consumable' || 
+                        (item.type !== 'weapon' && item.type !== 'head' && item.type !== 'chest' && 
+                         item.type !== 'legs' && item.type !== 'feet' && item.type !== 'gloves' && 
+                         item.type !== 'ring' && item.type !== 'necklace' && item.type !== 'armor' && 
+                         item.type !== 'accessory' && item.type !== 'companion_equipment' && 
+                         item.type !== 'card' && item.type !== 'pet' &&
+                         (item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || 
+                          item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || 
+                          item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || 
+                          item.subtype === 'starter_pack' || item.subtype === 'hp_potion' || item.subtype === 'exp_scroll' || 
+                          item.subtype === 'hp_percent' || item.subtype === 'both_percent' || item.subtype === 'hp_regen' || 
+                          item.subtype === 'both_regen' || item.subtype === 'ap_potion'))
+                    );
                     
                     if (isConsumable) {
                         // 消耗品
@@ -14940,7 +14974,7 @@ const REGION_CONSUMABLES = {
                             <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px;">
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                     <div style="flex: 1;">
-                                        <div style="color: ${item.color}; font-weight: bold;">${item.name}${enhanceDisplay} [${item.rarityLabel}]</div>
+                                        <div style="color: ${item.color}; font-weight: bold;">${item.name}${enhanceDisplay} <span style="color: #888; font-size: 0.9em;">[${getEquipmentSlotLabel(item.type)}]</span> [${item.rarityLabel}]</div>
                                         ${item.setName ? `<div style="font-size: 0.8rem; color: #FFD700; margin-top: 2px;">✨ ${item.setName}</div>` : ''}
                                         <div style="font-size: 0.85rem; margin-top: 5px; line-height: 1.6;">
                                             ${formatItemStats(item, currentEquipped)}

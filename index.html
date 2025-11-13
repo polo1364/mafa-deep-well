@@ -14868,19 +14868,23 @@ const REGION_CONSUMABLES = {
                         return '';
                     }
                     // 更嚴格的消耗品檢查：有subtype或者type是consumable
-                    const isConsumable = (
+                    // 定義裝備類型列表
+                    const equipmentTypes = ['weapon', 'head', 'chest', 'legs', 'feet', 'gloves', 
+                                           'ring', 'necklace', 'armor', 'accessory'];
+                    const specialTypes = ['companion_equipment', 'card', 'pet', 'companion'];
+                    
+                    // 如果是裝備或特殊類型，絕對不是消耗品
+                    const isEquipmentOrSpecial = equipmentTypes.includes(item.type) || specialTypes.includes(item.type);
+                    
+                    // 只有當不是裝備/特殊類型時，才檢查是否為消耗品
+                    const isConsumable = !isEquipmentOrSpecial && (
                         item.type === 'consumable' || 
-                        (item.type !== 'weapon' && item.type !== 'head' && item.type !== 'chest' && 
-                         item.type !== 'legs' && item.type !== 'feet' && item.type !== 'gloves' && 
-                         item.type !== 'ring' && item.type !== 'necklace' && item.type !== 'armor' && 
-                         item.type !== 'accessory' && item.type !== 'companion_equipment' && 
-                         item.type !== 'card' && item.type !== 'pet' &&
-                         (item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || 
-                          item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || 
-                          item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || 
-                          item.subtype === 'starter_pack' || item.subtype === 'hp_potion' || item.subtype === 'exp_scroll' || 
-                          item.subtype === 'hp_percent' || item.subtype === 'both_percent' || item.subtype === 'hp_regen' || 
-                          item.subtype === 'both_regen' || item.subtype === 'ap_potion'))
+                        item.subtype === 'hp' || item.subtype === 'ap' || item.subtype === 'hp_fixed' || 
+                        item.subtype === 'ap_fixed' || item.subtype === 'both_fixed' || item.subtype === 'buff' || 
+                        item.subtype === 'exp' || item.subtype === 'skill_reset' || item.subtype === 'bag_expand' || 
+                        item.subtype === 'starter_pack' || item.subtype === 'hp_potion' || item.subtype === 'exp_scroll' || 
+                        item.subtype === 'hp_percent' || item.subtype === 'both_percent' || item.subtype === 'hp_regen' || 
+                        item.subtype === 'both_regen' || item.subtype === 'ap_potion'
                     );
                     
                     if (isConsumable) {

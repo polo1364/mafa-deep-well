@@ -2533,7 +2533,7 @@
             <!-- 裝備收藏 -->
             <div style="margin-bottom: 15px;">
                 <h3 style="color: #4EA5FF; margin: 0 0 10px 0;">🛠️ 裝備收藏</h3>
-                <div id="equipment-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                <div id="companion-equipment-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
                     <!-- 裝備卡片將由 JavaScript 生成 -->
                 </div>
             </div>
@@ -7781,6 +7781,9 @@ const REGION_CONSUMABLES = {
                 
                 return `<div class="skill-card" onclick="selectSkill('${skillName}')" style="padding:20px;background:linear-gradient(135deg,rgba(255,215,0,0.05) 0%,rgba(255,215,0,0.1) 100%);border:2px solid rgba(255,215,0,0.3);border-radius:12px;cursor:pointer;transition:all 0.3s;"><div style="font-size:2rem;text-align:center;margin-bottom:10px;">${typeIcon}</div><div style="font-size:1.2rem;font-weight:bold;color:#ffd700;text-align:center;margin-bottom:8px;text-shadow:0 0 10px rgba(255,215,0,0.5);">${skillName}</div><div style="font-size:0.9rem;color:#c0c0c0;text-align:center;margin-bottom:12px;">${typeLabel}</div><div style="font-size:0.95rem;color:#ffffff;line-height:1.6;">${skill.desc}</div></div>`;
             }).join('');
+            console.log('裝備列表HTML已生成，長度:', equipmentList.innerHTML.length);
+            console.log('equipmentList.children.length:', equipmentList.children.length);
+            console.log('實際HTML內容:', equipmentList.innerHTML.substring(0, 500));
         }
         
         function selectSkill(skillName) {
@@ -16559,6 +16562,9 @@ const REGION_CONSUMABLES = {
         }
         
         function updateCompanionModal() {
+            console.log('=== updateCompanionModal 被調用 ===');
+            console.log('ownedEquipment:', gameState.companions.ownedEquipment);
+            console.log('ownedEquipment 長度:', gameState.companions.ownedEquipment ? gameState.companions.ownedEquipment.length : 'undefined');
             window.dbg={a:gameState.companions.active,e:gameState.companions.equipment};
             const activeCompanion = getActiveCompanion();
             const activeCompanionInfo = document.getElementById('active-companion-info');
@@ -17023,17 +17029,33 @@ const REGION_CONSUMABLES = {
         
         // 更新裝備列表
         function updateEquipmentList() {
-            const equipmentList = document.getElementById('equipment-list');
-            if (!equipmentList) return;
+            console.log('=== updateEquipmentList 被調用 ===');
+            const equipmentList = document.getElementById('companion-equipment-list');
+            console.log('equipment-list 元素:', equipmentList);
+            if (!equipmentList) {
+                console.error('找不到 equipment-list 元素！');
+                return;
+            }
+            
+            console.log('ownedEquipment:', gameState.companions.ownedEquipment);
+            console.log('ownedEquipment 長度:', gameState.companions.ownedEquipment ? gameState.companions.ownedEquipment.length : 'undefined');
             
             if (!gameState.companions.ownedEquipment || gameState.companions.ownedEquipment.length === 0) {
+                console.log('裝備列表為空，顯示提示');
                 equipmentList.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #c0c0c0; padding: 30px;">你還沒有裝備，擊敗怪物獲取吧！</div>';
                 return;
             }
             
+            console.log('開始渲染', gameState.companions.ownedEquipment.length, '件裝備');
+            
             equipmentList.innerHTML = gameState.companions.ownedEquipment.map(owned => {
+                console.log('渲染裝備:', owned.id, '等級:', owned.level);
                 const equipment = COMPANION_EQUIPMENT[owned.id];
-                if (!equipment) return '';
+                console.log('找到裝備定義:', equipment ? equipment.name : 'undefined');
+                if (!equipment) {
+                    console.warn('找不到裝備定義:', owned.id);
+                    return '';
+                }
                 
                 const isEquipped = gameState.companions.equipment === owned.id;
                 const rarityColor = getRarityColor(equipment.rarity);
@@ -17070,6 +17092,9 @@ const REGION_CONSUMABLES = {
                     </div>
                 `;
             }).join('');
+            console.log('裝備列表HTML已生成，長度:', equipmentList.innerHTML.length);
+            console.log('equipmentList.children.length:', equipmentList.children.length);
+            console.log('實際HTML內容:', equipmentList.innerHTML.substring(0, 500));
         }
         
         // 裝備裝備
@@ -20008,6 +20033,9 @@ const REGION_CONSUMABLES = {
                     </div>
                 `;
             }).join('');
+            console.log('裝備列表HTML已生成，長度:', equipmentList.innerHTML.length);
+            console.log('equipmentList.children.length:', equipmentList.children.length);
+            console.log('實際HTML內容:', equipmentList.innerHTML.substring(0, 500));
         }
         
         // 更新寵物收藏列表
@@ -20107,6 +20135,9 @@ const REGION_CONSUMABLES = {
                     </div>
                 `;
             }).join('');
+            console.log('裝備列表HTML已生成，長度:', equipmentList.innerHTML.length);
+            console.log('equipmentList.children.length:', equipmentList.children.length);
+            console.log('實際HTML內容:', equipmentList.innerHTML.substring(0, 500));
         }
         
         // 更新寵物材料顯示
@@ -20301,6 +20332,9 @@ const REGION_CONSUMABLES = {
                     </div>
                 `;
             }).join('');
+            console.log('裝備列表HTML已生成，長度:', equipmentList.innerHTML.length);
+            console.log('equipmentList.children.length:', equipmentList.children.length);
+            console.log('實際HTML內容:', equipmentList.innerHTML.substring(0, 500));
         }
         
         function renderCardShop() {

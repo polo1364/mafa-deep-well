@@ -17060,14 +17060,37 @@ const REGION_CONSUMABLES = {
                 const isEquipped = gameState.companions.equipment === owned.id;
                 const rarityColor = getRarityColor(equipment.rarity);
                 const levelMultiplier = 1 + (owned.level - 1) * 0.1;
-                const currentEffect = (equipment.effect * levelMultiplier).toFixed(1);
-                const nextLevelEffect = (equipment.effect * (levelMultiplier + 0.1)).toFixed(1);
                 
                 const upgradeCost = owned.level * 10 + 20;
                 const canUpgrade = owned.level < 10 && gameState.companions.shards >= upgradeCost;
                 
                 const typeText = equipment.type === 'attack' ? '攻擊' : equipment.type === 'defense' ? '防禦' : '回復';
                 const typeColor = equipment.type === 'attack' ? '#ff6b6b' : equipment.type === 'defense' ? '#4ea5ff' : '#4ade80';
+                
+                // 生成效果列表
+                const effectNames = {
+                    atk: '攻擊力', def: '防禦力', hp: '最大生命',
+                    crit: '暴擊率', critDmg: '暴擊傷害', dmgRed: '減傷',
+                    lifeSteal: '吸血', regen: '每回合回復', reflect: '反傷',
+                    ignoreDefense: '無視防禦', postBattleHeal: '戰後回復', lowHpHeal: '低血回復'
+                };
+                let currentEffectsHtml = '';
+                let nextEffectsHtml = '';
+                if (equipment.effects) {
+                    currentEffectsHtml = Object.entries(equipment.effects).map(([stat, value]) => {
+                        const displayValue = (value * 100 * levelMultiplier).toFixed(1);
+                        const statName = effectNames[stat] || stat;
+                        return `<div style="color: #c0c0c0; font-size: 0.85rem;">• ${statName} +${displayValue}%</div>`;
+                    }).join('');
+                    
+                    if (owned.level < 10) {
+                        nextEffectsHtml = Object.entries(equipment.effects).map(([stat, value]) => {
+                            const displayValue = (value * 100 * (levelMultiplier + 0.1)).toFixed(1);
+                            const statName = effectNames[stat] || stat;
+                            return `${statName} +${displayValue}%`;
+                        }).join(', ');
+                    }
+                }
                 
                 return `
                     <div style="background: ${isEquipped ? 'rgba(0, 255, 136, 0.08)' : 'rgba(78, 165, 255, 0.05)'}; padding: 12px; border-radius: 8px; border: 2px solid ${isEquipped ? 'rgba(0, 255, 136, 0.4)' : rarityColor}; position: relative;">
@@ -17082,8 +17105,8 @@ const REGION_CONSUMABLES = {
                         </div>
                         <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
                             <div style="color: #00ff88; font-size: 0.85rem; font-weight: bold; margin-bottom: 3px;">✨ 當前效果</div>
-                            <div style="color: #c0c0c0; font-size: 0.85rem;">${equipment.statType} +${currentEffect}%</div>
-                            ${owned.level < 10 ? `<div style="color: #888; font-size: 0.75rem; margin-top: 3px;">下一級: ${equipment.statType} +${nextLevelEffect}%</div>` : '<div style="color: #ffd700; font-size: 0.75rem; margin-top: 3px;">⭐ 已滿級</div>'}
+                            ${currentEffectsHtml}
+                            ${owned.level < 10 ? `<div style="color: #888; font-size: 0.75rem; margin-top: 3px;">下一級: ${nextEffectsHtml}</div>` : '<div style="color: #ffd700; font-size: 0.75rem; margin-top: 3px;">⭐ 已滿級</div>'}
                         </div>
                         <div style="display: flex; gap: 5px;">
                             ${!isEquipped ? `<button onclick="equipEquipment('${owned.id}'); updateCompanionModal(); updateCompanionDisplay();" style="flex: 1; padding: 6px; font-size: 0.85rem; background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%); color: #000; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">✅ 裝備</button>` : ''}

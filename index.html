@@ -26376,6 +26376,7 @@ function generateEquipmentByRarity(rarity) {
             gameState.currentZodiacFloor = {
                 realmId: realmId,
                 constellationId: constellationId,
+                floorIndex: floorIndex,  // 保存層數索引
                 floor: floor,
                 realm: realm
             };
@@ -26608,13 +26609,20 @@ function generateEquipmentByRarity(rarity) {
 
         // 黃道副本戰鬥勝利處理
         function handleZodiacVictory() {
-            if (!gameState.currentZodiacFloor) return;
+            console.log('=== handleZodiacVictory 被調用 ===');
+            console.log('currentZodiacFloor:', gameState.currentZodiacFloor);
             
-            const { realmId, constellationId, floor, realm } = gameState.currentZodiacFloor;
+            if (!gameState.currentZodiacFloor) {
+                console.warn('currentZodiacFloor 為空，跳過處理');
+                return;
+            }
+            
+            const { realmId, constellationId, floorIndex, floor, realm } = gameState.currentZodiacFloor;
             const floorKey = `${realmId}_${constellationId}_${floor.floor}`;
             
             // 記錄怪物到圖鑑
             const monsterId = `${realmId}_${constellationId}_${floor.floor}`;
+            console.log('記錄怪物ID:', monsterId);
             addZodiacMonsterToCodex(monsterId);
             
             // 記錄通關
@@ -26629,11 +26637,61 @@ function generateEquipmentByRarity(rarity) {
                 addLog('獎勵', `獲得 ${shardAmount} ${realm.shardIcon} ${realm.shardName}！`, true);
             }
             
-            // 清除暫存數據
-            gameState.currentZodiacFloor = null;
+            // 顯示快速挑戰選項
+            showZodiacQuickChallengeOptions(realmId, constellationId, floorIndex, realm);
             
             updateUI();
             saveGame();
+        }
+
+
+        // 顯示快速挑戰選項
+        function showZodiacQuickChallengeOptions(realmId, constellationId, floorIndex, realm) {
+            const constellation = ZODIAC_DUNGEONS[realmId].constellations[constellationId];
+            const hasNextFloor = floorIndex < constellation.floors.length - 1;
+            
+            let optionsHtml = '<div style="background: rgba(255,215,0,0.1); border: 2px solid #FFD700; border-radius: 8px; padding: 15px; margin: 10px 0;">';
+            optionsHtml += '<div style="color: #FFD700; font-weight: bold; margin-bottom: 10px; text-align: center;">⭐ 黃道副本挑戰 ⭐</div>';
+            optionsHtml += '<div style="display: flex; gap: 10px; flex-wrap: wrap;">';
+            
+            // 重新挑戰當前層
+            optionsHtml += `<button onclick="quickChallengeZodiac('${realmId}', '${constellationId}', ${floorIndex})" style="flex: 1; min-width: 120px; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🔄 重新挑戰</button>`;
+            
+            // 下一層按鈕（如果有）
+            if (hasNextFloor) {
+                const nextFloor = constellation.floors[floorIndex + 1];
+                optionsHtml += `<button onclick="quickChallengeZodiac('${realmId}', '${constellationId}', ${floorIndex + 1})" style="flex: 1; min-width: 120px; padding: 10px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">➡️ 下一層 (Lv.${nextFloor.level})</button>`;
+            }
+            
+            // 返回星座神殿
+            optionsHtml += `<button onclick="closeQuickChallengeOptions(); openZodiacTempleModal();" style="flex: 1; min-width: 120px; padding: 10px; background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🏛️ 返回神殿</button>`;
+            
+            optionsHtml += '</div></div>';
+            
+            // 插入到戰鬥日誌區域上方
+            const logContainer = document.getElementById('battle-log');
+            if (logContainer && logContainer.parentNode) {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.id = 'zodiac-quick-challenge-options';
+                optionsDiv.innerHTML = optionsHtml;
+                logContainer.parentNode.insertBefore(optionsDiv, logContainer);
+            }
+        }
+        
+        // 快速挑戰
+        function quickChallengeZodiac(realmId, constellationId, floorIndex) {
+            closeQuickChallengeOptions();
+            challengeZodiacFloor(realmId, constellationId, floorIndex);
+        }
+        
+        // 關閉快速挑戰選項
+        function closeQuickChallengeOptions() {
+            const optionsDiv = document.getElementById('zodiac-quick-challenge-options');
+            if (optionsDiv) {
+                optionsDiv.remove();
+            }
+            // 清除暫存數據
+            gameState.currentZodiacFloor = null;
         }
 
         // ========== 黃道怪物圖鑑系統 ==========

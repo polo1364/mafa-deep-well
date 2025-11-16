@@ -2039,7 +2039,7 @@
                         <p style="color: #ffd700; font-weight: bold; margin-bottom: 8px;">🏆 圖鑑獎勵</p>
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• 怪物1000殺：<strong style="color: #ffd700;">強化石 x50</strong> + <strong style="color: #ffd700;">稱號</strong></p>
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• 套裝收集：<strong style="color: #ffd700;">稱號</strong> + <strong style="color: #00ff88;">屬性加成</strong></p>
-                        <p style="color: #c0c0c0; font-size: 0.9rem;">• 隨從收集：<strong style="color: #ffd700;">稱號</strong> + <strong style="color: #00ff88;">特殊效果</strong></p>
+
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• 卡片收集：<strong style="color: #ffd700;">稱號</strong> + <strong style="color: #00ff88;">屬性加成</strong></p>
                     </div>
                     <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 點擊主界面的<strong style="color: #ffd700;">「📖 圖鑑」</strong>按鈕查看收集進度！</p>
@@ -2178,9 +2178,9 @@
                         <p style="color: #667eea; font-weight: bold; margin-bottom: 8px;">📖 圖鑑稱號（新！）</p>
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #ff6b6b;">怪物1000殺</strong>：53個稱號（普通32 + 精莉16 + Boss5）</p>
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #9c27b0;">套裝收集</strong>：6個稱號（總收集 + 區域套裝）</p>
-                        <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #ff9800;">隨從收集</strong>：8個稱號（進度 + 類型專家）</p>
+
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #667eea;">卡片收集</strong>：4個稱號（收藏家系列）</p>
-                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 共<strong style="color: #ffd700;">71個圖鑑稱號</strong>等你解鎖！</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 共<strong style="color: #ffd700;">63個圖鑑稱號</strong>等你解鎖！</p>
                     </div>
                     
                     <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%); padding: 20px; border-radius: 10px; border: 2px solid rgba(255, 215, 0, 0.5); margin-top: 25px;">
@@ -4075,15 +4075,7 @@ const TITLES_DATA = {
         condition: { type: 'event', value: 'halloween' },
         bonus: { bossDmg: 10 }
     },
-    'first_day_player': {
-        name: '🎮 首日玩家',
-        desc: '遊戲首日登入',
-        howToGet: '在遊戲首日（發布當天）登入遊戲即可解鎖',
-        category: 'special',
-        rarity: 'legendary',
-        condition: { type: 'first_day', value: 1 },
-        bonus: { atk: 3, def: 3, hp: 3 }
-    },
+
     'abyss_guardian': {
         name: '🌟 數位深淵守護者',
         desc: '遊玩滿100小時',
@@ -4093,17 +4085,6 @@ const TITLES_DATA = {
         condition: { type: 'play_hours', value: 100 },
         bonus: { atk: 10, def: 10, hp: 10 }
     },
-    
-    // v2.0 遷移稱號已移除
-    'iteration_vanguard': {
-        name: '⚡ 迭代先鋒',
-        desc: '高等級早期玩家，迭代系統先驅',
-        howToGet: '使用 Lv.50+ 的舊版本存檔載入 v2.0 版本，系統會自動遷移並解鎖此稱號',
-        category: 'special',
-        rarity: 'legendary',
-        condition: { type: 'migration', value: 'v2_iteration_vanguard' },
-        bonus: { atk: 5, def: 5, hp: 5, expBonus: 8, iterationIP: 10 }
-    }    ,
     
     // 成長系列稱號（8個）
     'beginner': {
@@ -4898,81 +4879,6 @@ const TITLES_DATA = {
         bonus: { regionDmg: 5, setBonus: 5 }
     },
     
-    // 隨從圖鑑稱號
-    'companion_collector_5': {
-        name: '🤖 隨從收集者',
-        desc: '收集 5 個隨從',
-        howToGet: '獲得並收集 5 個不同的隨從',
-        category: 'codex_companion',
-        rarity: 'common',
-        condition: { type: 'companions_collected', value: 5 },
-        bonus: { companionBonus: 5 }
-    },
-    'companion_collector_10': {
-        name: '🤖 隨從愛好者',
-        desc: '收集 10 個隨從',
-        howToGet: '獲得並收集 10 個不同的隨從',
-        category: 'codex_companion',
-        rarity: 'rare',
-        condition: { type: 'companions_collected', value: 10 },
-        bonus: { companionBonus: 10 }
-    },
-    'companion_collector_15': {
-        name: '🤖 隨從專家',
-        desc: '收集 15 個隨從',
-        howToGet: '獲得並收集 15 個不同的隨從',
-        category: 'codex_companion',
-        rarity: 'epic',
-        condition: { type: 'companions_collected', value: 15 },
-        bonus: { companionBonus: 15 }
-    },
-    'companion_collector_20': {
-        name: '🤖 隨從大師',
-        desc: '收集 20 個隨從',
-        howToGet: '獲得並收集 20 個隨從',
-        category: 'codex_companion',
-        rarity: 'legendary',
-        condition: { type: 'companions_collected', value: 20 },
-        bonus: { companionBonus: 20, atk: 3, def: 3 }
-    },
-    
-    // 隨從類型稱號
-    'companion_type_master_attack': {
-        name: '⚔️ 攻擊隨從專家',
-        desc: '收集所有攻擊型隨從',
-        howToGet: '收集所有攻擊型隨從（共 4 個）',
-        category: 'codex_companion',
-        rarity: 'rare',
-        condition: { type: 'companion_type', companionType: 'attack', value: 4 },
-        bonus: { companionAttackBonus: 15 }
-    },
-    'companion_type_master_defense': {
-        name: '🛡️ 防禦隨從專家',
-        desc: '收集所有防禦型隨從',
-        howToGet: '收集所有防禦型隨從（共 3 個）',
-        category: 'codex_companion',
-        rarity: 'rare',
-        condition: { type: 'companion_type', companionType: 'defense', value: 3 },
-        bonus: { companionDefenseBonus: 15 }
-    },
-    'companion_type_master_recovery': {
-        name: '💚 恢復隨從專家',
-        desc: '收集所有恢復型隨從',
-        howToGet: '收集所有恢復型隨從（共 3 個）',
-        category: 'codex_companion',
-        rarity: 'rare',
-        condition: { type: 'companion_type', companionType: 'recovery', value: 3 },
-        bonus: { companionRecoveryBonus: 15 }
-    },
-    'companion_type_master_balanced': {
-        name: '⚖️ 平衡隨從專家',
-        desc: '收集所有平衡型隨從',
-        howToGet: '收集所有平衡型隨從（共 3 個）',
-        category: 'codex_companion',
-        rarity: 'rare',
-        condition: { type: 'companion_type', companionType: 'balanced', value: 3 },
-        bonus: { companionBalancedBonus: 15 }
-    },
     
     // 卡牌圖鑑稱號
     'card_collector_10': {
@@ -5010,6 +4916,116 @@ const TITLES_DATA = {
         rarity: 'legendary',
         condition: { type: 'cards_collected', value: 40 },
         bonus: { cardBonus: 20, atk: 3, def: 3 }
+    },
+    
+    // 12生肖稱號
+    'zodiac_master_rat': {
+        name: '🐭 鼠影者',
+        desc: '獲得鼠影者隨從',
+        howToGet: '獲得鼠影者隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'rat', value: 3 },
+        bonus: { crit: 3, dodge: 3 }
+    },
+    'zodiac_master_ox': {
+        name: '🐂 鐵甲牛',
+        desc: '獲得鐵甲牛隨從',
+        howToGet: '獲得鐵甲牛隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'ox', value: 3 },
+        bonus: { def: 5, hp: 5 }
+    },
+    'zodiac_master_tiger': {
+        name: '🐯 虎啸王',
+        desc: '獲得虎啸王隨從',
+        howToGet: '獲得虎啸王隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'tiger', value: 3 },
+        bonus: { atk: 5, critDmg: 5 }
+    },
+    'zodiac_master_rabbit': {
+        name: '🐰 疾風兔',
+        desc: '獲得疾風兔隨從',
+        howToGet: '獲得疾風兔隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'rabbit', value: 3 },
+        bonus: { dodge: 5, goldBonus: 5 }
+    },
+    'zodiac_master_dragon': {
+        name: '🐲 天火龍',
+        desc: '獲得天火龍隨從',
+        howToGet: '獲得天火龍隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'dragon', value: 3 },
+        bonus: { atk: 3, def: 3, hp: 3 }
+    },
+    'zodiac_master_snake': {
+        name: '🐍 毒牙蛇',
+        desc: '獲得毒牙蛇隨從',
+        howToGet: '獲得毒牙蛇隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'snake', value: 3 },
+        bonus: { atk: 4, ignoreDefense: 3 }
+    },
+    'zodiac_master_horse': {
+        name: '🐴 閃電馬',
+        desc: '獲得閃電馬隨從',
+        howToGet: '獲得閃電馬隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'horse', value: 3 },
+        bonus: { atk: 4, expBonus: 5 }
+    },
+    'zodiac_master_sheep': {
+        name: '🐑 鋼鐵羊',
+        desc: '獲得鋼鐵羊隨從',
+        howToGet: '獲得鋼鐵羊隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'sheep', value: 3 },
+        bonus: { hp: 5, lifeSteal: 3 }
+    },
+    'zodiac_master_monkey': {
+        name: '🐵 狂戰猴',
+        desc: '獲得狂戰猴隨從',
+        howToGet: '獲得狂戰猴隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'monkey', value: 3 },
+        bonus: { crit: 4, dodge: 3 }
+    },
+    'zodiac_master_rooster': {
+        name: '🐔 戰鷹雞',
+        desc: '獲得戰鷹雞隨從',
+        howToGet: '獲得戰鷹雞隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'rooster', value: 3 },
+        bonus: { crit: 5, accuracy: 5 }
+    },
+    'zodiac_master_dog': {
+        name: '🐕 鐵衛犬',
+        desc: '獲得鐵衛犬隨從',
+        howToGet: '獲得鐵衛犬隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'dog', value: 3 },
+        bonus: { def: 4, dmgRed: 3 }
+    },
+    'zodiac_master_pig': {
+        name: '🐷 重裝豬',
+        desc: '獲得重裝豬隨從',
+        howToGet: '獲得重裝豬隨從',
+        category: 'codex_zodiac',
+        rarity: 'rare',
+        condition: { type: 'zodiac_set', zodiac: 'pig', value: 3 },
+        bonus: { goldBonus: 10, hp: 3 }
     }
 
 };
@@ -16896,8 +16912,7 @@ const REGION_CONSUMABLES = {
                 gameState.codex.stats.totalCompanionsObtained++;
                 addLog('圖鑑', `📖 解鎖隨從圖鑑：${companion.name}`);
                 
-                // 檢查隨從收集稱號
-                checkCompanionCodexTitles();
+
             }
             
             saveGame();
@@ -17106,29 +17121,6 @@ const REGION_CONSUMABLES = {
             }
         }
         
-        // 檢查隨從收集稱號
-        function checkCompanionCodexTitles() {
-            const totalObtained = gameState.codex.stats.totalCompanionsObtained;
-            
-            const milestones = [
-                { count: 5, titleId: 'companion_collector_5' },
-                { count: 10, titleId: 'companion_collector_10' },
-                { count: 15, titleId: 'companion_collector_15' },
-                { count: 20, titleId: 'companion_collector_20' }
-            ];
-            
-            for (const milestone of milestones) {
-                if (totalObtained >= milestone.count) {
-                    const titleId = milestone.titleId;
-                    if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
-                        gameState.titles.unlocked.push(titleId);
-                        const titleData = TITLES_DATA[titleId];
-                        addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
-                        playSound('levelup');
-                    }
-                }
-            }
-        }
         
         // 檢查卡牌收集稱號
         function checkCardCodexTitles() {
@@ -17144,6 +17136,46 @@ const REGION_CONSUMABLES = {
             for (const milestone of milestones) {
                 if (totalObtained >= milestone.count) {
                     const titleId = milestone.titleId;
+                    if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
+                        gameState.titles.unlocked.push(titleId);
+                        const titleData = TITLES_DATA[titleId];
+                        addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                        playSound('levelup');
+                    }
+                }
+            }
+        }
+        
+        // 檢查生肖稱號
+        function checkZodiacTitles() {
+            // 初始化隨從系統（兼容舊存檔）
+            if (!gameState.companions) {
+                return;
+            }
+            
+            // 統計每個生肖的隨從數量
+            const zodiacCounts = {};
+            
+            // 遍歷玩家擁有的所有隨從
+            if (gameState.companions.owned && Array.isArray(gameState.companions.owned)) {
+                for (const companionData of gameState.companions.owned) {
+                    const companionId = companionData.id || companionData;
+                    // 從 ZODIAC_COMPANIONS 中獲取隨從信息
+                    if (ZODIAC_COMPANIONS && ZODIAC_COMPANIONS[companionId]) {
+                        const zodiac = companionId; // companionId 就是生肖名稱 (rat, ox, tiger...)
+                        zodiacCounts[zodiac] = (zodiacCounts[zodiac] || 0) + 1;
+                    }
+                }
+            }
+            
+            // 檢查每個生肖是否達到 3 件（普通、稀有、史詩各 1 件）
+            // 但實際上每個生肖只有 1 個隨從，所以檢查 >= 1 即可
+            const zodiacs = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 
+                             'horse', 'sheep', 'monkey', 'rooster', 'dog', 'pig'];
+            
+            for (const zodiac of zodiacs) {
+                if (zodiacCounts[zodiac] >= 1) {
+                    const titleId = `zodiac_master_${zodiac}`;
                     if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
                         gameState.titles.unlocked.push(titleId);
                         const titleData = TITLES_DATA[titleId];
@@ -17197,6 +17229,9 @@ const REGION_CONSUMABLES = {
             
             // 記錄隨從圖鑑
             recordCompanionObtained(companionId);
+            
+            // 檢查生肖稱號
+            checkZodiacTitles();
             
             addLog('隨從', `🎉 獲得新隨從：${companion.name}！`);
 
@@ -26248,16 +26283,6 @@ function showEquipmentDropAnimation(equipment) {
                     totalTalentLevel += level;
                 }
                 return `天賦等級: ${totalTalentLevel}/${cond.value}`;
-            } else if (cond.type === 'migration') {
-                // 遷移稱號的特殊處理
-                if (cond.value === 'v2_iteration_optimized') {
-                    return '舊存檔遷移至 v2.0 即可解鎖';
-                } else if (cond.value === 'v2_pioneer') {
-                    return 'Lv.15+ 舊存檔遷移至 v2.0 即可解鎖';
-                } else if (cond.value === 'v2_iteration_vanguard') {
-                    return 'Lv.50+ 舊存檔遷移至 v2.0 即可解鎖';
-                }
-                return '特殊條件解鎖';
             }
             
             return '';
@@ -31589,3 +31614,6 @@ input:checked + .slider:before {
     }
     
     </script>
+
+</body>
+</html>

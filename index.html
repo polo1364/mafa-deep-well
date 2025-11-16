@@ -1582,7 +1582,7 @@
                             <li>每<strong style="color: #ffd700;">10場戰鬥</strong>會遇到<strong style="color: #ffd700;">Boss</strong>,獎勵更豐厚!</li>
                             <li>達到<strong style="color: #ffd700;">26級</strong>後可以切換到更高級的區域</li>
                             <li>點擊<strong style="color: #ffd700;">「💰 商店」</strong>購買藥水和道具</li>
-                            <li>點擊<strong style="color: #ffd700;">「🔨 鐵匠舖」</strong>強化或分解裝備</li>
+                            <li>強化或分解裝備</li>
                             <li>點擊<strong style="color: #ffd700;">「📖 圖鑑」</strong>查看收集進度和解鎖稱號</li>
                             <li>點擊<strong style="color: #ffd700;">「⚙️ 自動」</strong>啟用自動裝備與分解</li>
                             <li>點擊其他Tab查看更多進階系統!</li>
@@ -1696,8 +1696,8 @@
                 <div class="how-to-play-panel" id="panel-gear" style="display: none;">
                     <h3 style="color: #ffd700; text-align: center; margin-bottom: 20px;">🎒 裝備與強化</h3>
                     
-                    <h4 style="color: #ffd700; margin-top: 20px;">💎 裝備品質</h4>
-                    <p style="color: #c0c0c0;">裝備分為8種品質,品質越高,屬性點數越多!</p>
+                    <h4 style="color: #ffd700; margin-top: 20px;">🎒 裝備品質（共9種）</h4>
+                    <p style="color: #c0c0c0;">裝備分為9種品質（含套裝）,品質越高,屬性點數越多!</p>
                     <table style="width: 100%; border-collapse: collapse; margin: 15px 0; background: rgba(255, 215, 0, 0.05);">
                         <thead>
                             <tr style="background: rgba(255, 215, 0, 0.15);">
@@ -1742,6 +1742,11 @@
                                 <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);">65</td>
                                 <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);">極稀有</td>
                             </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);"><strong style="color: #E040FB;">永恆(亮紫)</strong></td>
+                                <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);">75</td>
+                                <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);"><strong style="color: #E040FB;">最頂級裝備</strong></td>
+                            </tr>
                             <tr style="background: rgba(0, 255, 255, 0.1);">
                                 <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);"><strong style="color: #ffaa00;">套裝(青)</strong></td>
                                 <td style="padding: 10px; border: 1px solid rgba(255, 215, 0, 0.2);">45</td>
@@ -1750,28 +1755,127 @@
                         </tbody>
                     </table>
                     
-                    <h4 style="color: #ffd700; margin-top: 25px;">✨ 裝備詞綴</h4>
-                    <p style="color: #c0c0c0;">高品質裝備會附帶<strong style="color: #ff9800;">前綴</strong>和<strong style="color: #2196f3;">後綴</strong>,提供強大的特殊效果!</p>
-                    
-                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); margin: 15px 0;">
-                        <h5 style="color: #ff9800; margin-bottom: 10px;">🔥 前綴詞綴(武器專屬)</h5>
-                        <ul style="color: #c0c0c0; margin-left: 20px; font-size: 0.9rem;">
-                            <li><strong style="color: #ff9800;">熾熱的</strong>: 15%機率造成額外50%傷害</li>
-                            <li><strong style="color: #ff9800;">閃電的</strong>: 20%機率連鎖傷害</li>
-                            <li><strong style="color: #ff9800;">嗜血的</strong>: 擊殺回復15%最大生命</li>
-                            <li><strong style="color: #ffd700;">神聖的</strong>: 10%機率造成200%傷害</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="background: rgba(33, 150, 243, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(33, 150, 243, 0.3); margin: 15px 0;">
-                        <h5 style="color: #2196f3; margin-bottom: 10px;">🛡️ 後綴詞綴(防具專屬)</h5>
-                        <ul style="color: #c0c0c0; margin-left: 20px; font-size: 0.9rem;">
-                            <li><strong style="color: #2196f3;">守護</strong>: 致命傷只扣1血(30%機率)</li>
-                            <li><strong style="color: #2196f3;">再生</strong>: 每5秒回復2%最大生命</li>
-                            <li><strong style="color: #2196f3;">反射</strong>: 反彈10%傷害給敵人</li>
-                            <li><strong style="color: #ffd700;">魔盾</strong>: 戰鬥開始獲得20%最大生命護盾</li>
-                        </ul>
-                    </div>
+                        <h3 style="margin-top: 30px; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">⚔️ 裝備詞綴系統</h3>
+                        <p style="color: #ddd; margin: 15px 0;">高品質裝備有機率附帶強大的詞綴效果！共40個詞綴可供收集。</p>
+                        
+                        <h4 style="color: #ff9800; margin-top: 20px;">🗡️ 前綴詞綴（武器專屬 - 16個）</h4>
+                        <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <ul style="color: #ddd; margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong style="color: #ff9800;">熾熱的</strong>: 15%機率造成額外50%傷害（灼燒）</li>
+                                <li><strong style="color: #ff9800;">閃電的</strong>: 20%機率連鎖傷害（30%×2次）</li>
+                                <li><strong style="color: #ff9800;">冰霜的</strong>: 25%機率減緩敵人（降低10%攻擊）</li>
+                                <li><strong style="color: #ff9800;">嗜血的</strong>: 擊殺回復15%最大生命</li>
+                                <li><strong style="color: #ff9800;">致命的</strong>: 對低血敵人（<30%）額外30%傷害</li>
+                                <li><strong style="color: #ff9800;">精準的</strong>: 暴擊時額外20%傷害</li>
+                                <li><strong style="color: #ff9800;">狂暴的</strong>: 低血時（<50%）攻擊+20%</li>
+                                <li><strong style="color: #ffd700;">神聖的</strong>: 10%機率造成200%傷害</li>
+                                <li><strong style="color: #ff9800;">破甲的</strong>: 無視15%防禦</li>
+                                <li><strong style="color: #ff9800;">穿刺的</strong>: 對滿血敵人額外40%傷害</li>
+                                <li><strong style="color: #ff9800;">毒性的</strong>: 20%機率中毒（持續3回合）</li>
+                                <li><strong style="color: #ff9800;">狂風的</strong>: 15%機率額外攻擊（50%傷害）</li>
+                                <li><strong style="color: #ff9800;">暗影的</strong>: 暴擊時30%機率立即再次攻擊</li>
+                                <li><strong style="color: #ff9800;">審判的</strong>: 對Boss額外30%傷害</li>
+                                <li><strong style="color: #ff9800;">虛空的</strong>: 10%機率破甲（降低50%防禦）</li>
+                                <li><strong style="color: #ffd700;">末日的</strong>: 擊殺後下次攻擊150%傷害</li>
+                            </ul>
+                        </div>
+                        
+                        <h4 style="color: #2196f3; margin-top: 20px;">🛡️ 後綴詞綴（防具專屬 - 16個）</h4>
+                        <div style="background: rgba(33, 150, 243, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <ul style="color: #ddd; margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong style="color: #2196f3;">守護</strong>: 致命傷30%機率只扣1血（CD 60秒）</li>
+                                <li><strong style="color: #2196f3;">再生</strong>: 每5秒回復2%生命</li>
+                                <li><strong style="color: #2196f3;">反射</strong>: 反彈10%傷害</li>
+                                <li><strong style="color: #2196f3;">冰甲</strong>: 20%機率減傷50%</li>
+                                <li><strong style="color: #2196f3;">潮汐</strong>: 低血時（<30%）防禦+50%</li>
+                                <li><strong style="color: #2196f3;">堅韌</strong>: 減傷5%</li>
+                                <li><strong style="color: #ffd700;">魔盾</strong>: 戰鬥開始獲得20%生命護盾</li>
+                                <li><strong style="color: #ffd700;">時光</strong>: 15%機率復活50%生命（每戰1次）</li>
+                                <li><strong style="color: #2196f3;">荊棘</strong>: 近戰反彈15%傷害</li>
+                                <li><strong style="color: #2196f3;">迅捷</strong>: 受擊後20%機率閃避下次攻擊</li>
+                                <li><strong style="color: #2196f3;">堡壘</strong>: 高血時（>80%）額外減傷10%</li>
+                                <li><strong style="color: #2196f3;">不屈</strong>: 致命傷20%機率大幅減傷</li>
+                                <li><strong style="color: #ffd700;">聖光</strong>: 瀕死自動回復30%生命（每戰1次）</li>
+                                <li><strong style="color: #2196f3;">永恆</strong>: 每5秒回復3%生命和1%法力</li>
+                                <li><strong style="color: #2196f3;">鋼鐵</strong>: 減少暴擊傷害30%</li>
+                                <li><strong style="color: #2196f3;">祝福</strong>: 受傷時15%機率獲得護盾</li>
+                            </ul>
+                        </div>
+                        
+                        <h4 style="color: #9c27b0; margin-top: 20px;">💎 特殊詞綴（飾品專屬 - 8個）</h4>
+                        <div style="background: rgba(156, 39, 176, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <ul style="color: #ddd; margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong style="color: #9c27b0;">貪婪</strong>: 金幣+50%</li>
+                                <li><strong style="color: #9c27b0;">經驗</strong>: 經驗值+30%</li>
+                                <li><strong style="color: #9c27b0;">幸運</strong>: 裝備掉落+20%</li>
+                                <li><strong style="color: #9c27b0;">連擊</strong>: 連殺3個後下次攻擊雙倍傷害</li>
+                                <li><strong style="color: #9c27b0;">獵殺</strong>: 對Boss額外25%傷害</li>
+                                <li><strong style="color: #ffd700;">星辰</strong>: 每殺10個敵人+1全屬性（最多10層）</li>
+                                <li><strong style="color: #9c27b0;">煉金</strong>: 藥水效果+20%</li>
+                                <li><strong style="color: #ffd700;">彩虹</strong>: 隨機臨時Buff（持續30秒）</li>
+                            </ul>
+                        </div>
+
+                        <h3 style="margin-top: 30px; color: #f44336; text-shadow: 0 0 10px rgba(244, 67, 54, 0.5);">👹 怪物詞綴系統</h3>
+                        <p style="color: #ddd; margin: 15px 0;">敵人可能擁有強大的詞綴，提升戰鬥難度！共43個詞綴。</p>
+                        <h4 style="color: #ff5722; margin-top: 20px;">⚔️ 前綴詞綴（18個）</h4>
+                        <div style="background: rgba(255, 87, 34, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <ul style="color: #ddd; margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong style="color: #ff5722;">狂暴</strong>: 攻擊力+30%</li>
+                                <li><strong style="color: #ff5722;">連擊</strong>: 30%機率連續攻擊兩次</li>
+                                <li><strong style="color: #ff5722;">致命</strong>: 暴擊率+20%, 暴擊傷害+50%</li>
+                                <li><strong style="color: #ff5722;">嗜血</strong>: 攻擊時回復20%傷害</li>
+                                <li><strong style="color: #ff5722;">狂怒</strong>: 生命低於50%時攻擊力+50%</li>
+                                <li><strong style="color: #ff5722;">精準</strong>: 無視玩家30%防禦</li>
+                                <li><strong style="color: #ff5722;">堅韌</strong>: 防禦力+40%, 生命+30%</li>
+                                <li><strong style="color: #ff5722;">鋼鐵</strong>: 減少所有受到的傷害12%</li>
+                                <li><strong style="color: #ff5722;">冰甲</strong>: 受到攻擊時反彈15%傷害</li>
+                                <li><strong style="color: #ff5722;">再生</strong>: 每回合回復5%最大生命</li>
+                                <li><strong style="color: #ff5722;">閃避</strong>: 30%機率閃避攻擊</li>
+                                <li><strong style="color: #ff5722;">潮汐</strong>: 生命低於30%時防禦力+100%</li>
+                                <li><strong style="color: #ff5722;">精英</strong>: 全屬性+20%</li>
+                                <li><strong style="color: #ff5722;">傳奇</strong>: 全屬性+40%</li>
+                                <li><strong style="color: #ff5722;">魔法</strong>: 攻擊附帶隨機元素效果</li>
+                                <li><strong style="color: #ff5722;">星界</strong>: 每次攻擊獲得3%攻擊力（最多8層）</li>
+                                <li><strong style="color: #ff5722;">混沌</strong>: 每次攻擊傷害在75%-125%間波動</li>
+                                <li><strong style="color: #ff5722;">不滅</strong>: 第一次死亡時復活並回復50%生命</li>
+                            </ul>
+                        </div>
+                        <h4 style="color: #ff9800; margin-top: 20px;">💀 中綴詞綴（Boss專屬 - 10個）</h4>
+                        <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <ul style="color: #ddd; margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong style="color: #ff9800;">元素</strong>: 攻擊附帶隨機元素效果</li>
+                                <li><strong style="color: #ff9800;">星界</strong>: 每次攻擊獲得3%攻擊（疊8層）</li>
+                                <li><strong style="color: #ff9800;">混沌</strong>: 每次攻擊傷害在75%-125%間波動</li>
+                                <li><strong style="color: #ff9800;">暗影</strong>: 30%閃避+20%暴擊</li>
+                                <li><strong style="color: #ff9800;">狂亂</strong>: 攻擊+40%+20%雙倍攻擊</li>
+                                <li><strong style="color: #ff9800;">泰坦</strong>: 生命+100%+防禦+50%</li>
+                                <li><strong style="color: #ff9800;">虛空</strong>: 無視防禦50%+吸血25%</li>
+                                <li><strong style="color: #ff9800;">時空</strong>: 20%機率重置回合</li>
+                                <li><strong style="color: #ff9800;">神聖</strong>: 全屬性+40%+每回合回復10%</li>
+                                <li><strong style="color: #ff9800;">末日</strong>: 攻擊+80%+生命+80%+減傷30%</li>
+                            </ul>
+                        </div>
+                        <h4 style="color: #2196f3; margin-top: 20px;">🛡️ 後綴詞綴（15個）</h4>
+                        <div style="background: rgba(33, 150, 243, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <ul style="color: #ddd; margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li><strong style="color: #2196f3;">之盾</strong>: 防禦+30%</li>
+                                <li><strong style="color: #2196f3;">之錘</strong>: 減傷20%</li>
+                                <li><strong style="color: #2196f3;">之壁</strong>: 生命+30%</li>
+                                <li><strong style="color: #2196f3;">之影</strong>: 閃避30%</li>
+                                <li><strong style="color: #2196f3;">之刺</strong>: 反傷20%</li>
+                                <li><strong style="color: #2196f3;">之心</strong>: 每回合回復5%生命</li>
+                                <li><strong style="color: #2196f3;">之體</strong>: 生命+50%, 防禦+20%</li>
+                                <li><strong style="color: #2196f3;">之魂</strong>: 減傷30%, 閃避20%</li>
+                                <li><strong style="color: #2196f3;">之王</strong>: 全屬性+30%</li>
+                                <li><strong style="color: #2196f3;">之神</strong>: 生命+80%, 防禦+40%</li>
+                                <li><strong style="color: #2196f3;">之塔</strong>: 防禦+100%, 減傷30%</li>
+                                <li><strong style="color: #2196f3;">之靈</strong>: 生命+60%, 每回合回復8%</li>
+                                <li><strong style="color: #2196f3;">之錘甲</strong>: 減傷40%, 反傷30%</li>
+                                <li><strong style="color: #2196f3;">不滅</strong>: 第一次死亡復活50%生命</li>
+                                <li><strong style="color: #2196f3;">永恆</strong>: 生命+150%, 每回合回復10%</li>
+                            </ul>
+                        </div>
                     
                     <h4 style="color: #ffd700; margin-top: 25px;">🎽 套裝系統</h4>
                     <p style="color: #c0c0c0;">穿戴同名的<strong style="color: #ffaa00;">套裝裝備</strong>可以觸發超強大的套裝效果!</p>
@@ -1784,7 +1888,7 @@
                     </div>
                     
                     <h4 style="color: #ffd700; margin-top: 25px;">🔨 強化與分解</h4>
-                    <p style="color: #c0c0c0;">點擊<strong style="color: #ffd700;">「🔨 鐵匠鋪」</strong>可以強化或分解裝備。</p>
+                    <p style="color: #c0c0c0;">裝備可以通過強化提升屬性，或分解獲得碎片。</p>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
                         <div style="background: rgba(255, 215, 0, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3);">
@@ -1811,6 +1915,147 @@
                         <p style="color: #c0c0c0; margin-top: 10px;">卡牌可以使用<strong style="color: #9c27b0;">碎片</strong>升級,提升效果。</p>
                         <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 提示: 裝備同系列的卡牌可以觸發<strong style="color: #ffd700;">套牌效果</strong>!</p>
                     </div>
+
+                    <h4 style="color: #ffd700; margin-top: 25px;">🐾 12生肖隨從系統</h4>
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.3); margin: 15px 0;">
+                        <p style="color: #c0c0c0;">遊戲中有<strong style="color: #00ff88;">12個生肖隨從</strong>，每個隨從都有獨特的技能和屬性加成。</p>
+                        <p style="color: #c0c0c0; margin-top: 10px;">隨從會在戰鬥中提供<strong style="color: #ffd700;">被動加成</strong>和<strong style="color: #ff9800;">主動技能</strong>。</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 15px 0; font-size: 0.9rem;">
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐭</span><br>
+                            <span style="color: #c0c0c0;">鼠影者</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐂</span><br>
+                            <span style="color: #c0c0c0;">鐵甲牛</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐯</span><br>
+                            <span style="color: #c0c0c0;">虎啸王</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐰</span><br>
+                            <span style="color: #c0c0c0;">疾風兔</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐲</span><br>
+                            <span style="color: #c0c0c0;">天火龍</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐍</span><br>
+                            <span style="color: #c0c0c0;">毒牙蛇</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐴</span><br>
+                            <span style="color: #c0c0c0;">閃電馬</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐑</span><br>
+                            <span style="color: #c0c0c0;">鋼鐵羊</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐵</span><br>
+                            <span style="color: #c0c0c0;">狂戰猴</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐔</span><br>
+                            <span style="color: #c0c0c0;">戰鷹雞</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐕</span><br>
+                            <span style="color: #c0c0c0;">鐵衛犬</span>
+                        </div>
+                        <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-size: 1.5rem;">🐷</span><br>
+                            <span style="color: #c0c0c0;">重裝豬</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0, 255, 136, 0.08); padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <p style="color: #c0c0c0; font-size: 0.9rem;">• 隨從可以裝備專屬裝備，使用<strong style="color: #ffd700;">🌟 隨從碎片</strong>升級</p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 5px;">• 重複獲得的隨從會自動轉換為<strong style="color: #ffd700;">🌟 隨從碎片</strong></p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 5px;">• 獲得對應生肖隨從可解鎖<strong style="color: #ffd700;">生肖稱號</strong></p>
+                    </div>
+                    
+
+                    <h4 style="color: #ffd700; margin-top: 25px;">🌟 星座神殿（黃道十二宮）</h4>
+                    <div style="background: rgba(102, 126, 234, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.3); margin: 15px 0;">
+                        <p style="color: #c0c0c0;">探索<strong style="color: #667eea;">12個星座領域</strong>，挑戰強大的黃道怪物！</p>
+                        <p style="color: #c0c0c0; margin-top: 10px;">每個領域有<strong style="color: #ffd700;">3個難度</strong>，擊敗怪物可獲得<strong style="color: #00ff88;">💎 元素碎片</strong>。</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; font-size: 0.85rem;">
+                        <div style="background: rgba(255, 107, 107, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #ff6b6b;">♈ 白羊座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">火元素</span>
+                        </div>
+                        <div style="background: rgba(76, 175, 80, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #4caf50;">♉ 金牛座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">土元素</span>
+                        </div>
+                        <div style="background: rgba(255, 235, 59, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #ffeb3b;">♊ 雙子座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">風元素</span>
+                        </div>
+                        <div style="background: rgba(33, 150, 243, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #2196f3;">♋ 巨蟹座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">水元素</span>
+                        </div>
+                        <div style="background: rgba(255, 152, 0, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #ff9800;">♌ 獅子座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">火元素</span>
+                        </div>
+                        <div style="background: rgba(139, 195, 74, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #8bc34a;">♍ 處女座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">土元素</span>
+                        </div>
+                        <div style="background: rgba(156, 39, 176, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #9c27b0;">♎ 天秤座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">風元素</span>
+                        </div>
+                        <div style="background: rgba(244, 67, 54, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #f44336;">♏ 天蠍座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">水元素</span>
+                        </div>
+                        <div style="background: rgba(255, 193, 7, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #ffc107;">♐ 射手座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">火元素</span>
+                        </div>
+                        <div style="background: rgba(121, 85, 72, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #795548;">♑ 摩羯座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">土元素</span>
+                        </div>
+                        <div style="background: rgba(0, 188, 212, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #00bcd4;">♒ 水瓶座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">風元素</span>
+                        </div>
+                        <div style="background: rgba(103, 58, 183, 0.1); padding: 10px; border-radius: 6px; text-align: center;">
+                            <span style="color: #673ab7;">♓ 雙魚座</span><br>
+                            <span style="color: #888; font-size: 0.75rem;">水元素</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(102, 126, 234, 0.08); padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <p style="color: #c0c0c0; font-size: 0.9rem;">• 收集<strong style="color: #00ff88;">💎 元素碎片</strong>可在黃道商人處兌換<strong style="color: #ffd700;">黃道套裝</strong></p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 5px;">• 黃道套裝擁有強大的套裝效果</p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 5px;">• 每個星座領域都有獨特的怪物和獎勵</p>
+                    </div>
+                    
+                    <h4 style="color: #ffd700; margin-top: 25px;">🎰 賭博商人</h4>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3); margin: 15px 0;">
+                        <p style="color: #c0c0c0;">使用<strong style="color: #00ff88;">🔷 裝備碎片</strong>在賭博商人處進行賭博，有機會獲得高品質裝備！</p>
+                        <p style="color: #c0c0c0; margin-top: 10px;">每次賭博消耗<strong style="color: #ffd700;">200 🔷 裝備碎片</strong>，可選擇裝備類型。</p>
+                    </div>
+                    
+                    <div style="background: rgba(255, 152, 0, 0.08); padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <p style="color: #c0c0c0; font-size: 0.9rem;">• 可選擇武器、防具或飾品類型</p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 5px;">• 裝備品質隨機，有機會獲得<strong style="color: #ffd700;">傳說</strong>或<strong style="color: #ff9800;">神話</strong>裝備</p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 5px;">• 賭博商人每<strong style="color: #667eea;">3天</strong>刷新一次</p>
+                    </div>
+                    
+
                     
                     <h5 style="color: #9c27b0; margin-top: 15px;">✨ 卡牌詞綴系統</h5>
                     <div style="background: rgba(156, 39, 176, 0.08); padding: 12px; border-radius: 6px; margin: 10px 0;">
@@ -1887,86 +2132,6 @@
                         <p style="color: #c0c0c0; margin-top: 10px;">隨從提供<strong style="color: #ffd700;">被動屬性加成</strong>,並且會在戰鬥中<strong style="color: #ffd700;">主動釋放技能</strong>。</p>
                         <p style="color: #c0c0c0; margin-top: 10px;">隨從可以透過戰鬥<strong style="color: #00ff88;">升級</strong>,變得更強大。</p>
                     </div>
-                    
-                    <h5 style="color: #ff9800; margin-top: 15px;">🛠️ 隨從裝備系統</h5>
-                    <div style="background: rgba(78, 165, 255, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(78, 165, 255, 0.3);">
-                        <p style="color: #c0c0c0; font-size: 0.9rem;">為你的隨從裝備<strong style="color: #4EA5FF;">專屬裝備</strong>，大幅提升戰鬥力！</p>
-                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 8px;">裝備來源：</p>
-                        <ul style="color: #c0c0c0; margin-left: 20px; margin-top: 5px; font-size: 0.85rem;">
-                            <li>擊敗怪物有機率掉落</li>
-                            <li>品質越高，掉落機率越低</li>
-                            <li>重複裝備會自動轉換為<strong style="color: #ffd700;">裝備碎片</strong></li>
-                        </ul>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0;">
-                        <div style="background: rgba(255, 107, 107, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
-                            <strong style="color: #ff6b6b;">⚔️ 攻擊型裝備</strong><br>
-                            <span style="color: #c0c0c0; font-size: 0.8rem;">提升攻擊、暴擊、暴傷</span><br>
-                            <span style="color: #888; font-size: 0.75rem;">龍爪、惡魔之刃等</span>
-                        </div>
-                        <div style="background: rgba(78, 165, 255, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 165, 255, 0.3);">
-                            <strong style="color: #4EA5FF;">🛡️ 防禦型裝備</strong><br>
-                            <span style="color: #c0c0c0; font-size: 0.8rem;">提升防禦、生命、減傷</span><br>
-                            <span style="color: #888; font-size: 0.75rem;">聖盾、防禦核心等</span>
-                        </div>
-                        <div style="background: rgba(76, 175, 80, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.3);">
-                            <strong style="color: #4caf50;">💚 回復型裝備</strong><br>
-                            <span style="color: #c0c0c0; font-size: 0.8rem;">提升生命、回復、吸血</span><br>
-                            <span style="color: #888; font-size: 0.75rem;">生命護符、治療之心等</span>
-                        </div>
-                    </div>
-                    
-                    <h5 style="color: #ff9800; margin-top: 15px;">✨ 組合效果系統</h5>
-                    <div style="background: rgba(0, 255, 136, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(0, 255, 136, 0.3);">
-                        <p style="color: #c0c0c0; font-size: 0.9rem;">隨從和裝備的<strong style="color: #ffd700;">類型組合</strong>會觸發特殊效果！</p>
-                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-top: 8px;">組合類型：</p>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; font-size: 0.85rem;">
-                        <div style="background: rgba(255, 215, 0, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
-                            <strong style="color: #ffd700;">⚖️ 永恆組合</strong><br>
-                            <span style="color: #c0c0c0;">永恆階隨從 + 任意裝備</span><br>
-                            <span style="color: #00ff88;">攻+10% 防+10% 血+10%</span>
-                        </div>
-                        <div style="background: rgba(255, 107, 107, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 107, 107, 0.3);">
-                            <strong style="color: #ff6b6b;">⚔️ 極限攻勢</strong><br>
-                            <span style="color: #c0c0c0;">攻擊隨從 + 攻擊裝備</span><br>
-                            <span style="color: #00ff88;">攻+15% 暴擊+10%</span>
-                        </div>
-                        <div style="background: rgba(78, 165, 255, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 165, 255, 0.3);">
-                            <strong style="color: #4EA5FF;">🛡️ 鐵壁防禦</strong><br>
-                            <span style="color: #c0c0c0;">防禦隨從 + 防禦裝備</span><br>
-                            <span style="color: #00ff88;">防+15% 減傷+10%</span>
-                        </div>
-                        <div style="background: rgba(76, 175, 80, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.3);">
-                            <strong style="color: #4caf50;">💚 生命泉源</strong><br>
-                            <span style="color: #c0c0c0;">回復隨從 + 回復裝備</span><br>
-                            <span style="color: #00ff88;">血+15% 回復+5%</span>
-                        </div>
-                        <div style="background: rgba(255, 152, 0, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.3);">
-                            <strong style="color: #ff9800;">⚔️🛡️ 攻防一體</strong><br>
-                            <span style="color: #c0c0c0;">攻擊隨從 + 防禦裝備</span><br>
-                            <span style="color: #00ff88;">攻+5% 防+5%</span>
-                        </div>
-                        <div style="background: rgba(233, 30, 99, 0.08); padding: 10px; border-radius: 6px; border: 1px solid rgba(233, 30, 99, 0.3);">
-                            <strong style="color: #e91e63;">⚔️💚 狂戰士</strong><br>
-                            <span style="color: #c0c0c0;">攻擊隨從 + 回復裝備</span><br>
-                            <span style="color: #00ff88;">攻+8% 吸血+3%</span>
-                        </div>
-                    </div>
-                    
-                    <h5 style="color: #ff9800; margin-top: 15px;">⬆️ 裝備升級</h5>
-                    <div style="background: rgba(156, 39, 176, 0.1); padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid rgba(156, 39, 176, 0.3);">
-                        <p style="color: #c0c0c0; font-size: 0.9rem;">使用<strong style="color: #ffd700;">裝備碎片</strong>升級裝備，提升效果！</p>
-                        <ul style="color: #c0c0c0; margin-left: 20px; margin-top: 5px; font-size: 0.85rem;">
-                            <li>最高等級：<strong style="color: #ffd700;">Lv.10</strong></li>
-                            <li>每級提升：<strong style="color: #00ff88;">+10%</strong> 效果</li>
-                            <li>升級消耗：等級 × 10 + 20 碎片</li>
-                        </ul>
-                        <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">💡 提示: 在隨從界面查看裝備收藏並進行升級！</p>
-                    </div>
-                    
                     <h4 style="color: #ffd700; margin-top: 25px;">📋 每日任務</h4>
                     <div style="background: rgba(33, 150, 243, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(33, 150, 243, 0.3); margin: 15px 0;">
                         <p style="color: #c0c0c0;">每天會刷新<strong style="color: #2196f3;">5個每日任務</strong>,完成後可以獲得豐厚獎勵。</p>
@@ -2022,10 +2187,10 @@
                         </div>
                         <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 152, 0, 0.3);">
                             <h5 style="color: #ff9800; margin-bottom: 8px;">🐾 隨從圖鑑</h5>
-                            <p style="color: #c0c0c0; font-size: 0.85rem;">收集隨從，解鎖<strong style="color: #ffd700;">類型專家</strong>稱號！</p>
-                            <p style="color: #888; font-size: 0.75rem; margin-top: 5px;">• 收集5/10/15/20個
-<br>• 攻擊/防禦/恢復/平衡
-<br>• 稱號加成</p>
+                            <p style="color: #c0c0c0; font-size: 0.85rem;">收集<strong style="color: #ffd700;">12生肖隨從</strong>，解鎖生肖稱號！</p>
+                            <p style="color: #888; font-size: 0.75rem; margin-top: 5px;">• 獲得對應生肖隨從即可解鎖稱號
+<br>• 鼠影者、鐵甲牛、虎啸王等
+<br>• 每個生肖稱號都有獨特加成</p>
                         </div>
                         <div style="background: rgba(102, 126, 234, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.3);">
                             <h5 style="color: #667eea; margin-bottom: 8px;">🎴 卡片圖鑑</h5>
@@ -2180,7 +2345,8 @@
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #9c27b0;">套裝收集</strong>：6個稱號（總收集 + 區域套裝）</p>
 
                         <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #667eea;">卡片收集</strong>：4個稱號（收藏家系列）</p>
-                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 共<strong style="color: #ffd700;">63個圖鑑稱號</strong>等你解鎖！</p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem;">• <strong style="color: #00ff88;">生肖收集</strong>：12個稱號（12生肖隨從）</p>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">💡 共<strong style="color: #ffd700;">75個圖鑑稱號</strong>等你解鎖！</p>
                     </div>
                     
                     <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%); padding: 20px; border-radius: 10px; border: 2px solid rgba(255, 215, 0, 0.5); margin-top: 25px;">

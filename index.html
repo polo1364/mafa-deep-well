@@ -9714,6 +9714,8 @@ const REGION_CONSUMABLES = {
         }
 
         function startExplore() {
+            // 清除星座副本狀態，因為現在開始普通區域戰鬥
+            gameState.currentZodiacFloor = null;
 
             if (gameState.player.ap < 1) {
                 addLog('系統', '體力不足！請等待體力回復。');
@@ -12533,6 +12535,45 @@ const REGION_CONSUMABLES = {
                     gameState.zodiac.progress[floorKey] = {};
                 }
                 gameState.zodiac.progress[floorKey].cleared = true;
+                
+                // 星座副本戰鬥結束，不掉落裝備、隨從、卡片等，直接跳到結尾
+                addLog('勝利', `擊敗了 ${enemy.name}！獲得 ${goldReward} 金幣、${expReward} 經驗`, enemy.isSpecialBoss);
+                // 恢復原始最大生命值
+                if (gameState.originalMaxHpBeforeCombat) { 
+                    gameState.player.maxHp = gameState.originalMaxHpBeforeCombat; 
+                    delete gameState.originalMaxHpBeforeCombat; 
+                }
+                playSound('reward');
+                
+                // 消耗buff持續時間
+                if (gameState.player.buffs && gameState.player.buffs.length > 0) {
+                    gameState.player.buffs = gameState.player.buffs.map(buff => {
+                        buff.duration -= 1;
+                        return buff;
+                    }).filter(buff => buff.duration > 0);
+                }
+                
+                updateUI();
+                saveGame();
+                
+                // 設定戰鬥結束回調
+                battleEndCallback = () => {
+                    isBattleInProgress = false;
+                    hideEnemyHP();
+                    if (gameState.currentZodiacFloor) {
+                        showZodiacRechallengeButton();
+                    }
+                };
+                
+                setTimeout(() => {
+                    if (logQueue.length === 0 && !isProcessingLog) {
+                        const callback = battleEndCallback;
+                        battleEndCallback = null;
+                        if (callback) callback();
+                    }
+                }, 100);
+                
+                return; // 星座副本戰鬥結束，不執行後續掉落邏輯
             }
             
             addLog('勝利', `擊敗了 ${enemy.name}！獲得 ${goldReward} 金幣、${expReward} 經驗`, enemy.isSpecialBoss);
@@ -12743,9 +12784,14 @@ const REGION_CONSUMABLES = {
             if (equipmentId) {
                 obtainEquipment(equipmentId);
                 const equipment = ZODIAC_EQUIPMENT[equipmentId];
-                const rarityColor = getRarityColor(equipment.rarity);
-                const enemyType = enemy.isSpecialBoss ? '特殊Boss' : (enemy.isBoss ? 'Boss' : '菁英');
-                addLog('隨從', `🎉 ${enemyType}掉落！獲得<span style="color: ${rarityColor}">${equipment.rarity}</span>裝備：${equipment.icon}${equipment.name}！`, enemy.isSpecialBoss || enemy.isBoss);
+                // 安全檢查：確保裝備存在
+                if (equipment) {
+                    const rarityColor = getRarityColor(equipment.rarity);
+                    const enemyType = enemy.isSpecialBoss ? '特殊Boss' : (enemy.isBoss ? 'Boss' : '菁英');
+                    addLog('隨從', `🎉 ${enemyType}掉落！獲得<span style="color: ${rarityColor}">${equipment.rarity}</span>裝備：${equipment.icon}${equipment.name}！`, enemy.isSpecialBoss || enemy.isBoss);
+                } else {
+                    console.warn(`裝備 ID ${equipmentId} 不存在於 ZODIAC_EQUIPMENT 中`);
+                }
             }
             
             // 掉落卡牌（普通/菁英/Boss/特殊Boss）
@@ -12857,7 +12903,8 @@ const REGION_CONSUMABLES = {
                     // 添加寵物蛋到背包
                     gameState.pets.eggs.push({
                         family: randomFamily,
-                        hatchTime: null // 立即孵化，無需等待
+                        hatchTime: null, // 立即孵化，無需等待
+                        obtainedAt: Date.now() // 獲得時間
                     });
                     
                     const familyNames = {
@@ -13167,6 +13214,7 @@ const REGION_CONSUMABLES = {
                         if (container && container.parentNode) {
                             container.remove();
                         }
+                        // 不清除 currentZodiacFloor，讓下次戰鬥勝利後仍然可以顯示按鈕
                     }, 300);
                 }
             }, 10000);
@@ -13194,6 +13242,7 @@ const REGION_CONSUMABLES = {
                     }
                 }, 300);
             }
+            // 不清除 currentZodiacFloor，讓下次戰鬥勝利後仍然可以顯示按鈕
         }
 
         function defeat() {
@@ -17319,20 +17368,41 @@ const REGION_CONSUMABLES = {
                 return;
             }
             
+            // 初始化稱號系統（兼容舊存檔）
+            if (!gameState.titles) {
+                gameState.titles = {
+                    unlocked: [],
+                    equipped: null,
+                    progress: {}
+                };
+            }
+            if (!gameState.titles.unlocked) {
+                gameState.titles.unlocked = [];
+            }
+            
             // 統計每個生肖的隨從數量
             const zodiacCounts = {};
+            
+            console.log('[checkZodiacTitles] 開始檢查生肖稱號');
+            console.log('[checkZodiacTitles] 擁有的隨從:', gameState.companions.owned);
             
             // 遍歷玩家擁有的所有隨從
             if (gameState.companions.owned && Array.isArray(gameState.companions.owned)) {
                 for (const companionData of gameState.companions.owned) {
                     const companionId = companionData.id || companionData;
+                    console.log('[checkZodiacTitles] 檢查隨從 ID:', companionId);
                     // 從 ZODIAC_COMPANIONS 中獲取隨從信息
                     if (ZODIAC_COMPANIONS && ZODIAC_COMPANIONS[companionId]) {
                         const zodiac = companionId; // companionId 就是生肖名稱 (rat, ox, tiger...)
                         zodiacCounts[zodiac] = (zodiacCounts[zodiac] || 0) + 1;
+                        console.log('[checkZodiacTitles] 生肖計數:', zodiac, zodiacCounts[zodiac]);
+                    } else {
+                        console.warn('[checkZodiacTitles] 隨從 ID 不存在於 ZODIAC_COMPANIONS:', companionId);
                     }
                 }
             }
+            
+            console.log('[checkZodiacTitles] 最終生肖計數:', zodiacCounts);
             
             // 檢查每個生肖是否達到 3 件（普通、稀有、史詩各 1 件）
             // 但實際上每個生肖只有 1 個隨從，所以檢查 >= 1 即可
@@ -17342,14 +17412,27 @@ const REGION_CONSUMABLES = {
             for (const zodiac of zodiacs) {
                 if (zodiacCounts[zodiac] >= 1) {
                     const titleId = `zodiac_master_${zodiac}`;
-                    if (TITLES_DATA[titleId] && !gameState.titles.unlocked.includes(titleId)) {
-                        gameState.titles.unlocked.push(titleId);
-                        const titleData = TITLES_DATA[titleId];
-                        addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
-                        playSound('levelup');
+                    console.log('[checkZodiacTitles] 生肖', zodiac, '達到條件，稱號 ID:', titleId);
+                    console.log('[checkZodiacTitles] TITLES_DATA[titleId]:', TITLES_DATA[titleId]);
+                    console.log('[checkZodiacTitles] 已解鎖稱號:', gameState.titles.unlocked);
+                    
+                    if (TITLES_DATA[titleId]) {
+                        if (!gameState.titles.unlocked.includes(titleId)) {
+                            gameState.titles.unlocked.push(titleId);
+                            const titleData = TITLES_DATA[titleId];
+                            console.log('[checkZodiacTitles] 解鎖稱號:', titleData.name);
+                            addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
+                            playSound('levelup');
+                        } else {
+                            console.log('[checkZodiacTitles] 稱號已解鎖:', titleId);
+                        }
+                    } else {
+                        console.warn('[checkZodiacTitles] 稱號不存在:', titleId);
                     }
                 }
             }
+            
+            console.log('[checkZodiacTitles] 檢查完成');
         }
         
         // 獲取圖鑑進度
@@ -20213,6 +20296,13 @@ function dropZodiacCompanion() {
         if (roll <= 0) {
             // 掉落此生肖
             gameState.companions.owned.push(companion.id);
+            
+            // 記錄隨從圖鑑
+            recordCompanionObtained(companion.id);
+            
+            // 檢查生肖稱號
+            checkZodiacTitles();
+            
             addLog(`✨ 獲得新生肖：${companion.icon} ${companion.name}！`, 'gold');
             showZodiacDropAnimation(companion);
             saveGame();
@@ -23734,7 +23824,10 @@ function showEquipmentDropAnimation(equipment) {
             // 移除寵物蛋
             gameState.pets.eggs.splice(eggIndex, 1);
             
-            // 記錄圖鑑
+            // 記錄圖鑑（初始化寵物圖鑑）
+            if (!gameState.codex.pets) {
+                gameState.codex.pets = {};
+            }
             if (!gameState.codex.pets[petId]) {
                 gameState.codex.pets[petId] = {
                     id: petId,

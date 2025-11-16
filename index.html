@@ -2617,7 +2617,7 @@
             
             <!-- 碎片顯示 -->
             <div style="background: rgba(100, 100, 100, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #4EA5FF;">💎 裝備碎片</h3>
+                <h3 style="margin-top: 0; color: #4EA5FF;">🌟 隨從碎片</h3>
                 <div style="text-align: center; font-size: 1.5rem; color: #ffd700;">
                     <span id="equipment-shards-display">0</span> 碎片
                 </div>
@@ -2835,7 +2835,7 @@
             
             <!-- 碎片顯示 -->
             <div style="background: rgba(100, 100, 100, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0;">💎 卡牌碎片</h3>
+                <h3 style="margin-top: 0;">🎴 卡牌碎片</h3>
                 <div id="card-shards-display" style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <!-- 動態生成 -->
                 </div>
@@ -17014,7 +17014,7 @@ const REGION_CONSUMABLES = {
             // 發放碎片
             if (reward.shards > 0) {
                 gameState.companions.shards += reward.shards;
-                addLog('獎勵', `💎 獲得隨從碎片 ${reward.shards}`);
+                addLog('獎勵', `🌟 獲得隨從碎片 ${reward.shards}`);
 
             }
             
@@ -17214,7 +17214,7 @@ const REGION_CONSUMABLES = {
                 // 重複隨從轉換為碎片
                 const shardAmount = getCompanionShardAmount(companion.rarity);
                 gameState.companions.shards += shardAmount;
-                addLog('隨從', `已擁有 ${companion.name}，轉換為 ${shardAmount} 個隨從碎片！（總計: ${gameState.companions.shards}）`);
+                addLog('隨從', `已擁有 ${companion.name}，轉換為 ${shardAmount} 🌟 隨從碎片！（總計: ${gameState.companions.shards}）`);
 
                 
                 saveGame();
@@ -17267,7 +17267,7 @@ const REGION_CONSUMABLES = {
                 // 重複裝備轉換為碎片
                 const shardAmount = getEquipmentShardAmount(equipment.rarity);
                 gameState.companions.shards += shardAmount;
-                addLog('隨從', `已擁有 ${equipment.icon}${equipment.name}，轉換為 ${shardAmount} 個隨從碎片！（總計: ${gameState.companions.shards}）`);
+                addLog('隨從', `已擁有 ${equipment.icon}${equipment.name}，轉換為 ${shardAmount} 🌟 隨從碎片！（總計: ${gameState.companions.shards}）`);
 
                 
                 saveGame();
@@ -17337,7 +17337,7 @@ const REGION_CONSUMABLES = {
             }
             const cost = getEquipmentUpgradeCost(owned.level);
             if (gameState.companions.shards < cost) {
-                addLog('隨從', `❌ 隨從碎片不足（需要 ${cost}，擁有 ${gameState.companions.shards}）`);
+                addLog('隨從', `❌ 🌟 隨從碎片不足（需要 ${cost}，擁有 ${gameState.companions.shards}）`);
                 return false;
             }
             gameState.companions.shards -= cost;
@@ -20687,7 +20687,7 @@ function decomposeZodiac(zodiacId) {
     
     // 日誌提示
     addLog('分解', `✨ 分解 ${zodiac.icon}${zodiac.name}，獲得 ${shardAmount} 個裝備碎片！`);
-    addLog('分解', `💎 當前碎片：${gameState.companions.shards}`);
+    addLog('分解', `🌟 當前碎片：${gameState.companions.shards}`);
     
     // 播放音效
     playSound('upgrade');
@@ -20782,7 +20782,7 @@ function decomposeZodiacEquipment(equipmentId) {
     
     // 日誌提示
     addLog('分解', `✨ 分解 ${equipment.icon}${equipment.name} Lv.${owned.level}，獲得 ${totalShards} 個裝備碎片！`);
-    addLog('分解', `💎 當前碎片：${gameState.companions.shards}`);
+    addLog('分解', `🌟 當前碎片：${gameState.companions.shards}`);
     
     // 播放音效
     playSound('upgrade');
@@ -22163,6 +22163,25 @@ function showEquipmentDropAnimation(equipment) {
         // 獲取卡牌升級後的效果倍率
         function getCardLevelMultiplier(level) {
             return 1 + (level - 1) * 0.1; // 每級+10%
+        }
+        
+        // 獲取卡牌升級所需碁片
+        function getUpgradeShardCost(currentLevel, rarity) {
+            // 根據品質設定基礎成本
+            const baseCosts = {
+                'Common': 2,
+                'Fine': 5,
+                'Rare': 15,
+                'Epic': 40,
+                'Legendary': 100
+            };
+            
+            const baseCost = baseCosts[rarity] || 2;
+            
+            // 每級成本遞增：基礎成本 * (1 + 等級 * 0.5)
+            // Lv.1→1: 1x, Lv.2→3: 1.5x, Lv.3→4: 2x, ..., Lv.9→10: 5x
+            const multiplier = 1 + currentLevel * 0.5;
+            return Math.floor(baseCost * multiplier);
         }
         
         // ========== 卡牌融合系統 ==========
@@ -24486,9 +24505,9 @@ function showEquipmentDropAnimation(equipment) {
                     if (owned) {
                         html += `<button disabled style="width: 100%; padding: 8px; background: #555; color: #888; border: none; border-radius: 4px; cursor: not-allowed;">✅ 已擁有</button>`;
                     } else if (!canAfford) {
-                        html += `<button disabled style="width: 100%; padding: 8px; background: #555; color: #888; border: none; border-radius: 4px; cursor: not-allowed;">💎 ${shardCost} 碎片（不足）</button>`;
+                        html += `<button disabled style="width: 100%; padding: 8px; background: #555; color: #888; border: none; border-radius: 4px; cursor: not-allowed;">🎴 ${shardCost} 碎片（不足）</button>`;
                     } else {
-                        html += `<button onclick="buyCardWithShards('${card.id}', '${rarity}', ${shardCost})" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 4px; cursor: pointer;">💎 兌換（${shardCost} 碎片）</button>`;
+                        html += `<button onclick="buyCardWithShards('${card.id}', '${rarity}', ${shardCost})" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 4px; cursor: pointer;">🎴 兌換（${shardCost} 碎片）</button>`;
                     }
                     html += `</div>`;
                 });
@@ -30426,7 +30445,7 @@ function checkFreeRollAvailability() {
     } else {
         freeInfo.style.display = 'none';
         cooldownInfo.style.display = 'block';
-        gambleBtn.innerHTML = '🎰 賭博 (200💎)';
+        gambleBtn.innerHTML = '🎰 賭博 (200🔷)';
         
         // 計算剩餘時間
         const timeLeft = threeDays - (now - gameState.gambler.lastFreeRollTime);
@@ -31094,11 +31113,11 @@ input:checked + .slider:before {
             <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
                 <div>
                     <span style="font-size: 14px; color: #9ca3af;">擁有碎片：</span>
-                    <span id="gambler-fragments" style="font-size: 18px; font-weight: bold; color: #3b82f6;">0</span> 💎
+                    <span id="gambler-fragments" style="font-size: 18px; font-weight: bold; color: #3b82f6;">0</span> 🔷
                 </div>
                 <div>
                     <span style="font-size: 14px; color: #9ca3af;">消耗：</span>
-                    <span style="font-size: 18px; font-weight: bold; color: #ef4444;">200</span> 💎
+                    <span style="font-size: 18px; font-weight: bold; color: #ef4444;">200</span> 🔷
                 </div>
             </div>
             
@@ -31163,7 +31182,7 @@ input:checked + .slider:before {
             
             <!-- 賭博按鈕 -->
             <button onclick="performGamble()" id="gamble-btn" style="width: 100%; padding: 15px; font-size: 18px; font-weight: bold; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-                🎰 賭博 (200💎)
+                🎰 賭博 (200🔷)
             </button>
             
             <!-- 統計 -->
@@ -31171,7 +31190,7 @@ input:checked + .slider:before {
                 <h3 style="margin-top: 0; margin-bottom: 10px;">📊 統計</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px;">
                     <div>總次數：<span id="gambler-total-rolls">0</span></div>
-                    <div>總消耗：<span id="gambler-total-fragments">0</span>💎</div>
+                    <div>總消耗：<span id="gambler-total-fragments">0</span>🔷</div>
                     <div>🔵 精良：<span id="gambler-fine-count">0</span></div>
                     <div>🟪 稀有：<span id="gambler-rare-count">0</span></div>
                     <div>🟠 史詩：<span id="gambler-epic-count">0</span></div>

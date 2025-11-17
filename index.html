@@ -11073,7 +11073,18 @@ const REGION_CONSUMABLES = {
                 
                 // 玩家攻擊（應用組合效果）
                 const playerAtkWithCombo = Math.floor(gameState.player.atk * (1 + comboEffects.atk));
-                let playerDmg = calculateDamage(playerAtkWithCombo, enemy.def, gameState.player.armorPen);
+                
+                // 計算總無視防禦：基礎 + 隨從
+                let totalArmorPen = gameState.player.armorPen;
+                if (companion && companion.skills) {
+                    companion.skills.forEach(skill => {
+                        if (skill.effect && skill.effect.ignoreDefense) {
+                            totalArmorPen += skill.effect.ignoreDefense * 100; // 0.03 -> 3%
+                        }
+                    });
+                }
+                
+                let playerDmg = calculateDamage(playerAtkWithCombo, enemy.def, totalArmorPen);
                 let playerCrit = gameState.player.crit + (comboEffects.crit * 100);
                 // 加上套裝暴擊率
                 if (gameState.player.setEffects) {
@@ -11471,7 +11482,19 @@ const REGION_CONSUMABLES = {
                 
                 // ========== 玩家閃避判定 ==========
                 let playerDodged = false;
-                const playerDodgeChance = (gameState.player.dodge || 0) + (comboEffects.dodge || 0);
+                
+                // 計算閃避機率：基礎 + 組合 + 隨從
+                let playerDodgeChance = (gameState.player.dodge || 0) + (comboEffects.dodge || 0);
+                
+                // 添加隨從閃避加成
+                const companion = getActiveCompanion();
+                if (companion && companion.skills) {
+                    companion.skills.forEach(skill => {
+                        if (skill.effect && skill.effect.dodge) {
+                            playerDodgeChance += skill.effect.dodge;
+                        }
+                    });
+                }
                 if (playerDodgeChance > 0 && Math.random() < playerDodgeChance) {
                     playerDodged = true;
                 }
@@ -11794,6 +11817,21 @@ const REGION_CONSUMABLES = {
                         gameState.player.hp = playerHp;
                         addLog('回復', `💚 生命回復 ${regenAmount} 點生命值`);
                     }
+                }
+                
+                // 隨從 regen 效果（每回合回復）
+                // 重用上面的companion變數，不再重複宣告
+                if (companion && companion.skills && playerHp > 0) {
+                    companion.skills.forEach(skill => {
+                        if (skill.effect && skill.effect.regen) {
+                            const companionRegenAmount = Math.floor(gameState.player.maxHp * skill.effect.regen);
+                            if (companionRegenAmount > 0) {
+                                playerHp = Math.min(playerHp + companionRegenAmount, gameState.player.maxHp);
+                                gameState.player.hp = playerHp;
+                                addLog('隨從', `🐾 ${companion.name} - ${skill.name}：回復 ${companionRegenAmount} 點生命值`);
+                            }
+                        }
+                    });
                 }
                 
                 // 持續回復藥水buff處理
@@ -12706,7 +12744,10 @@ const REGION_CONSUMABLES = {
                     const availableCompanions = Object.values(ZODIAC_COMPANIONS).filter(c => c.rarity === selectedRarity);
                     if (availableCompanions.length > 0) {
                         const randomCompanion = availableCompanions[Math.floor(Math.random() * availableCompanions.length)];
-                        const alreadyOwned = gameState.companions.owned.find(c => c.id === randomCompanion.id);
+                        const alreadyOwned = gameState.companions.owned.find(c => {
+                            const id = typeof c === 'string' ? c : c.id;
+                            return id === randomCompanion.id;
+                        });
                         
                         if (!alreadyOwned) {
                             obtainCompanion(randomCompanion.id);
@@ -14378,6 +14419,8 @@ const REGION_CONSUMABLES = {
                     let typeName = '裝備';
                     if (type === 'weapon') typeName = '武器';
                     else if (armorTypes.includes(type)) typeName = '防具';
+                    else if (type === 'ring') typeName = '戒指';
+                    else if (type === 'necklace') typeName = '項鏈';
                     else if (accessoryTypes.includes(type)) typeName = '飾品';
                     
                     const item = {
@@ -14870,6 +14913,13 @@ const REGION_CONSUMABLES = {
                 if (companionBonuses.lifeSteal) {
                     totalLifeSteal += companionBonuses.lifeSteal;
                 }
+                if (companionBonuses.goldBonus) {
+                    totalGoldBonus += companionBonuses.goldBonus;
+                }
+                if (companionBonuses.expBonus) {
+                    totalExpBonus += companionBonuses.expBonus;
+                }
+                // dodge, regen, accuracy, ignoreDefense 等屬性在戰鬥中處理
             }
             
             // 加上卡牌加成
@@ -15775,13 +15825,15 @@ const REGION_CONSUMABLES = {
             
             // 稀有度加成
             const rarityBonus = {
-                'Common': 0,
-                'Fine': 100,
-                'Rare': 300,
-                'Epic': 600,
-                'Legendary': 1000,
-                'Mythic': 1500,
-                'Eternal': 2000
+                'common': 0,
+                'uncommon': 50,
+                'fine': 100,
+                'rare': 300,
+                'epic': 600,
+                'legendary': 1000,
+                'mythic': 1500,
+                'eternal': 2000,
+                'set': 1200  // 套裝裝備加成，相當於傳說級
             };
             score += rarityBonus[equipment.rarity] || 0;
             
@@ -15840,15 +15892,21 @@ const REGION_CONSUMABLES = {
                 // 卸下當前裝備（放回背包）
                 if (currentEquip) {
                     gameState.inventory.push(currentEquip);
+                    addLog('自動裝備', `⚠️ 卸下舊裝備：${currentEquip.name}，已放回背包`);
                 }
                 
                 // 裝備新裝備
                 gameState.player.equipment[targetSlot] = item;
                 
-                // 從背包中移除
-                const index = gameState.inventory.indexOf(item);
-                if (index > -1) {
-                    gameState.inventory.splice(index, 1);
+                // 注意：不需要從背包中移除，因為 addToInventory 在呼叫 autoEquipItem 時裝備還沒有被加入背包
+                
+                // 清除舊版本的欄位，防止干擾（特別是 ring1/ring2）
+                if (targetSlot === 'ring') {
+                    delete gameState.player.equipment.ring1;
+                    delete gameState.player.equipment.ring2;
+                } else if (targetSlot === 'necklace') {
+                    delete gameState.player.equipment.accessory1;
+                    delete gameState.player.equipment.accessory2;
                 }
                 
                 // 統計
@@ -16287,10 +16345,17 @@ const REGION_CONSUMABLES = {
                         // 裝備
                         const slotMap = {
                             'weapon': 'weapon',
-                            'armor': 'armor',
-                            'accessory': gameState.player.equipment.accessory1 ? 'accessory2' : 'accessory1'
+                            'head': 'head',
+                            'chest': 'chest',
+                            'gloves': 'gloves',
+                            'legs': 'legs',
+                            'feet': 'feet',
+                            'ring': 'ring',
+                            'necklace': 'necklace',
+                            'armor': 'chest',  // 舊版相容
+                            'accessory': 'ring'  // 舊版相容
                         };
-                        const targetSlot = slotMap[item.type];
+                        const targetSlot = slotMap[item.type] || item.type;
                         const currentEquipped = gameState.player.equipment[targetSlot];
                         
                         // 強化等級顯示
@@ -16405,7 +16470,7 @@ const REGION_CONSUMABLES = {
             }
             
             // 3. 隨機選擇1個Common隨從
-            const commonCompanions = Object.keys(ZODIAC_COMPANIONS).filter(id => ZODIAC_COMPANIONS[id].rarity === 'Common');
+            const commonCompanions = Object.keys(ZODIAC_COMPANIONS).filter(id => ZODIAC_COMPANIONS[id].rarity === 'common');
             if (commonCompanions.length > 0) {
                 const randomCompanionId = commonCompanions[Math.floor(Math.random() * commonCompanions.length)];
                 obtainCompanion(randomCompanionId);
@@ -17514,7 +17579,10 @@ const REGION_CONSUMABLES = {
                 addLog('系統', '❌ 隨從不存在');
                 return false;
             }
-            const existing = gameState.companions.owned.find(c => c.id === companionId);
+            const existing = gameState.companions.owned.find(c => {
+                const id = typeof c === 'string' ? c : c.id;
+                return id === companionId;
+            });
             if (existing) {
                 // 重複隨從轉換為碎片
                 const shardAmount = getCompanionShardAmount(companion.rarity);
@@ -17665,7 +17733,10 @@ const REGION_CONSUMABLES = {
         // 裝備隨從
         function equipCompanion(companionId) {
             initCompanionSystem();
-            const owned = gameState.companions.owned.find(c => c.id === companionId);
+            const owned = gameState.companions.owned.find(c => {
+                const id = typeof c === 'string' ? c : c.id;
+                return id === companionId;
+            });
             if (!owned) {
                 addLog('隨從', '❌ 你沒有這個隨從');
                 return false;
@@ -17695,7 +17766,10 @@ const REGION_CONSUMABLES = {
             if (!gameState.companions || !gameState.companions.active) return null;
             const companionId = gameState.companions.active;
             const companionData = ZODIAC_COMPANIONS[companionId];
-            const ownedData = gameState.companions.owned.find(c => c.id === companionId);
+            const ownedData = gameState.companions.owned.find(c => {
+                const id = typeof c === 'string' ? c : c.id;
+                return id === companionId;
+            });
             if (!companionData || !ownedData) return null;
             return { ...companionData, ...ownedData };
         }
@@ -17704,23 +17778,37 @@ const REGION_CONSUMABLES = {
         function applyCompanionPassiveSkills() {
             const companion = getActiveCompanion();
             if (!companion) return {};
-            const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0 };
-            companion.skills.forEach(skill => {
-                if (skill.trigger !== 'passive') return;
-                const levelBonus = (companion.level - 1) * 0.02;
-                const effectValue = skill.value * (1 + levelBonus);
-                switch (skill.type) {
-                    case 'buff_atk': bonuses.atk += effectValue; break;
-                    case 'buff_def': bonuses.def += effectValue; break;
-                    case 'buff_hp': bonuses.hp += effectValue; break;
-                    case 'buff_dmgred': bonuses.dmgRed += effectValue; break;
-                    case 'buff_lifesteal': bonuses.lifeSteal += effectValue; break;
-                    case 'buff_crit':
-                        if (skill.statType === 'critDmg') bonuses.critDmg += effectValue;
-                        else bonuses.crit += effectValue;
-                        break;
-                }
-            });
+            const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0, dodge: 0, regen: 0, accuracy: 0, ignoreDefense: 0 };
+            
+            // 支持新版生肖隨從的skill結構（effect屬性）
+            if (companion.skills && Array.isArray(companion.skills)) {
+                companion.skills.forEach(skill => {
+                    if (skill.effect) {
+                        // 新版生肖隨從：直接使用effect屬性
+                        Object.keys(skill.effect).forEach(key => {
+                            if (bonuses.hasOwnProperty(key)) {
+                                // 將百分比轉換為百分比數值（例如 0.05 -> 5%）
+                                bonuses[key] += skill.effect[key] * 100;
+                            }
+                        });
+                    } else if (skill.trigger === 'passive') {
+                        // 舊版隨從：使用trigger和type
+                        const levelBonus = (companion.level - 1) * 0.02;
+                        const effectValue = skill.value * (1 + levelBonus);
+                        switch (skill.type) {
+                            case 'buff_atk': bonuses.atk += effectValue; break;
+                            case 'buff_def': bonuses.def += effectValue; break;
+                            case 'buff_hp': bonuses.hp += effectValue; break;
+                            case 'buff_dmgred': bonuses.dmgRed += effectValue; break;
+                            case 'buff_lifesteal': bonuses.lifeSteal += effectValue; break;
+                            case 'buff_crit':
+                                if (skill.statType === 'critDmg') bonuses.critDmg += effectValue;
+                                else bonuses.crit += effectValue;
+                                break;
+                        }
+                    }
+                });
+            }
             return bonuses;
         }
 
@@ -17807,6 +17895,23 @@ const REGION_CONSUMABLES = {
             const companion = getActiveCompanion();
             if (!companion) return null;
             const results = [];
+            
+            // 支持新版生肖隨從：直接從effect中讀取postBattleHeal
+            if (triggerType === 'battle_end' && companion.skills) {
+                companion.skills.forEach(skill => {
+                    if (skill.effect && skill.effect.postBattleHeal) {
+                        const healAmount = Math.floor(gameState.player.maxHp * skill.effect.postBattleHeal);
+                        gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                        results.push({ 
+                            type: 'heal', 
+                            amount: healAmount, 
+                            message: `🐾 ${companion.name} - ${skill.name}：戰後回復 ${healAmount} 點生命` 
+                        });
+                    }
+                });
+            }
+            
+            // 舊版隨從相容性處理
             companion.skills.forEach(skill => {
                 if (skill.trigger !== triggerType) return;
                 if (skill.cooldown) {
@@ -17858,7 +17963,10 @@ const REGION_CONSUMABLES = {
         function addCompanionExp(amount) {
             const companion = getActiveCompanion();
             if (!companion) return;
-            const ownedData = gameState.companions.owned.find(c => c.id === companion.id);
+            const ownedData = gameState.companions.owned.find(c => {
+                const id = typeof c === 'string' ? c : c.id;
+                return id === companion.id;
+            });
             if (!ownedData) return;
             ownedData.exp += amount;
             // 顯示經驗獲得日誌
@@ -17914,7 +18022,8 @@ function migrateOldSaveToZodiac() {
             zodiacEquipment: {},
             equipment: {},
             exp: 0,
-            level: 1
+            level: 1,
+            migrated: true  // 新遊戲不需要遷移
         };
         return;
     }
@@ -17935,7 +18044,7 @@ function migrateOldSaveToZodiac() {
     if (hasZodiacEquipment && !hasOldCompanions) {
         console.log('✅ 已是新版存檔，無需遷移');
         gameState.companions.migrated = true;
-        saveGame();
+        // 不要呼叫 saveGame()，避免觸發多餘的存檔
         return;
     }
     
@@ -17946,7 +18055,7 @@ function migrateOldSaveToZodiac() {
             gameState.companions.zodiacEquipment = {};
         }
         gameState.companions.migrated = true;
-        saveGame();
+        // 不要呼叫 saveGame()，避免觸發多餘的存檔
         return;
     }
     
@@ -17975,9 +18084,11 @@ function migrateOldSaveToZodiac() {
         level: oldData.level    // 保留等級
     };
     
-    // 遷移策略：給予補償
+    // 遷移策略：給予補償 (已停用)
     // 1. 如果玩家有舊隨從，給予一個生肖的完整套組
     const oldCompanionCount = oldData.owned.length;
+    // 補償機制已移除
+    /*
     if (oldCompanionCount > 0) {
         console.log(`🎁 檢測到 ${oldCompanionCount} 個舊隨從，給予補償...`);
         
@@ -18046,6 +18157,7 @@ function migrateOldSaveToZodiac() {
         gameState.player.gold += goldCompensation;
         console.log(`💰 ${oldData.shards} 個碎片已轉換為 ${goldCompensation} 金幣`);
     }
+    */
     
     // 設置遷移完成標記
     gameState.companions.migrated = true;
@@ -18053,9 +18165,10 @@ function migrateOldSaveToZodiac() {
     // 保存遷移後的遊戲
     saveGame();
     
-    // 顯示遷移完成提示
-    addLog('系統', '🔄 存檔已升級到新版十二生肖系統！', 'gold');
+    // 顯示遷移完成提示 (補償日誌已移除)
+    // addLog('系統', '🔄 存檔已升級到新版十二生肖系統！', 'gold');
     
+    /*
     if (oldCompanionCount > 0) {
         addLog('補償', `🎁 獲得鼠生肖完整套組作為補償！`, 'gold');
         addLog('補償', `🎁 獲得 ${Object.keys(gameState.companions.zodiacEquipment).length} 件鼠生肖裝備（+5等級）！`, 'gold');
@@ -18064,6 +18177,7 @@ function migrateOldSaveToZodiac() {
     if (oldData.shards > 0) {
         addLog('補償', `💰 ${oldData.shards} 個碎片已轉換為金幣！`, 'gold');
     }
+    */
     
     console.log('✅ 存檔遷移完成！');
     console.log('新存檔數據：', gameState.companions);
@@ -20588,7 +20702,9 @@ function updateCompanionList() {
     // 過濾掉舊隨從，只保留十二生肖ID（字符串）
     const zodiacOwned = owned.filter(c => typeof c === 'string' && ZODIAC_COMPANIONS[c]);
     
-    for (const companionId of owned) {
+    for (const companionData of owned) {
+        // 支持兩種格式：字符串ID 或 物件{id, level, exp}
+        const companionId = typeof companionData === 'string' ? companionData : companionData.id;
         const companion = ZODIAC_COMPANIONS[companionId];
         if (!companion) continue;
         
@@ -20953,7 +21069,10 @@ function upgradeEquipment(equipmentId) {
 // 1. 分解生肖
 function decomposeZodiac(zodiacId) {
     // 檢查是否擁有該生肖
-    const zodiacIndex = gameState.companions.owned.findIndex(z => z === zodiacId);
+    const zodiacIndex = gameState.companions.owned.findIndex(z => {
+        const id = typeof z === 'string' ? z : z.id;
+        return id === zodiacId;
+    });
     if (zodiacIndex === -1) {
         addLog('分解', '❌ 未擁有該生肖');
         return false;
@@ -24636,7 +24755,10 @@ function showEquipmentDropAnimation(equipment) {
             const companionList = Object.values(ZODIAC_COMPANIONS).filter(c => c.rarity === 'common');
             
             return companionList.map(companion => {
-                const owned = gameState.companions.owned.find(c => c.id === companion.id);
+                const owned = gameState.companions.owned.find(c => {
+                    const id = typeof c === 'string' ? c : c.id;
+                    return id === companion.id;
+                });
                 const isOwned = !!owned;
                 const rarityColor = getRarityColor(companion.rarity);
                 const typeIcon = { heal: '💚', buff: '⬆️', debuff: '⬇️', resource: '💰' }[companion.type] || '❓';
@@ -24880,7 +25002,10 @@ function showEquipmentDropAnimation(equipment) {
                 return;
             }
             
-            const owned = gameState.companions.owned.find(c => c.id === companionId);
+            const owned = gameState.companions.owned.find(c => {
+                const id = typeof c === 'string' ? c : c.id;
+                return id === companionId;
+            });
             if (owned) {
                 addLog('商店', `你已經擁有 ${companion.name}！`);
                 return;
@@ -27450,6 +27575,14 @@ function showEquipmentDropAnimation(equipment) {
                 // 記錄離線時間
                 recordOfflineTime();
                 
+                // 清除舊版本的 ring1/ring2 欄位，防止干擾新的 ring 欄位
+                if (gameState.player && gameState.player.equipment) {
+                    delete gameState.player.equipment.ring1;
+                    delete gameState.player.equipment.ring2;
+                    delete gameState.player.equipment.accessory1;
+                    delete gameState.player.equipment.accessory2;
+                }
+                
                 // 確保存檔時包含最新版本號和時間戳
                 gameState.version = GAME_VERSION;
                 gameState.lastSaveTime = Date.now(); // 記錄存檔時間
@@ -27563,16 +27696,26 @@ function showEquipmentDropAnimation(equipment) {
             if (loadedState.player.equipment && (loadedState.player.equipment.ring1 !== undefined || loadedState.player.equipment.ring2 !== undefined)) {
                 console.log('[Migration] 遷移 ring1/ring2 到 gloves/ring');
                 const oldEquip = loadedState.player.equipment;
+                // 只在 ring 欄位為空時才從 ring1/ring2 遷移
+                const migratedRing = oldEquip.ring || oldEquip.ring1 || oldEquip.ring2 || null;
                 loadedState.player.equipment = {
                     weapon: oldEquip.weapon || null,
                     head: oldEquip.head || null,
                     chest: oldEquip.chest || null,
                     legs: oldEquip.legs || null,
                     feet: oldEquip.feet || null,
-                    gloves: null,
-                    ring: oldEquip.ring1 || oldEquip.ring2 || null,  // 取其一
+                    gloves: oldEquip.gloves || null,
+                    ring: migratedRing,
                     necklace: oldEquip.necklace || null
                 };
+            }
+            
+            // 強制清除所有舊欄位，防止干擾
+            if (loadedState.player && loadedState.player.equipment) {
+                delete loadedState.player.equipment.ring1;
+                delete loadedState.player.equipment.ring2;
+                delete loadedState.player.equipment.accessory1;
+                delete loadedState.player.equipment.accessory2;
             }
             
             // 修復所有裝備的hpRegen和expBonus字段

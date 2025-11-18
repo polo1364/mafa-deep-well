@@ -16489,6 +16489,10 @@ const REGION_CONSUMABLES = {
                 obtainCompanion(randomCompanionId);
                 const companion = ZODIAC_COMPANIONS[randomCompanionId];
                 rewards.push(`🐾 隨從: <span style="color: #9e9e9e;">[Common] ${companion.name}</span>`);
+                // 確保設置遷移標記，避免讀檔時被誤判為舊存檔
+                if (gameState.companions) {
+                    gameState.companions.migrated = true;
+                }
             }
             
             // 4. 隨機選擇1個Common卡牌
@@ -18073,28 +18077,38 @@ function migrateOldSaveToZodiac() {
         return;
     }
     
-    // 檢查是否已經是新版存檔（有zodiacEquipment字段且不為空）
-    const hasZodiacEquipment = gameState.companions.zodiacEquipment !== undefined && 
-                               Object.keys(gameState.companions.zodiacEquipment).length > 0;
+    // 檢查是否已經是新版存檔（有zodiacEquipment字段）
+    const hasZodiacEquipment = gameState.companions.zodiacEquipment !== undefined;
     
-    // 檢查是否有舊隨從數據
-    const hasOldCompanions = gameState.companions.owned && gameState.companions.owned.length > 0;
+    // 檢查是否有隨從數據（新版格式：物件陣列）
+    const hasCompanions = gameState.companions.owned && gameState.companions.owned.length > 0;
     
-    if (hasZodiacEquipment && !hasOldCompanions) {
+    // 檢查是否有ownedEquipment字段（新版特徵）
+    const hasOwnedEquipment = gameState.companions.ownedEquipment !== undefined;
+    
+    // 如果已經有zodiacEquipment和ownedEquipment字段，說明是新版存檔，無需遷移
+    if (hasZodiacEquipment && hasOwnedEquipment) {
         console.log('✅ 已是新版存檔，無需遷移');
         gameState.companions.migrated = true;
-        // 不要呼叫 saveGame()，避免觸發多餘的存檔
+        // 確保必要字段存在
+        if (!gameState.companions.shards) gameState.companions.shards = 0;
+        if (!gameState.companions.cooldowns) gameState.companions.cooldowns = {};
         return;
     }
     
-    if (!hasOldCompanions) {
-        console.log('✅ 沒有舊隨從數據，無需遷移');
-        // 初始化zodiacEquipment為空對象
+    // 如果沒有隨從數據且沒有zodiacEquipment，說明是全新遊戲
+    if (!hasCompanions && !hasZodiacEquipment) {
+        console.log('✅ 全新遊戲，初始化新版結構');
         if (!gameState.companions.zodiacEquipment) {
             gameState.companions.zodiacEquipment = {};
         }
+        if (!gameState.companions.ownedEquipment) {
+            gameState.companions.ownedEquipment = [];
+        }
+        if (!gameState.companions.shards) {
+            gameState.companions.shards = 0;
+        }
         gameState.companions.migrated = true;
-        // 不要呼叫 saveGame()，避免觸發多餘的存檔
         return;
     }
     
@@ -18115,12 +18129,14 @@ function migrateOldSaveToZodiac() {
     
     // 初始化新結構
     gameState.companions = {
-        owned: [],              // 新的生肖列表（將從空開始）
-        active: null,           // 當前激活的生肖
-        zodiacEquipment: {},    // 生肖裝備背包
-        equipment: {},          // 已裝備的裝備
-        exp: oldData.exp,       // 保留經驗值
-        level: oldData.level    // 保留等級
+        owned: oldData.owned || [],  // 保留原有的生肖列表
+        active: null,                // 當前激活的生肖
+        zodiacEquipment: {},         // 生肖裝備背包
+        equipment: {},               // 已裝備的裝備
+        ownedEquipment: [],          // 已擁有的裝備列表
+        shards: oldData.shards || 0, // 保留碎片數量
+        exp: oldData.exp,            // 保留經驗值
+        level: oldData.level         // 保留等級
     };
     
     // 遷移策略：給予補償 (已停用)

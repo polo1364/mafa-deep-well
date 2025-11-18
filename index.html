@@ -11074,6 +11074,9 @@ const REGION_CONSUMABLES = {
                 // 玩家攻擊（應用組合效果）
                 const playerAtkWithCombo = Math.floor(gameState.player.atk * (1 + comboEffects.atk));
                 
+                // 獲取當前隨從
+                let companion = getActiveCompanion();
+                
                 // 計算總無視防禦：基礎 + 隨從
                 let totalArmorPen = gameState.player.armorPen;
                 if (companion && companion.skills) {
@@ -11487,7 +11490,7 @@ const REGION_CONSUMABLES = {
                 let playerDodgeChance = (gameState.player.dodge || 0) + (comboEffects.dodge || 0);
                 
                 // 添加隨從閃避加成
-                const companion = getActiveCompanion();
+                companion = getActiveCompanion();
                 if (companion && companion.skills) {
                     companion.skills.forEach(skill => {
                         if (skill.effect && skill.effect.dodge) {
@@ -12192,6 +12195,16 @@ const REGION_CONSUMABLES = {
             } else {
                 hpText.textContent = `${currentHP}/${maxHP} (${Math.round(hpPercent)}%)`;
             }
+        }
+        
+        function updatePlayerHP(currentHP, maxHP) {
+            // 更新 gameState 中的玩家 HP
+            gameState.player.hp = Math.max(0, currentHP);
+            
+            // 更新顯示
+            document.getElementById('player-hp').textContent = `${gameState.player.hp}/${maxHP}`;
+            const hpPercent = (gameState.player.hp / maxHP) * 100;
+            document.getElementById('player-hp-bar').style.width = `${hpPercent}%`;
         }
         
         function hideEnemyHP() {
@@ -16800,6 +16813,26 @@ const REGION_CONSUMABLES = {
             if (gameState.companions.shards === undefined) {
                 gameState.companions.shards = 0;
             }
+            
+            // 轉換舊版本字串格式的隨從資料為物件格式
+            if (gameState.companions.owned && gameState.companions.owned.length > 0) {
+                gameState.companions.owned = gameState.companions.owned.map(c => {
+                    // 如果是字串格式，轉換為物件格式
+                    if (typeof c === 'string') {
+                        return {
+                            id: c,
+                            level: 1,
+                            exp: 0,
+                            expToNext: 100
+                        };
+                    }
+                    // 如果是物件但缺少欄位，補充預設值
+                    if (typeof c.exp === 'undefined') c.exp = 0;
+                    if (typeof c.expToNext === 'undefined') c.expToNext = 100;
+                    if (typeof c.level === 'undefined') c.level = 1;
+                    return c;
+                });
+            }
         }
 
         // ========== 圖鑑系統 ==========
@@ -17968,6 +18001,12 @@ const REGION_CONSUMABLES = {
                 return id === companion.id;
             });
             if (!ownedData) return;
+            
+            // 確保舊資料格式也有 exp 和 expToNext 欄位
+            if (typeof ownedData.exp === 'undefined') ownedData.exp = 0;
+            if (typeof ownedData.expToNext === 'undefined') ownedData.expToNext = 100;
+            if (typeof ownedData.level === 'undefined') ownedData.level = 1;
+            
             ownedData.exp += amount;
             // 顯示經驗獲得日誌
             addLog('隨從', `🐾 ${companion.name} 獲得 ${amount} 點經驗 (${ownedData.exp}/${ownedData.expToNext})`);

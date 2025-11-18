@@ -28136,6 +28136,9 @@ function showEquipmentDropAnimation(equipment) {
                 // 初始化圖鑑系統（確保舊存檔相容）
                 initCodexSystem();
                 
+                // 初始化隨從系統（確保舊存檔相容，轉換舊格式資料）
+                initCompanionSystem();
+                
                 // 離線體力恢復計算
                 const now = Date.now();
                 const offlineTime = now - (gameState.apRegenTime || now);

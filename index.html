@@ -22993,7 +22993,7 @@ function showEquipmentDropAnimation(equipment) {
             
             // 隨從等級加成
             const activeCompanion = getActiveCompanion();
-            if (activeCompanion) {
+            if (activeCompanion && activeCompanion.level) {
                 efficiencyCoefficient += activeCompanion.level / 100;
             }
             
@@ -23014,10 +23014,11 @@ function showEquipmentDropAnimation(equipment) {
             
             // 隨從加成（優化後）
             if (activeCompanion) {
+                const companionLevel = activeCompanion.level || 1; // 預設為1級
                 if (activeCompanion.type === 'resource') {
-                    bonusCoefficient += 0.2 + (activeCompanion.level * 0.02); // 20% + 2%/級
+                    bonusCoefficient += 0.2 + (companionLevel * 0.02); // 20% + 2%/級
                 } else {
-                    bonusCoefficient += 0.1 + (activeCompanion.level * 0.01); // 10% + 1%/級
+                    bonusCoefficient += 0.1 + (companionLevel * 0.01); // 10% + 1%/級
                 }
             }
             

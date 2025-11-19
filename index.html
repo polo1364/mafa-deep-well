@@ -6088,6 +6088,7 @@ const REGION_CONSUMABLES = {
         rarity: 'common',
         type: 'agile',
         description: '機靈敏捷，善於發現弱點',
+        maxLevel: 50,
         skills: [
             { name: '鼠目寸光', effect: { crit: 0.05 }, description: '暴擊率 +5%' },
             { name: '靈活身手', effect: { dodge: 0.03 }, description: '閃避率 +3%' }
@@ -6101,6 +6102,7 @@ const REGION_CONSUMABLES = {
         rarity: 'common',
         type: 'defense',
         description: '穩重堅韌，如山般不可撼動',
+        maxLevel: 50,
         skills: [
             { name: '牛氣沖天', effect: { def: 0.08 }, description: '防禦力 +8%' },
             { name: '堅韌不拔', effect: { hp: 0.10 }, description: '最大生命 +10%' }
@@ -6114,8 +6116,9 @@ const REGION_CONSUMABLES = {
         rarity: 'common',
         type: 'dodge',
         description: '靈動輕盈，難以捕捉',
+        maxLevel: 50,
         skills: [
-            { name: '兔起鶻落', effect: { dodge: 0.08 }, description: '閃避率 +8%' },
+            { name: '兔起鵛落', effect: { dodge: 0.08 }, description: '閃避率 +8%' },
             { name: '月宮祝福', effect: { regen: 0.015 }, description: '每回合回復 1.5% HP' }
         ],
         dropRate: 0.05
@@ -6127,6 +6130,7 @@ const REGION_CONSUMABLES = {
         rarity: 'common',
         type: 'heal',
         description: '溫和善良，帶來祥瑞',
+        maxLevel: 50,
         skills: [
             { name: '羊群效應', effect: { regen: 0.02 }, description: '每回合回復 2% HP' },
             { name: '祥瑞之兆', effect: { postBattleHeal: 0.10 }, description: '戰後回復 10% HP' }
@@ -6140,6 +6144,7 @@ const REGION_CONSUMABLES = {
         rarity: 'common',
         type: 'accuracy',
         description: '準確無誤，從不失手',
+        maxLevel: 50,
         skills: [
             { name: '雞鳴破曉', effect: { accuracy: 0.10 }, description: '命中率 +10%' },
             { name: '啄擊', effect: { ignoreDefense: 0.03 }, description: '無視 3% 防禦' }
@@ -6152,7 +6157,8 @@ const REGION_CONSUMABLES = {
         icon: '🐷',
         rarity: 'common',
         type: 'fortune',
-        description: '憨厚可愛，帶來財運',
+        description: '憐厚可愛，帶來財運',
+        maxLevel: 50,
         skills: [
             { name: '豬籠入水', effect: { goldBonus: 0.15 }, description: '金幣獲得 +15%' },
             { name: '福氣滿滿', effect: { expBonus: 0.10 }, description: '經驗獲得 +10%' }
@@ -6168,8 +6174,9 @@ const REGION_CONSUMABLES = {
         rarity: 'rare',
         type: 'attack',
         description: '兇猛強悍，攻勢如虎',
+        maxLevel: 50,
         skills: [
-            { name: '虎嘯山林', effect: { atk: 0.12 }, description: '攻擊力 +12%' },
+            { name: '虎啸山林', effect: { atk: 0.12 }, description: '攻擊力 +12%' },
             { name: '猛虎撲擊', effect: { critDmg: 0.15 }, description: '暴擊傷害 +15%' },
             { name: '虎威', effect: { enemyDefReduce: 0.05 }, description: '敵人防禦 -5%' }
         ],
@@ -6182,6 +6189,7 @@ const REGION_CONSUMABLES = {
         rarity: 'rare',
         type: 'poison',
         description: '陰險狡詐，毒素致命',
+        maxLevel: 50,
         skills: [
             { name: '蛇毒', effect: { poison: 0.02 }, description: '毒素每回合 2% 傷害' },
             { name: '蛇行', effect: { dodge: 0.05 }, description: '閃避率 +5%' },
@@ -6196,6 +6204,7 @@ const REGION_CONSUMABLES = {
         rarity: 'rare',
         type: 'speed',
         description: '快如疾風，勢不可擋',
+        maxLevel: 50,
         skills: [
             { name: '馬踏飛燕', effect: { crit: 0.10 }, description: '暴擊率 +10%' },
             { name: '疾風迅雷', effect: { critDmg: 0.20 }, description: '暴擊傷害 +20%' },
@@ -6209,7 +6218,8 @@ const REGION_CONSUMABLES = {
         icon: '🐵',
         rarity: 'rare',
         type: 'trick',
-        description: '機智靈活，變化莫測',
+        description: '機智靈活，變化莎測',
+        maxLevel: 50,
         skills: [
             { name: '猴性靈巧', effect: { crit: 0.08 }, description: '暴擊率 +8%' },
             { name: '金箍棒', effect: { atk: 0.10 }, description: '攻擊力 +10%' },
@@ -6226,6 +6236,7 @@ const REGION_CONSUMABLES = {
         rarity: 'epic',
         type: 'guardian',
         description: '忠誠無比，誓死守護主人',
+        maxLevel: 50,
         skills: [
             { name: '忠誠守護', effect: { def: 0.15 }, description: '防禦力 +15%' },
             { name: '護主', effect: { survivalChance: 0.20 }, description: '20% 機率保留 1 HP' },
@@ -6243,6 +6254,7 @@ const REGION_CONSUMABLES = {
         rarity: 'legendary',
         type: 'supreme',
         description: '至高無上的神獸，力量無與倫比',
+        maxLevel: 50,
         skills: [
             { name: '龍威', effect: { allStats: 0.10 }, description: '全屬性 +10%' },
             { name: '龍鱗護體', effect: { dmgRed: 0.08 }, description: '減傷 +8%' },
@@ -6793,7 +6805,7 @@ const REGION_CONSUMABLES = {
         icon: '🗿',
         zodiac: 'pig',
         rarity: 'epic',
-        description: '金豬神像，財運亨通',
+        description: '金豬神像,財運亨通',
         effects: { goldBonus: 0.40, expBonus: 0.25, hp: 0.15, def: 0.10 },
         special: '擊敗敵人時額外獲得 20% 金幣和經驗',
         specialEffect: { type: 'onKill', goldBonus: 0.20, expBonus: 0.20 },
@@ -12772,26 +12784,24 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            // 檢查是否掉落隨從裝備（新系統：依照區域和怪物類型）
+            // 檢查是否掉落隨從裝備（已移除：生肖隨從已有專屬裝備系統）
+            /* 原通用裝備掉落邏輯已移除
             let companionEquipmentDropChance = 0;
             let equipmentId = null;
             
             if (enemy.isSpecialBoss) {
-                // 特殊Boss掉落率：區域1-4: 12%, 15%, 18%, 22%
                 companionEquipmentDropChance = [0.12, 0.15, 0.18, 0.22][gameState.region] || 0.12;
                 if (Math.random() < companionEquipmentDropChance) {
                     const epicEquipment = ['attack_engine', 'defense_wall', 'heal_fountain'];
                     equipmentId = epicEquipment[Math.floor(Math.random() * epicEquipment.length)];
                 }
             } else if (enemy.isBoss) {
-                // Boss掉落率：區域1-4: 6%, 8%, 12%, 15%
                 companionEquipmentDropChance = [0.06, 0.08, 0.12, 0.15][gameState.region] || 0.06;
                 if (Math.random() < companionEquipmentDropChance) {
                     const rareEquipment = ['attack_core', 'defense_core', 'heal_core'];
                     equipmentId = rareEquipment[Math.floor(Math.random() * rareEquipment.length)];
                 }
             } else if (enemy.isElite) {
-                // 精英掉落率：區域1-4: 3%, 5%, 7%, 10%
                 companionEquipmentDropChance = [0.03, 0.05, 0.07, 0.10][gameState.region] || 0.03;
                 if (Math.random() < companionEquipmentDropChance) {
                     const commonEquipment = ['attack_chip', 'defense_chip', 'heal_chip'];
@@ -12802,7 +12812,6 @@ const REGION_CONSUMABLES = {
             if (equipmentId) {
                 obtainEquipment(equipmentId);
                 const equipment = ZODIAC_EQUIPMENT[equipmentId];
-                // 安全檢查：確保裝備存在
                 if (equipment) {
                     const rarityColor = getRarityColor(equipment.rarity);
                     const enemyType = enemy.isSpecialBoss ? '特殊Boss' : (enemy.isBoss ? 'Boss' : '菁英');
@@ -12811,6 +12820,7 @@ const REGION_CONSUMABLES = {
                     console.warn(`裝備 ID ${equipmentId} 不存在於 ZODIAC_EQUIPMENT 中`);
                 }
             }
+            */
             
             // 掉落卡牌（普通/菁英/Boss/特殊Boss）
             let cardDropChance = 0;
@@ -16439,19 +16449,57 @@ const REGION_CONSUMABLES = {
                 weaponRarity = RARITIES[2]; // 精良(藍)
             }
             
-            let weapon = generateItem('normal', weaponRarity.name);
-            if (!weapon || weapon.type !== 'weapon') {
-                // 如果不是武器，重新生成直到獲得武器
-                let attempts = 0;
-                while ((!weapon || weapon.type !== 'weapon') && attempts < 10) {
-                    weapon = generateItem('normal', weaponRarity.name);
-                    attempts++;
-                }
+            // 直接從武器池中選擇並手動構建
+            const region = REGIONS[gameState.region];
+            const regionLoot = REGION_LOOT[region.name];
+            let weapon = null;
+            
+            if (regionLoot && regionLoot.weapons && regionLoot.weapons.length > 0) {
+                const weaponBase = regionLoot.weapons[Math.floor(Math.random() * regionLoot.weapons.length)];
+                const level = gameState.player.level;
+                
+                // 手動構建武器物件
+                const { mainCount, subCount } = selectAffixCount(weaponRarity.name, 'weapon');
+                const affixes = selectAffixes('weapon', mainCount, subCount);
+                
+                const regionBaseBudget = 15;
+                const rarityMult = {'common': 0.5, 'uncommon': 0.7, 'fine': 0.9}[weaponRarity.name] || 0.5;
+                const finalBudget = Math.floor(regionBaseBudget * rarityMult);
+                
+                const pointsDistribution = distributePoints(finalBudget, affixes, 'weapon');
+                const stats = convertPointsToStats(pointsDistribution);
+                const finalStats = applyRandomVariation(stats);
+                
+                weapon = {
+                    id: Date.now() + Math.random(),
+                    type: 'weapon',
+                    name: weaponBase.name,
+                    region: region.name,
+                    rarity: weaponRarity.name,
+                    rarityLabel: weaponRarity.label,
+                    color: weaponRarity.color,
+                    atk: finalStats.atk || 0,
+                    def: finalStats.def || 0,
+                    hp: finalStats.hp || 0,
+                    crit: finalStats.crit || 0,
+                    critDmg: finalStats.critDmg || 0,
+                    dmgRed: finalStats.dmgRed || 0,
+                    lifeSteal: finalStats.lifeSteal || 0,
+                    armorPen: finalStats.armorPen || 0,
+                    bossDmg: finalStats.bossDmg || 0,
+                    hpRegen: 0,
+                    expBonus: 0,
+                    luck: 0,
+                    goldBonus: 0,
+                    affixes: affixes,
+                    enhance: 0
+                };
+                
+                // 生成裝備詞綴
+                generateEquipmentAffix(weapon, weaponRarity.name);
             }
             
-            // generateItem 已經會自動根據品階生成詞綴，不需要手動添加
-            
-            if (addToInventory(weapon, false)) {
+            if (weapon && addToInventory(weapon, false)) {
                 rewards.push(`⚔️ 武器: <span style="color: ${weaponRarity.color};">[${weaponRarity.label}] ${weapon.name}</span>`);
             }
             
@@ -16466,19 +16514,66 @@ const REGION_CONSUMABLES = {
                 armorRarity = RARITIES[2]; // 精良(藍)
             }
             
-            let armor = generateItem('normal', armorRarity.name);
-            if (!armor || armor.type !== 'armor') {
-                // 如果不是防具，重新生成直到獲得防具
-                let attempts = 0;
-                while ((!armor || armor.type !== 'armor') && attempts < 10) {
-                    armor = generateItem('normal', armorRarity.name);
-                    attempts++;
+            // 直接從防具池中選擇並手動構建
+            let armor = null;
+            const armorTypes = ['head', 'chest', 'gloves', 'legs', 'feet'];
+            
+            if (regionLoot) {
+                // 合併所有防具類型
+                const armorPool = [];
+                armorTypes.forEach(type => {
+                    if (regionLoot[type] && regionLoot[type].length > 0) {
+                        armorPool.push(...regionLoot[type]);
+                    }
+                });
+                
+                if (armorPool.length > 0) {
+                    const armorBase = armorPool[Math.floor(Math.random() * armorPool.length)];
+                    const level = gameState.player.level;
+                    
+                    // 手動構建防具物件
+                    const { mainCount, subCount } = selectAffixCount(armorRarity.name, armorBase.type);
+                    const affixes = selectAffixes(armorBase.type, mainCount, subCount);
+                    
+                    const regionBaseBudget = 15;
+                    const rarityMult = {'common': 0.5, 'uncommon': 0.7, 'fine': 0.9}[armorRarity.name] || 0.5;
+                    const finalBudget = Math.floor(regionBaseBudget * rarityMult);
+                    
+                    const pointsDistribution = distributePoints(finalBudget, affixes, armorBase.type);
+                    const stats = convertPointsToStats(pointsDistribution);
+                    const finalStats = applyRandomVariation(stats);
+                    
+                    armor = {
+                        id: Date.now() + Math.random() + 1,
+                        type: armorBase.type,
+                        name: armorBase.name,
+                        region: region.name,
+                        rarity: armorRarity.name,
+                        rarityLabel: armorRarity.label,
+                        color: armorRarity.color,
+                        atk: finalStats.atk || 0,
+                        def: finalStats.def || 0,
+                        hp: finalStats.hp || 0,
+                        crit: finalStats.crit || 0,
+                        critDmg: finalStats.critDmg || 0,
+                        dmgRed: finalStats.dmgRed || 0,
+                        lifeSteal: finalStats.lifeSteal || 0,
+                        armorPen: finalStats.armorPen || 0,
+                        bossDmg: finalStats.bossDmg || 0,
+                        hpRegen: 0,
+                        expBonus: 0,
+                        luck: 0,
+                        goldBonus: 0,
+                        affixes: affixes,
+                        enhance: 0
+                    };
+                    
+                    // 生成裝備詞綴
+                    generateEquipmentAffix(armor, armorRarity.name);
                 }
             }
             
-            // generateItem 已經會自動根據品階生成詞綴，不需要手動添加
-            
-            if (addToInventory(armor, false)) {
+            if (armor && addToInventory(armor, false)) {
                 rewards.push(`🛡️ 防具: <span style="color: ${armorRarity.color};">[${armorRarity.label}] ${armor.name}</span>`);
             }
             
@@ -16562,6 +16657,9 @@ const REGION_CONSUMABLES = {
                 if (index !== -1) {
                     gameState.inventory.splice(index, 1);
                 }
+                
+                // 關閉背包視窗
+                closeBagModal();
                 
                 updateUI();
                 saveGame();
@@ -17814,18 +17912,27 @@ const REGION_CONSUMABLES = {
         // 應用隨從被動技能
         function applyCompanionPassiveSkills() {
             const companion = getActiveCompanion();
+            console.log('[applyCompanionPassiveSkills] 當前隨從:', companion);
             if (!companion) return {};
             const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0, dodge: 0, regen: 0, accuracy: 0, ignoreDefense: 0 };
             
             // 支持新版生肖隨從的skill結構（effect屬性）
+            console.log('[applyCompanionPassiveSkills] 技能列表:', companion.skills);
             if (companion.skills && Array.isArray(companion.skills)) {
-                companion.skills.forEach(skill => {
+                companion.skills.forEach((skill, index) => {
+                    console.log(`[applyCompanionPassiveSkills] 處理技能 ${index}:`, skill);
                     if (skill.effect) {
-                        // 新版生肖隨從：直接使用effect屬性
+                        console.log(`[applyCompanionPassiveSkills] 技能 ${index} 有 effect:`, skill.effect);
+                        // 新版生肖隨從：直接使用effect屬性，並添加等級加成
+                        const levelBonus = (companion.level - 1) * 0.01; // 每級 +1%
                         Object.keys(skill.effect).forEach(key => {
+                            console.log(`[applyCompanionPassiveSkills] 檢查屬性 ${key}:`, skill.effect[key], 'bonuses有這個屬性嗎?', bonuses.hasOwnProperty(key));
                             if (bonuses.hasOwnProperty(key)) {
-                                // 將百分比轉換為百分比數值（例如 0.05 -> 5%）
-                                bonuses[key] += skill.effect[key] * 100;
+                                // 將百分比轉換為百分比數值，並應用等級加成
+                                const baseValue = skill.effect[key] * 100;
+                                const bonusValue = baseValue * (1 + levelBonus);
+                                bonuses[key] += bonusValue;
+                                console.log(`[applyCompanionPassiveSkills] 已加上 ${key}: ${bonuses[key]} (基礎: ${baseValue}, 等級加成: ${levelBonus * 100}%)`);
                             }
                         });
                     } else if (skill.trigger === 'passive') {
@@ -17846,6 +17953,7 @@ const REGION_CONSUMABLES = {
                     }
                 });
             }
+            console.log('[applyCompanionPassiveSkills] 最終加成:', bonuses);
             return bonuses;
         }
 
@@ -20758,17 +20866,47 @@ function updateCompanionList() {
     const zodiacOwned = owned.filter(c => typeof c === 'string' && ZODIAC_COMPANIONS[c]);
     
     for (const companionData of owned) {
-        // 支持兩種格式：字符串ID 或 物件{id, level, exp}
+        // 支持兩種格式：字串ID 或 物件{id, level, exp}
         const companionId = typeof companionData === 'string' ? companionData : companionData.id;
         const companion = ZODIAC_COMPANIONS[companionId];
         if (!companion) continue;
         
+        // 獲取等級和經驗值
+        const level = typeof companionData === 'object' ? (companionData.level || 1) : 1;
+        const exp = typeof companionData === 'object' ? (companionData.exp || 0) : 0;
+        const expToNext = typeof companionData === 'object' ? (companionData.expToNext || 100) : 100;
+        const expPercent = Math.min((exp / expToNext) * 100, 100);
+        
         const isActive = gameState.companions.active === companionId;
         const rarityColor = getRarityColor(companion.rarity);
         
-        let skillsHtml = companion.skills.map(skill => 
-            `<div style="color: #c0c0c0; font-size: 0.8rem;">• ${skill.description}</div>`
-        ).join('');
+        // 生成技能顯示，包含當前等級效果和下一級預覽
+        const levelBonus = (level - 1) * 0.01; // 每級 +1%
+        const nextLevelBonus = level * 0.01; // 下一級的加成
+        const isMaxLevel = level >= (companion.maxLevel || 50);
+        
+        let skillsHtml = companion.skills.map(skill => {
+            if (!skill.effect) return `<div style="color: #c0c0c0; font-size: 0.8rem;">• ${skill.description}</div>`;
+            
+            // 計算當前等級和下一級的效果
+            const effectEntries = Object.entries(skill.effect);
+            const currentEffects = effectEntries.map(([key, value]) => {
+                const baseValue = value * 100;
+                const currentValue = baseValue * (1 + levelBonus);
+                return `${currentValue.toFixed(2)}%`;
+            }).join(', ');
+            
+            const nextEffects = !isMaxLevel ? effectEntries.map(([key, value]) => {
+                const baseValue = value * 100;
+                const nextValue = baseValue * (1 + nextLevelBonus);
+                return `${nextValue.toFixed(2)}%`;
+            }).join(', ') : null;
+            
+            return `<div style="color: #c0c0c0; font-size: 0.8rem; margin-bottom: 3px;">
+                • ${skill.name}: ${currentEffects}
+                ${!isMaxLevel ? `<span style="color: #888; font-size: 0.75rem;"> → 下一級: ${nextEffects}</span>` : '<span style="color: #ffd700; font-size: 0.75rem;"> (滿級)</span>'}
+            </div>`;
+        }).join('');
         
         html += `
             <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px; border: 2px solid ${rarityColor}; position: relative; margin-bottom: 10px;">
@@ -20776,6 +20914,18 @@ function updateCompanionList() {
                 <div style="font-size: 2rem; margin-bottom: 5px;">${companion.icon}</div>
                 <div style="font-size: 1.1rem; color: ${rarityColor}; font-weight: bold; margin-bottom: 3px;">${companion.name}</div>
                 <div style="color: #888; font-size: 0.8rem; margin-bottom: 8px;">${companion.description}</div>
+                
+                <!-- 等級和經驗值條 -->
+                <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <span style="color: #ffd700; font-weight: bold; font-size: 0.9rem;">⭐ Lv.${level}</span>
+                        <span style="color: #c0c0c0; font-size: 0.8rem;">${exp}/${expToNext}</span>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #ffd700, #ffed4e); height: 100%; width: ${expPercent}%; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+                
                 <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
                     ${skillsHtml}
                 </div>
@@ -20934,6 +21084,9 @@ function equipCompanion(companionId) {
         }
     }
     
+    // 重新計算屬性，應用隨從加成
+    recalculateStats();
+    
     saveGame();
     updateCompanionModal();
     updateUI();
@@ -20944,6 +21097,10 @@ function unequipCompanion() {
     gameState.companions.active = null;
     gameState.companions.equipment = null;
     addLog('已卸下生肖和裝備', 'yellow');
+    
+    // 重新計算屬性，移除隨從加成
+    recalculateStats();
+    
     saveGame();
     updateCompanionModal();
     updateUI();
@@ -21449,9 +21606,27 @@ function showEquipmentDropAnimation(equipment) {
                     `;
                 }
                 
+                // 獲取經驗值資料
+                const ownedData = gameState.companions.owned.find(c => {
+                    const id = typeof c === 'string' ? c : c.id;
+                    return id === companion.id;
+                });
+                const exp = typeof ownedData === 'object' ? (ownedData.exp || 0) : 0;
+                const expToNext = typeof ownedData === 'object' ? (ownedData.expToNext || 100) : 100;
+                const expPercent = Math.min((exp / expToNext) * 100, 100);
+                
                 companionHtml = `
                     <div style="font-weight: bold; color: ${rarityColor}; margin-bottom: 2px; font-size: 0.8rem;">${companion.name}</div>
                     <div style="color: #c0c0c0; font-size: 0.65rem;">Lv.${companion.level} | ${companion.rarity}</div>
+                    <div style="margin-top: 3px; margin-bottom: 3px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                            <span style="color: #ffd700; font-size: 0.6rem;">⭐ EXP</span>
+                            <span style="color: #c0c0c0; font-size: 0.6rem;">${exp}/${expToNext}</span>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.1); height: 4px; border-radius: 2px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #ffd700, #ffed4e); height: 100%; width: ${expPercent}%; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
                     ${skillsHtml}
                 `;
             } else {
@@ -27391,8 +27566,18 @@ function showEquipmentDropAnimation(equipment) {
             const questIndex = gameState.dailyQuests.quests.findIndex(q => q.id === questId);
             if (questIndex === -1) return;
             
-            // 從任務池中隨機選擇一個新任務
-            const pool = [...DAILY_QUEST_POOL];
+            // 獲取當前所有任務的 ID 列表（排除正在更新的任務）
+            const currentQuestIds = gameState.dailyQuests.quests
+                .filter((q, idx) => idx !== questIndex)
+                .map(q => q.id);
+            
+            // 從任務池中篩選出未重複的任務
+            const availableQuests = DAILY_QUEST_POOL.filter(q => !currentQuestIds.includes(q.id));
+            
+            // 如果沒有可用任務，則使用全部任務池
+            const pool = availableQuests.length > 0 ? availableQuests : DAILY_QUEST_POOL;
+            
+            // 隨機選擇一個新任務
             const newQuest = pool[Math.floor(Math.random() * pool.length)];
             
             // 替換任務

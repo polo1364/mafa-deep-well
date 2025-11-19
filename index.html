@@ -20825,8 +20825,8 @@ function updateEquipmentList() {
         const rarityColor = getRarityColor(equipment.rarity);
         const levelMultiplier = 1 + (owned.level - 1) * 0.1;
         
-        // 檢查是否可以裝備（需要對應生肖）
-        const canEquip = gameState.companions.active === equipment.zodiac;
+        // 檢查是否可以裝備（需要擁有對應生肖）
+        const canEquip = gameState.companions.owned.includes(equipment.zodiac);
         const zodiacName = ZODIAC_COMPANIONS[equipment.zodiac]?.name || equipment.zodiac;
         
         let effectsHtml = Object.entries(equipment.effects).map(([stat, value]) => {
@@ -27606,18 +27606,34 @@ function showEquipmentDropAnimation(equipment) {
             const bonus = title.bonus;
             const baseStats = getBaseStats();
             
+            // 基礎屬性(百分比加成)
             if (bonus.atk) gameState.player.atk += Math.floor(baseStats.atk * bonus.atk / 100);
             if (bonus.def) gameState.player.def += Math.floor(baseStats.def * bonus.def / 100);
             if (bonus.hp) {
                 const hpBonus = Math.floor(baseStats.hp * bonus.hp / 100);
                 gameState.player.maxHp += hpBonus;
-                gameState.player.hp += hpBonus;
+                // 不要直接修改 hp,讓 recalculateStats 最後統一處理
             }
+            
+            // 暴擊相關(固定數值)
             if (bonus.crit) gameState.player.crit += bonus.crit;
             if (bonus.critDmg) gameState.player.critDmg += bonus.critDmg;
+            
+            // 戰鬥屬性(固定數值)
             if (bonus.bossDmg) gameState.player.bossDmg = (gameState.player.bossDmg || 0) + bonus.bossDmg;
             if (bonus.dmgRed) gameState.player.dmgRed = (gameState.player.dmgRed || 0) + bonus.dmgRed;
             if (bonus.lifeSteal) gameState.player.lifeSteal = (gameState.player.lifeSteal || 0) + bonus.lifeSteal;
+            if (bonus.armorPen) gameState.player.armorPen = (gameState.player.armorPen || 0) + bonus.armorPen;
+            if (bonus.hpRegen) gameState.player.hpRegen = (gameState.player.hpRegen || 0) + bonus.hpRegen;
+            
+            // 生肖稱號特殊屬性(固定數值)
+            if (bonus.dodge) gameState.player.dodge = (gameState.player.dodge || 0) + bonus.dodge;
+            if (bonus.ignoreDefense) gameState.player.ignoreDefense = (gameState.player.ignoreDefense || 0) + bonus.ignoreDefense;
+            if (bonus.accuracy) gameState.player.accuracy = (gameState.player.accuracy || 0) + bonus.accuracy;
+            
+            // 資源加成(固定數值)
+            if (bonus.goldBonus) gameState.player.goldBonus = (gameState.player.goldBonus || 0) + bonus.goldBonus;
+            if (bonus.expBonus) gameState.player.expBonus = (gameState.player.expBonus || 0) + bonus.expBonus;
             
             // 儲存加成供其他系統使用
             gameState.titleBonuses = bonus;

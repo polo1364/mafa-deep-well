@@ -1007,6 +1007,32 @@
                 opacity: 0;
             }
         }
+        
+        /* 成就通知動畫 */
+        @keyframes achievementPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes achievementFade {
+            from {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
 
     </style>
 </head>
@@ -1338,7 +1364,9 @@
                         
                         <!-- 迭代按鈕（條件顯示） -->
                         <div class="quick-actions-row" id="iteration-row" style="display: none;">
-                            <button onclick="openIterationModal()" id="quick-iteration-btn" class="quick-btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🔄 迭代</button>
+                            <button onclick="openIterationModal()" id="quick-iteration-btn" class="quick-btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"> 🔄 迭代</button>
+                            <button onclick="openShardExchangeModal()" class="quick-btn" style="background: linear-gradient(135deg, #ff6b6b 0%, #4EA5FF 100%);"> ♻️ 碎片兌換</button>
+                            <button onclick="openReincarnationSetModal()" class="quick-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"> 🎯 套裝收藏</button>
                         </div>
                     </div>
                     
@@ -2513,6 +2541,57 @@
         </div>
     </div>
 
+    <!-- ♻️ 碎片兌換模態視窗 -->
+    <div class="modal" id="shard-exchange-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h2 style="text-align: center; color: #ff6b6b;">♻️ 輪迴碎片兌換</h2>
+            <div style="background: rgba(255, 107, 107, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.3); margin: 20px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <span style="color: #c0c0c0; font-size: 1.1rem;">擁有碎片：</span>
+                    <span id="shard-exchange-count" style="color: #4EA5FF; font-weight: bold; font-size: 1.3rem;">0</span>
+                </div>
+                <div style="text-align: center; color: #aaa; font-size: 0.95rem; margin-bottom: 15px;">
+                    每 100 個輪迴碎片可兌換 1 個無盡征途套裝部位
+                </div>
+            </div>
+            
+            <div id="shard-exchange-list" style="display: grid; grid-template-columns: 1fr; gap: 10px; max-height: 400px; overflow-y: auto;">
+                <!-- 動態生成 -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeShardExchangeModal()" style="flex: 1;">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎯 套裝收藏模態視窗 -->
+    <div class="modal" id="reincarnation-set-modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="text-align: center; color: #ff6b6b;">🎯 無盡征途套裝收藏</h2>
+            <div style="background: rgba(255, 107, 107, 0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.3); margin: 15px 0;">
+                <div style="display: flex; justify-content: space-around; text-align: center;">
+                    <div>
+                        <div style="color: #aaa; font-size: 0.9rem;">已收集</div>
+                        <div id="set-collection-count" style="color: #4EA5FF; font-weight: bold; font-size: 1.3rem;">0 / 8</div>
+                    </div>
+                    <div>
+                        <div style="color: #aaa; font-size: 0.9rem;">套裝效果</div>
+                        <div id="set-effect-active" style="color: #ffd700; font-weight: bold; font-size: 1.3rem;">0 件</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="reincarnation-set-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px;">
+                <!-- 動態生成 -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeReincarnationSetModal()" style="flex: 1;">關閉</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 每日任務模態視窗 -->
     <div class="modal" id="daily-quests-modal">
         <div class="modal-content" style="max-width: 700px;">
@@ -3347,18 +3426,6 @@ input:checked + .slider:before {
                         maxLevel: 3,
                         cost: [2, 4, 6],
                         effect: (level) => ({ startGold: level * 500 })
-                    }
-                }
-            },
-            special: {
-                name: '✨ 特殊天賦',
-                talents: {
-                    bagSize: {
-                        name: '空間擴展',
-                        desc: '永久提升背包容量',
-                        maxLevel: 3,
-                        cost: [3, 5, 7],
-                        effect: (level) => ({ bagSize: level * 5 })
                     }
                 }
             }
@@ -6066,6 +6133,23 @@ const REGION_CONSUMABLES = {
             }
         };
 
+        // ♲️ 迭代套裝：無盡征途（隨等級成長）
+        const REINCARNATION_SET = {
+            setName: '無盡征途',
+            icon: '♲️',
+            description: '超越時空的征戰者裝備，隨著使用者的成長而變強',
+            items: [
+                { type: 'weapon', name: '征途破軍刃', baseAtk: 120, baseDef: 30, baseHp: 252, armorPen: 18, bossDmg: 10 },
+                { type: 'head', name: '霸者戰冠', baseAtk: 30, baseDef: 80, baseHp: 454, armorPen: 10 },
+                { type: 'chest', name: '不屈戰鎧', baseAtk: 30, baseDef: 80, baseHp: 454, armorPen: 8 },
+                { type: 'gloves', name: '征伐鐵拳', baseAtk: 30, baseDef: 80, baseHp: 454, armorPen: 10 },
+                { type: 'legs', name: '長驅直入腿鎧', baseAtk: 30, baseDef: 80, baseHp: 454, armorPen: 8 },
+                { type: 'feet', name: '踏破虛空戰靴', baseAtk: 30, baseDef: 80, baseHp: 454, armorPen: 6 },
+                { type: 'ring', name: '永恆征戰印', baseAtk: 60, baseDef: 60, baseHp: 403, armorPen: 14, bossDmg: 10 },
+                { type: 'necklace', name: '霸業之證', baseAtk: 60, baseDef: 60, baseHp: 403, armorPen: 12, bossDmg: 8 }
+            ]
+        };
+
         // 迭代天賦系統
 
         // 隨從系統常量
@@ -7252,7 +7336,13 @@ const REGION_CONSUMABLES = {
                 2: { name: '虛空之力', atkPercent: 35, armorPenBonus: 22, bossDmgBonus: 18 },
                 4: { name: '穿透打擊', armorPenBonus: 30, critBonus: 12, bossDmgBonus: 25 },
                 6: { name: '破甲專精', atkPercent: 40, armorPenBonus: 40, bossDmgBonus: 35, specialEffect: 'armor_shatter' },
-                8: { name: '虛空主宰', atkPercent: 60, armorPenBonus: 60, bossDmgBonus: 50, critDmgBonus: 70, specialEffect: 'true_damage' }
+                8: { name: '虛空主孰', atkPercent: 60, armorPenBonus: 60, bossDmgBonus: 50, critDmgBonus: 70, specialEffect: 'true_damage' }
+            },
+            '無盡征途': {
+                2: { name: '征戰之魂', atkPercent: 42, armorPenBonus: 26, bossDmgBonus: 22 },
+                4: { name: '破軍之勢', armorPenBonus: 36, critBonus: 14, bossDmgBonus: 30 },
+                6: { name: '歸破虛空', atkPercent: 48, armorPenBonus: 48, bossDmgBonus: 42, specialEffect: 'dimension_shatter' },
+                8: { name: '終焉湟滅', atkPercent: 72, armorPenBonus: 72, bossDmgBonus: 60, critDmgBonus: 84, specialEffect: 'ultimate_annihilation' }
             }
         };
 
@@ -8023,8 +8113,12 @@ const REGION_CONSUMABLES = {
                 totalIP: 0,  // 總迭代點數
                 availableIP: 0,  // 可用迭代點數
                 talents: {},  // 已解鎖的天賦 {talentId: level}
-                completedBosses: []  // 已完成的Boss列表
+                completedBosses: [],  // 已完成的Boss列表
+                chests: 0,  // 迭代寶箱數量
+                reincarnationShards: 0,  // ♫️ 輪迴碎片數量
+                reincarnationEquipment: []  // 已獲得的迭代套裝 [{type, name, ...stats}]
             },
+            achievements: [],  // 成就列表
             dailyQuests: {
                 lastReset: Date.now(),  // 上次重置時間
                 quests: [],  // 當前任務列表
@@ -10614,9 +10708,13 @@ const REGION_CONSUMABLES = {
             const atkVariance = 0.9 + Math.random() * 0.2; // ±10%
             const defVariance = 0.9 + Math.random() * 0.2; // ±10%
             
-            const finalHp = Math.floor(baseHpValue * hpVariance);
-            const finalAtk = Math.floor(baseAtkValue * atkVariance);
-            const finalDef = Math.floor(baseDefValue * defVariance);
+            // ♲️ 迭代難度倍率（每次迭代 +15%）
+            const iterationCount = gameState.iteration.count || 0;
+            const iterationMultiplier = 1 + (iterationCount * 0.15);
+            
+            const finalHp = Math.floor(baseHpValue * hpVariance * iterationMultiplier);
+            const finalAtk = Math.floor(baseAtkValue * atkVariance * iterationMultiplier);
+            const finalDef = Math.floor(baseDefValue * defVariance * iterationMultiplier);
             
             // 暴擊屬性也添加隨機浮動
             const critVariance = 0.8 + Math.random() * 0.4; // ±20%
@@ -11209,6 +11307,18 @@ const REGION_CONSUMABLES = {
                 if ((enemy.isBoss || enemy.isSpecialBoss) && gameState.player.bossDmg > 0) {
                     const bossDmgBonus = Math.min(gameState.player.bossDmg, 100);
                     finalDmg = Math.floor(finalDmg * (1 + bossDmgBonus / 100));
+                }
+                
+                // ◆️ 無盡征途套裝特效
+                const reincarnationEffects = applyReincarnationSetEffects(
+                    gameState.player, 
+                    enemy, 
+                    finalDmg, 
+                    enemy.isBoss || enemy.isSpecialBoss
+                );
+                if (reincarnationEffects.messages.length > 0) {
+                    finalDmg = reincarnationEffects.damage;
+                    reincarnationEffects.messages.forEach(msg => addLog('特殊', msg));
                 }
                 
                 // ========== 元素克制計算（使用武器元素） ==========
@@ -15435,9 +15545,13 @@ const REGION_CONSUMABLES = {
             
             buffsList.innerHTML = html;
             
-            // 迭代按鈕顯示（等級100且完成所有Boss時顯示）
+            // 迭代按鈕顯示（無條件顯示）
             const iterationBtn = document.getElementById('iteration-btn');
             const quickIterationBtn = document.getElementById('quick-iteration-btn');
+            const iterationRow = document.getElementById('iteration-row');
+            // 無條件顯示迭代按鈕區域
+            if (iterationRow) iterationRow.style.display = 'flex';
+            // 迭代按鈕仍然需要條件（等級100且完成所有Boss）
             if (gameState.player.level >= 100 && checkAllBossesCompleted()) {
                 if (iterationBtn) iterationBtn.style.display = 'block';
                 if (quickIterationBtn) quickIterationBtn.style.display = 'block';
@@ -16644,6 +16758,116 @@ const REGION_CONSUMABLES = {
             
             document.body.appendChild(modal);
         }
+        
+        // ♲️ 開啟迭代寶箱
+        function openReincarnationChest() {
+            const rewards = [];
+            
+            // 100% 必出：出生禮包
+            const starterPack = {
+                id: Date.now() + Math.random(),
+                type: 'consumable',
+                subtype: 'starter_pack',
+                name: '🎁 出生禮包',
+                description: '[一次性] 開啟獲得新手裝備、隨從、卡牌和藥水',
+                quantity: 1,
+                canUse: true
+            };
+            gameState.inventory.push(starterPack);
+            rewards.push(`🎁 <span style="color: #ffd700; font-weight: bold;">出生禮包</span>`);
+            addLog('系統', '🎁 獲得出生禮包！');
+            
+            // 5% 機率獲得套裝部位，95% 機率獲得碎片
+            const roll = Math.random();
+            
+            if (roll < 0.05) {
+                // 獲得套裝部位
+                const equipment = generateReincarnationEquipment();
+                gameState.iteration.reincarnationEquipment.push(equipment);
+                rewards.push(`♫️ <span style="color: #ff6b6b; font-weight: bold;">${equipment.name}</span>`);
+                addLog('系統', `✨ 獲得迭代套裝：${equipment.name}！`);
+            } else {
+                // 獲得碎片
+                const shardAmount = Math.floor(Math.random() * 16) + 5; // 5-20
+                if (!gameState.iteration.reincarnationShards) gameState.iteration.reincarnationShards = 0;
+                gameState.iteration.reincarnationShards += shardAmount;
+                rewards.push(`♫️ <span style="color: #4EA5FF;">輪迴碎片 × ${shardAmount}</span>`);
+                addLog('系統', `獲得 ${shardAmount} 個輪迴碎片！`);
+            }
+            
+            // 顯示獲勵視窗
+            showReincarnationChestRewards(rewards);
+            
+            updateUI();
+            saveGame();
+        }
+        
+        // 生成迭代套裝裝備（帶詞綴）
+        function generateReincarnationEquipment() {
+            // 隨機選擇一個部位
+            const itemData = REINCARNATION_SET.items[Math.floor(Math.random() * REINCARNATION_SET.items.length)];
+            
+            // 計算當前等級的屬性（隨等級成長）
+            const levelMultiplier = 1 + (gameState.player.level * 0.02);
+            
+            // 基礎屬性
+            const equipment = {
+                id: Date.now() + Math.random(),
+                type: itemData.type,
+                name: itemData.name,
+                setName: REINCARNATION_SET.setName,
+                isReincarnation: true, // 標記為迭代套裝
+                atk: Math.floor(itemData.baseAtk * levelMultiplier),
+                def: Math.floor(itemData.baseDef * levelMultiplier),
+                hp: Math.floor(itemData.baseHp * levelMultiplier),
+                armorPen: itemData.armorPen || 0,
+                bossDmg: itemData.bossDmg || 0,
+                crit: 0,
+                critDmg: 0,
+                dmgRed: 0,
+                lifeSteal: 0,
+                luck: 0,
+                expBonus: 0,
+                goldBonus: 0,
+                hpRegen: 0,
+                color: '#ff6b6b',
+                rarity: 'legendary',
+                rarityLabel: '傳說',
+                affixes: [], // 詞綴列表
+                equipmentAffix: { prefix: null, suffix: null }
+            };
+            
+            // 生成詞綴（傳說品質）
+            generateEquipmentAffix(equipment, 'legendary');
+            
+            return equipment;
+        }
+        
+        // 顯示迭代寶箱獲勵視窗
+        function showReincarnationChestRewards(rewards) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.style.zIndex = '10000';
+            
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <h2 style="text-align: center; color: #ff6b6b; text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);">♲️ 迭代寶箱開啟成功！</h2>
+                    <div style="background: rgba(255, 107, 107, 0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.3); margin: 20px 0;">
+                        <h3 style="color: #ff6b6b; text-align: center; margin-bottom: 15px;">獲得物品</h3>
+                        <div style="color: #e0e6ff; line-height: 2; font-size: 1.1rem; text-align: center;">
+                            ${rewards.map(r => `<div style="padding: 10px 0; border-bottom: 1px solid rgba(255, 107, 107, 0.1);">${r}</div>`).join('')}
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: #aaa; font-size: 0.9rem; margin-bottom: 15px;">
+                        ♲️ 輪迴碎片：${gameState.iteration.reincarnationShards || 0} / 100
+                    </div>
+                    <button onclick="this.closest('.modal').remove()" style="width: 100%; padding: 15px; font-size: 1.1rem; background: linear-gradient(135deg, #ff6b6b 0%, #4EA5FF 100%);">確定</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
         function useConsumable(itemId) {
             const item = gameState.inventory.find(i => i.id == itemId);
             if (!item || item.type !== 'consumable') return;
@@ -16653,6 +16877,23 @@ const REGION_CONSUMABLES = {
                 openStarterPack();
                 
                 // 移除禮包
+                const index = gameState.inventory.findIndex(i => i.id == itemId);
+                if (index !== -1) {
+                    gameState.inventory.splice(index, 1);
+                }
+                
+                // 關閉背包視窗
+                closeBagModal();
+                
+                updateUI();
+                saveGame();
+                return;
+                
+            } else if (item.subtype === 'reincarnation_chest') {
+                // ♲️ 迭代寶箱
+                openReincarnationChest();
+                
+                // 移除寶箱
                 const index = gameState.inventory.findIndex(i => i.id == itemId);
                 if (index !== -1) {
                     gameState.inventory.splice(index, 1);
@@ -16878,9 +17119,6 @@ const REGION_CONSUMABLES = {
                 item.quantity--;
             } else {
                 gameState.inventory = gameState.inventory.filter(i => i.id != itemId);
-            
-            // 更新任務進度：分解裝備
-            updateQuestProgress('salvage_equipment', 1);
             }
             
             // 更新UI
@@ -26295,6 +26533,19 @@ function showEquipmentDropAnimation(equipment) {
             addLog('系統', `📎 獲得 ${ip} 點迭代點數！`);
             addLog('系統', `🔷 保留 ${retainedShards} 碎片！`);
             addLog('系統', `🏆 獲得稱號：${getIterationTitle(gameState.iteration.count)}`);
+            
+            // ♲️ 獲得迭代寶箱（添加到背包）
+            const reincarnationChest = {
+                id: Date.now() + Math.random(),
+                type: 'consumable',
+                subtype: 'reincarnation_chest',
+                name: '♲️ 迭代寶箱',
+                description: '包含無盡征途套裝的神秘寶箱，有機率獲得套裝部位或輪迴碎片',
+                color: '#ff6b6b',
+                rarity: 'legendary'
+            };
+            addToInventory(reincarnationChest, false);
+            addLog('系統', `♲️ 獲得 1 個迭代寶箱！`);
             addLog('系統', `歡迎回到數位深淵！開始你的第 ${gameState.iteration.count} 次迭代之旅！`);
             
             // 自動存檔
@@ -26321,6 +26572,315 @@ function showEquipmentDropAnimation(equipment) {
         function closeTalentsModal() {
             document.getElementById('talents-modal').style.display = 'none';
         }
+// ========== 輪迴碎片兌換系統 ==========
+
+function openShardExchangeModal() {
+    const modal = document.getElementById('shard-exchange-modal');
+    const shardCount = document.getElementById('shard-exchange-count');
+    const exchangeList = document.getElementById('shard-exchange-list');
+    
+    // 更新碎片數量
+    shardCount.textContent = gameState.iteration.reincarnationShards || 0;
+    
+    // 生成兌換列表
+    const items = REINCARNATION_SET.items;
+    const canExchange = (gameState.iteration.reincarnationShards || 0) >= 100;
+    
+    exchangeList.innerHTML = items.map((item, index) => {
+        const typeNames = {
+            weapon: '武器',
+            head: '頭部',
+            chest: '胸甲',
+            gloves: '手套',
+            legs: '腿甲',
+            feet: '鞋子',
+            ring: '戒指',
+            necklace: '項鍊'
+        };
+        
+        // 檢查是否已擁有
+        const owned = gameState.iteration.reincarnationEquipment.some(eq => eq.type === item.type);
+        
+        return `
+            <div style="background: rgba(255, 107, 107, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 107, 107, 0.2); display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1;">
+                    <div style="font-size: 1.1rem; font-weight: bold; color: #ff6b6b; margin-bottom: 5px;">
+                        ♲️ ${item.name}
+                    </div>
+                    <div style="font-size: 0.9rem; color: #aaa;">
+                        ${typeNames[item.type]} | 攻擊 ${item.baseAtk} | 防禦 ${item.baseDef} | 生命 ${item.baseHp}
+                    </div>
+                    ${owned ? '<div style="color: #4EA5FF; font-size: 0.85rem; margin-top: 5px;">✓ 已擁有</div>' : ''}
+                </div>
+                <button 
+                    onclick="exchangeShardForEquipment('${item.type}')" 
+                    ${!canExchange || owned ? 'disabled' : ''}
+                    style="padding: 10px 20px; white-space: nowrap; ${!canExchange || owned ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                    ${owned ? '已擁有' : '兌換 (100碎片)'}
+                </button>
+            </div>
+        `;
+    }).join('');
+    
+    modal.classList.add('active');
+}
+
+function closeShardExchangeModal() {
+    document.getElementById('shard-exchange-modal').classList.remove('active');
+}
+
+function exchangeShardForEquipment(equipmentType) {
+    const shards = gameState.iteration.reincarnationShards || 0;
+    
+    if (shards < 100) {
+        addLog('系統', '輪迴碎片不足！需要 100 個碎片');
+        return;
+    }
+    
+    // 檢查是否已擁有
+    const alreadyOwned = gameState.iteration.reincarnationEquipment.some(eq => eq.type === equipmentType);
+    if (alreadyOwned) {
+        addLog('系統', '你已經擁有這件裝備了！');
+        return;
+    }
+    
+    // 扣除碎片
+    gameState.iteration.reincarnationShards -= 100;
+    
+    // 生成裝備
+    const equipment = generateReincarnationEquipment(equipmentType);
+    
+    // 添加到背包
+    gameState.player.bag.push(equipment);
+    
+    // 記錄已獲得
+    gameState.iteration.reincarnationEquipment.push({
+        type: equipmentType,
+        name: equipment.name
+    });
+    
+    addLog('兌換', `成功兌換 ♲️ ${equipment.name}！`);
+    
+    // 檢查是否集齊套裝
+    checkReincarnationSetComplete();
+    
+    // 刷新UI
+    openShardExchangeModal();
+    updateUI();
+    saveGame();
+}
+
+// ========== 套裝收藏系統 ==========
+
+function openReincarnationSetModal() {
+    const modal = document.getElementById('reincarnation-set-modal');
+    const collectionCount = document.getElementById('set-collection-count');
+    const effectActive = document.getElementById('set-effect-active');
+    const setList = document.getElementById('reincarnation-set-list');
+    
+    // 計算已收集數量
+    const ownedCount = gameState.iteration.reincarnationEquipment.length;
+    collectionCount.textContent = `${ownedCount} / 8`;
+    
+    // 計算當前穿戴的套裝件數
+    const equippedCount = countEquippedReincarnationSet();
+    effectActive.textContent = `${equippedCount} 件`;
+    
+    // 生成套裝列表
+    const items = REINCARNATION_SET.items;
+    
+    setList.innerHTML = items.map(item => {
+        const typeNames = {
+            weapon: '武器',
+            head: '頭部',
+            chest: '胸甲',
+            gloves: '手套',
+            legs: '腿甲',
+            feet: '鞋子',
+            ring: '戒指',
+            necklace: '項鍊'
+        };
+        
+        // 檢查是否已收集
+        const collected = gameState.iteration.reincarnationEquipment.some(eq => eq.type === item.type);
+        
+        // 檢查是否已裝備
+        const equipped = gameState.player.equipment[item.type] && 
+                        gameState.player.equipment[item.type].setName === '無盡征途';
+        
+        // 計算當前等級的屬性
+        const level = gameState.player.level;
+        const scaleFactor = 1 + level * 0.02;
+        const scaledAtk = Math.floor(item.baseAtk * scaleFactor);
+        const scaledDef = Math.floor(item.baseDef * scaleFactor);
+        const scaledHp = Math.floor(item.baseHp * scaleFactor);
+        
+        return `
+            <div style="background: ${collected ? 'rgba(255, 107, 107, 0.1)' : 'rgba(100, 100, 100, 0.1)'}; padding: 15px; border-radius: 10px; border: 2px solid ${collected ? 'rgba(255, 107, 107, 0.4)' : 'rgba(100, 100, 100, 0.3)'}; position: relative;">
+                ${equipped ? '<div style="position: absolute; top: 10px; right: 10px; background: #ffd700; color: #000; padding: 3px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold;">已裝備</div>' : ''}
+                <div style="font-size: 1.2rem; font-weight: bold; color: ${collected ? '#ff6b6b' : '#666'}; margin-bottom: 10px; text-align: center;">
+                    ${collected ? '♲️' : '🔒'} ${item.name}
+                </div>
+                <div style="font-size: 0.85rem; color: #aaa; text-align: center; margin-bottom: 10px;">
+                    ${typeNames[item.type]}
+                </div>
+                ${collected ? `
+                    <div style="font-size: 0.9rem; color: #c0c0c0; line-height: 1.6;">
+                        <div>⚔️ 攻擊力: ${scaledAtk}</div>
+                        <div>🛡️ 防禦力: ${scaledDef}</div>
+                        <div>❤️ 生命值: ${scaledHp}</div>
+                        ${item.armorPen ? `<div>🎯 護甲穿透: ${item.armorPen}%</div>` : ''}
+                        ${item.bossDmg ? `<div>👑 Boss傷害: +${item.bossDmg}%</div>` : ''}
+                    </div>
+                ` : `
+                    <div style="text-align: center; color: #666; font-size: 0.9rem;">
+                        尚未收集
+                    </div>
+                `}
+            </div>
+        `;
+    }).join('');
+    
+    // 顯示套裝效果
+    const setEffects = SET_EFFECTS['無盡征途'];
+    if (setEffects) {
+        const effectsHtml = `
+            <div style="background: rgba(255, 215, 0, 0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); margin-top: 20px;">
+                <h3 style="color: #ffd700; text-align: center; margin-bottom: 15px;">套裝效果</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    ${Object.entries(setEffects).map(([pieces, effect]) => {
+                        const active = equippedCount >= parseInt(pieces);
+                        return `
+                            <div style="background: ${active ? 'rgba(255, 215, 0, 0.1)' : 'rgba(100, 100, 100, 0.05)'}; padding: 10px; border-radius: 8px; border: 1px solid ${active ? 'rgba(255, 215, 0, 0.4)' : 'rgba(100, 100, 100, 0.2)'};">
+                                <div style="font-weight: bold; color: ${active ? '#ffd700' : '#666'}; margin-bottom: 5px;">${pieces} 件套</div>
+                                <div style="font-size: 0.85rem; color: ${active ? '#c0c0c0' : '#555'}; line-height: 1.4;">
+                                    ${(() => { let d = effect.name ? effect.name + ": " : ""; const e = []; if(effect.atkPercent) e.push("攻擊+" + effect.atkPercent + "%"); if(effect.armorPenBonus) e.push("穿透+" + effect.armorPenBonus + "%"); if(effect.bossDmgBonus) e.push("Boss傷害+" + effect.bossDmgBonus + "%"); if(effect.critBonus) e.push("暴擊+" + effect.critBonus + "%"); if(effect.critDmgBonus) e.push("暴傷+" + effect.critDmgBonus + "%"); if(effect.specialEffect === "dimension_shatter") e.push("特效:次元破碎(15%真實傷害)"); if(effect.specialEffect === "ultimate_annihilation") e.push("特效:終極湮滅(Boss 30%最大HP)"); return d + e.join(", "); })()}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+        setList.insertAdjacentHTML('afterend', effectsHtml);
+    }
+    
+    modal.classList.add('active');
+}
+
+function closeReincarnationSetModal() {
+    document.getElementById('reincarnation-set-modal').classList.remove('active');
+}
+
+// 計算當前穿戴的無盡征途套裝件數
+function countEquippedReincarnationSet() {
+    let count = 0;
+    const equipment = gameState.player.equipment;
+    
+    for (const slot in equipment) {
+        if (equipment[slot] && equipment[slot].setName === '無盡征途') {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+// 檢查是否集齊套裝並觸發成就
+function checkReincarnationSetComplete() {
+    const ownedCount = gameState.iteration.reincarnationEquipment.length;
+    
+    if (ownedCount === 8) {
+        // 觸發成就
+        if (!gameState.achievements) {
+            gameState.achievements = [];
+        }
+        
+        if (!gameState.achievements.includes('reincarnation_set_complete')) {
+            gameState.achievements.push('reincarnation_set_complete');
+            
+            // 顯示成就通知
+            showAchievementNotification('無盡征途', '集齊完整的無盡征途套裝！');
+            
+            // 給予獎勵
+            gameState.player.gold += 100000;
+            gameState.iteration.availableIP += 50;
+            
+            addLog('成就', '🏆 達成成就：無盡征途！獲得 100,000 金幣和 50 迭代點數！');
+        }
+    }
+}
+
+// 顯示成就通知
+function showAchievementNotification(title, description) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        z-index: 10001;
+        text-align: center;
+        animation: achievementPop 0.5s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 3rem; margin-bottom: 10px;">🏆</div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #000; margin-bottom: 10px;">成就達成！</div>
+        <div style="font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 5px;">${title}</div>
+        <div style="font-size: 0.9rem; color: #fff;">${description}</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒後自動消失
+    setTimeout(() => {
+        notification.style.animation = 'achievementFade 0.5s ease-out';
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
+
+// ========== 套裝特效戰鬥效果 ==========
+
+// 在戰鬥中應用套裝特效
+function applyReincarnationSetEffects(attacker, defender, damage, isBoss) {
+    const setCount = countEquippedReincarnationSet();
+    let finalDamage = damage;
+    let effectMessages = [];
+    
+    // 6件套: 次元破碎 - 攻擊時有15%機率造成真實傷害(無視防禦)
+    if (setCount >= 6) {
+        if (Math.random() < 0.15) {
+            // 計算無視防禦的傷害
+            const trueDamage = Math.floor(attacker.atk * 1.5);
+            finalDamage = trueDamage;
+            effectMessages.push('💥 次元破碎！造成真實傷害！');
+        }
+    }
+    
+    // 8件套: 終極湮滅 - 對Boss額外造成30%最大生命值的傷害
+    if (setCount >= 8 && isBoss) {
+        const annihilationDamage = Math.floor(defender.maxHp * 0.3);
+        finalDamage += annihilationDamage;
+        effectMessages.push(`⚡ 終極湮滅！額外造成 ${annihilationDamage} 點湮滅傷害！`);
+    }
+    
+    return {
+        damage: finalDamage,
+        messages: effectMessages
+    };
+}
+
+// 修改戰鬥函數以整合套裝特效
+// 這個函數需要在現有的戰鬥邏輯中調用
+function integrateReincarnationEffectsInCombat() {
+    // 這個函數會在後面整合到主戰鬥邏輯中
+    // 暫時作為接口預留
+}
         
         // ========== 圖鑑UI函數 ==========
         
@@ -27883,16 +28443,25 @@ function showEquipmentDropAnimation(equipment) {
 	            // 確保新屬性存在（v1.1.0+）
 	            if (loadedState.player.dmgRed === undefined) loadedState.player.dmgRed = 0;
 	            
-	            // 確保迭代系統屬性存在（v4.0+）
-	            if (!loadedState.iteration) {
-	                loadedState.iteration = {
-	                    count: 0,
-	                    totalIP: 0,
-	                    availableIP: 0,
-	                    talents: {},
-	                    completedBosses: []
-	                };
-	            }
+            // 確保迭代系統屬性存在（v4.0+）
+            if (!loadedState.iteration) {
+                loadedState.iteration = {
+                    count: 0,
+                    totalIP: 0,
+                    availableIP: 0,
+                    talents: {},
+                    completedBosses: [],
+                    chests: 0,
+                    reincarnationShards: 0,
+                    reincarnationEquipment: []
+                };
+            }
+            // 確保迭代寶箱和輪迴碎片屬性存在（v4.1+）
+            if (loadedState.iteration.chests === undefined) loadedState.iteration.chests = 0;
+            if (loadedState.iteration.reincarnationShards === undefined) loadedState.iteration.reincarnationShards = 0;
+            if (!loadedState.iteration.reincarnationEquipment) loadedState.iteration.reincarnationEquipment = [];
+            // 確保成就系統屬性存在（v4.1+）
+            if (!loadedState.achievements) loadedState.achievements = [];
             if (!loadedState.stats.legendaryItems) {
                 loadedState.stats.legendaryItems = 0;
             }

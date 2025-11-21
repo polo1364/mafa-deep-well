@@ -11110,7 +11110,7 @@ const REGION_CONSUMABLES = {
                         const effect = equipment.specialEffect;
                         
                         // 每3回合隨機Buff（猴神戰甲）
-                        if (effect.type === 'onTurn' && effect.interval && round % effect.interval === 0) {
+                        if ((effect.type === 'onTurn' || effect.type === 'everyNTurns') && effect.interval && round % effect.interval === 0) {
                             if (effect.randomBuff) {
                                 const buffs = [
                                     { name: '力量', stat: 'atk', value: 0.20 },
@@ -11163,6 +11163,58 @@ const REGION_CONSUMABLES = {
                     }
                 }
                 
+                // 更新生肖技能隨機Buff持續時間
+                if (gameState.player.companionBuffs && gameState.player.companionBuffs.length > 0) {
+                    gameState.player.companionBuffs = gameState.player.companionBuffs.filter(buff => {
+                        buff.remainingTurns--;
+                        if (buff.remainingTurns <= 0) {
+                            addLog('生肖', `⏰ ${buff.name} 效果結束`);
+                            return false;
+                        }
+                        return true;
+                    });
+                    if (gameState.player.companionBuffs.length === 0) {
+                        recalculateStats(); // Buff消失後重新計算屬性
+                    }
+                }
+                
+                // ========== 檢查生肖技能的randomBuff效果 ==========
+                let companion = getActiveCompanion();
+                if (companion && companion.skills) {
+                    companion.skills.forEach(skill => {
+                        if (skill.effect && skill.effect.randomBuff) {
+                            // 每3回合觸發隨機增益
+                            if (round % 3 === 0) {
+                                // 清除舊的隨機增益Buff，保持只有一個生效
+                                if (!gameState.player.companionBuffs) gameState.player.companionBuffs = [];
+                                // 移除所有隨機增益Buff
+                                gameState.player.companionBuffs = gameState.player.companionBuffs.filter(buff => 
+                                    !buff.name.includes('隨機增益')
+                                );
+                                
+                                const buffs = [
+                                    { name: '力量', stat: 'atk', value: 0.15 },
+                                    { name: '防禦', stat: 'def', value: 0.20 },
+                                    { name: '暴擊', stat: 'crit', value: 10 },
+                                    { name: '回復', stat: 'regen', value: 0.03 }
+                                ];
+                                const randomBuff = buffs[Math.floor(Math.random() * buffs.length)];
+                                
+                                gameState.player.companionBuffs.push({
+                                    name: `${companion.icon} ${skill.name}：${randomBuff.name}`,
+                                    stat: randomBuff.stat,
+                                    value: randomBuff.value,
+                                    duration: 3,
+                                    remainingTurns: 3
+                                });
+                                
+                                addLog('生肖', `${companion.icon} ${companion.name} - ${skill.name}！獲得隨機Buff：${randomBuff.name}`);
+                                recalculateStats();
+                            }
+                        }
+                    });
+                }
+                
                 // 應用 debuff 到敵人屬性（每回合開始）
                 applyDebuffs(enemy);
                 
@@ -11181,8 +11233,7 @@ const REGION_CONSUMABLES = {
                 // 玩家攻擊（應用組合效果）
                 const playerAtkWithCombo = Math.floor(gameState.player.atk * (1 + comboEffects.atk));
                 
-                // 獲取當前隨從
-                let companion = getActiveCompanion();
+                // 獲取當前隨從 (上面已經宣告過 companion 變數)
                 
                 // 計算總無視防禦：基礎 + 隨從
                 let totalArmorPen = gameState.player.armorPen;
@@ -13267,6 +13318,14 @@ const REGION_CONSUMABLES = {
                 }).filter(buff => buff.duration > 0);
             }
             
+            // 清除戰鬥中的生肖Buff
+            if (gameState.player.zodiacBuffs) {
+                gameState.player.zodiacBuffs = [];
+            }
+            if (gameState.player.companionBuffs) {
+                gameState.player.companionBuffs = [];
+            }
+            
             updateUI();
             
             // 戰鬥勝利後立即存檔
@@ -13429,6 +13488,14 @@ const REGION_CONSUMABLES = {
                     buff.duration -= 1;
                     return buff;
                 }).filter(buff => buff.duration > 0);
+            }
+            
+            // 清除戰鬥中的生肖Buff
+            if (gameState.player.zodiacBuffs) {
+                gameState.player.zodiacBuffs = [];
+            }
+            if (gameState.player.companionBuffs) {
+                gameState.player.companionBuffs = [];
             }
             
             updateUI();
@@ -14949,6 +15016,7 @@ const REGION_CONSUMABLES = {
                 });
             }
             
+
             // ========== 加上生肖Buff效果 ==========
             if (gameState.player.zodiacBuffs && gameState.player.zodiacBuffs.length > 0) {
                 gameState.player.zodiacBuffs.forEach(buff => {
@@ -14973,6 +15041,23 @@ const REGION_CONSUMABLES = {
                 });
             }
             
+            // ========== 加上生肖技能隨機Buff效果 ==========
+            if (gameState.player.companionBuffs && gameState.player.companionBuffs.length > 0) {
+                gameState.player.companionBuffs.forEach(buff => {
+                    if (buff.stat && buff.value !== undefined) {
+                        if (buff.stat === 'atk') {
+                            baseAtk = Math.floor(baseAtk * (1 + buff.value));
+                        } else if (buff.stat === 'def') {
+                            baseDef = Math.floor(baseDef * (1 + buff.value));
+                        } else if (buff.stat === 'crit') {
+                            baseCrit += buff.value;
+                        } else if (buff.stat === 'regen') {
+                            // 回復加成在下面處理
+                        }
+                    }
+                });
+            }
+            
             gameState.player.atk = Math.floor(baseAtk);
             gameState.player.def = Math.floor(baseDef);
             gameState.player.maxHp = Math.floor(baseMaxHp);
@@ -14982,6 +15067,7 @@ const REGION_CONSUMABLES = {
             // 計算其他屬性（裝備 + 套裝效果）
             let totalDmgRed = 0, totalLifeSteal = 0, totalArmorPen = 0, totalBossDmg = 0, totalHpRegen = 0, totalExpBonus = 0, totalLuck = 0, totalGoldBonus = 0;
             
+
             // 加上裝備屬性（包含強化加成）
             Object.values(gameState.player.equipment).forEach(item => {
                 if (item) {
@@ -15030,20 +15116,27 @@ const REGION_CONSUMABLES = {
             // 加上隨從被動技能加成
             const companionBonuses = applyCompanionPassiveSkills();
             if (companionBonuses) {
+                // 生肖套裝效果的 atk/def/hp 是小數形式的百分比（如 0.08 = 8%）
                 if (companionBonuses.atk) {
-                    gameState.player.atk = Math.floor(gameState.player.atk * (1 + companionBonuses.atk / 100));
+                    gameState.player.atk = Math.floor(gameState.player.atk * (1 + companionBonuses.atk));
                 }
                 if (companionBonuses.def) {
-                    gameState.player.def = Math.floor(gameState.player.def * (1 + companionBonuses.def / 100));
+                    gameState.player.def = Math.floor(gameState.player.def * (1 + companionBonuses.def));
                 }
                 if (companionBonuses.hp) {
-                    gameState.player.maxHp = Math.floor(gameState.player.maxHp * (1 + companionBonuses.hp / 100));
+                    gameState.player.maxHp = Math.floor(gameState.player.maxHp * (1 + companionBonuses.hp));
+                }
+                // allStats 是全屬性加成（龍套裝）
+                if (companionBonuses.allStats) {
+                    gameState.player.atk = Math.floor(gameState.player.atk * (1 + companionBonuses.allStats));
+                    gameState.player.def = Math.floor(gameState.player.def * (1 + companionBonuses.allStats));
+                    gameState.player.maxHp = Math.floor(gameState.player.maxHp * (1 + companionBonuses.allStats));
                 }
                 if (companionBonuses.crit) {
-                    gameState.player.crit += companionBonuses.crit;
+                    gameState.player.crit += companionBonuses.crit * 100;  // 0.05 -> 5%
                 }
                 if (companionBonuses.critDmg) {
-                    gameState.player.critDmg += companionBonuses.critDmg;
+                    gameState.player.critDmg += companionBonuses.critDmg * 100;  // 0.183 -> 18.3%
                 }
                 if (companionBonuses.dmgRed) {
                     totalDmgRed += companionBonuses.dmgRed;
@@ -15060,7 +15153,42 @@ const REGION_CONSUMABLES = {
                 // dodge, regen, accuracy, ignoreDefense 等屬性在戰鬥中處理
             }
             
-            // 加上卡牌加成
+            // 加上生肖裝備屬性加成
+            const equipmentBonuses = getCompanionEquipmentCombo();
+            if (equipmentBonuses) {
+                // 百分比加成（乘法）
+                if (equipmentBonuses.atk) {
+                    gameState.player.atk = Math.floor(gameState.player.atk * (1 + equipmentBonuses.atk));
+                }
+                if (equipmentBonuses.def) {
+                    gameState.player.def = Math.floor(gameState.player.def * (1 + equipmentBonuses.def));
+                }
+                if (equipmentBonuses.hp) {
+                    gameState.player.maxHp = Math.floor(gameState.player.maxHp * (1 + equipmentBonuses.hp));
+                }
+                if (equipmentBonuses.crit) {
+                    gameState.player.crit += equipmentBonuses.crit * 100;  // 0.05 -> 5%
+                }
+                if (equipmentBonuses.critDmg) {
+                    gameState.player.critDmg += equipmentBonuses.critDmg * 100;  // 0.10 -> 10%
+                }
+                if (equipmentBonuses.dmgRed) {
+                    totalDmgRed += equipmentBonuses.dmgRed;
+                }
+                if (equipmentBonuses.lifeSteal) {
+                    totalLifeSteal += equipmentBonuses.lifeSteal;
+                }
+                if (equipmentBonuses.goldGain) {
+                    totalGoldBonus += equipmentBonuses.goldGain;
+                }
+                if (equipmentBonuses.expGain) {
+                    totalExpBonus += equipmentBonuses.expGain;
+                }
+                // dodge, regen, accuracy, reflect 等屬性在戰鬥中處理
+            }
+
+            
+            // 加上卡片加成
             const cardBonuses = applyCardBonuses();
             if (cardBonuses) {
                 if (cardBonuses.atk) {
@@ -18158,8 +18286,8 @@ const REGION_CONSUMABLES = {
                         const levelBonus = (companion.level - 1) * 0.01; // 每級 +1%
                         Object.keys(skill.effect).forEach(key => {
                             if (bonuses.hasOwnProperty(key)) {
-                                // 將百分比轉換為百分比數值，並應用等級加成
-                                const baseValue = skill.effect[key] * 100;
+                                // 直接使用小數形式的百分比，並應用等級加成
+                                const baseValue = skill.effect[key];  // 0.12 = 12%
                                 const bonusValue = baseValue * (1 + levelBonus);
                                 bonuses[key] += bonusValue;
                             }
@@ -21369,6 +21497,7 @@ function equipZodiacEquipment(equipmentId) {
     gameState.companions.equipment[zodiacId][slot] = equipmentId;
     
     addLog(`裝備：${equipment.icon} ${equipment.name}`, 'green');
+    recalculateStats();  // 重新計算屬性
     saveGame();
     updateCompanionModal();
     updateUI();
@@ -21395,6 +21524,7 @@ function unequipZodiacEquipment(zodiacId, slot) {
     gameState.companions.equipment[zodiacId][slot] = null;
     
     addLog(`已卸下 ${equipment.icon} ${equipment.name}`, 'yellow');
+    recalculateStats();  // 重新計算屬性
     saveGame();
     updateCompanionModal();
     updateUI();
@@ -32188,7 +32318,39 @@ input:checked + .slider:before {
         content.innerHTML = '';
         
         if (characterInfo) {
-            content.appendChild(characterInfo.cloneNode(true));
+            const clonedInfo = characterInfo.cloneNode(true);
+            content.appendChild(clonedInfo);
+            
+            // 在稱號名稱後添加加成
+            if (gameState.titles && gameState.titles.equipped) {
+                const titleId = gameState.titles.equipped;
+                const title = TITLES_DATA[titleId];
+                if (title && title.bonus) {
+                    // 找到稱號名稱元素
+                    const titleNameElem = clonedInfo.querySelector('#current-title-name');
+                    if (titleNameElem) {
+                        const bonusTexts = [];
+                        if (title.bonus.atk) bonusTexts.push(`攻擊力+${title.bonus.atk}%`);
+                        if (title.bonus.def) bonusTexts.push(`防禦力+${title.bonus.def}%`);
+                        if (title.bonus.hp) bonusTexts.push(`生命值+${title.bonus.hp}%`);
+                        if (title.bonus.crit) bonusTexts.push(`暴擊率+${title.bonus.crit}%`);
+                        if (title.bonus.critDmg) bonusTexts.push(`暴擊傷害+${title.bonus.critDmg}%`);
+                        if (title.bonus.dodge) bonusTexts.push(`閃避+${title.bonus.dodge}%`);
+                        if (title.bonus.accuracy) bonusTexts.push(`命中+${title.bonus.accuracy}%`);
+                        if (title.bonus.ignoreDefense) bonusTexts.push(`無視防禦+${title.bonus.ignoreDefense}%`);
+                        if (title.bonus.lifeSteal) bonusTexts.push(`生命偷取+${title.bonus.lifeSteal}%`);
+                        if (title.bonus.dmgRed) bonusTexts.push(`傷害減免+${title.bonus.dmgRed}%`);
+                        if (title.bonus.goldBonus) bonusTexts.push(`金幣加成+${title.bonus.goldBonus}%`);
+                        if (title.bonus.expBonus) bonusTexts.push(`經驗加成+${title.bonus.expBonus}%`);
+                        
+                        // 在稱號名稱後添加加成
+                        const bonusSpan = document.createElement('span');
+                        bonusSpan.style.cssText = 'font-size: 0.75rem; color: #4EA5FF; font-weight: normal; margin-left: 8px;';
+                        bonusSpan.textContent = `(${bonusTexts.join(', ')})`;
+                        titleNameElem.appendChild(bonusSpan);
+                    }
+                }
+            }
         }
         
         // 添加HP/AP/EXP血條

@@ -8807,10 +8807,8 @@ const REGION_CONSUMABLES = {
                 gameState.potionCooldown = 0; // 初始化冷卻時間
             }
             if (now < gameState.potionCooldown) {
-                console.log(`[自動喝藥] 冷卻中，還需 ${Math.ceil((gameState.potionCooldown - now) / 1000)} 秒`);
                 return false; // 冷卻中，不使用藥水
             }
-            console.log(`[自動喝藥] 檢查觸發，HP: ${gameState.player.hp}/${gameState.player.maxHp} (${Math.floor((gameState.player.hp / gameState.player.maxHp) * 100)}%)`);
             
             // 檢查HP是否低於閉值
             const hpPercent = (gameState.player.hp / gameState.player.maxHp) * 100;
@@ -8880,7 +8878,6 @@ const REGION_CONSUMABLES = {
             // 設定冷卻時間
             gameState.potionCooldown = Date.now() + 2000; // 2秒冷卻
             
-            console.log(`[自動喝藥] 使用了 ${potion.name}，下次可使用時間: ${gameState.potionCooldown}`);
             addLog('自動喝藥', `自動使用了 ${potion.name}，恢復了 ${healAmount} HP`);
             
             // 從背包中移除藥水（正確處理數量）
@@ -17207,7 +17204,6 @@ const REGION_CONSUMABLES = {
             // 移除不在定義中的裝備
             for (const key in gameState.codex.equipment) {
                 if (!validEquipmentNames.has(key)) {
-                    console.log('移除無效的裝備圖鑑條目:', key);
                     delete gameState.codex.equipment[key];
                 }
             }
@@ -17215,7 +17211,6 @@ const REGION_CONSUMABLES = {
             // 檢查是否有缺失的裝備，如果有則強制重建
             const currentCount = Object.keys(gameState.codex.equipment).length;
             if (currentCount !== 64) {
-                console.log(`偵測到裝備圖鑑數量不正確 (${currentCount}/64)，強制重建...`);
                 gameState.codex.equipment = {};
                 initEquipmentCodex();
                 return;
@@ -17230,7 +17225,6 @@ const REGION_CONSUMABLES = {
             );
             
             if (hasOldData) {
-                console.log('偵測到舊的區域或套裝名稱，強制重建...');
                 // 保存已獲得的記錄
                 const obtainedEquipment = {};
                 Object.entries(gameState.codex.equipment).forEach(([key, equip]) => {
@@ -17258,7 +17252,6 @@ const REGION_CONSUMABLES = {
                 
                 // 重新計算統計數據
                 gameState.codex.stats.totalEquipmentObtained = Object.values(gameState.codex.equipment).filter(e => e.obtained).length;
-                console.log('重建完成，已恢復', Object.keys(obtainedEquipment).length, '個已獲得的裝備記錄');
             }
         }
         // 同步已擁有的生肖和裝備到圖鑑（舊存檔相容）
@@ -17369,6 +17362,23 @@ const REGION_CONSUMABLES = {
                     }
                 });
             }
+            
+            // 遍歷所有特殊Boss
+            for (const regionName in SPECIAL_BOSSES) {
+                const specialBoss = SPECIAL_BOSSES[regionName];
+                if (!gameState.codex.monsters[specialBoss.name]) {
+                    gameState.codex.monsters[specialBoss.name] = {
+                        name: specialBoss.name,
+                        icon: specialBoss.icon,
+                        region: regionName,
+                        type: 'special_boss',
+                        killCount: 0,
+                        firstKillTime: null,
+                        unlocked: false,
+                        rewardsCollected: []
+                    };
+                }
+            }
         }
         
         // 初始化裝備圖鑑（只記錄套裝裝備）
@@ -17383,7 +17393,6 @@ const REGION_CONSUMABLES = {
             }) || Object.keys(gameState.codex.equipment).length !== 64; // 強制檢查總數
             
             if (needsRebuild) {
-                console.log('偵測到舊的裝備圖鑑結構，正在重建...');
                 // 保存已獲得的記錄
                 const obtainedEquipment = {};
                 Object.entries(gameState.codex.equipment).forEach(([key, equip]) => {
@@ -17395,7 +17404,6 @@ const REGION_CONSUMABLES = {
                         };
                     }
                 });
-                console.log('保存了', Object.keys(obtainedEquipment).length, '個已獲得的裝備記錄');
                 
                 gameState.codex.equipment = {};
                 
@@ -17480,7 +17488,6 @@ const REGION_CONSUMABLES = {
                 
                 // 重新計算統計數據
                 gameState.codex.stats.totalEquipmentObtained = Object.values(gameState.codex.equipment).filter(e => e.obtained).length;
-                console.log('重建完成，已恢復', Object.keys(obtainedEquipment).length, '個已獲得的裝備記錄');
                 
                 // 清除臨時變數
                 delete window._tempObtainedEquipment;
@@ -17563,23 +17570,18 @@ const REGION_CONSUMABLES = {
         
         // 記錄裝備獲得（只記錄套裝裝備）
         function recordEquipmentObtained(item) {
-            console.log('[recordEquipmentObtained] 開始記錄裝備:', item);
             
             if (!gameState.codex || !gameState.codex.equipment) {
-                console.log('[recordEquipmentObtained] 圖鑑不存在，正在初始化...');
                 initCodexSystem();
             }
             
             // 只記錄套裝裝備，使用裝備名稱作為鍵值
             if (!item.setName) {
-                console.log('[recordEquipmentObtained] 不是套裝裝備，跳過記錄');
                 // 不是套裝裝備，不記錄
                 return;
             }
             
             const key = item.name;
-            console.log('[recordEquipmentObtained] 查找鍵值:', key);
-            console.log('[recordEquipmentObtained] 圖鑑中的所有裝備:', Object.keys(gameState.codex.equipment));
             
             const equipment = gameState.codex.equipment[key];
             
@@ -17592,7 +17594,6 @@ const REGION_CONSUMABLES = {
                 return;
             }
             
-            console.log('[recordEquipmentObtained] 找到圖鑑條目:', equipment);
             
             // 首次獲得
             if (!equipment.obtained) {
@@ -17774,7 +17775,6 @@ const REGION_CONSUMABLES = {
             
             // 檢查稱號是否存在於 TITLES_DATA
             if (!TITLES_DATA[titleId]) {
-                console.log(`稱號 ${titleId} 不存在於 TITLES_DATA`);
                 return;
             }
             
@@ -17885,26 +17885,21 @@ const REGION_CONSUMABLES = {
             // 統計每個生肖的隨從數量
             const zodiacCounts = {};
             
-            console.log('[checkZodiacTitles] 開始檢查生肖稱號');
-            console.log('[checkZodiacTitles] 擁有的隨從:', gameState.companions.owned);
             
             // 遍歷玩家擁有的所有隨從
             if (gameState.companions.owned && Array.isArray(gameState.companions.owned)) {
                 for (const companionData of gameState.companions.owned) {
                     const companionId = companionData.id || companionData;
-                    console.log('[checkZodiacTitles] 檢查隨從 ID:', companionId);
                     // 從 ZODIAC_COMPANIONS 中獲取隨從信息
                     if (ZODIAC_COMPANIONS && ZODIAC_COMPANIONS[companionId]) {
                         const zodiac = companionId; // companionId 就是生肖名稱 (rat, ox, tiger...)
                         zodiacCounts[zodiac] = (zodiacCounts[zodiac] || 0) + 1;
-                        console.log('[checkZodiacTitles] 生肖計數:', zodiac, zodiacCounts[zodiac]);
                     } else {
                         console.warn('[checkZodiacTitles] 隨從 ID 不存在於 ZODIAC_COMPANIONS:', companionId);
                     }
                 }
             }
             
-            console.log('[checkZodiacTitles] 最終生肖計數:', zodiacCounts);
             
             // 檢查每個生肖是否達到 3 件（普通、稀有、史詩各 1 件）
             // 但實際上每個生肖只有 1 個隨從，所以檢查 >= 1 即可
@@ -17914,19 +17909,14 @@ const REGION_CONSUMABLES = {
             for (const zodiac of zodiacs) {
                 if (zodiacCounts[zodiac] >= 1) {
                     const titleId = `zodiac_master_${zodiac}`;
-                    console.log('[checkZodiacTitles] 生肖', zodiac, '達到條件，稱號 ID:', titleId);
-                    console.log('[checkZodiacTitles] TITLES_DATA[titleId]:', TITLES_DATA[titleId]);
-                    console.log('[checkZodiacTitles] 已解鎖稱號:', gameState.titles.unlocked);
                     
                     if (TITLES_DATA[titleId]) {
                         if (!gameState.titles.unlocked.includes(titleId)) {
                             gameState.titles.unlocked.push(titleId);
                             const titleData = TITLES_DATA[titleId];
-                            console.log('[checkZodiacTitles] 解鎖稱號:', titleData.name);
                             addLog('稱號', `🏆 解鎖稱號：${titleData.name}！`);
                             playSound('levelup');
                         } else {
-                            console.log('[checkZodiacTitles] 稱號已解鎖:', titleId);
                         }
                     } else {
                         console.warn('[checkZodiacTitles] 稱號不存在:', titleId);
@@ -17934,7 +17924,6 @@ const REGION_CONSUMABLES = {
                 }
             }
             
-            console.log('[checkZodiacTitles] 檢查完成');
         }
         
         // 獲取圖鑑進度
@@ -18158,27 +18147,21 @@ const REGION_CONSUMABLES = {
         // 應用隨從被動技能
         function applyCompanionPassiveSkills() {
             const companion = getActiveCompanion();
-            console.log('[applyCompanionPassiveSkills] 當前隨從:', companion);
             if (!companion) return {};
             const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0, dodge: 0, regen: 0, accuracy: 0, ignoreDefense: 0 };
             
             // 支持新版生肖隨從的skill結構（effect屬性）
-            console.log('[applyCompanionPassiveSkills] 技能列表:', companion.skills);
             if (companion.skills && Array.isArray(companion.skills)) {
                 companion.skills.forEach((skill, index) => {
-                    console.log(`[applyCompanionPassiveSkills] 處理技能 ${index}:`, skill);
                     if (skill.effect) {
-                        console.log(`[applyCompanionPassiveSkills] 技能 ${index} 有 effect:`, skill.effect);
                         // 新版生肖隨從：直接使用effect屬性，並添加等級加成
                         const levelBonus = (companion.level - 1) * 0.01; // 每級 +1%
                         Object.keys(skill.effect).forEach(key => {
-                            console.log(`[applyCompanionPassiveSkills] 檢查屬性 ${key}:`, skill.effect[key], 'bonuses有這個屬性嗎?', bonuses.hasOwnProperty(key));
                             if (bonuses.hasOwnProperty(key)) {
                                 // 將百分比轉換為百分比數值，並應用等級加成
                                 const baseValue = skill.effect[key] * 100;
                                 const bonusValue = baseValue * (1 + levelBonus);
                                 bonuses[key] += bonusValue;
-                                console.log(`[applyCompanionPassiveSkills] 已加上 ${key}: ${bonuses[key]} (基礎: ${baseValue}, 等級加成: ${levelBonus * 100}%)`);
                             }
                         });
                     } else if (skill.trigger === 'passive') {
@@ -18199,7 +18182,6 @@ const REGION_CONSUMABLES = {
                     }
                 });
             }
-            console.log('[applyCompanionPassiveSkills] 最終加成:', bonuses);
             return bonuses;
         }
 
@@ -18404,15 +18386,9 @@ const REGION_CONSUMABLES = {
 // 用於將舊隨從系統存檔遷移到新的十二生肖系統
 
 function migrateOldSaveToZodiac() {
-    console.log('🔄 檢查存檔版本...');
-    console.log('gameState.companions:', gameState.companions);
-    console.log('zodiacEquipment 是否存在:', gameState.companions.zodiacEquipment);
-    console.log('zodiacEquipment 類型:', typeof gameState.companions.zodiacEquipment);
-    console.log('zodiacEquipment !== undefined:', gameState.companions.zodiacEquipment !== undefined);
     
     // 檢查是否需要遷移
     if (!gameState.companions) {
-        console.log('⚠️ 沒有companions數據，初始化新結構');
         gameState.companions = {
             owned: [],
             active: null,
@@ -18427,7 +18403,6 @@ function migrateOldSaveToZodiac() {
     
     // 檢查是否已經執行過遷移（使用標記）
     if (gameState.companions.migrated === true) {
-        console.log('✅ 已執行過遷移，無需重複執行');
         return;
     }
     
@@ -18442,7 +18417,6 @@ function migrateOldSaveToZodiac() {
     
     // 如果已經有zodiacEquipment和ownedEquipment字段，說明是新版存檔，無需遷移
     if (hasZodiacEquipment && hasOwnedEquipment) {
-        console.log('✅ 已是新版存檔，無需遷移');
         gameState.companions.migrated = true;
         // 確保必要字段存在
         if (!gameState.companions.shards) gameState.companions.shards = 0;
@@ -18452,7 +18426,6 @@ function migrateOldSaveToZodiac() {
     
     // 如果沒有隨從數據且沒有zodiacEquipment，說明是全新遊戲
     if (!hasCompanions && !hasZodiacEquipment) {
-        console.log('✅ 全新遊戲，初始化新版結構');
         if (!gameState.companions.zodiacEquipment) {
             gameState.companions.zodiacEquipment = {};
         }
@@ -18466,7 +18439,6 @@ function migrateOldSaveToZodiac() {
         return;
     }
     
-    console.log('🔄 檢測到舊版存檔，開始遷移...');
     
     // 保存舊數據
     const oldData = {
@@ -18479,7 +18451,6 @@ function migrateOldSaveToZodiac() {
         level: gameState.companions.level || 1
     };
     
-    console.log('📦 舊存檔數據：', oldData);
     
     // 初始化新結構
     gameState.companions = {
@@ -18499,19 +18470,16 @@ function migrateOldSaveToZodiac() {
     // 補償機制已移除
     /*
     if (oldCompanionCount > 0) {
-        console.log(`🎁 檢測到 ${oldCompanionCount} 個舊隨從，給予補償...`);
         
         // 給予鼠生肖作為補償（第一個生肖）
         const compensationZodiac = 'rat';
         gameState.companions.owned.push(compensationZodiac);
         gameState.companions.active = compensationZodiac;
         
-        console.log(`✅ 已給予生肖：${compensationZodiac}`);
     }
     
     // 2. 給予鼠生肖的所有裝備（+5等級）
     if (oldCompanionCount > 0) {
-        console.log('🎁 給予鼠生肖完整套組...');
         
         // 初始化必要的數組
         if (!gameState.companions.ownedEquipment) {
@@ -18554,17 +18522,14 @@ function migrateOldSaveToZodiac() {
             
             gameState.companions.zodiacEquipment[equipData.id] = equipData;
             
-            console.log(`  ✅ 獲得 ${equipData.icon}${equipData.name} (+${compensationLevel})`);
         });
         
-        console.log(`✅ 已給予 ${ratEquipment.length} 件鼠生肖裝備`);
     }
     
     // 3. 如果玩家有碎片，轉換為金幣補償
     if (oldData.shards > 0) {
         const goldCompensation = oldData.shards * 100; // 每個碎片=100金幣
         gameState.player.gold += goldCompensation;
-        console.log(`💰 ${oldData.shards} 個碎片已轉換為 ${goldCompensation} 金幣`);
     }
     */
     
@@ -18588,8 +18553,6 @@ function migrateOldSaveToZodiac() {
     }
     */
     
-    console.log('✅ 存檔遷移完成！');
-    console.log('新存檔數據：', gameState.companions);
 }
 
 // 在遊戲加載時自動執行遷移
@@ -18607,7 +18570,6 @@ function loadGameWithMigration() {
                 }
             });
             
-            console.log('✅ 存檔加載成功');
             
             // 執行遷移檢查
             migrateOldSaveToZodiac();
@@ -19461,6 +19423,14 @@ const affixEffects = {
         color: '#2196f3',
         effect: { defMultiplier: 1.4, hpMultiplier: 1.3 },
         description: '防禦力+40%，生命+30%'
+    },
+    enraged: {
+        id: 'enraged',
+        name: '狂怒',
+        icon: '⚔️',
+        color: '#ff5722',
+        effect: { lowHpAtkBonus: 0.5, lowHpThreshold: 0.5 },
+        description: '生命低於50%時攻擊力+50%'
     }
 };
 
@@ -19801,11 +19771,9 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     
     // 定義副本戰鬥勝利回調
     const dungeonVictoryCallback = (enemy, enemyMaxHp) => {
-        console.log('DEBUG: dungeonVictoryCallback 被調用');
         hideEnemyHP();
         
         const battleTime = Math.floor((Date.now() - battleStartTime) / 1000);
-        console.log('DEBUG: battleTime =', battleTime);
         
         // 戰鬥勝利
         record.dailyCount++;
@@ -19839,9 +19807,7 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
         }
         
         // 計算並發放獎勵
-        console.log('DEBUG: 準備計算獎勵', difficultyData, isFirstClear);
         const rewards = calculateDungeonRewards(difficultyData, isFirstClear);
-        console.log('DEBUG: 獎勵計算完成', rewards);
         
         // 應用詞綴和元素加成
         const affixCount = dailyConfig.affixes ? dailyConfig.affixes.length : 0;
@@ -19857,9 +19823,7 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
             addLog('獎勵', `🎉 敵人詞綴/元素加成：+${bonusPercent}%`);
         }
         
-        console.log('DEBUG: 準備發放獎勵');
         applyDungeonRewards(rewards);
-        console.log('DEBUG: 獎勵發放完成');
         
         addLog('副本', `✅ 副本完成！用時 ${battleTime} 秒`);
         if (isFirstClear) {
@@ -19946,7 +19910,6 @@ function calculateDungeonRewards(difficultyData, isFirstClear) {
 
 // 發放副本獎勵
 function applyDungeonRewards(rewards) {
-    console.log('DEBUG: applyDungeonRewards 被調用', rewards);
     // 顯示獎勵標題
     addLog('獎勵', '🎁 ===== 副本獎勵 =====');
     
@@ -20927,7 +20890,6 @@ function getZodiacSetInfo(companionId) {
 }
 
         function updateCompanionModal() {
-    console.log('=== updateCompanionModal 被調用 ===');
     
     // 初始化隨從數據（兼容舊存檔）
     if (!gameState.companions.owned) {
@@ -26939,8 +26901,12 @@ function integrateReincarnationEffectsInCombat() {
                     const unlocked = monster.unlocked;
                     const isBoss = monster.type === 'boss';
                     const isElite = monster.type === 'elite';
+                    const isSpecialBoss = monster.type === 'special_boss';
                     let bgColor, borderColor;
-                    if (isBoss) {
+                    if (isSpecialBoss) {
+                        bgColor = 'rgba(138, 43, 226, 0.15)';
+                        borderColor = 'rgba(138, 43, 226, 0.4)';
+                    } else if (isBoss) {
                         bgColor = 'rgba(255, 0, 0, 0.1)';
                         borderColor = 'rgba(255, 0, 0, 0.3)';
                     } else if (isElite) {
@@ -26957,6 +26923,7 @@ function integrateReincarnationEffectsInCombat() {
                                 <div style="flex: 1;">
                                     <div style="font-weight: bold; color: ${unlocked ? '#ffd700' : '#555'}; margin-bottom: 5px;">
                                         ${monster.icon} ${unlocked ? monster.name : '???'}
+                                        ${isSpecialBoss ? '<span style="color: #9370db; font-size: 0.8rem; margin-left: 5px;">[特殊BOSS]</span>' : ''}
                                         ${isBoss ? '<span style="color: #ff4444; font-size: 0.8rem; margin-left: 5px;">[BOSS]</span>' : ''}
                                         ${isElite ? '<span style="color: #ffa500; font-size: 0.8rem; margin-left: 5px;">[精英]</span>' : ''}
                                     </div>
@@ -27032,11 +26999,8 @@ function integrateReincarnationEffectsInCombat() {
             let html = '';
             
             // 調試：輸出所有裝備的詳細信息
-            console.log('裝備圖鑑總數:', Object.keys(gameState.codex.equipment).length);
             const weaponsList = Object.values(gameState.codex.equipment).filter(e => e.type === 'weapon');
-            console.log('武器總數:', weaponsList.length);
             weaponsList.forEach(w => {
-                console.log(`武器: ${w.name}, 區域: ${w.region}, 套裝: ${w.setName}, 套裝編號: ${w.setNumber}`);
             });
             
             // 按區域分組顯示套裝裝備
@@ -28376,7 +28340,6 @@ function integrateReincarnationEffectsInCombat() {
             
             // 如果沒有版本號，視為舊版本
             if (!loadedState.version) {
-                console.log('偵測到舊版本存檔，進行資料遷移...');
                 loadedState.version = GAME_VERSION;
             }
             
@@ -28447,7 +28410,6 @@ function integrateReincarnationEffectsInCombat() {
             
             // 體力上限更新：強制將 maxAp 設為 100 (如果舊存檔不是 100)
 	            if (loadedState.player.maxAp !== 100) {
-	                console.log(`體力上限從 ${loadedState.player.maxAp} 遷移至 100`);
 	                loadedState.player.maxAp = 100;
 	                // 如果當前體力超過新上限，則設為新上限
 	                if (loadedState.player.ap > 100) {
@@ -28465,7 +28427,6 @@ function integrateReincarnationEffectsInCombat() {
             
             // 裝備結構遷移：4欄位 -> 8欄位
             if (loadedState.player.equipment && loadedState.player.equipment.armor !== undefined) {
-                console.log('[Migration] 遷移舊裝備結構 (4欄位 -> 8欄位)');
                 const oldEquip = loadedState.player.equipment;
                 loadedState.player.equipment = {
                     weapon: oldEquip.weapon || null,
@@ -28480,7 +28441,6 @@ function integrateReincarnationEffectsInCombat() {
             }
             // 遷移 ring1/ring2 到 gloves/ring
             if (loadedState.player.equipment && (loadedState.player.equipment.ring1 !== undefined || loadedState.player.equipment.ring2 !== undefined)) {
-                console.log('[Migration] 遷移 ring1/ring2 到 gloves/ring');
                 const oldEquip = loadedState.player.equipment;
                 // 只在 ring 欄位為空時才從 ring1/ring2 遷移
                 const migratedRing = oldEquip.ring || oldEquip.ring1 || oldEquip.ring2 || null;
@@ -28646,11 +28606,9 @@ function integrateReincarnationEffectsInCombat() {
             
             // 修復空字符串問題：將 "" 轉為 null
             if (loadedState.selectedPotionId === '') {
-                console.log('[migrateGameData] 修復 selectedPotionId 空字符串');
                 loadedState.selectedPotionId = null;
             }
             if (loadedState.selectedPotionName === '') {
-                console.log('[migrateGameData] 修復 selectedPotionName 空字符串');
                 loadedState.selectedPotionName = null;
             }
             // 確保存在
@@ -28763,7 +28721,6 @@ function integrateReincarnationEffectsInCombat() {
                 const oldName = loadedState.companions.active;
                 if (companionNameMap[oldName]) {
                     loadedState.companions.active = companionNameMap[oldName];
-                    console.log(`✅ 隨從名稱遷移: ${oldName} → ${companionNameMap[oldName]}`);
                 }
             }
             
@@ -28772,7 +28729,6 @@ function integrateReincarnationEffectsInCombat() {
                 const oldName = loadedState.companions.equipment;
                 if (equipmentNameMap[oldName]) {
                     loadedState.companions.equipment = equipmentNameMap[oldName];
-                    console.log(`✅ 隨從裝備名稱遷移: ${oldName} → ${equipmentNameMap[oldName]}`);
                 }
             }
             
@@ -28822,14 +28778,10 @@ function integrateReincarnationEffectsInCombat() {
                         }
                     }
                     
-                    console.log('✅ 卡牌 UUID 遷移完成');
                 }
             }
             
             // ========== 生肖系統遷移 ==========
-            console.log('🔍 遷移前 loadedState.companions:', loadedState.companions);
-            console.log('🔍 遷移前 loadedState.companions.owned:', loadedState.companions.owned);
-            console.log('🔍 遷移前 loadedState.companions.zodiacEquipment:', loadedState.companions.zodiacEquipment);
             
             // 將 loadedState 賦值給 gameState 以便 migrateOldSaveToZodiac 可以使用
             gameState = loadedState;
@@ -28840,11 +28792,8 @@ function integrateReincarnationEffectsInCombat() {
         }
         
         function loadGame() {
-            console.log('🔵 loadGame 被調用');
             try {
-                console.log('🔵 開始讀取存檔...');
                 const save = storage.getItem(SAVE_KEY);
-                console.log('🔵 存檔內容:', save ? '存在' : '不存在');
                 if (!save) {
                     alert('沒有找到存檔！');
                     return;
@@ -28857,7 +28806,6 @@ function integrateReincarnationEffectsInCombat() {
                     const saveAge = Date.now() - loadedState.lastSaveTime;
                     const hoursAgo = Math.floor(saveAge / (1000 * 60 * 60));
                     if (hoursAgo > 0) {
-                        console.log(`讀取到 ${hoursAgo} 小時前的存檔`);
                     }
                 }
                 
@@ -31279,11 +31227,9 @@ let selectedGamblerType = 'weapon'; // 預設選擇武器
 
 // 打開賭博商人界面
 function openGamblerModal() {
-    console.log('[Gambler] 打開賭博商人界面');
     
     // 初始化賭博系統狀態
     if (!gameState.gambler) {
-        console.log('[Gambler] 初始化賭博系統狀態');
         gameState.gambler = {
             totalRolls: 0,
             totalFragmentsSpent: 0,
@@ -31310,18 +31256,15 @@ function openGamblerModal() {
     
     // 顯示模態框
     document.getElementById('gambler-modal').style.display = 'flex';
-    console.log('[Gambler] 模態框已顯示');
 }
 
 // 關閉賭博商人界面
 function closeGamblerModal() {
-    console.log('[Gambler] 關閉賭博商人界面');
     document.getElementById('gambler-modal').style.display = 'none';
 }
 
 // 選擇裝備類型
 function selectGamblerType(type) {
-    console.log(`[Gambler] 選擇類型: ${type}`);
     selectedGamblerType = type;
     
     // 更新按鈕樣式
@@ -31343,7 +31286,6 @@ function checkFreeRollAvailability() {
     if (!gameState.gambler.freeRollAvailable) {
         const timeSinceLastFree = now - gameState.gambler.lastFreeRollTime;
         if (timeSinceLastFree >= threeDays) {
-            console.log('[Gambler] 免費機會已恢復');
             gameState.gambler.freeRollAvailable = true;
         }
     }
@@ -31357,7 +31299,6 @@ function checkFreeRollAvailability() {
         freeInfo.style.display = 'block';
         cooldownInfo.style.display = 'none';
         gambleBtn.innerHTML = '🎰 賭博 (免費!)';
-        console.log('[Gambler] 免費機會可用');
     } else {
         freeInfo.style.display = 'none';
         cooldownInfo.style.display = 'block';
@@ -31368,13 +31309,11 @@ function checkFreeRollAvailability() {
         const daysLeft = Math.floor(timeLeft / (24 * 60 * 60 * 1000));
         const hoursLeft = Math.floor((timeLeft % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
         document.getElementById('free-roll-timer').textContent = `${daysLeft}天 ${hoursLeft}小時`;
-        console.log(`[Gambler] 免費冷卻中: ${daysLeft}天 ${hoursLeft}小時`);
     }
 }
 
 // 更新UI
 function updateGamblerUI() {
-    console.log('[Gambler] 更新UI');
     document.getElementById('gambler-fragments').textContent = gameState.player.shards || 0;
     document.getElementById('gambler-total-rolls').textContent = gameState.gambler.totalRolls;
     document.getElementById('gambler-total-fragments').textContent = gameState.gambler.totalFragmentsSpent;
@@ -31412,7 +31351,6 @@ function rollQuality() {
     for (const [quality, weight] of Object.entries(qualityWeights)) {
         cumulative += weight;
         if (rand < cumulative) {
-            console.log(`[Gambler] 擲出品質: ${quality} (隨機值: ${rand.toFixed(2)})`);
             return quality;
         }
     }
@@ -31423,13 +31361,11 @@ function rollQuality() {
 // 隨機詞綴
 function rollAffix(quality) {
     const hasAffix = Math.random() < affixChance[quality];
-    console.log(`[Gambler] 詞綴判定: ${hasAffix} (機率: ${(affixChance[quality] * 100).toFixed(1)}%)`);
     return hasAffix;
 }
 
 // 生成賭博裝備
 function generateGamblerEquipment(type, quality, hasAffix) {
-    console.log(`[Gambler] 生成裝備: 類型=${type}, 品質=${quality}, 詞綴=${hasAffix}`);
     
     let equipment;
     let attempts = 0;
@@ -31442,19 +31378,16 @@ function generateGamblerEquipment(type, quality, hasAffix) {
         
         // 檢查是否符合類型
         if (isMatchingType(equipment, type)) {
-            console.log(`[Gambler] 生成成功 (嘗試 ${attempts} 次): ${equipment.name} (${equipment.type})`);
             break;
         }
     } while (attempts < maxAttempts);
     
     // 如果超過最大嘗試次數，使用最後一次生成的裝備
     if (attempts >= maxAttempts) {
-        console.log(`[Gambler] 超過最大嘗試次數，使用: ${equipment.name} (${equipment.type})`);
     }
     
     // 詞綴已由 generateItem() 中的 generateEquipmentAffix() 自動生成
     // hasAffix 參數已經透過 forceRarity 影響品質，高品質有較高詞綴機率
-    console.log(`[Gambler] 裝備生成完成: ${equipment.name} (${equipment.type}), 品質: ${equipment.rarity}`);
     
     return equipment;
 }
@@ -31479,36 +31412,30 @@ function isMatchingType(equipment, type) {
 
 // 執行賭博
 function performGamble() {
-    console.log('[Gambler] ========== 開始賭博 ==========');
     
     // 檢查背包空間
     if (gameState.inventory.length >= gameState.maxInventory) {
         alert('背包已滿！請先清理背包。');
-        console.log('[Gambler] 背包已滿，賭博取消');
         return;
     }
     
     // 檢查是否有免費機會
     const isFree = gameState.gambler.freeRollAvailable;
-    console.log(`[Gambler] 是否免費: ${isFree}`);
     
     if (!isFree) {
         // 檢查碎片是否足夠
         if ((gameState.player.shards || 0) < 200) {
             alert('碎片不足！需要 200 碎片。');
-            console.log('[Gambler] 碎片不足，賭博取消');
             return;
         }
         
         // 扣除碎片
         gameState.player.shards -= 200;
         gameState.gambler.totalFragmentsSpent += 200;
-        console.log(`[Gambler] 扣除 200 碎片，剩餘: ${gameState.player.shards}`);
     } else {
         // 使用免費機會
         gameState.gambler.freeRollAvailable = false;
         gameState.gambler.lastFreeRollTime = Date.now();
-        console.log('[Gambler] 使用免費機會');
     }
     
     // 計算結果
@@ -31522,7 +31449,6 @@ function performGamble() {
         
         // 加入背包
         gameState.inventory.push(equipment);
-        console.log('[Gambler] 裝備已加入背包');
         
         // 更新統計
         gameState.gambler.totalRolls++;
@@ -31531,7 +31457,6 @@ function performGamble() {
         if (quality === 'Mythic') gameState.gambler.bestRoll = equipment;
         gameState.gambler.lastRoll = equipment;
         
-        console.log(`[Gambler] 統計更新: 總次數=${gameState.gambler.totalRolls}, ${quality}=${gameState.gambler.qualityCount[quality]}`);
         
         // 顯示結果
         showGambleResult(equipment, quality, hasAffix, isFree);
@@ -31556,8 +31481,6 @@ function performGamble() {
         if (isFree) logMessage += ' (免費)';
         
         addLog('賭博商人', logMessage);
-        console.log(`[Gambler] 日誌: ${logMessage}`);
-        console.log('[Gambler] ========== 賭博完成 ==========');
     });
     
     return; // 提前返回，剩餘邏輯在回調中執行
@@ -31606,14 +31529,12 @@ function showGambleResult(equipment, quality, hasAffix, isFree) {
         setTimeout(() => {
             resultDiv.style.animation = '';
         }, 3000);
-        console.log('[Gambler] 🎉 神話裝備！');
     } else if (quality === 'Legendary') {
         // 傳說特效：抖動
         resultDiv.style.animation = 'shake 0.5s';
         setTimeout(() => {
             resultDiv.style.animation = '';
         }, 500);
-        console.log('[Gambler] 🔴 傳說裝備！');
     } else if (quality === 'Epic') {
         // 史詩特效：縮放
         resultDiv.style.animation = 'bounce 0.5s';
@@ -31625,7 +31546,6 @@ function showGambleResult(equipment, quality, hasAffix, isFree) {
 
 // 拉霸機動畫
 function playSlotMachineAnimation(type, quality, hasAffix, callback) {
-    console.log('[Gambler] 播放拉霸機動畫');
     
     // 轉輪圖示對照
     const typeSymbols = {
@@ -31695,7 +31615,6 @@ function playSlotMachineAnimation(type, quality, hasAffix, callback) {
     reel2.style.top = '0px';
     reel3.style.top = '0px';
     
-    console.log('[Gambler] 轉輪位置已重置');
     
     // 強制重繪
     reel1.offsetHeight;
@@ -31719,7 +31638,6 @@ function playSlotMachineAnimation(type, quality, hasAffix, callback) {
         reel2.style.top = '-1200px';
         reel3.style.top = '-1200px';
         
-        console.log('[Gambler] 轉輪開始旋轉');
     }, 50);
     
     // 轉輪u505cu6b62u97f3u6548
@@ -31750,7 +31668,6 @@ function playSlotMachineAnimation(type, quality, hasAffix, callback) {
     
     // 等待所有轉輪停止（2.5s + 0.5s 緩衝）
     setTimeout(() => {
-        console.log('[Gambler] 轉輪停止，執行回u8abf');
         callback();
     }, 3000);
 }

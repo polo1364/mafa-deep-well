@@ -25087,15 +25087,33 @@ function showEquipmentDropAnimation(equipment) {
                 { name: '活力藥劑', desc: '[持續3戰] 每回合回復10%最大HP + 2 AP', price: 120, type: 'both_regen', hpValue: 0.10, apValue: 2, duration: 3, icon: '💚' }
             ];
             
-            return items.map(item => `
-                <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-weight: bold; color: #4CAF50;">${item.icon || '🧪'} ${item.name}</div>
-                        <div style="font-size: 0.85rem; color: #c0c0c0;">${item.desc}</div>
+            return items.map((item, index) => {
+                const itemId = `recovery_${index}`;
+                return `
+                <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: bold; color: #4CAF50;">${item.icon || '🧪'} ${item.name}</div>
+                            <div style="font-size: 0.85rem; color: #c0c0c0;">${item.desc}</div>
+                        </div>
+                        <div style="color: #ffd700; font-weight: bold;">💰 ${item.price}</div>
                     </div>
-                    <button onclick='buyGeneralItem(${JSON.stringify(item)})' style="padding: 8px 16px;">💰 ${item.price}</button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <div style="display: flex; gap: 4px; flex: 1;">
+                            <button onclick="setBuyQuantity('${itemId}', 1, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x1</button>
+                            <button onclick="setBuyQuantity('${itemId}', 5, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x5</button>
+                            <button onclick="setBuyQuantity('${itemId}', 10, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x10</button>
+                            <button onclick="setBuyQuantityMax('${itemId}', ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">最大</button>
+                        </div>
+                        <input type="number" id="${itemId}_quantity" value="1" min="1" style="width: 60px; padding: 6px; text-align: center;" onchange="updateTotalPrice('${itemId}', ${item.price})">
+                        <div style="min-width: 80px; text-align: right;">
+                            <div style="font-size: 0.85rem; color: #c0c0c0;">總價:</div>
+                            <div id="${itemId}_total" style="color: #ffd700; font-weight: bold;">💰 ${item.price}</div>
+                        </div>
+                        <button onclick='buyGeneralItemBatch(${JSON.stringify(item)}, "${itemId}")' style="padding: 8px 16px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">購買</button>
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
         
         function renderGeneralBattleShop() {
@@ -25108,15 +25126,33 @@ function showEquipmentDropAnimation(equipment) {
                 { name: '狂戰藥劑', desc: '[持續5戰] 攻擊+25%、防禦-10%', price: 70, type: 'berserk_potion', duration: 5, icon: '🔥' }
             ];
             
-            return items.map(item => `
-                <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-weight: bold; color: #FF9800;">${item.icon || '🎲'} ${item.name}</div>
-                        <div style="font-size: 0.85rem; color: #c0c0c0;">${item.desc}</div>
+            return items.map((item, index) => {
+                const itemId = `battle_${index}`;
+                return `
+                <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: bold; color: #FF9800;">${item.icon || '🎲'} ${item.name}</div>
+                            <div style="font-size: 0.85rem; color: #c0c0c0;">${item.desc}</div>
+                        </div>
+                        <div style="color: #ffd700; font-weight: bold;">💰 ${item.price}</div>
                     </div>
-                    <button onclick='buyGeneralItem(${JSON.stringify(item)})' style="padding: 8px 16px;">💰 ${item.price}</button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <div style="display: flex; gap: 4px; flex: 1;">
+                            <button onclick="setBuyQuantity('${itemId}', 1, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x1</button>
+                            <button onclick="setBuyQuantity('${itemId}', 5, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x5</button>
+                            <button onclick="setBuyQuantity('${itemId}', 10, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x10</button>
+                            <button onclick="setBuyQuantityMax('${itemId}', ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">最大</button>
+                        </div>
+                        <input type="number" id="${itemId}_quantity" value="1" min="1" style="width: 60px; padding: 6px; text-align: center;" onchange="updateTotalPrice('${itemId}', ${item.price})">
+                        <div style="min-width: 80px; text-align: right;">
+                            <div style="font-size: 0.85rem; color: #c0c0c0;">總價:</div>
+                            <div id="${itemId}_total" style="color: #ffd700; font-weight: bold;">💰 ${item.price}</div>
+                        </div>
+                        <button onclick='buyGeneralItemBatch(${JSON.stringify(item)}, "${itemId}")' style="padding: 8px 16px; background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">購買</button>
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
         
         function renderGeneralOtherShop() {
@@ -25129,15 +25165,39 @@ function showEquipmentDropAnimation(equipment) {
                 { name: '祝福藥水', desc: '[持續5戰] 所有屬性+8%', price: 85, type: 'blessing_potion', duration: 5, icon: '✨' }
             ];
             
-            return items.map(item => `
-                <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-weight: bold; color: #2196F3;">📚 ${item.name}</div>
-                        <div style="font-size: 0.85rem; color: #c0c0c0;">${item.desc}</div>
+            return items.map((item, index) => {
+                const itemId = `other_${index}`;
+                const hasLimit = item.maxPurchase ? true : false;
+                return `
+                <div style="padding: 12px; margin: 8px 0; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: bold; color: #2196F3;">${item.icon || '📚'} ${item.name}</div>
+                            <div style="font-size: 0.85rem; color: #c0c0c0;">${item.desc}</div>
+                        </div>
+                        <div style="color: #ffd700; font-weight: bold;">💰 ${item.price}</div>
                     </div>
-                    <button onclick='buyGeneralItem(${JSON.stringify(item)})' style="padding: 8px 16px;">💰 ${item.price}</button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        ${!hasLimit ? `
+                        <div style="display: flex; gap: 4px; flex: 1;">
+                            <button onclick="setBuyQuantity('${itemId}', 1, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x1</button>
+                            <button onclick="setBuyQuantity('${itemId}', 5, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x5</button>
+                            <button onclick="setBuyQuantity('${itemId}', 10, ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">x10</button>
+                            <button onclick="setBuyQuantityMax('${itemId}', ${item.price})" style="padding: 6px 12px; font-size: 0.9rem;">最大</button>
+                        </div>
+                        <input type="number" id="${itemId}_quantity" value="1" min="1" style="width: 60px; padding: 6px; text-align: center;" onchange="updateTotalPrice('${itemId}', ${item.price})">
+                        <div style="min-width: 80px; text-align: right;">
+                            <div style="font-size: 0.85rem; color: #c0c0c0;">總價:</div>
+                            <div id="${itemId}_total" style="color: #ffd700; font-weight: bold;">💰 ${item.price}</div>
+                        </div>
+                        <button onclick='buyGeneralItemBatch(${JSON.stringify(item)}, "${itemId}")' style="padding: 8px 16px; background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">購買</button>
+                        ` : `
+                        <div style="flex: 1;"></div>
+                        <button onclick='buyGeneralItem(${JSON.stringify(item)})' style="padding: 8px 16px; background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">購買</button>
+                        `}
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
         
         function renderCompanionShop() {
@@ -25724,6 +25784,75 @@ function showEquipmentDropAnimation(equipment) {
                 openBagModal();
             }
             
+            saveGame();
+        }
+        // 批量購買輔助函數
+        function setBuyQuantity(itemId, quantity, price) {
+            const input = document.getElementById(`${itemId}_quantity`);
+            if (input) {
+                input.value = quantity;
+                updateTotalPrice(itemId, price);
+            }
+        }
+        
+        function setBuyQuantityMax(itemId, price) {
+            const maxQuantity = Math.floor(gameState.player.gold / price);
+            const input = document.getElementById(`${itemId}_quantity`);
+            if (input) {
+                input.value = maxQuantity > 0 ? maxQuantity : 1;
+                updateTotalPrice(itemId, price);
+            }
+        }
+        
+        function updateTotalPrice(itemId, price) {
+            const input = document.getElementById(`${itemId}_quantity`);
+            const totalDisplay = document.getElementById(`${itemId}_total`);
+            if (input && totalDisplay) {
+                const quantity = parseInt(input.value) || 1;
+                const total = price * quantity;
+                totalDisplay.textContent = `💰 ${total}`;
+            }
+        }
+        
+        function buyGeneralItemBatch(item, itemId) {
+            const input = document.getElementById(`${itemId}_quantity`);
+            const quantity = parseInt(input.value) || 1;
+            
+            if (quantity < 1) {
+                addLog('商店', '購買數量必須大於0！');
+                return;
+            }
+            
+            const totalPrice = item.price * quantity;
+            
+            if (gameState.player.gold < totalPrice) {
+                addLog('商店', `金幣不足！需要 ${totalPrice} 金幣，目前擁有 ${gameState.player.gold} 金幣`);
+                return;
+            }
+            
+            // 批量購買
+            let successCount = 0;
+            for (let i = 0; i < quantity; i++) {
+                // 檢查是否還有足夠的金幣
+                if (gameState.player.gold < item.price) {
+                    addLog('商店', `成功購買了 ${successCount} 個 ${item.name}，金幣不足停止購買`);
+                    break;
+                }
+                
+                // 購買單個物品
+                buyGeneralItem(item);
+                successCount++;
+            }
+            
+            if (successCount === quantity) {
+                addLog('商店', `成功批量購買了 ${quantity} 個 ${item.name}！`);
+            }
+            
+            // 重置數量輸入框
+            input.value = 1;
+            updateTotalPrice(itemId, item.price);
+            
+            updateUI();
             saveGame();
         }
 

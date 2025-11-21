@@ -280,20 +280,20 @@
         .log-container::-webkit-scrollbar-thumb:hover { background: #ffaa00; }
         
         .log-entry { 
-            margin-bottom: 12px; 
-            padding: 14px; 
-            background: rgba(255, 215, 0, 0.12);
-            border-left: 4px solid #ffd700; 
-            border-radius: 6px; 
+            margin-bottom: 0px; 
+            padding: 1px 8px; 
+            background: transparent;
+            border-left: none; 
+            border-radius: 0; 
             animation: fadeIn 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            box-shadow: none;
             transition: all 0.2s;
         }
         
         .log-entry:hover {
-            background: rgba(255, 215, 0, 0.18);
-            border-left-color: #ffaa00;
-            box-shadow: 0 3px 12px rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.08);
+            border-left-color: transparent;
+            box-shadow: none;
         }
         
         @keyframes fadeIn { 
@@ -2527,7 +2527,6 @@
                 <button onclick="switchTalentTab('combat')" id="talent-tab-combat" class="talent-tab active" style="flex: 1; min-width: 120px;">⚔️ 戰鬥</button>
                 <button onclick="switchTalentTab('defense')" id="talent-tab-defense" class="talent-tab" style="flex: 1; min-width: 120px;">🛡️ 防禦</button>
                 <button onclick="switchTalentTab('resource')" id="talent-tab-resource" class="talent-tab" style="flex: 1; min-width: 120px;">💰 資源</button>
-                <button onclick="switchTalentTab('special')" id="talent-tab-special" class="talent-tab" style="flex: 1; min-width: 120px;">✨ 特殊</button>
             </div>
             
             <!-- 天賦內容區域 -->
@@ -11075,8 +11074,32 @@ const REGION_CONSUMABLES = {
             const enemyMaxHp = enemy.hp; // 保存怪物最大血量
             let round = 0;
             
+            // 戰鬥統計
+            const battleStats = {
+                totalDamage: 0,
+                totalDamageTaken: 0,
+                totalLifeSteal: 0,
+                critCount: 0,
+                attackCount: 0,
+                skillTriggers: 0,
+                companionBuffs: 0,
+                goldGained: 0,
+                expGained: 0,
+                itemsDropped: []
+            };
+            
             const battleInterval = setInterval(() => {
                 round++;
+                
+                // 回合分隔線
+                if (round > 1) {
+                    const log = document.getElementById('battle-log');
+                    const separator = document.createElement('div');
+                    separator.style.cssText = 'border-top: 1px solid rgba(255, 255, 255, 0.15); margin: 8px 0; padding-top: 8px;';
+                    separator.innerHTML = `<div style="text-align: center; color: #888; font-size: 0.8rem;">─── 回合 ${round} ───</div>`;
+                    log.appendChild(separator);
+                    log.scrollTop = log.scrollHeight;
+                }
                 
                 // 減少隨從技能冷卻
                 reduceCompanionCooldowns();
@@ -11129,6 +11152,7 @@ const REGION_CONSUMABLES = {
                                     remainingTurns: effect.duration || 3
                                 });
                                 
+                                battleStats.companionBuffs++;
                                 addLog('特殊', `🐵 ${equipment.name}觸發！獲得隨機Buff：${randomBuff.name}`);
                                 recalculateStats();
                             }
@@ -11208,6 +11232,7 @@ const REGION_CONSUMABLES = {
                                     remainingTurns: 3
                                 });
                                 
+                                battleStats.companionBuffs++;
                                 addLog('生肖', `${companion.icon} ${companion.name} - ${skill.name}！獲得隨機Buff：${randomBuff.name}`);
                                 recalculateStats();
                             }
@@ -11454,6 +11479,11 @@ const REGION_CONSUMABLES = {
                 enemyHp -= finalDmg;
                 enemy.hp = enemyHp; // 同步enemy.hp
                 
+                // 統計
+                battleStats.totalDamage += finalDmg;
+                battleStats.attackCount++;
+                if (isCrit) battleStats.critCount++;
+                
                 // 反彈傷害
                 if (monsterHitResult.reflect > 0) {
                     gameState.player.hp -= monsterHitResult.reflect;
@@ -11468,6 +11498,7 @@ const REGION_CONSUMABLES = {
                     const healAmount = Math.floor(finalDmg * lifeStealCap / 100);
                     if (healAmount > 0) {
                         gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                        battleStats.totalLifeSteal += healAmount;
                         addLog('戰鬥', `🩸 吸血回復 ${healAmount} 點生命值`);
                     }
                 }
@@ -11476,9 +11507,11 @@ const REGION_CONSUMABLES = {
                 // 嘗試觸發玩家技能（攻擊時）
                 const skillResult = tryTriggerPlayerSkill('onAttack', playerDmg);
                 if (skillResult.triggered) {
+                    battleStats.skillTriggers++;
                     playSound('skill'); // 技能音效
                     if (skillResult.damage > 0) {
                         enemyHp -= skillResult.damage;
+                        battleStats.totalDamage += skillResult.damage;
                         addLog('技能', `⚡ ${skillResult.skillName} 觸發！造成 ${skillResult.damage} 點傷害`);
                     } else if (skillResult.buff) {
                         addLog('技能', `✨ ${skillResult.skillName} 觸發！${skillResult.buff}`);
@@ -11553,7 +11586,7 @@ const REGION_CONSUMABLES = {
                     });
                 }
                 
-                addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害${isCrit ? ' (暴擊！)' : ''}`);
+                addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害${isCrit ? ' 💥' : ''}`);
                 playSound(isCrit ? 'crit' : 'attack'); // 攻擊音效
                 
                 // 更新怪物HP顯示
@@ -11593,7 +11626,7 @@ const REGION_CONSUMABLES = {
                     if (customVictoryCallback) {
                         customVictoryCallback(enemy, enemyMaxHp);
                     } else {
-                        victory(enemy);
+                        victory(enemy, battleStats);
                     }
                     return;
                     } // 閉合不滅詞綴檢查的 else
@@ -11811,6 +11844,9 @@ const REGION_CONSUMABLES = {
                 
                 playerHp -= enemyDmg;
                 gameState.player.hp = Math.max(0, playerHp);
+                
+                // 統計受到的傷害
+                battleStats.totalDamageTaken += enemyDmg;
                 
                  // 套裝受擊效果
                  if (gameState.player.setEffects && gameState.player.setEffects.specialEffects) {
@@ -12179,7 +12215,7 @@ const REGION_CONSUMABLES = {
                             // 檢查敵人是否死亡
                             if (enemyHp <= 0) {
                                 clearInterval(battleInterval);
-                                victory(enemy);
+                                victory(enemy, battleStats);
                                 return;
                             }
                         } else {
@@ -12196,7 +12232,7 @@ const REGION_CONSUMABLES = {
                             // 檢查敵人是否死亡
                             if (enemyHp <= 0) {
                                 clearInterval(battleInterval);
-                                victory(enemy);
+                                victory(enemy, battleStats);
                                 return;
                             }
                         }
@@ -12593,7 +12629,7 @@ const REGION_CONSUMABLES = {
             });
         }
 
-        function victory(enemy) {
+        function victory(enemy, battleStats = null) {
             playSound('victory');
             trackWinStreak(); // 勝利音效
             gameState.stats.kills++;
@@ -13326,6 +13362,11 @@ const REGION_CONSUMABLES = {
                 gameState.player.companionBuffs = [];
             }
             
+            // 顯示戰鬥統計
+            if (battleStats) {
+                displayBattleStats(battleStats, finalGoldReward, expReward);
+            }
+            
             updateUI();
             
             // 戰鬥勝利後立即存檔
@@ -13457,6 +13498,53 @@ const REGION_CONSUMABLES = {
             // 不清除 currentZodiacFloor，讓下次戰鬥勝利後仍然可以顯示按鈕
         }
 
+        // 顯示戰鬥統計
+        function displayBattleStats(battleStats, goldGained, expGained) {
+            // 添加分隔線
+            addLog('統計', '═══════════════════════════════');
+            addLog('統計', '📊 戰鬥統計');
+            addLog('統計', '───────────────────────────────');
+            
+            // 計算衍生數據
+            const avgDamage = battleStats.attackCount > 0 ? Math.floor(battleStats.totalDamage / battleStats.attackCount) : 0;
+            const critRate = battleStats.attackCount > 0 ? Math.floor((battleStats.critCount / battleStats.attackCount) * 100) : 0;
+            
+            // 基礎統計
+            addLog('統計', `⚔️ 總傷害: ${Math.floor(battleStats.totalDamage)}`);
+            addLog('統計', `🛡️ 受到傷害: ${Math.floor(battleStats.totalDamageTaken)}`);
+            addLog('統計', `💥 暴擊次數: ${battleStats.critCount} (${critRate}%)`);
+            
+            if (battleStats.totalLifeSteal > 0) {
+                addLog('統計', `🩸 吸血回復: ${Math.floor(battleStats.totalLifeSteal)}`);
+            }
+            
+            if (battleStats.skillTriggers > 0) {
+                addLog('統計', `⚡ 技能觸發: ${battleStats.skillTriggers} 次`);
+            }
+            
+            if (battleStats.companionBuffs > 0) {
+                addLog('統計', `✨ 生肖Buff: ${battleStats.companionBuffs} 次`);
+            }
+            
+            if (avgDamage > 0) {
+                addLog('統計', `📈 平均傷害: ${avgDamage}`);
+            }
+            
+            // 獲得物品統計
+            addLog('統計', '───────────────────────────────');
+            addLog('統計', `💰 獲得金幣: ${goldGained}`);
+            addLog('統計', `⭐ 獲得經驗: ${expGained}`);
+            
+            // 如果有掉落物品，在這裡顯示
+            if (battleStats.itemsDropped && battleStats.itemsDropped.length > 0) {
+                battleStats.itemsDropped.forEach(item => {
+                    addLog('統計', `🎁 ${item}`);
+                });
+            }
+            
+            addLog('統計', '═══════════════════════════════');
+        }
+
         function defeat() {
             resetWinStreak();
             playSound('defeat'); // 失敗音效
@@ -13499,20 +13587,15 @@ const REGION_CONSUMABLES = {
             }
             
             updateUI();
-            
-            // 戰鬥勝利後立即存檔
             saveGame();
             
-            // 設定戰鬥結束回調：等待所有日誌顯示完畢後執行
+            // 設定戰鬥結束回調
             battleEndCallback = () => {
                 isBattleInProgress = false;
-                // 隱藏怪物HP顯示
                 hideEnemyHP();
             };
             
-            // 延遲100ms檢查佇列，給日誌時間加入佇列
             setTimeout(() => {
-                // 如果日誌佇列已空且沒有正在處理，執行回調
                 if (logQueue.length === 0 && !isProcessingLog) {
                     const callback = battleEndCallback;
                     battleEndCallback = null;
@@ -16059,9 +16142,11 @@ const REGION_CONSUMABLES = {
             const fontSize = isSpecialBoss ? '1.3rem' : 'inherit';
             if (isSpecialBoss) fontWeight = 'bold';
             
+            // 簡化格式：移除 [type] 標籤，只保留 emoji 和訊息
             entry.innerHTML = `
-                <div class="log-time" style="color: ${color}; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);">${icon} [${type}]</div>
-                <div class="log-text" style="color: ${color}; font-size: ${fontSize}; font-weight: ${fontWeight}; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);">${message}</div>
+                <div class="log-text" style="color: ${color}; font-size: ${fontSize}; font-weight: ${fontWeight}; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); padding: 4px 8px;">
+                    ${icon} ${message}
+                </div>
             `;
             log.appendChild(entry);
             log.scrollTop = log.scrollHeight;

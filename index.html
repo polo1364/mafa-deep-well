@@ -11003,7 +11003,7 @@ const REGION_CONSUMABLES = {
             }
         }
 
-        function battle(enemy) {
+        function battle(enemy, customVictoryCallback = null, customDefeatCallback = null) {
             // 教學系統已移除
             
             // 更新任務進度：與寵物戰鬥
@@ -11542,7 +11542,11 @@ const REGION_CONSUMABLES = {
                     }
                     
                     clearInterval(battleInterval);
-                    victory(enemy);
+                    if (customVictoryCallback) {
+                        customVictoryCallback(enemy, enemyMaxHp);
+                    } else {
+                        victory(enemy);
+                    }
                     return;
                     } // 閉合不滅詞綴檢查的 else
                 }
@@ -12022,7 +12026,11 @@ const REGION_CONSUMABLES = {
                     
                         if (!revived) {
                             clearInterval(battleInterval);
-                            defeat();
+                            if (customDefeatCallback) {
+                                customDefeatCallback();
+                            } else {
+                                defeat();
+                            }
                             return;
                         }
                     }
@@ -19698,6 +19706,7 @@ function challengeDungeon(dungeonId, difficulty) {
 }
 
 // 開始副本戰鬥
+// 開始副本戰鬥
 function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     const enemy = { 
         ...difficultyData.enemy
@@ -19755,6 +19764,13 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
             if (effect.damageReduction) enemy.affixEffects.damageReduction = effect.damageReduction;
             if (effect.reflect) enemy.affixEffects.reflect = effect.reflect;
             if (effect.regen) enemy.affixEffects.regen = effect.regen;
+            if (effect.dodge) enemy.affixEffects.dodge = effect.dodge;
+            if (effect.armorPen) enemy.affixEffects.armorPen = effect.armorPen;
+            if (effect.elementalAttack) enemy.affixEffects.elementalAttack = true;
+            if (effect.revive) {
+                enemy.affixEffects.revive = true;
+                enemy.affixEffects.revivePercent = effect.revivePercent;
+            }
         });
     }
     
@@ -19762,9 +19778,6 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
     if (dailyConfig.element) {
         enemy.element = dailyConfig.element;
     }
-    
-    // 獲取隨從裝備組合效果
-    const comboEffects = getCompanionEquipmentCombo();
     
     // 關閉副本界面
     closeDungeonDetailModal();
@@ -19786,166 +19799,89 @@ function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
         addLog('副本', `${elementData.icon} 敵人擁有元素：${elementData.name}`);
     }
     
-    // 使用現有戰鬥系統
-    showEnemyHP(enemy);
-    
-    let playerHp = gameState.player.hp;
-    let enemyHp = enemy.hp;
-    const enemyMaxHp = enemy.hp; // 保存怪物最大血量
-    let round = 0;
-    
-    const battleInterval = setInterval(() => {
-        round++;
+    // 定義副本戰鬥勝利回調
+    const dungeonVictoryCallback = (enemy, enemyMaxHp) => {
+        console.log('DEBUG: dungeonVictoryCallback 被調用');
+        hideEnemyHP();
         
-        // 回合開始：同步 playerHp 與 gameState.player.hp（防止自動喝藥或反射傷害導致不同步）
-        playerHp = gameState.player.hp;
+        const battleTime = Math.floor((Date.now() - battleStartTime) / 1000);
+        console.log('DEBUG: battleTime =', battleTime);
         
-        // 玩家攻擊
-        let playerDmg = calculateDamage(gameState.player.atk, enemy.def, gameState.player.armorPen);
-        const isCrit = Math.random() * 100 < gameState.player.crit;
-        let finalDmg = isCrit ? Math.floor(playerDmg * gameState.player.critDmg / 100) : playerDmg;
+        // 戰鬥勝利
+        record.dailyCount++;
+        record.totalCount++;
         
-        enemyHp -= finalDmg;
-        
-        // 敵人反射詞綴
-        if (enemy.affixEffects && enemy.affixEffects.reflect) {
-            const reflectDmg = Math.floor(finalDmg * enemy.affixEffects.reflect);
-            playerHp -= reflectDmg;
-            gameState.player.hp = Math.max(0, playerHp);
-            addLog('詞綴', `🔮 敵人反射了 ${reflectDmg} 點傷害！`);
+        if (!record.bestTime || battleTime < record.bestTime) {
+            record.bestTime = battleTime;
         }
         
-        if (isCrit) {
-            addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害 💥暴擊！`);
-            playSound('crit');
-        } else {
-            addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害`);
-            playSound('attack');
+        const isFirstClear = !record.cleared;
+        if (isFirstClear) {
+            record.cleared = true;
         }
         
-        updateEnemyHP(enemyHp, enemyMaxHp);
+        // 更新任務進度：完成副本
+        updateQuestProgress('complete_dungeon', 1);
         
-        if (enemyHp <= 0) {
-            clearInterval(battleInterval);
-            hideEnemyHP();
-            
-            const battleTime = Math.floor((Date.now() - battleStartTime) / 1000);
-            
-            // 戰鬥勝利
-            record.dailyCount++;
-            record.totalCount++;
-            
-            if (!record.bestTime || battleTime < record.bestTime) {
-                record.bestTime = battleTime;
-            }
-            
-            const isFirstClear = !record.cleared;
-            if (isFirstClear) {
-                record.cleared = true;
-            }
-            
-            // 更新任務進度：完成副本
-            updateQuestProgress('complete_dungeon', 1);
-            
-            // 更新任務進度：完成困難副本
-            if (difficulty === 'hard' || difficulty === 'hell' || difficulty === 'abyss') {
-                updateQuestProgress('complete_hard_dungeon', 1);
-            }
-            
-            // 更新任務進度：完成不同類型副本
-            if (!gameState.dailyQuests) gameState.dailyQuests = {};
-            if (!gameState.dailyQuests.completedDungeonTypes) {
-                gameState.dailyQuests.completedDungeonTypes = [];
-            }
-            if (!gameState.dailyQuests.completedDungeonTypes.includes(dungeonId)) {
-                gameState.dailyQuests.completedDungeonTypes.push(dungeonId);
-                updateQuestProgress('complete_different_dungeons', 1);
-            }
-            
-            // 計算並發放獎勵
-            const rewards = calculateDungeonRewards(difficultyData, isFirstClear);
-            
-            // 應用詞綴和元素加成
-            const affixCount = dailyConfig.affixes ? dailyConfig.affixes.length : 0;
-            const hasElement = dailyConfig.element ? true : false;
-            const rewardBonus = calculateDungeonRewardBonus(affixCount, hasElement);
-            
-            if (rewardBonus > 1.0) {
-                rewards.exp = Math.floor(rewards.exp * rewardBonus);
-                rewards.gold = Math.floor(rewards.gold * rewardBonus);
-                rewards.shards = Math.floor(rewards.shards * rewardBonus);
-                
-                const bonusPercent = Math.round((rewardBonus - 1.0) * 100);
-                addLog('獎勵', `🎉 敵人詞綴/元素加成：+${bonusPercent}%`);
-            }
-            
-            applyDungeonRewards(rewards);
-            
-            // 顯示結算
-            showDungeonResult(dungeonId, difficulty, rewards, battleTime, record, isFirstClear);
-            
-            playSound('victory');
-            saveGame();
-            updateUI();
-            return;
+        // 更新任務進度：完成困難副本
+        if (difficulty === 'hard' || difficulty === 'hell' || difficulty === 'abyss') {
+            updateQuestProgress('complete_hard_dungeon', 1);
         }
         
-        // 敵人回合開始：再生效果
-        if (enemy.affixEffects && enemy.affixEffects.regen) {
-            const regenAmount = Math.floor(enemyMaxHp * enemy.affixEffects.regen);
-            enemyHp = Math.min(enemyHp + regenAmount, enemyMaxHp);
-            addLog('詞綴', `💚 敵人再生了 ${regenAmount} 點生命！`);
-            updateEnemyHP(enemyHp, enemyMaxHp);
+        // 更新任務進度：完成不同類型副本
+        if (!gameState.dailyQuests) gameState.dailyQuests = {};
+        if (!gameState.dailyQuests.completedDungeonTypes) {
+            gameState.dailyQuests.completedDungeonTypes = [];
+        }
+        if (!gameState.dailyQuests.completedDungeonTypes.includes(dungeonId)) {
+            gameState.dailyQuests.completedDungeonTypes.push(dungeonId);
+            updateQuestProgress('complete_different_dungeons', 1);
         }
         
-        // 敵人攻擊
-        let enemyDmg = calculateDamage(enemy.atk, gameState.player.def);
+        // 計算並發放獎勵
+        console.log('DEBUG: 準備計算獎勵', difficultyData, isFirstClear);
+        const rewards = calculateDungeonRewards(difficultyData, isFirstClear);
+        console.log('DEBUG: 獎勵計算完成', rewards);
         
-        // 敵人減傷詞綴
-        if (enemy.affixEffects && enemy.affixEffects.damageReduction) {
-            // 這是敵人的減傷，不應用到敵人攻擊
-        }
+        // 應用詞綴和元素加成
+        const affixCount = dailyConfig.affixes ? dailyConfig.affixes.length : 0;
+        const hasElement = dailyConfig.element ? true : false;
+        const rewardBonus = calculateDungeonRewardBonus(affixCount, hasElement);
         
-        // 玩家減傷
-        if (gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0) {
-            const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
-            const dmgRedCap = Math.min(totalDmgRed, 75);
-            enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
-        }
-        
-        playerHp -= enemyDmg;
-        gameState.player.hp = Math.max(0, playerHp);
-        
-        // 敵人吸血詞綴
-        if (enemy.affixEffects && enemy.affixEffects.lifeSteal) {
-            const lifeStealAmount = Math.floor(enemyDmg * enemy.affixEffects.lifeSteal);
-            enemyHp = Math.min(enemyHp + lifeStealAmount, enemyMaxHp);
-            addLog('詞綴', `🩸 敵人吸血回復了 ${lifeStealAmount} 點生命！`);
-            updateEnemyHP(enemyHp, enemyMaxHp);
-        }
-        
-        addLog('戰鬥', `${enemy.name} 造成了 ${enemyDmg} 點傷害`);
-        playSound('hit');
-        
-        if (playerHp <= 0) {
-            clearInterval(battleInterval);
-            hideEnemyHP();
+        if (rewardBonus > 1.0) {
+            rewards.exp = Math.floor(rewards.exp * rewardBonus);
+            rewards.gold = Math.floor(rewards.gold * rewardBonus);
+            rewards.shards = Math.floor(rewards.shards * rewardBonus);
             
-            // 戰鬥失敗
-            addLog('副本', '❌ 挑戰失敗！');
-            alert('挑戰失敗！\n\nAP已消耗，但不計入挑戰次數。');
-            
-            gameState.player.hp = gameState.player.maxHp;
-            
-            playSound('defeat');
-            saveGame();
-            updateUI();
-            return;
+            const bonusPercent = Math.round((rewardBonus - 1.0) * 100);
+            addLog('獎勵', `🎉 敵人詞綴/元素加成：+${bonusPercent}%`);
         }
         
+        console.log('DEBUG: 準備發放獎勵');
+        applyDungeonRewards(rewards);
+        console.log('DEBUG: 獎勵發放完成');
+        
+        addLog('副本', `✅ 副本完成！用時 ${battleTime} 秒`);
+        if (isFirstClear) {
+            addLog('副本', `🎊 首次通關獎勵已發放！`);
+        }
+        
+        playSound('victory');
         updateUI();
-    }, 1000);
+    };
+    
+    // 定義副本戰鬥失敗回調
+    const dungeonDefeatCallback = () => {
+        hideEnemyHP();
+        addLog('副本', `💀 副本挑戰失敗...`);
+        playSound('defeat');
+        updateUI();
+    };
+    
+    // 調用主戰鬥函數
+    battle(enemy, dungeonVictoryCallback, dungeonDefeatCallback);
 }
+
 
 // 計算副本獎勵
 function calculateDungeonRewards(difficultyData, isFirstClear) {
@@ -20010,9 +19946,14 @@ function calculateDungeonRewards(difficultyData, isFirstClear) {
 
 // 發放副本獎勵
 function applyDungeonRewards(rewards) {
+    console.log('DEBUG: applyDungeonRewards 被調用', rewards);
+    // 顯示獎勵標題
+    addLog('獎勵', '🎁 ===== 副本獎勵 =====');
+    
     // 經驗
     if (rewards.exp > 0) {
         gameState.player.exp += rewards.exp;
+        addLog('獎勵', `🌟 經驗值 +${rewards.exp}`);
         // 檢查升級
         while (gameState.player.exp >= gameState.player.expToNext) {
             levelUp();
@@ -20022,18 +19963,22 @@ function applyDungeonRewards(rewards) {
     // 金幣
     if (rewards.gold > 0) {
         gameState.player.gold += rewards.gold;
+        addLog('獎勵', `💰 金幣 +${rewards.gold}`);
     }
     
     // 碎片
     if (rewards.shards > 0) {
         gameState.player.shards += rewards.shards;
         trackShardsGain(rewards.shards);
+        addLog('獎勵', `💎 碎片 +${rewards.shards}`);
     }
     
     // 裝備
     for (const equipment of rewards.equipment) {
         // 使用 addToInventory 以觸發自動裝備
         if (addToInventory(equipment, false)) {
+            const rarityIcon = {"common": "⚪", "uncommon": "🟢", "rare": "🔵", "epic": "🟣", "legendary": "🟠"}[equipment.rarity] || "⚪";
+            addLog('獎勵', `${rarityIcon} 獲得裝備：${equipment.name}`);
             gameState.stats.items++;
             if (equipment.rarity === 'legendary') {
                 gameState.stats.legendaryItems++;
@@ -20056,9 +20001,11 @@ function applyDungeonRewards(rewards) {
     }
     if (rewards.materials.enhanceStone > 0) {
         gameState.materials.enhanceStone += rewards.materials.enhanceStone;
+        addLog('獎勵', `🔨 強化石 +${rewards.materials.enhanceStone}`);
     }
     if (rewards.materials.reforgeStone > 0) {
         gameState.materials.reforgeStone += rewards.materials.reforgeStone;
+        addLog('獎勵', `⚒️ 重鑄石 +${rewards.materials.reforgeStone}`);
     }
 }
 
@@ -30173,370 +30120,7 @@ function challengeDungeon(dungeonId, difficulty) {
     startDungeonBattle(dungeonId, difficulty, difficultyData, record);
 }
 
-// 開始副本戰鬥
-function startDungeonBattle(dungeonId, difficulty, difficultyData, record) {
-    const enemy = { 
-        ...difficultyData.enemy
-    };
-    // 如果敵人沒有等級，使用副本推薦等級
-    if (!enemy.level) {
-        enemy.level = difficultyData.level;
-    }
-    
-    // 初始化 maxHp（如果不存在）
-    if (!enemy.maxHp && enemy.hp) {
-        enemy.maxHp = enemy.hp;
-    }
-    
-    const battleStartTime = Date.now();
-    
-    // 獲取每日敵人配置
-    const dailyConfig = generateDailyDungeonEnemyConfig(dungeonId, difficulty);
-    
-    // 應用詞綴
-    if (dailyConfig.affixes && dailyConfig.affixes.length > 0) {
-        enemy.affixes = dailyConfig.affixes;
-        enemy.affixEffects = {};
-        
-        // 應用每個詞綴的效果到敵人屬性
-        dailyConfig.affixes.forEach(affixId => {
-            const affix = affixEffects[affixId];
-            if (!affix || !affix.effect) return;
-            
-            const effect = affix.effect;
-            
-            // 應用屬性倍率
-            if (effect.atkMultiplier) {
-                enemy.atk = Math.floor(enemy.atk * effect.atkMultiplier);
-            }
-            if (effect.defMultiplier) {
-                enemy.def = Math.floor(enemy.def * effect.defMultiplier);
-            }
-            if (effect.hpMultiplier) {
-                enemy.maxHp = Math.floor(enemy.maxHp * effect.hpMultiplier);
-                enemy.hp = enemy.maxHp;
-            }
-            if (effect.allStatsMultiplier) {
-                enemy.atk = Math.floor(enemy.atk * effect.allStatsMultiplier);
-                enemy.def = Math.floor(enemy.def * effect.allStatsMultiplier);
-                enemy.maxHp = Math.floor(enemy.maxHp * effect.allStatsMultiplier);
-                enemy.hp = enemy.maxHp;
-            }
-            if (effect.critRate) {
-                enemy.crit = (enemy.crit || 0) + effect.critRate * 100;
-            }
-            
-            // 儲存特殊效果供戰鬥中使用
-            if (effect.lifeSteal) enemy.affixEffects.lifeSteal = effect.lifeSteal;
-            if (effect.damageReduction) enemy.affixEffects.damageReduction = effect.damageReduction;
-            if (effect.reflect) enemy.affixEffects.reflect = effect.reflect;
-            if (effect.regen) enemy.affixEffects.regen = effect.regen;
-        });
-    }
-    
-    // 應用元素
-    if (dailyConfig.element) {
-        enemy.element = dailyConfig.element;
-    }
-    
-    // 獲取隨從裝備組合效果
-    const comboEffects = getCompanionEquipmentCombo();
-    
-    // 關閉副本界面
-    closeDungeonDetailModal();
-    closeDungeonsModal();
-    
-    // 顯示戰鬥日誌
-    addLog('副本', `🏰 進入副本：${DUNGEONS_DATA[dungeonId].name} - ${difficultyData.name}`);
-    addLog('副本', `⚔️ 遭遇敵人：${enemy.name}`);
-    
-    // 顯示敵人詞綴
-    if (dailyConfig.affixes && dailyConfig.affixes.length > 0) {
-        const affixNames = dailyConfig.affixes.map(a => affixEffects[a].name).join('、');
-        addLog('副本', `⚠️ 敵人擁有詞綴：${affixNames}`);
-    }
-    
-    // 顯示敵人元素
-    if (dailyConfig.element) {
-        const elementData = ELEMENTS[dailyConfig.element];
-        addLog('副本', `${elementData.icon} 敵人擁有元素：${elementData.name}`);
-    }
-    
-    // 使用現有戰鬥系統
-    showEnemyHP(enemy);
-    
-    let playerHp = gameState.player.hp;
-    let enemyHp = enemy.hp;
-    const enemyMaxHp = enemy.hp; // 保存怪物最大血量
-    let round = 0;
-    
-    const battleInterval = setInterval(() => {
-        round++;
-        
-        // 回合開始：同步 playerHp 與 gameState.player.hp（防止自動喝藥或反射傷害導致不同步）
-        playerHp = gameState.player.hp;
-        
-        // 玩家攻擊
-        let playerDmg = calculateDamage(gameState.player.atk, enemy.def, gameState.player.armorPen);
-        const isCrit = Math.random() * 100 < gameState.player.crit;
-        let finalDmg = isCrit ? Math.floor(playerDmg * gameState.player.critDmg / 100) : playerDmg;
-        
-        enemyHp -= finalDmg;
-        
-        // 敵人反射詞綴
-        if (enemy.affixEffects && enemy.affixEffects.reflect) {
-            const reflectDmg = Math.floor(finalDmg * enemy.affixEffects.reflect);
-            playerHp -= reflectDmg;
-            gameState.player.hp = Math.max(0, playerHp);
-            addLog('詞綴', `🔮 敵人反射了 ${reflectDmg} 點傷害！`);
-        }
-        
-        if (isCrit) {
-            addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害 💥暴擊！`);
-            playSound('crit');
-        } else {
-            addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害`);
-            playSound('attack');
-        }
-        
-        updateEnemyHP(enemyHp, enemyMaxHp);
-        
-        if (enemyHp <= 0) {
-            clearInterval(battleInterval);
-            hideEnemyHP();
-            
-            const battleTime = Math.floor((Date.now() - battleStartTime) / 1000);
-            
-            // 戰鬥勝利
-            record.dailyCount++;
-            record.totalCount++;
-            
-            if (!record.bestTime || battleTime < record.bestTime) {
-                record.bestTime = battleTime;
-            }
-            
-            const isFirstClear = !record.cleared;
-            if (isFirstClear) {
-                record.cleared = true;
-            }
-            
-            // 更新任務進度：完成副本
-            updateQuestProgress('complete_dungeon', 1);
-            
-            // 更新任務進度：完成困難副本
-            if (difficulty === 'hard' || difficulty === 'hell' || difficulty === 'abyss') {
-                updateQuestProgress('complete_hard_dungeon', 1);
-            }
-            
-            // 更新任務進度：完成不同類型副本
-            if (!gameState.dailyQuests) gameState.dailyQuests = {};
-            if (!gameState.dailyQuests.completedDungeonTypes) {
-                gameState.dailyQuests.completedDungeonTypes = [];
-            }
-            if (!gameState.dailyQuests.completedDungeonTypes.includes(dungeonId)) {
-                gameState.dailyQuests.completedDungeonTypes.push(dungeonId);
-                updateQuestProgress('complete_different_dungeons', 1);
-            }
-            
-            // 計算並發放獎勵
-            const rewards = calculateDungeonRewards(difficultyData, isFirstClear);
-            
-            // 應用詞綴和元素加成
-            const affixCount = dailyConfig.affixes ? dailyConfig.affixes.length : 0;
-            const hasElement = dailyConfig.element ? true : false;
-            const rewardBonus = calculateDungeonRewardBonus(affixCount, hasElement);
-            
-            if (rewardBonus > 1.0) {
-                rewards.exp = Math.floor(rewards.exp * rewardBonus);
-                rewards.gold = Math.floor(rewards.gold * rewardBonus);
-                rewards.shards = Math.floor(rewards.shards * rewardBonus);
-                
-                const bonusPercent = Math.round((rewardBonus - 1.0) * 100);
-                addLog('獎勵', `🎉 敵人詞綴/元素加成：+${bonusPercent}%`);
-            }
-            
-            applyDungeonRewards(rewards);
-            
-            // 顯示結算
-            showDungeonResult(dungeonId, difficulty, rewards, battleTime, record, isFirstClear);
-            
-            playSound('victory');
-            saveGame();
-            updateUI();
-            return;
-        }
-        
-        // 敵人回合開始：再生效果
-        if (enemy.affixEffects && enemy.affixEffects.regen) {
-            const regenAmount = Math.floor(enemyMaxHp * enemy.affixEffects.regen);
-            enemyHp = Math.min(enemyHp + regenAmount, enemyMaxHp);
-            addLog('詞綴', `💚 敵人再生了 ${regenAmount} 點生命！`);
-            updateEnemyHP(enemyHp, enemyMaxHp);
-        }
-        
-        // 敵人攻擊
-        let enemyDmg = calculateDamage(enemy.atk, gameState.player.def);
-        
-        // 敵人減傷詞綴
-        if (enemy.affixEffects && enemy.affixEffects.damageReduction) {
-            // 這是敵人的減傷，不應用到敵人攻擊
-        }
-        
-        // 玩家減傷
-        if (gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0) {
-            const totalDmgRed = gameState.player.dmgRed + (comboEffects.dmgRed * 100);
-            const dmgRedCap = Math.min(totalDmgRed, 75);
-            enemyDmg = Math.floor(enemyDmg * (1 - dmgRedCap / 100));
-        }
-        
-        playerHp -= enemyDmg;
-        gameState.player.hp = Math.max(0, playerHp);
-        
-        // 敵人吸血詞綴
-        if (enemy.affixEffects && enemy.affixEffects.lifeSteal) {
-            const lifeStealAmount = Math.floor(enemyDmg * enemy.affixEffects.lifeSteal);
-            enemyHp = Math.min(enemyHp + lifeStealAmount, enemyMaxHp);
-            addLog('詞綴', `🩸 敵人吸血回復了 ${lifeStealAmount} 點生命！`);
-            updateEnemyHP(enemyHp, enemyMaxHp);
-        }
-        
-        addLog('戰鬥', `${enemy.name} 造成了 ${enemyDmg} 點傷害`);
-        playSound('hit');
-        
-        if (playerHp <= 0) {
-            clearInterval(battleInterval);
-            hideEnemyHP();
-            
-            // 戰鬥失敗
-            addLog('副本', '❌ 挑戰失敗！');
-            alert('挑戰失敗！\n\nAP已消耗，但不計入挑戰次數。');
-            
-            gameState.player.hp = gameState.player.maxHp;
-            
-            playSound('defeat');
-            saveGame();
-            updateUI();
-            return;
-        }
-        
-        updateUI();
-    }, 1000);
-}
-
-// 計算副本獎勵
-function calculateDungeonRewards(difficultyData, isFirstClear) {
-    const rewards = {
-        exp: difficultyData.rewards.exp || 0,
-        gold: 0,
-        equipment: [],
-        materials: {
-            enhanceStone: 0,
-            reforgeStone: 0
-        },
-        shards: 0
-    };
-    
-    // 金幣
-    if (difficultyData.rewards.gold) {
-        const [min, max] = difficultyData.rewards.gold;
-        rewards.gold = Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    
-    // 裝備
-    if (difficultyData.rewards.equipment) {
-        const equipData = difficultyData.rewards.equipment;
-        for (let i = 0; i < equipData.count; i++) {
-            rewards.equipment.push(generateEquipmentByRarity(equipData.rarity));
-        }
-    }
-    
-    // 材料
-    if (difficultyData.rewards.materials) {
-        rewards.materials.enhanceStone = difficultyData.rewards.materials.enhanceStone || 0;
-        rewards.materials.reforgeStone = difficultyData.rewards.materials.reforgeStone || 0;
-    }
-    
-    // 首次通關獎勵
-    if (isFirstClear && difficultyData.firstClear) {
-        const firstClear = difficultyData.firstClear;
-        
-        if (firstClear.shards) {
-            rewards.shards += firstClear.shards;
-        }
-        
-        if (firstClear.gold) {
-            rewards.gold += firstClear.gold;
-        }
-        
-        if (firstClear.equipment) {
-            const equipData = firstClear.equipment;
-            for (let i = 0; i < equipData.count; i++) {
-                rewards.equipment.push(generateEquipmentByRarity(equipData.rarity));
-            }
-        }
-        
-        if (firstClear.materials) {
-            rewards.materials.enhanceStone += firstClear.materials.enhanceStone || 0;
-            rewards.materials.reforgeStone += firstClear.materials.reforgeStone || 0;
-        }
-    }
-    
-    return rewards;
-}
-
 // 發放副本獎勵
-function applyDungeonRewards(rewards) {
-    // 經驗
-    if (rewards.exp > 0) {
-        gameState.player.exp += rewards.exp;
-        // 檢查升級
-        while (gameState.player.exp >= gameState.player.expToNext) {
-            levelUp();
-        }
-    }
-    
-    // 金幣
-    if (rewards.gold > 0) {
-        gameState.player.gold += rewards.gold;
-    }
-    
-    // 碎片
-    if (rewards.shards > 0) {
-        gameState.player.shards += rewards.shards;
-        trackShardsGain(rewards.shards);
-    }
-    
-    // 裝備
-    for (const equipment of rewards.equipment) {
-        // 使用 addToInventory 以觸發自動裝備
-        if (addToInventory(equipment, false)) {
-            gameState.stats.items++;
-            if (equipment.rarity === 'legendary') {
-                gameState.stats.legendaryItems++;
-            }
-            
-            // 更新任務進度：獲得裝備
-            updateQuestProgress('collect_equipment', 1);
-            if (equipment.rarity === 'Rare' || equipment.rarity === 'Epic' || equipment.rarity === 'Legendary' || equipment.rarity === 'Set') {
-                updateQuestProgress('collect_rare', 1);
-            }
-            if (equipment.rarity === 'legendary') {
-                updateQuestProgress('collect_legendary', 1);
-            }
-        }
-    }
-    
-    // 材料
-    if (!gameState.materials) {
-        gameState.materials = { enhanceStone: 0, reforgeStone: 0 };
-    }
-    if (rewards.materials.enhanceStone > 0) {
-        gameState.materials.enhanceStone += rewards.materials.enhanceStone;
-    }
-    if (rewards.materials.reforgeStone > 0) {
-        gameState.materials.reforgeStone += rewards.materials.reforgeStone;
-    }
-}
 
 // 根據稀有度生成裝備
 function generateEquipmentByRarity(rarity) {

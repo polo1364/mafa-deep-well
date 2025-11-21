@@ -1389,7 +1389,7 @@
                     </div>
                     
                     <!-- 怪物HP顯示區（移到日誌上方） -->
-                    <div id="enemy-hp-container" style="display: none; margin-bottom: 15px; padding: 12px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; border: 2px solid rgba(255, 215, 0, 0.3); min-height: 80px;">
+                    <div id="enemy-hp-container" style="visibility: hidden; margin-bottom: 15px; padding: 12px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; border: 2px solid rgba(255, 215, 0, 0.3); min-height: 200px; overflow: hidden;">
                         <div id="enemy-name-display" style="font-size: 1rem; font-weight: bold; color: #ffd700; margin-bottom: 8px; text-align: center; min-height: 24px; line-height: 24px;"></div>
                         <div class="enemy-hp-bar" style="position: relative; width: 100%; height: 28px; background: rgba(0, 0, 0, 0.6); border-radius: 14px; border: 2px solid rgba(255, 215, 0, 0.5); overflow: hidden;">
                             <div id="enemy-hp-fill" style="height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%); transition: width 0.5s ease, background 0.3s ease; box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);"></div>
@@ -11088,6 +11088,16 @@ const REGION_CONSUMABLES = {
                 itemsDropped: []
             };
             
+            // 獲取生肖加成（在戰鬥循環中重複使用）
+            const companionBonuses = applyCompanionPassiveSkills();
+            
+            // 生肖破甲效果（虎啸王）
+            if (companionBonuses.enemyDefReduce && companionBonuses.enemyDefReduce > 0) {
+                const defReduction = Math.floor(companionBonuses.enemyDefReduce * 100);
+                enemy.def = Math.floor(enemy.def * (1 - companionBonuses.enemyDefReduce));
+                addLog('生肖', `🐯 破甲效果！敵人防禦降低${defReduction}%！`);
+            }
+            
             const battleInterval = setInterval(() => {
                 round++;
                 
@@ -11136,25 +11146,35 @@ const REGION_CONSUMABLES = {
                         if ((effect.type === 'onTurn' || effect.type === 'everyNTurns') && effect.interval && round % effect.interval === 0) {
                             if (effect.randomBuff) {
                                 const buffs = [
-                                    { name: '力量', stat: 'atk', value: 0.20 },
-                                    { name: '防禦', stat: 'def', value: 0.25 },
-                                    { name: '暴擊', stat: 'crit', value: 15 },
-                                    { name: '回復', stat: 'regen', value: 0.05 }
+                                    { name: '力量', stat: 'atk', value: 0.30 },
+                                    { name: '防禦', stat: 'def', value: 0.30 },
+                                    { name: '回復', stat: 'heal', value: 0.30 }
                                 ];
                                 const randomBuff = buffs[Math.floor(Math.random() * buffs.length)];
                                 
-                                if (!gameState.player.zodiacBuffs) gameState.player.zodiacBuffs = [];
-                                gameState.player.zodiacBuffs.push({
-                                    name: `猴神之力：${randomBuff.name}`,
-                                    stat: randomBuff.stat,
-                                    value: randomBuff.value,
-                                    duration: effect.duration || 3,
-                                    remainingTurns: effect.duration || 3
-                                });
-                                
-                                battleStats.companionBuffs++;
-                                addLog('特殊', `🐵 ${equipment.name}觸發！獲得隨機Buff：${randomBuff.name}`);
-                                recalculateStats();
+                                if (randomBuff.stat === 'heal') {
+                                    // 回復HP
+                                    const healAmount = Math.floor(gameState.player.maxHp * randomBuff.value);
+                                    gameState.player.hp = Math.min(gameState.player.hp + healAmount, gameState.player.maxHp);
+                                    playerHp = gameState.player.hp;
+                                    battleStats.companionBuffs++;
+                                    addLog('特殊', `🐵 ${equipment.name}觸發！回復${healAmount}點生命值！`);
+                                    updatePlayerHP(playerHp, gameState.player.maxHp);
+                                } else {
+                                    // 其他Buff
+                                    if (!gameState.player.zodiacBuffs) gameState.player.zodiacBuffs = [];
+                                    gameState.player.zodiacBuffs.push({
+                                        name: `猴神之力：${randomBuff.name}`,
+                                        stat: randomBuff.stat,
+                                        value: randomBuff.value,
+                                        duration: effect.duration || 3,
+                                        remainingTurns: effect.duration || 3
+                                    });
+                                    
+                                    battleStats.companionBuffs++;
+                                    addLog('特殊', `🐵 ${equipment.name}觸發！獲得隨機Buff：${randomBuff.name}`);
+                                    recalculateStats();
+                                }
                             }
                         }
                         
@@ -11347,6 +11367,12 @@ const REGION_CONSUMABLES = {
                             }
                         });
                     }
+                }
+                
+                // 生肖首回必暴（閃電馬）
+                if (round === 1 && companionBonuses.firstTurnCrit) {
+                    guaranteedCrit = true;
+                    addLog('生肖', `🐴 閃電馬！首回合必定暴擊！`);
                 }
                 
                 const isCrit = guaranteedCrit || (Math.random() * 100 < playerCrit);
@@ -11586,6 +11612,30 @@ const REGION_CONSUMABLES = {
                     });
                 }
                 
+                // 生肖真實傷害加成（天火龍）
+                if (companionBonuses.trueDmg && companionBonuses.trueDmg > 0) {
+                    const trueDmg = Math.floor(enemy.maxHp * companionBonuses.trueDmg);
+                    enemyHp -= trueDmg;
+                    addLog('生肖', `🐉 真實傷害！附加 ${trueDmg} 點傷害！`);
+                }
+                
+                // 生肖毒素傷害（毒牙蛇）
+                if (companionBonuses.poison && companionBonuses.poison > 0) {
+                    const poisonDmg = Math.floor(enemy.maxHp * companionBonuses.poison);
+                    // 毒素加倍：暴擊時毒素翻倍
+                    const poisonMultiplier = (isCrit && companionBonuses.poisonCrit) ? companionBonuses.poisonCrit : 1;
+                    const finalPoisonDmg = Math.floor(poisonDmg * poisonMultiplier);
+                    
+                    if (!enemy.poisons) enemy.poisons = [];
+                    enemy.poisons.push({ damage: finalPoisonDmg, duration: 3 });
+                    
+                    if (poisonMultiplier > 1) {
+                        addLog('生肖', `🐍 毒牙蛇暴擊！毒素加倍！${finalPoisonDmg}點/回合×3回合`);
+                    } else {
+                        addLog('生肖', `🐍 毒素攻擊！${finalPoisonDmg}點/回合×3回合`);
+                    }
+                }
+                
                 addLog('戰鬥', `你造成了 ${Math.floor(finalDmg)} 點傷害${isCrit ? ' 💥' : ''}`);
                 playSound(isCrit ? 'crit' : 'attack'); // 攻擊音效
                 
@@ -11645,6 +11695,19 @@ const REGION_CONSUMABLES = {
                 // 敵人攻擊（菁英怪物可能暴擊）
                 // 同步 playerHp 與 gameState.player.hp（防止自動喝藥導致不同步）
                 playerHp = gameState.player.hp;
+                
+                // ========== 暈暈狀態檢查 ==========
+                if (enemy.debuffs && enemy.debuffs.stun && enemy.debuffs.stun.duration > 0) {
+                    addLog('特殊', `💫 ${enemy.name}被暈暈，跳過這回合！`);
+                    enemy.debuffs.stun.duration--;
+                    if (enemy.debuffs.stun.duration <= 0) {
+                        delete enemy.debuffs.stun;
+                        addLog('特殊', `💫 暈暈效果消失了！`);
+                    }
+                    // 跳過敵人攻擊，直接進入下一回合
+                    round++;
+                    return;
+                }
                 
                 // 應用精準詞綴（無視防禦）
                 let enemyArmorPen = 0;
@@ -11896,6 +11959,14 @@ const REGION_CONSUMABLES = {
                     });
                 }
                 
+                // 生肖反傷效果（鐵衛犬）
+                if (companionBonuses.reflect && companionBonuses.reflect > 0) {
+                    const reflectDmg = Math.floor(enemyDmg * companionBonuses.reflect);
+                    enemyHp -= reflectDmg;
+                    addLog('生肖', `🐶 鐵衛犬反傷！造成 ${reflectDmg} 點働擊傷害！`);
+                    updateEnemyHP(enemyHp, enemyMaxHp);
+                }
+                
                 if (enemyCrit) {
                     addLog('戰鬥', `${enemy.name} 造成了 ${Math.floor(enemyDmg)} 點傷害 💥暴擊！`);
                     playSound('crit'); // 暴擊音效
@@ -11946,14 +12017,56 @@ const REGION_CONSUMABLES = {
                 
                 // 中毒傷害
                 if (enemy.poisons && enemy.poisons.length > 0) {
+                    // 檢查是否裝備了蛇眼寶石
+                    let snakeEyeMultiplier = 1.0;
+                    const equippedItems = [
+                        gameState.player.equipment.weapon,
+                        gameState.player.equipment.armor,
+                        gameState.player.equipment.accessory
+                    ];
+                    
+                    for (const itemId of equippedItems) {
+                        if (itemId) {
+                            const equipment = ZODIAC_EQUIPMENT[itemId];
+                            if (equipment && equipment.specialEffect && equipment.specialEffect.type === 'onPoisonCrit') {
+                                // 20%機率觸發毒素暴擊
+                                if (Math.random() < 0.2) {
+                                    snakeEyeMultiplier = 1 + equipment.specialEffect.damageMultiplier;
+                                    addLog('特殊', `👁️ ${equipment.name}觸發！毒素暴擊！`);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    
                     enemy.poisons.forEach(poison => {
-                        enemyHp -= poison.damage;
+                        const finalPoisonDmg = Math.floor(poison.damage * snakeEyeMultiplier);
+                        enemyHp -= finalPoisonDmg;
                         enemy.hp = enemyHp; // 同步enemy.hp
                         poison.duration--;
-                        addLog('元素', `🌿 中毒：${enemy.name}受到${poison.damage}點毒傷害！(剩餘${poison.duration}回合)`);
+                        if (snakeEyeMultiplier > 1) {
+                            addLog('元素', `🌿 中毒暴擊：${enemy.name}受到${finalPoisonDmg}點毒傷害！(剩餘${poison.duration}回合)`);
+                        } else {
+                            addLog('元素', `🌿 中毒：${enemy.name}受到${finalPoisonDmg}點毒傷害！(剩餘${poison.duration}回合)`);
+                        }
                     });
                     enemy.poisons = enemy.poisons.filter(p => p.duration > 0);
                     updateEnemyHP(enemyHp, enemyMaxHp);
+                }
+                
+                // ========== 流血傷害處理 ==========
+                if (enemy.debuffs && enemy.debuffs.bleed) {
+                    const bleedDmg = enemy.debuffs.bleed.damage;
+                    enemyHp -= bleedDmg;
+                    enemy.hp = enemyHp;
+                    enemy.debuffs.bleed.duration--;
+                    addLog('特殊', `🩸 流血：${enemy.name}受到${bleedDmg}點流血傷害！(剩餘${enemy.debuffs.bleed.duration}回合)`);
+                    updateEnemyHP(enemyHp, enemyMaxHp);
+                    
+                    if (enemy.debuffs.bleed.duration <= 0) {
+                        delete enemy.debuffs.bleed;
+                        addLog('特殊', `🩸 流血效果消失了！`);
+                    }
                 }
                 
                 // 更新 debuff 持續時間（回合結束）
@@ -12070,16 +12183,31 @@ const REGION_CONSUMABLES = {
                 }
                 
                 if (playerHp <= 0) {
+                    // 檢查生肖死亡抵抗（鐵衛犬）
+                    if (companionBonuses.survivalChance && companionBonuses.survivalChance > 0) {
+                        if (Math.random() < companionBonuses.survivalChance) {
+                            playerHp = 1;
+                            gameState.player.hp = 1;
+                            addLog('生肖', '🐶 鐵衛犬守護！死亡抵抗觸發！保留 1 HP！');
+                            playSound('heal');
+                            updateUI();
+                        }
+                    }
+                    
                     // 檢查護身符保護
-                    const guardianBuff = gameState.player.buffs ? gameState.player.buffs.find(b => b.type === 'guardian') : null;
-                    if (guardianBuff) {
-                        playerHp = 1;
-                        gameState.player.hp = 1;
-                        gameState.player.buffs = gameState.player.buffs.filter(b => b.type !== 'guardian');
-                        addLog('保護', '🛡️ 護身符觸發！保留1點生命！');
-                        playSound('heal');
-                        updateUI();
-                    } else {
+                    if (playerHp <= 0) {
+                        const guardianBuff = gameState.player.buffs ? gameState.player.buffs.find(b => b.type === 'guardian') : null;
+                        if (guardianBuff) {
+                            playerHp = 1;
+                            gameState.player.hp = 1;
+                            gameState.player.buffs = gameState.player.buffs.filter(b => b.type !== 'guardian');
+                            addLog('保護', '🛡️ 護身符觸發！保留1點生命！');
+                            playSound('heal');
+                            updateUI();
+                        }
+                    }
+                    
+                    if (playerHp <= 0) {
                         // 檢查裝備詞綴中的時光詞綴（復活機制）
                         let revived = false;
                         if (!gameState.player.battleReviveUsed) {
@@ -12301,7 +12429,7 @@ const REGION_CONSUMABLES = {
             displayEnemyStats(enemy);
             
             // 顯示容器
-            container.style.display = 'block';
+            container.style.visibility = 'visible';
         }
         
         function displayEnemyStats(enemy) {
@@ -12347,16 +12475,41 @@ const REGION_CONSUMABLES = {
                 
                 enemy.affixes.forEach(affix => {
                     let affixData = affix;
+                    let description = '';
                     
-                    // 判斷 affix 是字串（副本敵人）還是對象（普通敵人）
+                    // 判斷 affix 是字串（副本敵人）還是對象（普通敵人/特殊BOSS）
                     if (typeof affix === 'string') {
                         // 副本敵人：詞綴是ID字串，需要從affixEffects獲取數據
                         affixData = affixEffects[affix];
+                        description = affixData.description || affixData.desc || '';
+                    } else {
+                        // 特殊BOSS/普通敵人：詞綴是對象，需要根據effect生成描述
+                        if (affixData.effect) {
+                            const e = affixData.effect;
+                            const parts = [];
+                            if (e.atkMultiplier) parts.push(`攻擊力+${Math.floor((e.atkMultiplier - 1) * 100)}%`);
+                            if (e.defMultiplier) parts.push(`防禦力+${Math.floor((e.defMultiplier - 1) * 100)}%`);
+                            if (e.hpMultiplier) parts.push(`生命值+${Math.floor((e.hpMultiplier - 1) * 100)}%`);
+                            if (e.critRate) parts.push(`暴擊率+${Math.floor(e.critRate * 100)}%`);
+                            if (e.critDamage) parts.push(`暴擊傷害+${Math.floor(e.critDamage * 100)}%`);
+                            if (e.lifeSteal) parts.push(`吸血${Math.floor(e.lifeSteal * 100)}%`);
+                            if (e.damageReduction) parts.push(`減傷${Math.floor(e.damageReduction * 100)}%`);
+                            if (e.reflect) parts.push(`反傷${Math.floor(e.reflect * 100)}%`);
+                            if (e.regen) parts.push(`每回合回血${Math.floor(e.regen * 100)}%`);
+                            if (e.dodgeChance) parts.push(`閃避${Math.floor(e.dodgeChance * 100)}%`);
+                            if (e.armorPen) parts.push(`破甲${Math.floor(e.armorPen * 100)}%`);
+                            if (e.doubleAttackChance) parts.push(`連擊${Math.floor(e.doubleAttackChance * 100)}%`);
+                            if (e.lowHpAtkBonus) parts.push(`低血狂暴（<${Math.floor(e.lowHpThreshold * 100)}%HP時攻擊+${Math.floor(e.lowHpAtkBonus * 100)}%）`);
+                            if (e.lowHpDefMultiplier) parts.push(`低血防禦倍增（<${Math.floor(e.lowHpThreshold * 100)}%HP時防禦×${e.lowHpDefMultiplier}）`);
+                            if (e.revive) parts.push(`不滅復活（回復${Math.floor(e.revivePercent * 100)}%HP）`);
+                            if (e.resetChance) parts.push(`時空重置（${Math.floor(e.resetChance * 100)}%機率）`);
+                            description = parts.join('、');
+                        }
                     }
                     
                     if (affixData && affixData.icon && affixData.name) {
                         statsHTML += `<div style="color: #c0c0c0; margin-bottom: 3px;">`;
-                        statsHTML += `${affixData.icon} <span style="color: ${affixData.color || '#ffd700'};">${affixData.name}</span>: ${affixData.description || affixData.desc || ''}`;
+                        statsHTML += `${affixData.icon} <span style="color: ${affixData.color || '#ffd700'};">${affixData.name}</span>: ${description}`;
                         statsHTML += `</div>`;
                     }
                 });
@@ -12423,7 +12576,7 @@ const REGION_CONSUMABLES = {
         
         function hideEnemyHP() {
             const container = document.getElementById('enemy-hp-container');
-            container.style.display = 'none';
+            container.style.visibility = 'hidden';
         }
 
         // ===== Debuff 系統函數 =====
@@ -16109,6 +16262,15 @@ const REGION_CONSUMABLES = {
             } else if (type === '失敗' || type === '死亡') {
                 color = '#ff6666';  // 更亮的紅色
                 icon = '❌';
+            } else if (type === '隨從') {
+                color = '#44ffaa';  // 綠色
+                icon = '🐾';
+            } else if (type === '卡牌') {
+                color = '#66bbff';  // 藍色
+                icon = '🎴';
+            } else if (type === '寵物') {
+                color = '#ff88cc';  // 粉紅色
+                icon = '🐾';
             } else if (type === '裝備' || message.includes('裝備') || message.includes('卸下')) {
                 color = '#ff66ff';  // 更亮的紫色
                 icon = '🎽';
@@ -18361,7 +18523,7 @@ const REGION_CONSUMABLES = {
         function applyCompanionPassiveSkills() {
             const companion = getActiveCompanion();
             if (!companion) return {};
-            const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0, dodge: 0, regen: 0, accuracy: 0, ignoreDefense: 0 };
+            const bonuses = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, dmgRed: 0, lifeSteal: 0, goldBonus: 0, expBonus: 0, dropBonus: 0, dodge: 0, regen: 0, accuracy: 0, ignoreDefense: 0, allStats: 0, trueDmg: 0, enemyDefReduce: 0, poison: 0, poisonCrit: 0, reflect: 0, firstTurnCrit: false, survivalChance: 0 };
             
             // 支持新版生肖隨從的skill結構（effect屬性）
             if (companion.skills && Array.isArray(companion.skills)) {
@@ -21442,7 +21604,7 @@ function updateSetBonusDisplay() {
 // 10. 裝備生肖
 function equipCompanion(companionId) {
     gameState.companions.active = companionId;
-    addLog(`裝備生肖：${ZODIAC_COMPANIONS[companionId].icon} ${ZODIAC_COMPANIONS[companionId].name}`, 'green');
+    addLog('隨從', `🐾 已裝備隨從：${ZODIAC_COMPANIONS[companionId].icon} ${ZODIAC_COMPANIONS[companionId].name}`);
     
     // 如果當前裝備的裝備不屬於這個生肖，自動卸下
     if (gameState.companions.equipment) {
@@ -22930,7 +23092,7 @@ function showEquipmentDropAnimation(equipment) {
             
             // 裝備卡牌（儲存 UUID）
             gameState.cards[slotKey] = cardUuid;
-            addLog(`裝備卡牌：${card.name} 到槽位${slotNum}`, 'info');
+            addLog('卡牌', `🎴 已裝備卡牌：${card.icon} ${card.name} (槽位${slotNum})`);
             
             // 更新任務進度：裝備卡牌
             updateQuestProgress('equip_card', 1);
@@ -24640,7 +24802,7 @@ function showEquipmentDropAnimation(equipment) {
             }
             
             gameState.pets.equipped = numId;
-            addLog('寵物', `✅ 裝備了 ${pet.icon} ${pet.name}`);
+            addLog('寵物', `🐾 已裝備寵物：${pet.icon} ${pet.name}`);
             
             saveGame();
             updateUI();

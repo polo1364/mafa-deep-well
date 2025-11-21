@@ -6174,8 +6174,8 @@ const REGION_CONSUMABLES = {
         description: '機靈敏捷，善於發現弱點',
         maxLevel: 50,
         skills: [
-            { name: '鼠目寸光', effect: { crit: 0.05 }, description: '暴擊率 +5%' },
-            { name: '靈活身手', effect: { dodge: 0.03 }, description: '閃避率 +3%' }
+            { name: '暴擊提升', effect: { crit: 0.05 }, description: '暴擊率 +5%' },
+            { name: '閃避提升', effect: { dodge: 0.03 }, description: '閃避率 +3%' }
         ],
         dropRate: 0.05
     },
@@ -6188,8 +6188,8 @@ const REGION_CONSUMABLES = {
         description: '穩重堅韌，如山般不可撼動',
         maxLevel: 50,
         skills: [
-            { name: '牛氣沖天', effect: { def: 0.08 }, description: '防禦力 +8%' },
-            { name: '堅韌不拔', effect: { hp: 0.10 }, description: '最大生命 +10%' }
+            { name: '防禦加成', effect: { def: 0.08 }, description: '防禦力 +8%' },
+            { name: 'HP加成', effect: { hp: 0.10 }, description: '最大生命 +10%' }
         ],
         dropRate: 0.05
     },
@@ -6202,8 +6202,8 @@ const REGION_CONSUMABLES = {
         description: '靈動輕盈，難以捕捉',
         maxLevel: 50,
         skills: [
-            { name: '兔起鵛落', effect: { dodge: 0.08 }, description: '閃避率 +8%' },
-            { name: '月宮祝福', effect: { regen: 0.015 }, description: '每回合回復 1.5% HP' }
+            { name: '閃避提升', effect: { dodge: 0.08 }, description: '閃避率 +8%' },
+            { name: 'HP回復', effect: { regen: 0.015 }, description: '每回合回復 1.5% HP' }
         ],
         dropRate: 0.05
     },
@@ -6216,8 +6216,8 @@ const REGION_CONSUMABLES = {
         description: '溫和善良，帶來祥瑞',
         maxLevel: 50,
         skills: [
-            { name: '羊群效應', effect: { regen: 0.02 }, description: '每回合回復 2% HP' },
-            { name: '祥瑞之兆', effect: { postBattleHeal: 0.10 }, description: '戰後回復 10% HP' }
+            { name: 'HP回復', effect: { regen: 0.02 }, description: '每回合回復 2% HP' },
+            { name: '戰後治療', effect: { postBattleHeal: 0.10 }, description: '戰後回復 10% HP' }
         ],
         dropRate: 0.05
     },
@@ -6230,8 +6230,8 @@ const REGION_CONSUMABLES = {
         description: '準確無誤，從不失手',
         maxLevel: 50,
         skills: [
-            { name: '雞鳴破曉', effect: { accuracy: 0.10 }, description: '命中率 +10%' },
-            { name: '啄擊', effect: { ignoreDefense: 0.03 }, description: '無視 3% 防禦' }
+            { name: '命中提升', effect: { accuracy: 0.10 }, description: '命中率 +10%' },
+            { name: '破甲', effect: { ignoreDefense: 0.03 }, description: '無視 3% 防禦' }
         ],
         dropRate: 0.05
     },
@@ -6244,8 +6244,8 @@ const REGION_CONSUMABLES = {
         description: '憐厚可愛，帶來財運',
         maxLevel: 50,
         skills: [
-            { name: '豬籠入水', effect: { goldBonus: 0.15 }, description: '金幣獲得 +15%' },
-            { name: '福氣滿滿', effect: { expBonus: 0.10 }, description: '經驗獲得 +10%' }
+            { name: '金幣加成', effect: { goldBonus: 0.15 }, description: '金幣獲得 +15%' },
+            { name: '經驗加成', effect: { expBonus: 0.10 }, description: '經驗獲得 +10%' }
         ],
         dropRate: 0.05
     },
@@ -6260,9 +6260,9 @@ const REGION_CONSUMABLES = {
         description: '兇猛強悍，攻勢如虎',
         maxLevel: 50,
         skills: [
-            { name: '虎啸山林', effect: { atk: 0.12 }, description: '攻擊力 +12%' },
-            { name: '猛虎撲擊', effect: { critDmg: 0.15 }, description: '暴擊傷害 +15%' },
-            { name: '虎威', effect: { enemyDefReduce: 0.05 }, description: '敵人防禦 -5%' }
+            { name: '攻擊加成', effect: { atk: 0.12 }, description: '攻擊力 +12%' },
+            { name: '暴傷加成', effect: { critDmg: 0.15 }, description: '暴擊傷害 +15%' },
+            { name: '破甲', effect: { enemyDefReduce: 0.05 }, description: '敵人防禦 -5%' }
         ],
         dropRate: 0.02
     },
@@ -6275,9 +6275,9 @@ const REGION_CONSUMABLES = {
         description: '陰險狡詐，毒素致命',
         maxLevel: 50,
         skills: [
-            { name: '蛇毒', effect: { poison: 0.02 }, description: '毒素每回合 2% 傷害' },
-            { name: '蛇行', effect: { dodge: 0.05 }, description: '閃避率 +5%' },
-            { name: '毒牙', effect: { poisonCrit: 2.0 }, description: '暴擊時毒素翻倍' }
+            { name: '毒素傷害', effect: { poison: 0.02 }, description: '毒素每回合 2% 傷害' },
+            { name: '閃避提升', effect: { dodge: 0.05 }, description: '閃避率 +5%' },
+            { name: '毒素加倍', effect: { poisonCrit: 2.0 }, description: '暴擊時毒素翻倍' }
         ],
         dropRate: 0.02
     },
@@ -6290,9 +6290,9 @@ const REGION_CONSUMABLES = {
         description: '快如疾風，勢不可擋',
         maxLevel: 50,
         skills: [
-            { name: '馬踏飛燕', effect: { crit: 0.10 }, description: '暴擊率 +10%' },
-            { name: '疾風迅雷', effect: { critDmg: 0.20 }, description: '暴擊傷害 +20%' },
-            { name: '追風', effect: { firstTurnCrit: true }, description: '首回合必定暴擊' }
+            { name: '暴擊提升', effect: { crit: 0.10 }, description: '暴擊率 +10%' },
+            { name: '暴傷加成', effect: { critDmg: 0.20 }, description: '暴擊傷害 +20%' },
+            { name: '首回必暴', effect: { firstTurnCrit: true }, description: '首回合必定暴擊' }
         ],
         dropRate: 0.02
     },
@@ -6305,9 +6305,9 @@ const REGION_CONSUMABLES = {
         description: '機智靈活，變化莎測',
         maxLevel: 50,
         skills: [
-            { name: '猴性靈巧', effect: { crit: 0.08 }, description: '暴擊率 +8%' },
-            { name: '金箍棒', effect: { atk: 0.10 }, description: '攻擊力 +10%' },
-            { name: '七十二變', effect: { randomBuff: true }, description: '每3回合隨機增益' }
+            { name: '暴擊提升', effect: { crit: 0.08 }, description: '暴擊率 +8%' },
+            { name: '攻擊加成', effect: { atk: 0.10 }, description: '攻擊力 +10%' },
+            { name: '隨機增益', effect: { randomBuff: true }, description: '每3回合隨機增益' }
         ],
         dropRate: 0.02
     },
@@ -6322,10 +6322,10 @@ const REGION_CONSUMABLES = {
         description: '忠誠無比，誓死守護主人',
         maxLevel: 50,
         skills: [
-            { name: '忠誠守護', effect: { def: 0.15 }, description: '防禦力 +15%' },
-            { name: '護主', effect: { survivalChance: 0.20 }, description: '20% 機率保留 1 HP' },
-            { name: '反擊', effect: { reflect: 0.05 }, description: '反擊 5% 傷害' },
-            { name: '警戒', effect: { dmgRed: 0.05 }, description: '減傷 +5%' }
+            { name: '防禦加成', effect: { def: 0.15 }, description: '防禦力 +15%' },
+            { name: '死亡抵抗', effect: { survivalChance: 0.20 }, description: '20% 機率保留 1 HP' },
+            { name: '反傷', effect: { reflect: 0.05 }, description: '反擊 5% 傷害' },
+            { name: '減傷', effect: { dmgRed: 0.05 }, description: '減傷 +5%' }
         ],
         dropRate: 0.005
     },
@@ -6340,10 +6340,10 @@ const REGION_CONSUMABLES = {
         description: '至高無上的神獸，力量無與倫比',
         maxLevel: 50,
         skills: [
-            { name: '龍威', effect: { allStats: 0.10 }, description: '全屬性 +10%' },
-            { name: '龍鱗護體', effect: { dmgRed: 0.08 }, description: '減傷 +8%' },
-            { name: '龍息', effect: { trueDmg: 0.03 }, description: '附帶 3% 真實傷害' },
-            { name: '龍運', effect: { goldBonus: 0.20 }, description: '金幣獲得 +20%' }
+            { name: '全屬性加成', effect: { allStats: 0.10 }, description: '全屬性 +10%' },
+            { name: '減傷', effect: { dmgRed: 0.08 }, description: '減傷 +8%' },
+            { name: '真實傷害', effect: { trueDmg: 0.03 }, description: '附帶 3% 真實傷害' },
+            { name: '金幣加成', effect: { goldBonus: 0.20 }, description: '金幣獲得 +20%' }
         ],
         dropRate: 0.001
     }
@@ -20852,7 +20852,10 @@ companions: {
 function dropZodiacCompanion() {
     // 計算總掉落率
     const allCompanions = Object.values(ZODIAC_COMPANIONS);
-    const availableCompanions = allCompanions.filter(c => !gameState.companions.owned.includes(c.id));
+    const availableCompanions = allCompanions.filter(c => !gameState.companions.owned.some(owned => {
+        const id = typeof owned === 'string' ? owned : owned.id;
+        return id === c.id;
+    }));
     
     if (availableCompanions.length === 0) {
         return null; // 已收集全部生肖
@@ -21213,8 +21216,13 @@ function updateEquipmentList() {
         const rarityColor = getRarityColor(equipment.rarity);
         const levelMultiplier = 1 + (owned.level - 1) * 0.1;
         
-        // 檢查是否可以裝備（需要擁有對應生肖）
-        const canEquip = gameState.companions.owned.includes(equipment.zodiac);
+        // 檢查是否可以裝備（只有當前激活生肖的裝備才能裝備）
+        const isActiveZodiacEquipment = gameState.companions.active === equipment.zodiac;
+        const hasZodiac = gameState.companions.owned.some(c => {
+            const id = typeof c === 'string' ? c : c.id;
+            return id === equipment.zodiac;
+        });
+        const canEquip = isActiveZodiacEquipment && hasZodiac;
         const zodiacName = ZODIAC_COMPANIONS[equipment.zodiac]?.name || equipment.zodiac;
         
         let effectsHtml = Object.entries(equipment.effects).map(([stat, value]) => {
@@ -21250,7 +21258,8 @@ function updateEquipmentList() {
                 ${equipment.special ? `<div style="color: #ffd700; font-size: 0.8rem; margin: 5px 0;">⚡ ${equipment.special}</div>` : ''}
                 <div style="display: flex; gap: 5px; margin-top: 8px;">
                     ${!isEquipped && canEquip ? `<button onclick="equipZodiacEquipment('${owned.id}')" style="flex: 1; background: #00ff88; color: #000;">裝備</button>` : ''}
-                    ${!canEquip ? `<button disabled style="flex: 1; background: #555; color: #888; cursor: not-allowed;">需要 ${zodiacName}</button>` : ''}
+                    ${!isEquipped && !canEquip && hasZodiac && !isActiveZodiacEquipment ? `<button disabled style="flex: 1; background: #555; color: #888; cursor: not-allowed;">需要裝備 ${zodiacName}</button>` : ''}
+                    ${!hasZodiac ? `<button disabled style="flex: 1; background: #555; color: #888; cursor: not-allowed;">需要 ${zodiacName}</button>` : ''}
                     ${canUpgrade ? `<button onclick="upgradeEquipment('${owned.id}')" style="flex: 1; background: #4ea5ff;">升級 (${upgradeCost}碎片)</button>` : ''}
                     ${!canUpgrade && owned.level < 10 ? `<button disabled style="flex: 1; background: #555; color: #888;">碎片不足</button>` : ''}
                     ${!isEquipped ? `<button onclick="decomposeZodiacEquipment('${owned.id}')" style="flex: 1; background: #ff6b6b; color: #fff;">分解</button>` : ''}
@@ -21397,7 +21406,11 @@ function equipZodiacEquipment(equipmentId) {
     
     // 檢查是否擁有對應生肖
     const zodiacId = equipment.zodiac;
-    if (!gameState.companions.owned.includes(zodiacId)) {
+    const hasZodiac = gameState.companions.owned.some(c => {
+        const id = typeof c === 'string' ? c : c.id;
+        return id === zodiacId;
+    });
+    if (!hasZodiac) {
         const zodiacName = ZODIAC_COMPANIONS[zodiacId]?.name || zodiacId;
         addLog(`需要先獲得 ${zodiacName}`, 'red');
         return;

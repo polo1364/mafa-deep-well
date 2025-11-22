@@ -12487,6 +12487,7 @@ const REGION_CONSUMABLES = {
                         if (affixData.effect) {
                             const e = affixData.effect;
                             const parts = [];
+                            if (e.allStatsMultiplier) parts.push(`全屬性+${Math.floor((e.allStatsMultiplier - 1) * 100)}%`);
                             if (e.atkMultiplier) parts.push(`攻擊力+${Math.floor((e.atkMultiplier - 1) * 100)}%`);
                             if (e.defMultiplier) parts.push(`防禦力+${Math.floor((e.defMultiplier - 1) * 100)}%`);
                             if (e.hpMultiplier) parts.push(`生命值+${Math.floor((e.hpMultiplier - 1) * 100)}%`);
@@ -12499,6 +12500,8 @@ const REGION_CONSUMABLES = {
                             if (e.dodgeChance) parts.push(`閃避${Math.floor(e.dodgeChance * 100)}%`);
                             if (e.armorPen) parts.push(`破甲${Math.floor(e.armorPen * 100)}%`);
                             if (e.doubleAttackChance) parts.push(`連擊${Math.floor(e.doubleAttackChance * 100)}%`);
+                            if (e.damageVariance) parts.push(`傷害波動±${Math.floor(e.damageVariance * 100)}%`);
+                            if (e.stackingAtk) parts.push(`每次攻擊獲得${Math.floor(e.stackingAtk * 100)}%攻擊（疊${e.maxStacks}層）`);
                             if (e.lowHpAtkBonus) parts.push(`低血狂暴（<${Math.floor(e.lowHpThreshold * 100)}%HP時攻擊+${Math.floor(e.lowHpAtkBonus * 100)}%）`);
                             if (e.lowHpDefMultiplier) parts.push(`低血防禦倍增（<${Math.floor(e.lowHpThreshold * 100)}%HP時防禦×${e.lowHpDefMultiplier}）`);
                             if (e.revive) parts.push(`不滅復活（回復${Math.floor(e.revivePercent * 100)}%HP）`);

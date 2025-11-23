@@ -12487,6 +12487,7 @@ const REGION_CONSUMABLES = {
                         if (affixData.effect) {
                             const e = affixData.effect;
                             const parts = [];
+                            if (e.elementalAttack) parts.push(`攻擊附帶隨機元素效果`);
                             if (e.allStatsMultiplier) parts.push(`全屬性+${Math.floor((e.allStatsMultiplier - 1) * 100)}%`);
                             if (e.atkMultiplier) parts.push(`攻擊力+${Math.floor((e.atkMultiplier - 1) * 100)}%`);
                             if (e.defMultiplier) parts.push(`防禦力+${Math.floor((e.defMultiplier - 1) * 100)}%`);

@@ -15393,39 +15393,8 @@ const REGION_CONSUMABLES = {
                 // dodge, regen, accuracy, ignoreDefense 等屬性在戰鬥中處理
             }
             
-            // 加上生肖裝備屬性加成
-            const equipmentBonuses = getCompanionEquipmentCombo();
-            if (equipmentBonuses) {
-                // 百分比加成（乘法）
-                if (equipmentBonuses.atk) {
-                    gameState.player.atk = Math.floor(gameState.player.atk * (1 + equipmentBonuses.atk));
-                }
-                if (equipmentBonuses.def) {
-                    gameState.player.def = Math.floor(gameState.player.def * (1 + equipmentBonuses.def));
-                }
-                if (equipmentBonuses.hp) {
-                    gameState.player.maxHp = Math.floor(gameState.player.maxHp * (1 + equipmentBonuses.hp));
-                }
-                if (equipmentBonuses.crit) {
-                    gameState.player.crit += equipmentBonuses.crit * 100;  // 0.05 -> 5%
-                }
-                if (equipmentBonuses.critDmg) {
-                    gameState.player.critDmg += equipmentBonuses.critDmg * 100;  // 0.10 -> 10%
-                }
-                if (equipmentBonuses.dmgRed) {
-                    totalDmgRed += equipmentBonuses.dmgRed;
-                }
-                if (equipmentBonuses.lifeSteal) {
-                    totalLifeSteal += equipmentBonuses.lifeSteal;
-                }
-                if (equipmentBonuses.goldGain) {
-                    totalGoldBonus += equipmentBonuses.goldGain;
-                }
-                if (equipmentBonuses.expGain) {
-                    totalExpBonus += equipmentBonuses.expGain;
-                }
-                // dodge, regen, accuracy, reflect 等屬性在戰鬥中處理
-            }
+            // 注意：生肖裝備加成已經在 applyCompanionPassiveSkills() 中被應用
+            // 不需要再次應用 getCompanionEquipmentCombo()，以避免重複計算
 
             
             // 加上卡片加成
@@ -15460,15 +15429,7 @@ const REGION_CONSUMABLES = {
                 totalLifeSteal += lifeStealBonus;
             }
             
-            // 應用屬性上限（避免破壞平衡）
-            gameState.player.crit = Math.min(gameState.player.crit, 75); // 暴擊率上限 75%
-            gameState.player.dmgRed = Math.min(totalDmgRed, 75); // 減傷上限 75%
-            gameState.player.lifeSteal = Math.min(totalLifeSteal, 50); // 吸血上限 50%
-            gameState.player.armorPen = Math.min(totalArmorPen, 75); // 無視防禦上限 75%
-            gameState.player.bossDmg = Math.min(totalBossDmg, 100); // 對首領傷害上限 100%
-            gameState.player.hpRegen = Math.min(totalHpRegen, 10); // 生命回復上限 10%
-            gameState.player.expBonus = Math.min(totalExpBonus, 100); // 經驗加成上限 100%
-            gameState.player.luck = Math.min(totalLuck, 100); // 幸運值上限 100%
+            // 旧的上限控制已移動到 recalculateStats() 最後，以確保在所有加成應用後執行
             gameState.player.goldBonus = Math.min(totalGoldBonus, 200); // 金幣加成上限 200%
             
             // 保存屬性分解數據（用於UI顯示）
@@ -15514,6 +15475,16 @@ const REGION_CONSUMABLES = {
             
             // 應用稱號加成
             applyTitleBonuses();
+            
+            // 在所有加成應用後，強制應用屬性上限
+            gameState.player.crit = Math.min(gameState.player.crit, 50);
+            gameState.player.critDmg = Math.min(gameState.player.critDmg, 300);
+            gameState.player.dmgRed = Math.min(gameState.player.dmgRed, 60);
+            gameState.player.lifeSteal = Math.min(gameState.player.lifeSteal, 30);
+            gameState.player.armorPen = Math.min(gameState.player.armorPen, 40);
+            gameState.player.bossDmg = Math.min(gameState.player.bossDmg, 50);
+            gameState.player.hpRegen = Math.min(gameState.player.hpRegen, 8);
+            gameState.player.expBonus = Math.min(gameState.player.expBonus, 100);
             
             gameState.player.hp = Math.min(gameState.player.hp, gameState.player.maxHp);
         }
@@ -15702,39 +15673,41 @@ const REGION_CONSUMABLES = {
             document.getElementById('player-def').textContent = Math.round(gameState.player.def);
             
             // 暴擊率（只顯示最終總值）
-            const critValue = parseFloat((gameState.player.crit || 0).toFixed(1));
+            const critValue = Math.round(gameState.player.crit || 0);
             document.getElementById('player-crit').textContent = `${critValue}%`;
             
             // 暴擊傷害（只顯示最終總值）
-            const critDmgValue = parseFloat((gameState.player.critDmg || 0).toFixed(1));
+            const critDmgValue = Math.round(gameState.player.critDmg || 0);
             document.getElementById('player-critdmg').textContent = `${critDmgValue}%`;
             
             // 新增屬性顯示（只顯示最終總值）
-            const dmgRedValue = (gameState.player.dmgRed || 0).toFixed(1);
+            const dmgRedValue = Math.round(gameState.player.dmgRed || 0);
             document.getElementById('player-dmgred').textContent = `${dmgRedValue}%`;
             
-            const lifeStealValue = (gameState.player.lifeSteal || 0).toFixed(1);
+            const lifeStealValue = Math.round(gameState.player.lifeSteal || 0);
             document.getElementById('player-lifesteal').textContent = `${lifeStealValue}%`;
             
-            const armorPenValue = (gameState.player.armorPen || 0).toFixed(1);
+            const armorPenValue = Math.round(gameState.player.armorPen || 0);
             document.getElementById('player-armorpen').textContent = `${armorPenValue}%`;
             
-            const bossDmgValue = (gameState.player.bossDmg || 0).toFixed(1);
+            const bossDmgValue = Math.round(gameState.player.bossDmg || 0);
             document.getElementById('player-bossdmg').textContent = `${bossDmgValue}%`;
             
-            const hpRegenValue = (gameState.player.hpRegen || 0).toFixed(1);
+            const hpRegenValue = Math.round(gameState.player.hpRegen || 0);
             document.getElementById('player-hpregen').textContent = `${hpRegenValue}%`;
             
-            const expBonusValue = (gameState.player.expBonus || 0).toFixed(1);
+            const expBonusValue = Math.round(gameState.player.expBonus || 0);
             document.getElementById('player-expbonus').textContent = `${expBonusValue}%`;
             
             // 幸運值
-            document.getElementById('player-luck').textContent = `${(gameState.player.luck || 0).toFixed(1)}%`;
+            document.getElementById('player-luck').textContent = `${Math.round(gameState.player.luck || 0)}%`;
             
             // 金幣加成
-            document.getElementById('player-goldbonus').textContent = `${(gameState.player.goldBonus || 0).toFixed(1)}%`;
+            document.getElementById('player-goldbonus').textContent = `${Math.round(gameState.player.goldBonus || 0)}%`;
             
             // 裝備
+            // 先計算套裝效果，再更新顯示
+            calculateSetEffects();
             updateEquipmentSlots();
             
             // 區域資訊
@@ -16061,16 +16034,26 @@ const REGION_CONSUMABLES = {
             const stats = [];
             if (player.setEffects.atkPercent > 0) stats.push(`攻擊+${player.setEffects.atkPercent}%`);
             if (player.setEffects.defPercent > 0) stats.push(`防禦+${player.setEffects.defPercent}%`);
+            if (player.setEffects.hpPercent > 0) stats.push(`生命+${player.setEffects.hpPercent}%`);
             if (player.setEffects.crit > 0) stats.push(`暴擊率+${player.setEffects.crit}%`);
             if (player.setEffects.critDmg > 0) stats.push(`暴擊傷+${player.setEffects.critDmg}%`);
             if (player.setEffects.dmgRed > 0) stats.push(`減傷+${player.setEffects.dmgRed}%`);
             if (player.setEffects.lifeSteal > 0) stats.push(`吸血+${player.setEffects.lifeSteal}%`);
             if (player.setEffects.armorPen > 0) stats.push(`無視防禦+${player.setEffects.armorPen}%`);
             if (player.setEffects.bossDmg > 0) stats.push(`對首領傷害+${player.setEffects.bossDmg}%`);
+            if (player.setEffects.hpRegen > 1) stats.push(`每秒回復+${(player.setEffects.hpRegen - 1).toFixed(1)}%`);
+            if (player.setEffects.expBonus > 0) stats.push(`經驗+${player.setEffects.expBonus}%`);
+            
+            // 顯示激活的套裝名稱
+            const setNames = activeSets.map(([name, count]) => name + '(' + count + '/8)').join(' + ');
             
             if (stats.length > 0) {
-                setEffectText.textContent = stats.join('、');
-                setEffectText.style.color = '#00ff88';
+                setEffectText.innerHTML = '<div style="color: #ffd700; font-size: 0.9rem; margin-bottom: 3px;">' + setNames + '</div><div style="color: #00ff88;">' + stats.join('、') + '</div>';
+                const display = document.getElementById('set-effect-display');
+                if (display) {
+                    display.style.opacity = '1';
+                    display.style.background = 'rgba(0, 255, 136, 0.1)';
+                }
             } else {
                 setEffectText.textContent = '無';
                 setEffectText.style.color = '#7a8fb8';
@@ -18570,7 +18553,8 @@ const REGION_CONSUMABLES = {
             const bonuses = {
                 atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0,
                 dmgRed: 0, lifeSteal: 0, regen: 0, reflect: 0,
-                dodge: 0, accuracy: 0, expGain: 0, goldGain: 0
+                dodge: 0, accuracy: 0, expGain: 0, goldGain: 0,
+                ignoreDefense: 0
             };
             
             // 獲取當前激活的生肖
@@ -28195,6 +28179,16 @@ function integrateReincarnationEffectsInCombat() {
             
             // 儲存其他加成供其他系統使用
             gameState.talentBonuses = bonuses;
+            
+            // 應用屬性上限
+            gameState.player.crit = Math.min(gameState.player.crit, 50);
+            gameState.player.critDmg = Math.min(gameState.player.critDmg, 300);
+            gameState.player.dmgRed = Math.min(gameState.player.dmgRed, 60);
+            gameState.player.lifeSteal = Math.min(gameState.player.lifeSteal, 30);
+            gameState.player.armorPen = Math.min(gameState.player.armorPen, 40);
+            gameState.player.bossDmg = Math.min(gameState.player.bossDmg, 50);
+            gameState.player.hpRegen = Math.min(gameState.player.hpRegen, 8);
+            gameState.player.expBonus = Math.min(gameState.player.expBonus, 100);
         }
         
         function getBaseStats() {
@@ -28816,6 +28810,16 @@ function integrateReincarnationEffectsInCombat() {
             
             // 儲存加成供其他系統使用
             gameState.titleBonuses = bonus;
+            
+            // 應用屬性上限
+            gameState.player.crit = Math.min(gameState.player.crit, 50);
+            gameState.player.critDmg = Math.min(gameState.player.critDmg, 300);
+            gameState.player.dmgRed = Math.min(gameState.player.dmgRed, 60);
+            gameState.player.lifeSteal = Math.min(gameState.player.lifeSteal, 30);
+            gameState.player.armorPen = Math.min(gameState.player.armorPen, 40);
+            gameState.player.bossDmg = Math.min(gameState.player.bossDmg, 50);
+            gameState.player.hpRegen = Math.min(gameState.player.hpRegen, 8);
+            gameState.player.expBonus = Math.min(gameState.player.expBonus, 100);
         }
         
 

@@ -2510,13 +2510,38 @@ const Utils = {
     }
 };
 const DOM = { cache: new Map(), get(id) { if (!this.cache.has(id)) { const e = document.getElementById(id); if (e) this.cache.set(id, e); return e; } return this.cache.get(id); }, clear() { this.cache.clear(); } };
-const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Date.now();const SAVE_KEY = 'darui_game_save';const storage =(() => {let memoryStorage = {};let useMemory = false;try {const testKey = '__storage_test__';localStorage.setItem(testKey,'test');localStorage.removeItem(testKey);} catch(e){console.warn('localStorage 不可用，使用記憶體儲存（關閉分頁後數據將遺失）');useMemory = true;}
-            return {getItem:(key) => {if(useMemory){if(!memoryStorage[key]){try {const oldSave = localStorage.getItem(key);if(oldSave){console.log('從localStorage遷移舊存檔到記憶體');memoryStorage[key] = oldSave;return oldSave;}} catch(e){}}
-                        return memoryStorage[key] || null;}
-                    try {return localStorage.getItem(key);} catch(e){return memoryStorage[key] || null;}},setItem:(key,value) => {if(useMemory){memoryStorage[key] = value;return;}
-                    try {localStorage.setItem(key,value);} catch(e){memoryStorage[key] = value;}},removeItem:(key) => {if(useMemory){delete memoryStorage[key];return;}
-                    try {localStorage.removeItem(key);} catch(e){delete memoryStorage[key];}},clear:() => {if(useMemory){memoryStorage = {};return;}
-                    try {localStorage.clear();} catch(e){memoryStorage = {};}}};})();let gameState = {version:GAME_VERSION,player:{name:'',class:'',level:1,exp:0,expToNext:100,hp:100,maxHp:100,ap:100,maxAp:100,gold:200,shards:0,atk:13,def:6,crit:5,critDmg:150,dmgRed:0,lifeSteal:0,armorPen:0,bossDmg:0,hpRegen:1,expBonus:0,luck:0,goldBonus:0,equipment:{weapon:null,head:null,chest:null,legs:null,feet:null,gloves:null,ring:null,necklace:null},skill:null,buffs:[],classBonus:{}},region:0,battleProgress:0,inventory:[],maxInventory:50,potionCooldown:0,autoExplore:false,autoExploreInterval:null,autoPotion:false,autoPotionThreshold:50,autoPotionType:'medium',selectedPotionId:null,selectedPotionName:null,autoPotionConfig:{enabled:true,potionName:null,threshold:50},apRegenTime:Date.now(),hpRegenTime:Date.now(),stats:{kills:0,items:0,startTime:Date.now(),legendaryItems:0,currentWinStreak:0,maxWinStreak:0},iteration:{count:0,totalIP:0,availableIP:0,talents:{},completedBosses:[],chests:0,reincarnationShards:0,reincarnationEquipment:[]},achievements:[],dailyQuests:{lastReset:Date.now(),quests:[],completed:[],rewardsClaimed:{three:false,five:false},totalCompleted:0},titles:{unlocked:[],equipped:null,progress:{}},dungeons:{records:{}},companions:{owned:[],active:null,ownedEquipment:[],equipment:{},zodiacEquipment:{},shards:0,exp:0,level:1,migrated:false,equipmentLevels:{attack:1,defense:1,heal:1},cooldowns:{}},offline:{lastOnlineTime:Date.now(),totalOfflineTime:0,rewardsClaimed:true,stats:{totalGoldEarned:0,totalExpEarned:0,claimCount:0}},cards:{slot1:null,slot2:null,collection:[],shards:{},stats:{totalCardsObtained:0,totalCardsUpgraded:0,deckEffectsTriggered:0}},endlessMode:{unlocked:false,active:false,currentFloor:1,highestFloor:0,checkpoint:1,buffs:[],lastEntryDate:null,dailyEntered:false,stats:{totalKills:0,totalGold:0,totalFloors:0,totalRuns:0,averageFloor:0}},codex:{monsters:{},equipment:{},companions:{},cards:{},pets:{},stats:{totalMonstersUnlocked:0,totalEquipmentObtained:0,totalCompanionsObtained:0,totalCardsObtained:0,totalPetsObtained:0},rewardsCollected:{monsters:[],equipment:[],companions:[],cards:[]}},autoEquipment:{enabled:false,autoSalvage:false,salvageQuality:['common'],protectSet:true,considerSet:false,stats:{autoEquipped:0,autoSalvaged:0,materialsGained:0}},materials:{enhanceStone:0,reforgeStone:0,evolutionStone:0,eternalSource:0},pets:{collection:[],equipped:null,eggs:[],shards:{}}};let selectedClass = null;let currentEquipSlot = null;
+const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Date.now();const SAVE_KEY = 'darui_game_save';const storage = {
+    getItem: (key) => {
+        try {
+            return localStorage.getItem(key);
+        } catch(e) {
+            console.warn('localStorage 不可用:', e.message);
+            return null;
+        }
+    },
+    setItem: (key, value) => {
+        try {
+            localStorage.setItem(key, value);
+        } catch(e) {
+            console.warn('localStorage 寫入失敗:', e.message);
+        }
+    },
+    removeItem: (key) => {
+        try {
+            localStorage.removeItem(key);
+        } catch(e) {
+            console.warn('localStorage 刪除失敗:', e.message);
+        }
+    },
+    clear: () => {
+        try {
+            localStorage.clear();
+        } catch(e) {
+            console.warn('localStorage 清空失敗:', e.message);
+        }
+    }
+};;
+let gameState = {version:GAME_VERSION,player:{name:'',class:'',level:1,exp:0,expToNext:100,hp:100,maxHp:100,ap:100,maxAp:100,gold:200,shards:0,atk:13,def:6,crit:5,critDmg:150,dmgRed:0,lifeSteal:0,armorPen:0,bossDmg:0,hpRegen:1,expBonus:0,luck:0,goldBonus:0,equipment:{weapon:null,head:null,chest:null,legs:null,feet:null,gloves:null,ring:null,necklace:null},skill:null,buffs:[],classBonus:{}},region:0,battleProgress:0,inventory:[],maxInventory:50,potionCooldown:0,autoExplore:false,autoExploreInterval:null,autoPotion:false,autoPotionThreshold:50,autoPotionType:'medium',selectedPotionId:null,selectedPotionName:null,autoPotionConfig:{enabled:true,potionName:null,threshold:50},apRegenTime:Date.now(),hpRegenTime:Date.now(),stats:{kills:0,items:0,startTime:Date.now(),legendaryItems:0,currentWinStreak:0,maxWinStreak:0},iteration:{count:0,totalIP:0,availableIP:0,talents:{},completedBosses:[],chests:0,reincarnationShards:0,reincarnationEquipment:[]},achievements:[],dailyQuests:{lastReset:Date.now(),quests:[],completed:[],rewardsClaimed:{three:false,five:false},totalCompleted:0},titles:{unlocked:[],equipped:null,progress:{}},dungeons:{records:{}},companions:{owned:[],active:null,ownedEquipment:[],equipment:{},zodiacEquipment:{},shards:0,exp:0,level:1,migrated:false,equipmentLevels:{attack:1,defense:1,heal:1},cooldowns:{}},offline:{lastOnlineTime:Date.now(),totalOfflineTime:0,rewardsClaimed:true,stats:{totalGoldEarned:0,totalExpEarned:0,claimCount:0}},cards:{slot1:null,slot2:null,collection:[],shards:{},stats:{totalCardsObtained:0,totalCardsUpgraded:0,deckEffectsTriggered:0}},endlessMode:{unlocked:false,active:false,currentFloor:1,highestFloor:0,checkpoint:1,buffs:[],lastEntryDate:null,dailyEntered:false,stats:{totalKills:0,totalGold:0,totalFloors:0,totalRuns:0,averageFloor:0}},codex:{monsters:{},equipment:{},companions:{},cards:{},pets:{},stats:{totalMonstersUnlocked:0,totalEquipmentObtained:0,totalCompanionsObtained:0,totalCardsObtained:0,totalPetsObtained:0},rewardsCollected:{monsters:[],equipment:[],companions:[],cards:[]}},autoEquipment:{enabled:false,autoSalvage:false,salvageQuality:['common'],protectSet:true,considerSet:false,stats:{autoEquipped:0,autoSalvaged:0,materialsGained:0}},materials:{enhanceStone:0,reforgeStone:0,evolutionStone:0,eternalSource:0},pets:{collection:[],equipped:null,eggs:[],shards:{}}};let selectedClass = null;let currentEquipSlot = null;
 
         document.addEventListener('DOMContentLoaded',() => {try {const storedFileVersion = storage.getItem(FILE_VERSION_KEY);if(storedFileVersion && storedFileVersion !== GAME_VERSION){console.log(`檢測到檔案版本更新：${storedFileVersion} -> ${GAME_VERSION}`);storage.setItem(FILE_VERSION_KEY,GAME_VERSION);if(storedFileVersion !== null){console.log('清除快取並重新載入...');location.reload(true);return;}} else if(!storedFileVersion){storage.setItem(FILE_VERSION_KEY,GAME_VERSION);}} catch(e){console.error('版本檢查失敗：',e);}
             document.getElementById('new-game-btn').addEventListener('click',() => {const hasSave = storage.getItem(SAVE_KEY) !== null;if(hasSave){const confirmed = confirm('⚠️ 警告！\n\n開始新遊戲將會刪除現有存檔！\n\n確定要繼續嗎？');if(confirmed){const doubleConfirmed = confirm('再次確認：\n\n你的所有進度將會永久刪除！\n\n真的要開始新遊戲嗎？');if(doubleConfirmed){showCharacterCreation();}}} else {showCharacterCreation();}});document.getElementById('load-game-btn').addEventListener('click',loadGame);document.getElementById('how-to-play-btn').addEventListener('click',openHowToPlay);const autoEquipBtn = document.getElementById('auto-equip-btn');if(autoEquipBtn){autoEquipBtn.addEventListener('click',openAutoEquipSettings);}

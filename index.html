@@ -8378,55 +8378,34 @@ function endlessBattle(){
     }
     
     document.getElementById('endless-battle-start-btn').style.display = 'none';
-    const player = gameState.player;
+    
+    // 保存戰鬥前的HP
+    const savedPlayerHp = Math.floor(Number(gameState.endlessMode.currentPlayerHp) || Number(gameState.player.hp) || Number(gameState.player.maxHp) || 100);
+    gameState.player.hp = savedPlayerHp;
+    
     const enemy = gameState.endlessMode.currentBattle.enemy;
     
-    // 獲取隨從加成，確保是有效數值
-    const companionBonuses = (typeof applyCompanionPassiveSkills === 'function') ? applyCompanionPassiveSkills() : {atk:0,def:0,hp:0,crit:0,dodge:0};
+    // 關閉無盡挑戰的戰鬥UI，使用標準戰鬥UI
+    const endlessModal = document.getElementById('endless-challenge-modal');
+    if(endlessModal) endlessModal.style.display = 'none';
     
-    // 確保所有數值都是有效的整數
-    const playerAtk = Math.floor(Number(player.atk) || 10) + Math.floor(Number(companionBonuses.atk) || 0);
-    const playerDef = Math.floor(Number(player.def) || 5) + Math.floor(Number(companionBonuses.def) || 0);
-    const playerCrit = Math.floor(Number(player.crit) || 5) + Math.floor(Number(companionBonuses.crit) || 0);
-    const playerDodge = Math.floor(Number(player.dodge) || 0) + Math.floor(Number(companionBonuses.dodge) || 0);
-    const playerCritDmg = (Number(player.critDmg) || 150) / 100;
-    
-    // 使用保存的HP或當前HP，確保是有效數值
-    let playerHp = Math.floor(Number(gameState.endlessMode.currentPlayerHp) || Number(player.hp) || Number(player.maxHp) || 100);
-    const playerMaxHp = Math.floor(Number(player.maxHp) || 100);
-    
-    // 確保敵人數值有效
-    let enemyHp = Math.floor(Number(enemy.hp) || 100);
-    const enemyMaxHp = Math.floor(Number(enemy.maxHp) || enemyHp);
-    const enemyAtk = Math.floor(Number(enemy.atk) || 10);
-    const enemyDef = Math.floor(Number(enemy.def) || 5);
-    const enemyCrit = Math.floor(Number(enemy.crit) || 5);
-    const enemyDodge = Math.floor(Number(enemy.dodge) || 0);
-    
-    let round = 0;
-    const affixBonus = Math.min(0.2, (enemy.affixes || []).length * 0.05);
-    
-    endlessBattleInterval = setInterval(() => {
-        if(!gameState.endlessMode.active){
-            clearInterval(endlessBattleInterval);
-            endlessBattleInterval = null;
-            return;
+    // 使用標準的battle函數，但使用自定義的回調
+    battle(enemy, 
+        // 勝利回調
+        (victoryEnemy, battleStats) => {
+            // 保存當前玩家HP用於下一層
+            gameState.endlessMode.currentPlayerHp = gameState.player.hp;
+            
+            // 顯示無盡挑戰的獎勵窗口
+            setTimeout(() => showEndlessRewardWindow(), 500);
+        },
+        // 失敗回調
+        () => {
+            // 顯示無盡挑戰的失敗窗口
+            setTimeout(() => showEndlessDefeatWindow(), 500);
         }
-        round++;if(round > 1){const separator = document.createElement('div');separator.style.cssText = 'border-top:1px solid rgba(255,255,255,0.15);margin:8px 0;padding-top:8px;';separator.innerHTML = `<div style="text-align:center;color:#888;font-size:0.8rem;">─── 回合 ${round} ───</div>`;document.getElementById('endless-battle-log').appendChild(separator);document.getElementById('endless-battle-log').scrollTop = document.getElementById('endless-battle-log').scrollHeight;}
-        const playerDmgBase = Math.max(1,Math.floor(playerAtk *(0.8 + Math.random() * 0.4)));const playerHit = Math.random() * 100 > enemyDodge;if(playerHit){let playerDmg = playerDmgBase;if(Math.random() * 100 < playerCrit){playerDmg = Math.floor(playerDmg * playerCritDmg);addEndlessLog(`💥 爆擊！造成 ${playerDmg} 傷害`);} else {addEndlessLog(`⚔️ 你造成 ${playerDmg} 傷害`);}
-            for(let affix of enemy.affixes){const affixEffect = checkAffixTrigger(affix,true);if(affixEffect>0){playerDmg+=affixEffect;}}
-            const eventRoll = Math.random() * 100;if(eventRoll < 15 && round > 1){addEndlessLog(`🐉 隨從技能：${['破甲','削弱','詛咒'][Math.floor(Math.random() * 3)]}！`);} else if(eventRoll < 30 && round > 2){addEndlessLog(`⚙️ 裝備效果：${['火焰反擊','冰霜護甲'][Math.floor(Math.random() * 2)]}！`);} else if(eventRoll < 40 && round > 3){addEndlessLog(`🎴 卡牌效果：${['加攻','加防'][Math.floor(Math.random() * 2)]}！`);}
-            enemyHp -= playerDmg;} else {addEndlessLog(`❌ 攻擊落空`);}
-        enemy.hp = Math.max(0,enemyHp);updateEndlessEnemyHP(enemy.hp,enemy.maxHp);if(enemyHp <= 0){clearInterval(endlessBattleInterval);endlessBattleInterval=null;addEndlessLog(`✅ 勝利！擊敗了 ${enemy.name}！`);
-        // 保存當前玩家HP用於下一層
-        gameState.endlessMode.currentPlayerHp = playerHp;
-        gameState.player.hp = playerHp;
-        setTimeout(() => showEndlessRewardWindow(), 500);return;}
-        const enemyDmgBase = Math.max(1,Math.floor(enemyAtk *(0.8 + Math.random() * 0.4)));const enemyHit = Math.random() * 100 > playerDodge;if(enemyHit){let enemyDmg = enemyDmgBase;if(Math.random() * 100 < enemyCrit){enemyDmg = Math.floor(enemyDmg * 1.5);addEndlessLog(`💥 敵人爆擊！造成 ${enemyDmg} 傷害`);} else {addEndlessLog(`💥 敵人造成 ${enemyDmg} 傷害`);}
-            for(let affix of enemy.affixes){const affixEffect = checkAffixTrigger(affix,true);if(affixEffect<0){enemyDmg = Math.max(1,Math.floor(enemyDmg*(100+affixEffect)/100));}else if(affixEffect>0 && (affix.name==='生命'||affix.name==='再生'||affix.name==='聖光')){enemyHp = Math.min(enemyMaxHp, enemyHp + affixEffect);enemy.hp = enemyHp;updateEndlessEnemyHP(enemyHp,enemyMaxHp);}}if(Math.random() < (0.2+affixBonus) && round > 1){addEndlessLog(`⚡ 敵人技能：${['強化','回血'][Math.floor(Math.random() * 2)]}！`);}
-            const damageReduction = Math.floor(enemyDmg *(playerDef /(playerDef + 100)));enemyDmg = Math.max(1,enemyDmg - damageReduction);playerHp -= enemyDmg;} else {addEndlessLog(`🛡️ 敵人攻擊落空`);}
-        playerHp = Math.max(0,playerHp);player.hp = playerHp;updateEndlessPlayerHP(playerHp,playerMaxHp);if(round % 3 === 0 && Math.random() < 0.3){addEndlessLog(`✨ ${['回復生命','獲得護盾'][Math.floor(Math.random() * 2)]}！`);}
-        if(playerHp <= 0){clearInterval(endlessBattleInterval);endlessBattleInterval=null;addEndlessLog(`❌ 戰敗！你被 ${enemy.name} 擊倒了...`);setTimeout(() => showEndlessDefeatWindow(), 500);}},800);}
+    );
+}
 function updateEndlessPlayerHP(hp,maxHp){const hpPercent = Math.max(0,Math.min(100,(hp / maxHp) * 100));const hpBar = document.getElementById('endless-player-hp-bar');let bgColor = '#4CAF50';if(hpPercent <= 20){bgColor = '#F44336';} else if(hpPercent <= 40){bgColor = '#FF9800';} else if(hpPercent <= 70){bgColor = '#FFC107';}
     hpBar.style.background = `linear-gradient(90deg,${bgColor} 0%,${bgColor}dd 100%)`;hpBar.style.width = hpPercent + '%';document.getElementById('endless-player-hp').textContent = Math.ceil(hp);document.getElementById('endless-player-hp-max').textContent = maxHp;}
 function updateEndlessEnemyHP(hp,maxHp){const hpPercent = Math.max(0,Math.min(100,(hp / maxHp) * 100));const hpBar = document.getElementById('endless-enemy-hp-bar');let bgColor = '#F44336';if(hpPercent > 70){bgColor = '#4CAF50';} else if(hpPercent > 40){bgColor = '#FFC107';} else if(hpPercent > 20){bgColor = '#FF9800';}

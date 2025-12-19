@@ -5238,7 +5238,9 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
                 <div class="log-text" style="color:${color};font-size:${fontSize};font-weight:${fontWeight};">
                     ${icon} ${message}
                 </div>
-            `;logContent.appendChild(entry);setTimeout(() => {logContent.scrollTop = logContent.scrollHeight;},10);const allEntries = logContent.querySelectorAll('.log-entry[data-log-type]');if(allEntries.length > 200){Array.from(allEntries).slice(0,allEntries.length - 200).forEach(e => e.remove());}}
+            `;logContent.appendChild(entry);setTimeout(() => {logContent.scrollTop = logContent.scrollHeight;},10);const allEntries = logContent.querySelectorAll('.log-entry[data-log-type]');if(allEntries.length > 200){Array.from(allEntries).slice(0,allEntries.length - 200).forEach(e => e.remove());}
+            // 如果在無盡挑戰模式中，同時輸出到無盡挑戰日誌
+            if(gameState.endlessMode && gameState.endlessMode.inBattle && typeof addEndlessLog === 'function'){addEndlessLog(`${icon} ${message}`);}}
         function filterLogs(filterType){const log = document.getElementById('battle-log');if(!log) return;const logContent = log.querySelector('.log-content');if(!logContent) return;const entries = logContent.querySelectorAll('.log-entry[data-log-type]');const buttons = document.querySelectorAll('.log-filter-btn');buttons.forEach(btn => {if(btn.dataset.filter === filterType){btn.classList.add('active');} else {btn.classList.remove('active');}});entries.forEach(entry => {if(filterType === 'all' || entry.dataset.logType === filterType){entry.classList.remove('hidden');} else {entry.classList.add('hidden');}});}
         function clearBattleLog(){if(!confirm('確定要清除所有戰鬥日誌嗎？')) return;const log = document.getElementById('battle-log');if(!log) return;const logContent = log.querySelector('.log-content');if(!logContent) return;const entries = logContent.querySelectorAll('.log-entry[data-log-type]');entries.forEach(e => e.remove());addLog('系統','戰鬥日誌已清除');}
         function calculateEquipmentScore(equipment){if(!equipment || equipment.type === 'consumable') return 0;if(!gameState.autoEquipment){gameState.autoEquipment = {enabled:false,autoSalvage:false,salvageQuality:['common'],protectSet:true,considerSet:false,stats:{autoEquipped:0,autoSalvaged:0,materialsGained:0}};}
@@ -8307,7 +8309,7 @@ function showEndlessChallengeModal(){
     modal.classList.add('active');
     
     const enemy = gameState.endlessMode.currentBattle.enemy;
-    const floor = gameState.endlessMode.floor;
+    const floor = gameState.endlessMode.currentFloor;
     
     // 更新層數顯示
     document.getElementById('endless-floor').textContent = floor;
@@ -8385,14 +8387,17 @@ function endlessBattle(){
     
     const enemy = gameState.endlessMode.currentBattle.enemy;
     
-    // 關閉無盡挑戰的戰鬥UI，使用標準戰鬥UI
-    const endlessModal = document.getElementById('endless-challenge-modal');
-    if(endlessModal) endlessModal.style.display = 'none';
+    // 標記當前處於無盡挑戰模式，讓addLog函數知道要輸出到無盡挑戰日誌
+    gameState.endlessMode.inBattle = true;
     
+    // 不關閉無盡挑戰的戰鬥UI，保持顯示
     // 使用標準的battle函數，但使用自定義的回調
     battle(enemy, 
         // 勝利回調
         (victoryEnemy, battleStats) => {
+            // 清除無盡挑戰戰鬥標記
+            gameState.endlessMode.inBattle = false;
+            
             // 保存當前玩家HP用於下一層
             gameState.endlessMode.currentPlayerHp = gameState.player.hp;
             
@@ -8401,6 +8406,9 @@ function endlessBattle(){
         },
         // 失敗回調
         () => {
+            // 清除無盡挑戰戰鬥標記
+            gameState.endlessMode.inBattle = false;
+            
             // 顯示無盡挑戰的失敗窗口
             setTimeout(() => showEndlessDefeatWindow(), 500);
         }

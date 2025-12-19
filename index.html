@@ -4514,7 +4514,11 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
                 playerHp = gameState.player.hp;if(enemy.debuffs && enemy.debuffs.stun && enemy.debuffs.stun.duration > 0){addLog('特殊',`💫 ${enemy.name}被暈暈，跳過這回合！`);enemy.debuffs.stun.duration--;if(enemy.debuffs.stun.duration <= 0){delete enemy.debuffs.stun;addLog('特殊',`💫 暈暈效果消失了！`);}
                     round++;return;}
                 let enemyArmorPen = 0;if(enemy.affixEffects && enemy.affixEffects.armorPen){enemyArmorPen = enemy.affixEffects.armorPen * 100;}if(enrageStacks > 0){enemyArmorPen += enrageStacks * 5;}
-                let enemyDmg = calculateDamage(enemy.atk,gameState.player.def,enemyArmorPen);enemyDmg = Math.max(Math.floor(enemyDmg * enrageMultiplier),1);const monsterAttackResult = applyMonsterAffixOnAttack(enemy,enemyDmg);enemyDmg = Math.max(monsterAttackResult.damage,1);if(enemy.affixEffects && enemy.affixEffects.elementalAttack){const elements = ['fire','ice','thunder','poison','earth'];const randomElement = elements[Math.floor(Math.random() * elements.length)];const elementData = ELEMENTS[randomElement];if(elementData.effect.type === 'burn' || elementData.effect.type === 'poison'){if(!gameState.player.elementalEffects) gameState.player.elementalEffects = {};gameState.player.elementalEffects[randomElement] = {duration:elementData.effect.duration,damagePercent:elementData.effect.damagePercent};addLog('元素',`${elementData.icon} 怪物觸發了${elementData.name}！`);} else if(elementData.effect.type === 'weaken'){if(!gameState.player.elementalEffects) gameState.player.elementalEffects = {};gameState.player.elementalEffects.ice = {duration:elementData.effect.duration,weakenPercent:elementData.effect.weakenPercent};addLog('元素',`${elementData.icon} 怪物觸發了${elementData.name}！你的攻擊力降低了！`);}}
+                let enemyDmg = calculateDamage(enemy.atk || 0, gameState.player.def || 0, enemyArmorPen || 0);
+                enemyDmg = Math.max(Math.floor(Number(enemyDmg) || 1) * (Number(enrageMultiplier) || 1), 1);
+                const monsterAttackResult = applyMonsterAffixOnAttack(enemy, enemyDmg);
+                enemyDmg = Math.max(Math.floor(Number(monsterAttackResult.damage) || enemyDmg), 1);
+                if(isNaN(enemyDmg) || enemyDmg <= 0) enemyDmg = 1;if(enemy.affixEffects && enemy.affixEffects.elementalAttack){const elements = ['fire','ice','thunder','poison','earth'];const randomElement = elements[Math.floor(Math.random() * elements.length)];const elementData = ELEMENTS[randomElement];if(elementData.effect.type === 'burn' || elementData.effect.type === 'poison'){if(!gameState.player.elementalEffects) gameState.player.elementalEffects = {};gameState.player.elementalEffects[randomElement] = {duration:elementData.effect.duration,damagePercent:elementData.effect.damagePercent};addLog('元素',`${elementData.icon} 怪物觸發了${elementData.name}！`);} else if(elementData.effect.type === 'weaken'){if(!gameState.player.elementalEffects) gameState.player.elementalEffects = {};gameState.player.elementalEffects.ice = {duration:elementData.effect.duration,weakenPercent:elementData.effect.weakenPercent};addLog('元素',`${elementData.icon} 怪物觸發了${elementData.name}！你的攻擊力降低了！`);}}
                 if(monsterAttackResult.lifeSteal > 0){enemy.hp = Math.min(enemy.hp + monsterAttackResult.lifeSteal,enemy.maxHp);enemyHp = enemy.hp;addLog('詞綴',`🩸 怪物嘗血回復了 ${monsterAttackResult.lifeSteal} 點生命值`);updateEnemyHP(enemyHp,enemyMaxHp);}
                 let playerDodged = false;let playerDodgeChance =(gameState.player.dodge || 0) +(comboEffects.dodge || 0);companion = getActiveCompanion();if(companion && companion.skills){companion.skills.forEach(skill => {if(skill.effect && skill.effect.dodge){playerDodgeChance += skill.effect.dodge;}});}
                 if(playerDodgeChance > 0 && Math.random() < playerDodgeChance){playerDodged = true;}
@@ -4527,16 +4531,22 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
                     updateEnemyHP(enemyHp,enemyMaxHp);}
                 if(defenseResult.reflectDamage > 0){enemyHp -= defenseResult.reflectDamage;updateEnemyHP(enemyHp,enemyMaxHp);}
                 if(defenseResult.message){addLog('特殊',defenseResult.message);}
-                if(armorElement && armorElementValue > 0){const elem = ELEMENTS[armorElement];if(Math.random() < elem.effectChance){if(elem.effect === 'burn'){const reflectDmg = Math.floor(enemyDmg * armorElementValue);enemyHp -= reflectDmg;const percent = Math.floor(armorElementValue * 100);addLog('元素',`🔥 防具火元素[${percent}%]：反噬火焰！造成${reflectDmg}點傷害`);updateEnemyHP(enemyHp,enemyMaxHp);} else if(elem.effect === 'freeze'){const reduction = Math.floor(enemyDmg * armorElementValue);enemyDmg -= reduction;const percent = Math.floor(armorElementValue * 100);addLog('元素',`❄️ 防具冰元素[${percent}%]：冰霜護甲！減少${reduction}點傷害`);} else if(elem.effect === 'shock'){const counterDmg = Math.floor(enemyDmg * armorElementValue);enemyHp -= counterDmg;const percent = Math.floor(armorElementValue * 100);addLog('元素',`⚡ 防具雷元素[${percent}%]：雷電反擊！造成${counterDmg}點傷害`);updateEnemyHP(enemyHp,enemyMaxHp);} else if(elem.effect === 'poison'){const poisonDmg = Math.floor(enemy.maxHp * armorElementValue);if(!enemy.poisons) enemy.poisons = [];enemy.poisons.push({damage:poisonDmg,duration:3});const percent =(armorElementValue * 100).toFixed(1);addLog('元素',`🌿 防具毒元素[${percent}%]：毒霧反擊！敵人中毒${poisonDmg}點/回合×3回合`);} else if(elem.effect === 'shield'){const reduction = Math.floor(enemyDmg * armorElementValue);enemyDmg -= reduction;const percent = Math.floor(armorElementValue * 100);addLog('元素',`🌍 防具土元素[${percent}%]：岩石護盾！減少${reduction}點傷害`);}}}
+                if(armorElement && armorElementValue > 0){const elem = ELEMENTS[armorElement];if(elem && Math.random() < elem.effectChance){const armorValue = Number(armorElementValue) || 0;if(isNaN(armorValue) || armorValue <= 0) return;if(elem.effect === 'burn'){const reflectDmg = Math.max(0, Math.floor((Number(enemyDmg) || 0) * armorValue));enemyHp -= reflectDmg;const percent = Math.floor(armorValue * 100);addLog('元素',`🔥 防具火元素[${percent}%]：反噬火焰！造成${reflectDmg}點傷害`);updateEnemyHP(enemyHp,enemyMaxHp);} else if(elem.effect === 'freeze'){const reduction = Math.max(0, Math.floor((Number(enemyDmg) || 0) * armorValue));enemyDmg = Math.max(1, enemyDmg - reduction);const percent = Math.floor(armorValue * 100);addLog('元素',`❄️ 防具冰元素[${percent}%]：冰霜護甲！減少${reduction}點傷害`);} else if(elem.effect === 'shock'){const counterDmg = Math.max(0, Math.floor((Number(enemyDmg) || 0) * armorValue));enemyHp -= counterDmg;const percent = Math.floor(armorValue * 100);addLog('元素',`⚡ 防具雷元素[${percent}%]：雷電反擊！造成${counterDmg}點傷害`);updateEnemyHP(enemyHp,enemyMaxHp);} else if(elem.effect === 'poison'){const poisonDmg = Math.max(0, Math.floor((Number(enemy.maxHp) || 0) * armorValue));if(!enemy.poisons) enemy.poisons = [];enemy.poisons.push({damage:poisonDmg,duration:3});const percent =(armorValue * 100).toFixed(1);addLog('元素',`🌿 防具毒元素[${percent}%]：毒霧反擊！敵人中毒${poisonDmg}點/回合×3回合`);} else if(elem.effect === 'shield'){const reduction = Math.max(0, Math.floor((Number(enemyDmg) || 0) * armorValue));enemyDmg = Math.max(1, enemyDmg - reduction);const percent = Math.floor(armorValue * 100);addLog('元素',`🌍 防具土元素[${percent}%]：岩石護盾！減少${reduction}點傷害`);}}}
                 if(gameState.player.dmgRed > 0 || comboEffects.dmgRed > 0){const totalDmgRed = gameState.player.dmgRed +(comboEffects.dmgRed * 100);const dmgRedCap = Math.min(totalDmgRed,75);enemyDmg = Math.floor(enemyDmg *(1 - dmgRedCap / 100));}
                 let shieldBroken = false;if(gameState.player.shield && gameState.player.shield > 0){const shieldBefore = gameState.player.shield;gameState.player.shield = Math.max(0, gameState.player.shield - enemyDmg);const shieldAbsorbed = Math.min(shieldBefore, enemyDmg);enemyDmg = Math.max(0, enemyDmg - shieldAbsorbed);if(shieldBefore > 0 && gameState.player.shield === 0){shieldBroken = true;if(gameState.player.class && CLASSES[gameState.player.class] && CLASSES[gameState.player.class].uniqueMechanic === '雲霄護體'){if(!gameState.player.classMechanicData) gameState.player.classMechanicData = {};gameState.player.classMechanicData.cloudShieldBroken = true;gameState.player.classMechanicData.cloudShieldCooldown = 5;addLog('職業',`☁️ 雲霄護體被打破！5回合後重新生成`);}const shieldBreakResult = tryTriggerPlayerSkill('onShieldBreak',0,{shieldBroken:true,enemy:enemy});if(shieldBreakResult.triggered && shieldBreakResult.damage > 0){enemyHp -= shieldBreakResult.damage;addLog('技能',`⚡ ${shieldBreakResult.skillName} 觸發！護盾爆發造成 ${shieldBreakResult.damage} 點傷害！`);updateEnemyHP(enemyHp, enemyMaxHp);}}if(shieldAbsorbed > 0){addLog('護盾',`🛡️ 護盾吸收了 ${shieldAbsorbed} 點傷害（剩餘 ${gameState.player.shield} 點護盾）`);}}
-                playerHp -= enemyDmg;gameState.player.hp = Math.max(0,playerHp);updatePlayerHP(playerHp,gameState.player.maxHp);battleStats.totalDamageTaken += enemyDmg;if(gameState.player.setEffects && gameState.player.setEffects.specialEffects){gameState.player.setEffects.specialEffects.forEach(effect => {if(effect === 'counter_heal' && Math.random() < 0.50){const counterDmg = Math.floor(gameState.player.atk * 1.5);const healAmount = Math.floor(counterDmg * 1.0);enemyHp -= counterDmg;gameState.player.hp = Math.min(gameState.player.hp + healAmount,gameState.player.maxHp);playerHp = gameState.player.hp;updatePlayerHP(playerHp,gameState.player.maxHp);addLog('套裝',`🛡️ 防火牆反擊！造成 ${counterDmg} 點傷害並回復 ${healAmount} 點生命！`);updateEnemyHP(enemyHp,enemyMaxHp);}
+                enemyDmg = Math.max(0, Math.floor(Number(enemyDmg) || 0));
+                if(isNaN(enemyDmg)) enemyDmg = 0;
+                playerHp = Math.max(0, Math.floor(Number(playerHp) || 0) - enemyDmg);
+                gameState.player.hp = Math.max(0, playerHp);
+                updatePlayerHP(playerHp, gameState.player.maxHp);
+                battleStats.totalDamageTaken += enemyDmg;if(gameState.player.setEffects && gameState.player.setEffects.specialEffects){gameState.player.setEffects.specialEffects.forEach(effect => {if(effect === 'counter_heal' && Math.random() < 0.50){const counterDmg = Math.floor(gameState.player.atk * 1.5);const healAmount = Math.floor(counterDmg * 1.0);enemyHp -= counterDmg;gameState.player.hp = Math.min(gameState.player.hp + healAmount,gameState.player.maxHp);playerHp = gameState.player.hp;updatePlayerHP(playerHp,gameState.player.maxHp);addLog('套裝',`🛡️ 防火牆反擊！造成 ${counterDmg} 點傷害並回復 ${healAmount} 點生命！`);updateEnemyHP(enemyHp,enemyMaxHp);}
                          if(effect === 'shield_barrier' && Math.random() < 0.35){addLog('套裝',`✨ 護盾屏障！格擋了所有傷害！`);gameState.player.hp = Math.min(gameState.player.hp + enemyDmg,gameState.player.maxHp);playerHp = gameState.player.hp;updatePlayerHP(playerHp,gameState.player.maxHp);}
                          if(effect === 'fortress_counter' && Math.random() < 0.60){const counterDmg = Math.floor(gameState.player.def * 2.0);enemyHp -= counterDmg;addLog('套裝',`🏯 堡壘之盾！反擊造成 ${counterDmg} 點傷害！`);updateEnemyHP(enemyHp,enemyMaxHp);}
                          if(effect === 'ultimate_fortress' && gameState.player.hp <= 0){gameState.player.hp = Math.floor(gameState.player.maxHp * 0.30);playerHp = gameState.player.hp;updatePlayerHP(playerHp,gameState.player.maxHp);addLog('套裝',`🛡️ 不朽要塞！免疫致命傷害，保留30%生命值！`);const index = gameState.player.setEffects.specialEffects.indexOf('ultimate_fortress');if(index > -1){gameState.player.setEffects.specialEffects.splice(index,1);}}
                          if(effect === 'immortal_pulse'){const healAmount = Math.floor(gameState.player.maxHp * 0.05);gameState.player.hp = Math.min(gameState.player.hp + healAmount,gameState.player.maxHp);playerHp = gameState.player.hp;updatePlayerHP(playerHp,gameState.player.maxHp);addLog('套裝',`💖 永恆脈動！持續回復 ${healAmount} 點生命值！`);}});}
                 if(companionBonuses.reflect && companionBonuses.reflect > 0){const reflectDmg = Math.floor(enemyDmg * companionBonuses.reflect);enemyHp -= reflectDmg;addLog('生肖',`🐶 鐵衛犬反傷！造成 ${reflectDmg} 點働擊傷害！`);updateEnemyHP(enemyHp,enemyMaxHp);}
-                if(enemyCrit){addLog('戰鬥',`${enemy.name} 造成了 ${Math.floor(enemyDmg)} 點傷害 💥暴擊！`);playSound('crit');} else {addLog('戰鬥',`${enemy.name} 造成了 ${Math.floor(enemyDmg)} 點傷害`);playSound('hit');}
+                const displayDmg = Math.max(0, Math.floor(Number(enemyDmg) || 0));
+                if(enemyCrit){addLog('戰鬥',`${enemy.name} 造成了 ${displayDmg} 點傷害 💥暴擊！`);playSound('crit');} else {addLog('戰鬥',`${enemy.name} 造成了 ${displayDmg} 點傷害`);playSound('hit');}
                 if(monsterAttackResult.doubleAttack){let secondAttackDmg = Math.floor(enemyDmg * 0.5);if(gameState.player.dmgRed > 0){const dmgRedCap = Math.min(gameState.player.dmgRed,75);secondAttackDmg = Math.floor(secondAttackDmg *(1 - dmgRedCap / 100));}
                     playerHp -= secondAttackDmg;gameState.player.hp = Math.max(0,playerHp);updatePlayerHP(playerHp,gameState.player.maxHp);addLog('詞綴',`⚡ 怪物連擊！再次造成 ${secondAttackDmg} 點傷害`);}
                 const hpPercentAfterHit =(gameState.player.hp / gameState.player.maxHp) * 100;if(hpPercentAfterHit < 30 && gameState.player.hp > 0){const companionEmergency = triggerCompanionSkill('low_hp',{hpPercent:hpPercentAfterHit});if(companionEmergency){companionEmergency.forEach(result => {if(result.type === 'heal'){addLog('隨從',result.message);playerHp = gameState.player.hp;}});}}
@@ -4578,9 +4588,60 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
             if(enemy.affixes && enemy.affixes.length > 0){statsHTML += '<div style="color:#ffd700;font-weight:bold;margin-top:8px;margin-bottom:6px;border-top:1px solid rgba(255,215,0,0.3);padding-top:8px;">✨ 詞條效果</div>';enemy.affixes.forEach(affix => {let affixData = affix;let description = '';if(typeof affix === 'string'){affixData = affixEffects[affix];description = affixData.description || affixData.desc || '';} else {if(affixData.effect){const e = affixData.effect;const parts = [];if(e.elementalAttack) parts.push(`攻擊附帶隨機元素效果`);if(e.allStatsMultiplier) parts.push(`全屬性+${Math.floor((e.allStatsMultiplier - 1) * 100)}%`);if(e.atkMultiplier) parts.push(`攻擊力+${Math.floor((e.atkMultiplier - 1) * 100)}%`);if(e.defMultiplier) parts.push(`防禦力+${Math.floor((e.defMultiplier - 1) * 100)}%`);if(e.hpMultiplier) parts.push(`生命值+${Math.floor((e.hpMultiplier - 1) * 100)}%`);if(e.critRate) parts.push(`暴擊率+${Math.floor(e.critRate * 100)}%`);if(e.critDamage) parts.push(`暴擊傷害+${Math.floor(e.critDamage * 100)}%`);if(e.lifeSteal) parts.push(`吸血${Math.floor(e.lifeSteal * 100)}%`);if(e.damageReduction) parts.push(`減傷${Math.floor(e.damageReduction * 100)}%`);if(e.reflect) parts.push(`反傷${Math.floor(e.reflect * 100)}%`);if(e.regen) parts.push(`每回合回血${Math.floor(e.regen * 100)}%`);if(e.dodgeChance) parts.push(`閃避${Math.floor(e.dodgeChance * 100)}%`);if(e.armorPen) parts.push(`破甲${Math.floor(e.armorPen * 100)}%`);if(e.doubleAttackChance) parts.push(`連擊${Math.floor(e.doubleAttackChance * 100)}%`);if(e.damageVariance) parts.push(`傷害波動±${Math.floor(e.damageVariance * 100)}%`);if(e.stackingAtk) parts.push(`每次攻擊獲得${Math.floor(e.stackingAtk * 100)}%攻擊（疊${e.maxStacks}層）`);if(e.lowHpAtkBonus) parts.push(`低血狂暴（<${Math.floor(e.lowHpThreshold * 100)}%HP時攻擊+${Math.floor(e.lowHpAtkBonus * 100)}%）`);if(e.lowHpDefMultiplier) parts.push(`低血防禦倍增（<${Math.floor(e.lowHpThreshold * 100)}%HP時防禦×${e.lowHpDefMultiplier}）`);if(e.revive) parts.push(`不滅復活（回復${Math.floor(e.revivePercent * 100)}%HP）`);if(e.resetChance) parts.push(`時空重置（${Math.floor(e.resetChance * 100)}%機率）`);description = parts.join('、');}}
                     if(affixData && affixData.icon && affixData.name){statsHTML += `<div style="color:#c0c0c0;margin-bottom:3px;">`;statsHTML += `${affixData.icon} <span style="color:${affixData.color || '#ffd700'};">${affixData.name}</span>:${description}`;statsHTML += `</div>`;}});}
             statsDisplay.innerHTML = statsHTML;}
-        function updateEnemyHP(currentHP,maxHP){const hpFill = document.getElementById('enemy-hp-fill');const hpText = document.getElementById('enemy-hp-text');currentHP = Math.max(0,currentHP);const hpPercent =(currentHP / maxHP) * 100;hpFill.style.width = hpPercent + '%';let color,shadowColor;if(hpPercent > 70){color = 'linear-gradient(90deg,#4CAF50 0%,#66BB6A 100%)';shadowColor = 'rgba(76,175,80,0.5)';} else if(hpPercent > 40){color = 'linear-gradient(90deg,#ffd700 0%,#ffed4e 100%)';shadowColor = 'rgba(255,215,0,0.5)';} else if(hpPercent > 20){color = 'linear-gradient(90deg,#ff9800 0%,#ffb74d 100%)';shadowColor = 'rgba(255,152,0,0.5)';} else {color = 'linear-gradient(90deg,#ff4444 0%,#ff6b6b 100%)';shadowColor = 'rgba(255,68,68,0.5)';}
-            hpFill.style.background = color;hpFill.style.boxShadow = `0 0 10px ${shadowColor}`;if(window.innerWidth <= 767){hpText.textContent = `${currentHP}/${maxHP}`;} else {hpText.textContent = `${currentHP}/${maxHP}(${Math.round(hpPercent)}%)`;}}
-        function updatePlayerHP(currentHP,maxHP){gameState.player.hp = Math.max(0,currentHP);document.getElementById('player-hp').textContent = `${gameState.player.hp}/${maxHP}`;const hpPercent =(gameState.player.hp / maxHP) * 100;document.getElementById('player-hp-bar').style.width = `${hpPercent}%`;if(gameState.autoExplore){updateAutoBattleHP();}}
+        function updateEnemyHP(currentHP,maxHP){
+            currentHP = Math.max(0, Math.floor(Number(currentHP) || 0));
+            maxHP = Math.max(1, Math.floor(Number(maxHP) || 1));
+            const hpPercent = (currentHP / maxHP) * 100;
+            const hpFill = document.getElementById('enemy-hp-fill');
+            const hpText = document.getElementById('enemy-hp-text');
+            if(hpFill) hpFill.style.width = hpPercent + '%';
+            let color,shadowColor;
+            if(hpPercent > 70){
+                color = 'linear-gradient(90deg,#4CAF50 0%,#66BB6A 100%)';
+                shadowColor = 'rgba(76,175,80,0.5)';
+            } else if(hpPercent > 40){
+                color = 'linear-gradient(90deg,#ffd700 0%,#ffed4e 100%)';
+                shadowColor = 'rgba(255,215,0,0.5)';
+            } else if(hpPercent > 20){
+                color = 'linear-gradient(90deg,#ff9800 0%,#ffb74d 100%)';
+                shadowColor = 'rgba(255,152,0,0.5)';
+            } else {
+                color = 'linear-gradient(90deg,#ff4444 0%,#ff6b6b 100%)';
+                shadowColor = 'rgba(255,68,68,0.5)';
+            }
+            if(hpFill){
+                hpFill.style.background = color;
+                hpFill.style.boxShadow = `0 0 10px ${shadowColor}`;
+            }
+            if(hpText){
+                if(window.innerWidth <= 767){
+                    hpText.textContent = `${currentHP}/${maxHP}`;
+                } else {
+                    hpText.textContent = `${currentHP}/${maxHP}(${Math.round(hpPercent)}%)`;
+                }
+            }
+            // 如果在無盡挑戰模式，同時更新無盡挑戰UI
+            if(gameState.endlessMode && gameState.endlessMode.inBattle){
+                updateEndlessEnemyHP(currentHP, maxHP);
+            }
+        }
+        function updatePlayerHP(currentHP,maxHP){
+            currentHP = Math.max(0, Math.floor(Number(currentHP) || 0));
+            maxHP = Math.max(1, Math.floor(Number(maxHP) || 1));
+            gameState.player.hp = currentHP;
+            const hpPercent = (currentHP / maxHP) * 100;
+            const playerHpEl = document.getElementById('player-hp');
+            const playerHpBarEl = document.getElementById('player-hp-bar');
+            if(playerHpEl) playerHpEl.textContent = `${currentHP}/${maxHP}`;
+            if(playerHpBarEl) playerHpBarEl.style.width = `${hpPercent}%`;
+            // 如果在無盡挑戰模式，同時更新無盡挑戰UI
+            if(gameState.endlessMode && gameState.endlessMode.inBattle){
+                updateEndlessPlayerHP(currentHP, maxHP);
+            }
+            if(gameState.autoExplore){
+                updateAutoBattleHP();
+            }
+        }
         function updateAutoBattleHP(){if(!gameState.autoExplore) return;const hpBar = document.getElementById('auto-battle-hp-bar');const hpText = document.getElementById('auto-battle-hp-text');if(!hpBar || !hpText) return;const currentHP = gameState.player.hp;const maxHP = gameState.player.maxHp;const hpPercent = Math.max(0,Math.min(100,(currentHP / maxHP) * 100));hpText.textContent = `${currentHP}/${maxHP}`;hpBar.style.width = `${hpPercent}%`;let color,shadowColor;if(hpPercent > 70){color = 'linear-gradient(90deg,#4CAF50 0%,#66BB6A 100%)';shadowColor = 'rgba(76,175,80,0.6)';} else if(hpPercent > 40){color = 'linear-gradient(90deg,#ffd700 0%,#ffed4e 100%)';shadowColor = 'rgba(255,215,0,0.6)';} else if(hpPercent > 20){color = 'linear-gradient(90deg,#ff9800 0%,#ffb74d 100%)';shadowColor = 'rgba(255,152,0,0.6)';} else {color = 'linear-gradient(90deg,#ff4444 0%,#ff6b6b 100%)';shadowColor = 'rgba(255,68,68,0.6)';}
             hpBar.style.background = color;hpBar.style.boxShadow = `0 0 15px ${shadowColor}`;}
         function hideEnemyHP(){const container = document.getElementById('enemy-hp-container');if(container){container.style.visibility = 'hidden';}}
@@ -8414,10 +8475,48 @@ function endlessBattle(){
         }
     );
 }
-function updateEndlessPlayerHP(hp,maxHp){const hpPercent = Math.max(0,Math.min(100,(hp / maxHp) * 100));const hpBar = document.getElementById('endless-player-hp-bar');let bgColor = '#4CAF50';if(hpPercent <= 20){bgColor = '#F44336';} else if(hpPercent <= 40){bgColor = '#FF9800';} else if(hpPercent <= 70){bgColor = '#FFC107';}
-    hpBar.style.background = `linear-gradient(90deg,${bgColor} 0%,${bgColor}dd 100%)`;hpBar.style.width = hpPercent + '%';document.getElementById('endless-player-hp').textContent = Math.ceil(hp);document.getElementById('endless-player-hp-max').textContent = maxHp;}
-function updateEndlessEnemyHP(hp,maxHp){const hpPercent = Math.max(0,Math.min(100,(hp / maxHp) * 100));const hpBar = document.getElementById('endless-enemy-hp-bar');let bgColor = '#F44336';if(hpPercent > 70){bgColor = '#4CAF50';} else if(hpPercent > 40){bgColor = '#FFC107';} else if(hpPercent > 20){bgColor = '#FF9800';}
-    hpBar.style.background = `linear-gradient(90deg,${bgColor} 0%,${bgColor}dd 100%)`;hpBar.style.width = hpPercent + '%';document.getElementById('endless-enemy-hp').textContent = Math.ceil(hp);document.getElementById('endless-enemy-hp-max').textContent = maxHp;}
+function updateEndlessPlayerHP(hp,maxHp){
+    hp = Math.max(0, Math.floor(Number(hp) || 0));
+    maxHp = Math.max(1, Math.floor(Number(maxHp) || 1));
+    const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+    const hpBar = document.getElementById('endless-player-hp-bar');
+    const hpEl = document.getElementById('endless-player-hp');
+    const hpMaxEl = document.getElementById('endless-player-hp-max');
+    if(!hpBar || !hpEl || !hpMaxEl) return;
+    let bgColor = '#4CAF50';
+    if(hpPercent <= 20){
+        bgColor = '#F44336';
+    } else if(hpPercent <= 40){
+        bgColor = '#FF9800';
+    } else if(hpPercent <= 70){
+        bgColor = '#FFC107';
+    }
+    hpBar.style.background = `linear-gradient(90deg,${bgColor} 0%,${bgColor}dd 100%)`;
+    hpBar.style.width = hpPercent + '%';
+    hpEl.textContent = hp;
+    hpMaxEl.textContent = maxHp;
+}
+function updateEndlessEnemyHP(hp,maxHp){
+    hp = Math.max(0, Math.floor(Number(hp) || 0));
+    maxHp = Math.max(1, Math.floor(Number(maxHp) || 1));
+    const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+    const hpBar = document.getElementById('endless-enemy-hp-bar');
+    const hpEl = document.getElementById('endless-enemy-hp');
+    const hpMaxEl = document.getElementById('endless-enemy-hp-max');
+    if(!hpBar || !hpEl || !hpMaxEl) return;
+    let bgColor = '#F44336';
+    if(hpPercent > 70){
+        bgColor = '#4CAF50';
+    } else if(hpPercent > 40){
+        bgColor = '#FFC107';
+    } else if(hpPercent > 20){
+        bgColor = '#FF9800';
+    }
+    hpBar.style.background = `linear-gradient(90deg,${bgColor} 0%,${bgColor}dd 100%)`;
+    hpBar.style.width = hpPercent + '%';
+    hpEl.textContent = hp;
+    hpMaxEl.textContent = maxHp;
+}
 function addEndlessLog(message){const logContainer = document.getElementById('endless-battle-log');const timestamp = new Date().toLocaleTimeString('zh-TW',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});if(logContainer.innerHTML.includes('等待戰鬥開始')){logContainer.innerHTML = '';}
     const logEntry = document.createElement('div');logEntry.className = 'endless-log-entry';logEntry.style.marginBottom = '6px';logEntry.style.padding = '6px';logEntry.style.borderRadius = '4px';logEntry.style.backgroundColor = 'rgba(255,255,255,0.05)';let textColor = '#fff';if(message.includes('爆擊')){textColor = '#ff922b';} else if(message.includes('造成')){textColor = '#ff6b6b';} else if(message.includes('回復')){textColor = '#51cf66';} else if(message.includes('增強') || message.includes('加強')){textColor = '#74c0fc';} else if(message.includes('減弱') || message.includes('削弱')){textColor = '#ffd93d';} else if(message.includes('回合')){textColor = '#ffd700';} else if(message.includes('失敗') || message.includes('落空')){textColor = '#a8a8a8';}
     logEntry.innerHTML = `<span style="color:#888;font-size:0.75rem;">[${timestamp}]</span> <span style="color:${textColor};">${message}</span>`;logContainer.appendChild(logEntry);logContainer.scrollTop = logContainer.scrollHeight;}

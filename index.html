@@ -1090,8 +1090,10 @@ button:disabled {
     .log-filter-btn {font-size:0.65rem;padding:3px 8px;}
     .log-clear-btn {width:100%;font-size:0.7rem;padding:6px;}
     /* 戰鬥日誌更緊湊 */
-    .log-container {height:240px;}
-    .log-content {padding:6px;}
+    .battle-log-wrapper {flex-direction:row;min-height:220px !important;}
+    .log-filters-sidebar {flex-direction:row !important;flex-wrap:wrap;gap:4px !important;margin-bottom:8px;}
+    .log-container {height:240px;min-height:200px !important;width:100%;}
+    .log-content {padding:6px;height:100% !important;min-height:180px !important;overflow-y:auto !important;-webkit-overflow-scrolling:touch;}
     .log-entry {padding:6px 8px;margin-bottom:4px;border-left-width:2px;}
     .log-entry::before {width:2px;}
     .log-text {font-size:0.78rem;line-height:1.45;}
@@ -1163,6 +1165,14 @@ button:disabled {
         padding:12px 10px;
         font-size:0.85rem;
     }
+    
+    /* 小屏日誌修復 */
+    .battle-log-wrapper {flex-direction:column;min-height:250px !important;}
+    .log-filters-sidebar {flex-direction:row !important;flex-wrap:wrap;justify-content:center;gap:3px !important;margin-bottom:6px;}
+    .log-container {min-height:200px !important;height:auto !important;}
+    .log-content {min-height:180px !important;}
+    .log-filter-btn {padding:4px 6px;font-size:0.6rem;}
+    .log-clear-btn {padding:4px 8px;font-size:0.6rem;margin-top:0 !important;}
 }
 
 /* 稀有度顏色 */
@@ -1633,8 +1643,8 @@ button:active {transform:translateY(0);}
                             <div id="enemy-hp-text" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:bold;font-size:0.9rem;text-shadow:0 0 4px rgba(0,0,0,0.8),1px 1px 2px rgba(0,0,0,1);"></div>
                         </div>
                     </div>
-                    <div style="display:flex;gap:10px;align-items:flex-start;">
-                        <div class="log-filters" style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+                    <div class="battle-log-wrapper" style="display:flex;gap:10px;align-items:stretch;min-height:200px;">
+                        <div class="log-filters-sidebar" style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
                             <button class="log-filter-btn active" data-filter="all" onclick="filterLogs('all')">全部</button>
                             <button class="log-filter-btn" data-filter="戰鬥" onclick="filterLogs('戰鬥')">戰鬥</button>
                             <button class="log-filter-btn" data-filter="技能" onclick="filterLogs('技能')">技能</button>
@@ -1642,8 +1652,8 @@ button:active {transform:translateY(0);}
                             <button class="log-filter-btn" data-filter="系統" onclick="filterLogs('系統')">系統</button>
                             <button class="log-clear-btn" onclick="clearBattleLog()" title="清除日誌" style="margin-top:8px;">🗑️ 清除</button>
                         </div>
-                        <div class="log-container" id="battle-log" style="flex:1;">
-                            <div class="log-content">
+                        <div class="log-container" id="battle-log" style="flex:1;min-height:200px;">
+                            <div class="log-content" style="height:100%;min-height:180px;">
                                 <div class="log-entry" data-log-type="系統">
                                     <div class="log-time"><span class="log-type-badge" style="background:rgba(204,204,204,0.2);color:#cccccc;">[系統]</span><span>00:00:00</span></div>
                                     <div class="log-text" style="color:#cccccc;">✨ 歡迎來到仙途問道！開始你的修真之旅吧！</div>
@@ -5174,7 +5184,7 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
             const timing = checkBreakthroughTiming();let attributeBonus = 1;if(timing && timing.isAuspicious){attributeBonus = 1 + (timing.attributeBonus || 0) / 100;addLog('時辰',`✨ 吉時突破！獲得額外屬性加成！`);}cult.cultivationExp -= cult.cultivationExpToNext;cult.layer++;const nextLayerExp = Math.floor(realm.baseExp * Math.pow(realm.expMultiplier,cult.layer - 1));cult.cultivationExpToNext = nextLayerExp;const bonus = realm.bonus;gameState.player.atk += Math.floor((bonus.atk || 0) * attributeBonus);gameState.player.def += Math.floor((bonus.def || 0) * attributeBonus);gameState.player.maxHp += Math.floor((bonus.hp || 0) * attributeBonus);gameState.player.hp = gameState.player.maxHp;addLog('境界',`✨ 突破到 ${realm.name} 第${cult.layer}層！全屬性提升！`);playSound('levelup');gameState.player.cultivationPoints += 10;updateUI();saveGame();return true;}
         function tryBreakthroughRealm(){const cult = gameState.player.cultivation;const currentRealmIndex = CULTIVATION_REALMS.findIndex(r => r.id === cult.realm);if(currentRealmIndex >= CULTIVATION_REALMS.length - 1) return false;const nextRealm = CULTIVATION_REALMS[currentRealmIndex + 1];const tribulationConfig = TRIBULATION_CONFIG[cult.realm];if(tribulationConfig){openTribulationModal(cult.realm,nextRealm);return false;}
             cult.realm = nextRealm.id;cult.layer = 1;cult.cultivationExp = 0;cult.cultivationExpToNext = nextRealm.baseExp;const bonus = nextRealm.bonus;gameState.player.atk += bonus.atk || 0;gameState.player.def += bonus.def || 0;gameState.player.maxHp += bonus.hp || 0;gameState.player.hp = gameState.player.maxHp;addLog('境界',`🌟 成功突破到 ${nextRealm.name}！全屬性大幅提升！`);playSound('levelup');gameState.player.cultivationPoints += 50;updateUI();saveGame();return true;}
-        function startTribulation(currentRealmId,nextRealm){const tribulation = TRIBULATION_CONFIG[currentRealmId];if(!tribulation) return;const realm = CULTIVATION_REALMS.find(r => r.id === currentRealmId);const nextRealmData = CULTIVATION_REALMS.find(r => r.id === nextRealm.id);const timing = checkBreakthroughTiming();let successBonus = 0;let attributeBonus = 1;if(timing && timing.isAuspicious){successBonus = timing.successBonus || 0;attributeBonus = 1 + (timing.attributeBonus || 0) / 100;addLog('時辰',`✨ 吉時渡劫！成功率 +${successBonus}%！`);} else if(timing && !timing.isAuspicious){successBonus = timing.successBonus || 0;addLog('時辰',`⚠️ 凶時渡劫！成功率 ${successBonus}%！`);}const baseLevel = gameState.player.level;const enemyLevel = Math.floor(baseLevel * tribulation.enemyMultiplier);let enemyHp = Math.floor(gameState.player.maxHp * 2 * tribulation.difficulty);let enemyAtk = Math.floor(gameState.player.atk * 1.5 * tribulation.difficulty);let enemyDef = Math.floor(gameState.player.def * 1.2 * tribulation.difficulty);if(timing && timing.isAuspicious){enemyHp = Math.floor(enemyHp * 0.9);enemyAtk = Math.floor(enemyAtk * 0.9);enemyDef = Math.floor(enemyDef * 0.9);} else if(timing && !timing.isAuspicious){enemyHp = Math.floor(enemyHp * 1.1);enemyAtk = Math.floor(enemyAtk * 1.1);enemyDef = Math.floor(enemyDef * 1.1);}let enemyName = '';let enemyIcon = '';if(tribulation.type === 'lightning'){enemyName = `⚡ ${tribulation.name} - 天雷`;enemyIcon = '⚡';} else if(tribulation.type === 'heart_demon'){enemyName = `👹 ${tribulation.name} - 心魔`;enemyIcon = '👹';} else if(tribulation.type === 'wind_fire'){enemyName = `🔥 ${tribulation.name} - 風火`;enemyIcon = '🔥';}
+        function startTribulation(currentRealmId,nextRealm){if(gameState.autoExplore){stopAutoExplore();addLog('系統','⚡ 開始渡劫，自動戰鬥已關閉');}const tribulation = TRIBULATION_CONFIG[currentRealmId];if(!tribulation) return;const realm = CULTIVATION_REALMS.find(r => r.id === currentRealmId);const nextRealmData = CULTIVATION_REALMS.find(r => r.id === nextRealm.id);const timing = checkBreakthroughTiming();let successBonus = 0;let attributeBonus = 1;if(timing && timing.isAuspicious){successBonus = timing.successBonus || 0;attributeBonus = 1 + (timing.attributeBonus || 0) / 100;addLog('時辰',`✨ 吉時渡劫！成功率 +${successBonus}%！`);} else if(timing && !timing.isAuspicious){successBonus = timing.successBonus || 0;addLog('時辰',`⚠️ 凶時渡劫！成功率 ${successBonus}%！`);}const baseLevel = gameState.player.level;const enemyLevel = Math.floor(baseLevel * tribulation.enemyMultiplier);let enemyHp = Math.floor(gameState.player.maxHp * 2 * tribulation.difficulty);let enemyAtk = Math.floor(gameState.player.atk * 1.5 * tribulation.difficulty);let enemyDef = Math.floor(gameState.player.def * 1.2 * tribulation.difficulty);if(timing && timing.isAuspicious){enemyHp = Math.floor(enemyHp * 0.9);enemyAtk = Math.floor(enemyAtk * 0.9);enemyDef = Math.floor(enemyDef * 0.9);} else if(timing && !timing.isAuspicious){enemyHp = Math.floor(enemyHp * 1.1);enemyAtk = Math.floor(enemyAtk * 1.1);enemyDef = Math.floor(enemyDef * 1.1);}let enemyName = '';let enemyIcon = '';if(tribulation.type === 'lightning'){enemyName = `⚡ ${tribulation.name} - 天雷`;enemyIcon = '⚡';} else if(tribulation.type === 'heart_demon'){enemyName = `👹 ${tribulation.name} - 心魔`;enemyIcon = '👹';} else if(tribulation.type === 'wind_fire'){enemyName = `🔥 ${tribulation.name} - 風火`;enemyIcon = '🔥';}
             const enemy = {name:enemyName,icon:enemyIcon,level:enemyLevel,hp:enemyHp,maxHp:enemyHp,atk:enemyAtk,def:enemyDef,crit:15,critDmg:200,isBoss:true,isTribulation:true,tribulationRealm:currentRealmId,nextRealm:nextRealm.id};closeTribulationModal();addLog('渡劫',`⚡ 開始渡劫：${tribulation.name}！`);const victoryCallback =() => {isBattleInProgress = false;const cult = gameState.player.cultivation;cult.realm = nextRealm.id;cult.layer = 1;cult.cultivationExp = 0;cult.cultivationExpToNext = nextRealm.baseExp;const bonus = nextRealm.bonus;gameState.player.atk += Math.floor((bonus.atk || 0) * attributeBonus);gameState.player.def += Math.floor((bonus.def || 0) * attributeBonus);gameState.player.maxHp += Math.floor((bonus.hp || 0) * attributeBonus);gameState.player.hp = gameState.player.maxHp;addLog('渡劫',`🌟 渡劫成功！突破到 ${nextRealm.name}！全屬性大幅提升！`);playSound('levelup');gameState.player.cultivationPoints += 100;hideEnemyHP();updateUI();saveGame();};const defeatCallback =() => {isBattleInProgress = false;const cult = gameState.player.cultivation;const lostExp = Math.floor(cult.cultivationExp * 0.5);cult.cultivationExp = Math.max(0,cult.cultivationExp - lostExp);addLog('渡劫',`💀 渡劫失敗！修為倒退 ${lostExp} 點！可重新挑戰。`);hideEnemyHP();updateUI();saveGame();};battle(enemy,victoryCallback,defeatCallback);}
         function cultivateTechnique(categoryId,techniqueId){if(!gameState.player.techniques) gameState.player.techniques = {};if(!gameState.player.cultivationPoints) gameState.player.cultivationPoints = 0;const category = CULTIVATION_TECHNIQUES[categoryId];if(!category) return false;const technique = category.techniques.find(t => t.id === techniqueId);if(!technique) return false;const currentLevel = gameState.player.techniques[techniqueId] || 0;if(currentLevel >= technique.maxLevel){addLog('功法',`${technique.name} 已達到最高等級！`);return false;}
             const nextLevel = currentLevel + 1;const cost = technique.costs[nextLevel - 1];if(gameState.player.cultivationPoints < cost){addLog('功法',`修煉點數不足！需要 ${cost} 點，當前 ${gameState.player.cultivationPoints} 點。`);return false;}
@@ -5183,7 +5193,7 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
             recalculateStats();updateUI();saveGame();return true;}
         function getTechniqueSpecialDesc(special){if(!special) return '';if(special.type === 'onAttack'){return `攻擊時${special.chance}%機率造成額外${Math.floor(special.damageMultiplier*100)}%傷害`;} else if(special.type === 'onCrit'){return `暴擊時${special.chance}%機率觸發額外效果`;} else if(special.type === 'onHitTaken'){return `受擊時${special.chance}%機率減少${Math.floor(special.damageReduction*100)}%傷害`;} else if(special.type === 'onLowHp'){return `生命低於${Math.floor(special.threshold*100)}%時防禦提升${Math.floor(special.defBonus*100)}%`;} else if(special.type === 'onTurn'){return `每回合回復${Math.floor(special.healPercent*100)}%生命`;} else if(special.type === 'onDodge'){return `閃避時${special.chance}%機率反擊造成${Math.floor(special.counterDamage*100)}%傷害`;}
             return '特殊效果';}
-        function openTribulationModal(currentRealmId,nextRealm){const modal = document.getElementById('tribulation-modal');if(!modal){console.error('渡劫模态框不存在');return;}
+        function openTribulationModal(currentRealmId,nextRealm){if(gameState.autoExplore){stopAutoExplore();addLog('系統','⚡ 檢測到渡劫，自動戰鬥已關閉');}const modal = document.getElementById('tribulation-modal');if(!modal){console.error('渡劫模态框不存在');return;}
             const realm = CULTIVATION_REALMS.find(r => r.id === currentRealmId);const nextRealmData = CULTIVATION_REALMS.find(r => r.id === nextRealm.id);const tribulation = TRIBULATION_CONFIG[currentRealmId];if(!realm || !nextRealmData || !tribulation) return;document.getElementById('tribulation-current-realm').textContent = `${realm.icon} ${realm.name}`;document.getElementById('tribulation-next-realm').textContent = `${nextRealmData.icon} ${nextRealmData.name}`;document.getElementById('tribulation-name').textContent = tribulation.name;document.getElementById('tribulation-type').textContent = tribulation.type === 'lightning' ? '⚡ 天雷劫' : tribulation.type === 'heart_demon' ? '👹 心魔劫' : '🔥 風火劫';document.getElementById('tribulation-difficulty').textContent = `難度：${tribulation.difficulty.toFixed(1)}x`;modal.style.display = 'block';}
         function closeTribulationModal(){const modal = document.getElementById('tribulation-modal');if(modal) modal.style.display = 'none';}
         function openCultivationModal(){if(!gameState.player.cultivation){gameState.player.cultivation = {realm:'qi_refining',layer:1,cultivationExp:0,cultivationExpToNext:100};}

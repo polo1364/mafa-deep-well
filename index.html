@@ -5622,10 +5622,9 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
                 addEndlessLog(`${icon} ${message}`);
                 return;
             }
-            
             const log = document.getElementById('battle-log');
             if(!log) {
-                console.warn('Battle log container not found');
+                console.warn('Battle log container not found, type:', type, 'message:', message);
                 return;
             }
             let logContent = log.querySelector('.log-content');

@@ -4685,7 +4685,7 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
         function battle(enemy,customVictoryCallback = null,customDefeatCallback = null){if(gameState.pets && gameState.pets.equipped){updateQuestProgress('battle_with_pet',1);}
             isBattleInProgress = true;if(!gameState.player.battleReviveUsed){gameState.player.battleReviveUsed = false;} else {gameState.player.battleReviveUsed = false;}
             if(!enemy.baseAtk) enemy.baseAtk = enemy.atk;if(!enemy.baseDef) enemy.baseDef = enemy.def;if(!enemy.baseCrit) enemy.baseCrit = enemy.crit || 0;if(!enemy.debuffs) enemy.debuffs = [];if(gameState.player.setEffects && gameState.player.setEffects.specialEffects){if(!gameState.player.setEffects.specialEffects.includes('ultimate_fortress')){const hasFortress8 = gameState.player.setEffects.specialEffects.some(e => e === 'ultimate_fortress_base');if(hasFortress8){gameState.player.setEffects.specialEffects.push('ultimate_fortress');}}}
-            applyBattleStartSpecialEffects();if(gameState.player.buffs){const smokeDebuff = gameState.player.buffs.find(b => b.type === 'enemy_atk_debuff');if(smokeDebuff){const reduction = Math.floor(smokeDebuff.value * 100);enemy.atk = Math.floor(enemy.atk *(1 - smokeDebuff.value));addLog('道具',`💨 煙霧彈生效！敵人攻擊力降低${reduction}%！`);}}
+            applyBattleStartSpecialEffects();const enemyType = enemy.isSpecialBoss ? '👑 特殊魔尊' : enemy.isBoss ? '👑 魔尊' : enemy.isElite ? '⭐ 妖王' : '👾 普通';addLog('戰鬥',`⚔️ 遭遇 ${enemyType}：${enemy.name}（等級 ${enemy.level}）`);if(gameState.player.buffs){const smokeDebuff = gameState.player.buffs.find(b => b.type === 'enemy_atk_debuff');if(smokeDebuff){const reduction = Math.floor(smokeDebuff.value * 100);enemy.atk = Math.floor(enemy.atk *(1 - smokeDebuff.value));addLog('道具',`💨 煙霧彈生效！敵人攻擊力降低${reduction}%！`);}}
             const companionBattleStart = triggerCompanionSkill('battle_start',{enemy});if(companionBattleStart){companionBattleStart.forEach(result => {if(result.type === 'debuff'){if(result.skillType === 'debuff_atk'){enemy.atk = Math.floor(enemy.atk *(1 - result.value / 100));} else if(result.skillType === 'debuff_def'){enemy.def = Math.floor(enemy.def *(1 - result.value / 100));} else if(result.skillType === 'debuff_crit'){enemy.crit = Math.max(0,(enemy.crit || 0) *(1 - result.value / 100));}
                         addLog('隨從',result.message);}});}
             const cardBattleStart = triggerCardEffectsOnBattleStart();if(cardBattleStart && cardBattleStart.effects && cardBattleStart.effects.length > 0){cardBattleStart.effects.forEach(effect => {if(effect.type === 'buff'){if(!gameState.player.buffs) gameState.player.buffs = [];const statName = {'atk':'攻擊','def':'防禦','hp':'生命','crit':'暴擊率','critDmg':'暴擊傷害'}[effect.stat] || effect.stat;gameState.player.buffs.push({name:`${effect.icon} ${effect.card.name}：${statName}`,stat:effect.stat,value:effect.value,duration:effect.duration,startTime:Date.now()});addLog('卡牌',`${effect.icon} ${effect.card.name} 觸發！獲得${statName}+${Math.floor(effect.value*100)}%（${effect.duration}回合）`);}});recalculateStats();}
@@ -5624,9 +5624,17 @@ const FILE_VERSION_KEY = 'darui_file_version';const CURRENT_FILE_TIMESTAMP = Dat
             }
             
             const log = document.getElementById('battle-log');
-            if(!log) return;
-            const logContent = log.querySelector('.log-content');
-            if(!logContent) return;
+            if(!log) {
+                console.warn('Battle log container not found');
+                return;
+            }
+            let logContent = log.querySelector('.log-content');
+            if(!logContent) {
+                const newLogContent = document.createElement('div');
+                newLogContent.className = 'log-content';
+                log.appendChild(newLogContent);
+                logContent = newLogContent;
+            }
             const entry = document.createElement('div');
             entry.className = `log-entry log-type-${type}`;
             entry.setAttribute('data-log-type',type);

@@ -1,0 +1,12 @@
+{
+  "name": "仙途問道",
+  "short_name": "仙途問道",
+  "description": "修仙風格放置 RPG，支援離線遊玩",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#140a2c",
+  "theme_color": "#1a3a6a",
+  "icons": [
+    {"src": "assets/images/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

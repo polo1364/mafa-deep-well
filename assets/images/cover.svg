@@ -1,0 +1,8 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'>
+<defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop stop-color='#140a2c'/><stop offset='1' stop-color='#0f294f'/></linearGradient></defs>
+<rect width='1280' height='720' fill='url(#bg)'/>
+<circle cx='980' cy='180' r='140' fill='#ffd166' opacity='.35'/>
+<text x='640' y='300' text-anchor='middle' fill='#ffd700' font-size='86' font-family='Noto Sans TC, sans-serif'>仙途問道</text>
+<text x='640' y='370' text-anchor='middle' fill='#ffffff' font-size='34' font-family='Noto Sans TC, sans-serif'>修仙放置 RPG</text>
+<text x='640' y='430' text-anchor='middle' fill='#9ad1ff' font-size='24' font-family='Noto Sans TC, sans-serif'>可離線遊玩 • 支援行動裝置</text>
+</svg>
